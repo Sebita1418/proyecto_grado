@@ -534,7 +534,7 @@ class _RutasAdminScreenState
                     itemCount:
                         rutas.length,
                     separatorBuilder:
-                        (_, __) =>
+                        (_, _) =>
                             const SizedBox(
                       height: 10,
                     ),

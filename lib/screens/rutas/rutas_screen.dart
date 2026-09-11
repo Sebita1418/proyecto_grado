@@ -21,6 +21,10 @@ class _RutasScreenState extends State<RutasScreen> {
   bool cargando = true;
   String? error;
 
+  // Errores visuales del formulario de planificación.
+  String? originError;
+  String? destinationError;
+
   List<Ruta> rutas = [];
   List<Ruta> rutasFiltradas = [];
 
@@ -94,17 +98,26 @@ class _RutasScreenState extends State<RutasScreen> {
     final origen = originController.text.trim();
     final destino = destinationController.text.trim();
 
+    // Actualiza los mensajes de error de cada campo.
+    setState(() {
+      originError = origen.isEmpty ? 'Ingresa el punto de origen.' : null;
+
+      destinationError = destino.isEmpty
+          ? 'Ingresa el punto de destino.'
+          : null;
+    });
+
+    // Si falta alguno de los datos, no continúa.
     if (origen.isEmpty || destino.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Ingresa un origen y un destino.')),
-      );
       return;
     }
 
+    // Por ahora no se llama Google Routes API.
+    // Esta interfaz queda preparada para la integración posterior.
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text(
-          'La consulta de ruta se conectará con Google Routes API.',
+          'Origen y destino válidos. Pendiente integración con Google Routes API.',
         ),
       ),
     );
@@ -168,32 +181,43 @@ class _RutasScreenState extends State<RutasScreen> {
             style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
+
           Text(
             'Encuentra una ruta por nombre, origen o destino.',
             style: TextStyle(fontSize: 15, color: Colors.grey[600]),
           ),
+
           const SizedBox(height: 20),
 
           RoutePlannerForm(
             originController: originController,
             destinationController: destinationController,
             onCalculate: calcularRuta,
+            originError: originError,
+            destinationError: destinationError,
           ),
 
           const SizedBox(height: 24),
+
           const Text(
             'Mapa de ruta',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
+
           const SizedBox(height: 10),
+
           const RouteMap(initialPosition: _initialMapPosition),
+
           const SizedBox(height: 8),
+
           Text(
             'La ruta calculada se mostrará aquí cuando se complete '
             'la integración con el servicio de rutas.',
             style: TextStyle(fontSize: 13, color: Colors.grey[600]),
           ),
+
           const SizedBox(height: 24),
+
           TextField(
             controller: buscarController,
             decoration: InputDecoration(
@@ -210,12 +234,16 @@ class _RutasScreenState extends State<RutasScreen> {
               ),
             ),
           ),
+
           const SizedBox(height: 20),
+
           Text(
             '${rutasFiltradas.length} ruta(s) disponible(s)',
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
+
           const SizedBox(height: 12),
+
           if (rutasFiltradas.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 60),
@@ -261,6 +289,7 @@ class _RutaCard extends StatelessWidget {
               child: Icon(Icons.directions_bus_outlined),
             ),
             const SizedBox(width: 16),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -272,10 +301,15 @@ class _RutaCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+
                   const SizedBox(height: 10),
+
                   Text('Origen: ${ruta.origen}'),
+
                   const SizedBox(height: 6),
+
                   Text('Destino: ${ruta.destino}'),
+
                   if (ruta.descripcion != null &&
                       ruta.descripcion!.isNotEmpty) ...[
                     const SizedBox(height: 10),

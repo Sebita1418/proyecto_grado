@@ -6,12 +6,17 @@ class RoutePlannerForm extends StatelessWidget {
   final VoidCallback onCalculate;
   final bool isLoading;
 
+  final String? originError;
+  final String? destinationError;
+
   const RoutePlannerForm({
     super.key,
     required this.originController,
     required this.destinationController,
     required this.onCalculate,
     this.isLoading = false,
+    this.originError,
+    this.destinationError,
   });
 
   @override
@@ -27,27 +32,32 @@ class RoutePlannerForm extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
+
             TextField(
               controller: originController,
               enabled: !isLoading,
               textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Origen',
                 hintText: 'Ingresa el punto de origen',
-                prefixIcon: Icon(Icons.trip_origin),
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.trip_origin),
+                border: const OutlineInputBorder(),
+                errorText: originError,
               ),
             ),
+
             const SizedBox(height: 12),
+
             TextField(
               controller: destinationController,
               enabled: !isLoading,
               textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Destino',
                 hintText: 'Ingresa el punto de destino',
-                prefixIcon: Icon(Icons.location_on_outlined),
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.location_on_outlined),
+                border: const OutlineInputBorder(),
+                errorText: destinationError,
               ),
               onSubmitted: (_) {
                 if (!isLoading) {
@@ -55,7 +65,9 @@ class RoutePlannerForm extends StatelessWidget {
                 }
               },
             ),
+
             const SizedBox(height: 16),
+
             FilledButton.icon(
               onPressed: isLoading ? null : onCalculate,
               icon: isLoading

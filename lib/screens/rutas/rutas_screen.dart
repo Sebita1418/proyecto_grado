@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../models/ruta_model.dart';
 import '../../services/ruta_service.dart';
 import '../../widgets/route_map.dart';
+import '../../widgets/route_planner_form.dart';
 
 class RutasScreen extends StatefulWidget {
   const RutasScreen({super.key});
@@ -24,13 +25,14 @@ class _RutasScreenState extends State<RutasScreen> {
   List<Ruta> rutasFiltradas = [];
 
   final TextEditingController buscarController = TextEditingController();
+  final TextEditingController originController = TextEditingController();
+  final TextEditingController destinationController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
     cargarRutas();
-
     buscarController.addListener(filtrarRutas);
   }
 
@@ -62,17 +64,13 @@ class _RutasScreenState extends State<RutasScreen> {
     setState(() {
       if (texto.isEmpty) {
         rutasFiltradas = List<Ruta>.from(rutas);
-
         return;
       }
 
       rutasFiltradas = rutas.where((ruta) {
         final nombre = ruta.nombre.toLowerCase();
-
         final origen = ruta.origen.toLowerCase();
-
         final destino = ruta.destino.toLowerCase();
-
         final descripcion = ruta.descripcion?.toLowerCase() ?? '';
 
         return nombre.contains(texto) ||
@@ -92,9 +90,31 @@ class _RutasScreenState extends State<RutasScreen> {
     await cargarRutas();
   }
 
+  void calcularRuta() {
+    final origen = originController.text.trim();
+    final destino = destinationController.text.trim();
+
+    if (origen.isEmpty || destino.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ingresa un origen y un destino.')),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'La consulta de ruta se conectará con Google Routes API.',
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     buscarController.dispose();
+    originController.dispose();
+    destinationController.dispose();
     super.dispose();
   }
 
@@ -153,6 +173,14 @@ class _RutasScreenState extends State<RutasScreen> {
             style: TextStyle(fontSize: 15, color: Colors.grey[600]),
           ),
           const SizedBox(height: 20),
+
+          RoutePlannerForm(
+            originController: originController,
+            destinationController: destinationController,
+            onCalculate: calcularRuta,
+          ),
+
+          const SizedBox(height: 24),
           const Text(
             'Mapa de ruta',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -173,9 +201,7 @@ class _RutasScreenState extends State<RutasScreen> {
               prefixIcon: const Icon(Icons.search),
               suffixIcon: buscarController.text.isNotEmpty
                   ? IconButton(
-                      onPressed: () {
-                        buscarController.clear();
-                      },
+                      onPressed: buscarController.clear,
                       icon: const Icon(Icons.clear),
                     )
                   : null,

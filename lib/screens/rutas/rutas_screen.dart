@@ -19,6 +19,7 @@ class _RutasScreenState extends State<RutasScreen> {
   static const LatLng _initialMapPosition = LatLng(4.7110, -74.0721);
 
   bool cargando = true;
+  bool calculandoRuta = false;
   String? error;
 
   // Errores visuales del formulario de planificación.
@@ -94,26 +95,35 @@ class _RutasScreenState extends State<RutasScreen> {
     await cargarRutas();
   }
 
-  void calcularRuta() {
+  Future<void> calcularRuta() async {
     final origen = originController.text.trim();
     final destino = destinationController.text.trim();
 
-    // Actualiza los mensajes de error de cada campo.
     setState(() {
       originError = origen.isEmpty ? 'Ingresa el punto de origen.' : null;
-
       destinationError = destino.isEmpty
           ? 'Ingresa el punto de destino.'
           : null;
     });
 
-    // Si falta alguno de los datos, no continúa.
     if (origen.isEmpty || destino.isEmpty) {
       return;
     }
 
-    // Por ahora no se llama Google Routes API.
-    // Esta interfaz queda preparada para la integración posterior.
+    setState(() {
+      calculandoRuta = true;
+    });
+
+    // Simulación temporal del tiempo de consulta.
+    // Se reemplazará cuando se integre Google Routes API.
+    await Future<void>.delayed(const Duration(seconds: 1));
+
+    if (!mounted) return;
+
+    setState(() {
+      calculandoRuta = false;
+    });
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text(
@@ -180,6 +190,7 @@ class _RutasScreenState extends State<RutasScreen> {
             'Consulta de rutas',
             style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
           ),
+
           const SizedBox(height: 6),
 
           Text(
@@ -193,6 +204,7 @@ class _RutasScreenState extends State<RutasScreen> {
             originController: originController,
             destinationController: destinationController,
             onCalculate: calcularRuta,
+            isLoading: calculandoRuta,
             originError: originError,
             destinationError: destinationError,
           ),
@@ -288,6 +300,7 @@ class _RutaCard extends StatelessWidget {
               radius: 27,
               child: Icon(Icons.directions_bus_outlined),
             ),
+
             const SizedBox(width: 16),
 
             Expanded(

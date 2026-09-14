@@ -4,6 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../models/ruta_model.dart';
 import '../../services/ruta_service.dart';
 import '../../widgets/route_map.dart';
+import '../../widgets/route_planner_form.dart';
 
 class RutasScreen extends StatefulWidget {
   const RutasScreen({super.key});
@@ -18,19 +19,25 @@ class _RutasScreenState extends State<RutasScreen> {
   static const LatLng _initialMapPosition = LatLng(4.7110, -74.0721);
 
   bool cargando = true;
+  bool calculandoRuta = false;
   String? error;
+
+  // Errores visuales del formulario de planificación.
+  String? originError;
+  String? destinationError;
 
   List<Ruta> rutas = [];
   List<Ruta> rutasFiltradas = [];
 
   final TextEditingController buscarController = TextEditingController();
+  final TextEditingController originController = TextEditingController();
+  final TextEditingController destinationController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
     cargarRutas();
-
     buscarController.addListener(filtrarRutas);
   }
 
@@ -62,17 +69,13 @@ class _RutasScreenState extends State<RutasScreen> {
     setState(() {
       if (texto.isEmpty) {
         rutasFiltradas = List<Ruta>.from(rutas);
-
         return;
       }
 
       rutasFiltradas = rutas.where((ruta) {
         final nombre = ruta.nombre.toLowerCase();
-
         final origen = ruta.origen.toLowerCase();
-
         final destino = ruta.destino.toLowerCase();
-
         final descripcion = ruta.descripcion?.toLowerCase() ?? '';
 
         return nombre.contains(texto) ||
@@ -92,9 +95,49 @@ class _RutasScreenState extends State<RutasScreen> {
     await cargarRutas();
   }
 
+  Future<void> calcularRuta() async {
+    final origen = originController.text.trim();
+    final destino = destinationController.text.trim();
+
+    setState(() {
+      originError = origen.isEmpty ? 'Ingresa el punto de origen.' : null;
+      destinationError = destino.isEmpty
+          ? 'Ingresa el punto de destino.'
+          : null;
+    });
+
+    if (origen.isEmpty || destino.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      calculandoRuta = true;
+    });
+
+    // Simulación temporal del tiempo de consulta.
+    // Se reemplazará cuando se integre Google Routes API.
+    await Future<void>.delayed(const Duration(seconds: 1));
+
+    if (!mounted) return;
+
+    setState(() {
+      calculandoRuta = false;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Origen y destino válidos. Pendiente integración con Google Routes API.',
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     buscarController.dispose();
+    originController.dispose();
+    destinationController.dispose();
     super.dispose();
   }
 
@@ -147,25 +190,46 @@ class _RutasScreenState extends State<RutasScreen> {
             'Consulta de rutas',
             style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
           ),
+
           const SizedBox(height: 6),
+
           Text(
             'Encuentra una ruta por nombre, origen o destino.',
             style: TextStyle(fontSize: 15, color: Colors.grey[600]),
           ),
+
           const SizedBox(height: 20),
+
+          RoutePlannerForm(
+            originController: originController,
+            destinationController: destinationController,
+            onCalculate: calcularRuta,
+            isLoading: calculandoRuta,
+            originError: originError,
+            destinationError: destinationError,
+          ),
+
+          const SizedBox(height: 24),
+
           const Text(
             'Mapa de ruta',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
+
           const SizedBox(height: 10),
+
           const RouteMap(initialPosition: _initialMapPosition),
+
           const SizedBox(height: 8),
+
           Text(
             'La ruta calculada se mostrará aquí cuando se complete '
             'la integración con el servicio de rutas.',
             style: TextStyle(fontSize: 13, color: Colors.grey[600]),
           ),
+
           const SizedBox(height: 24),
+
           TextField(
             controller: buscarController,
             decoration: InputDecoration(
@@ -173,9 +237,7 @@ class _RutasScreenState extends State<RutasScreen> {
               prefixIcon: const Icon(Icons.search),
               suffixIcon: buscarController.text.isNotEmpty
                   ? IconButton(
-                      onPressed: () {
-                        buscarController.clear();
-                      },
+                      onPressed: buscarController.clear,
                       icon: const Icon(Icons.clear),
                     )
                   : null,
@@ -184,12 +246,16 @@ class _RutasScreenState extends State<RutasScreen> {
               ),
             ),
           ),
+
           const SizedBox(height: 20),
+
           Text(
             '${rutasFiltradas.length} ruta(s) disponible(s)',
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
+
           const SizedBox(height: 12),
+
           if (rutasFiltradas.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 60),
@@ -234,7 +300,9 @@ class _RutaCard extends StatelessWidget {
               radius: 27,
               child: Icon(Icons.directions_bus_outlined),
             ),
+
             const SizedBox(width: 16),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,10 +314,15 @@ class _RutaCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+
                   const SizedBox(height: 10),
+
                   Text('Origen: ${ruta.origen}'),
+
                   const SizedBox(height: 6),
+
                   Text('Destino: ${ruta.destino}'),
+
                   if (ruta.descripcion != null &&
                       ruta.descripcion!.isNotEmpty) ...[
                     const SizedBox(height: 10),

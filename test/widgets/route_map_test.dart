@@ -19,4 +19,33 @@ void main() {
 
     expect(find.byType(GoogleMap), findsOneWidget);
   });
+
+  testWidgets('RouteMap expone callback onTap al GoogleMap', (
+    WidgetTester tester,
+  ) async {
+    const initialPosition = LatLng(4.7110, -74.0721);
+
+    LatLng? selectedPosition;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: RouteMap(
+            initialPosition: initialPosition,
+            onTap: (position) {
+              selectedPosition = position;
+            },
+          ),
+        ),
+      ),
+    );
+
+    final googleMap = tester.widget<GoogleMap>(find.byType(GoogleMap));
+
+    const tappedPosition = LatLng(7.1193, -73.1227);
+
+    googleMap.onTap?.call(tappedPosition);
+
+    expect(selectedPosition, tappedPosition);
+  });
 }

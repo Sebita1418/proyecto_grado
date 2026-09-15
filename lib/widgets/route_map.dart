@@ -8,12 +8,14 @@ class RouteMap extends StatelessWidget {
     this.markers = const <Marker>{},
     this.polylines = const <Polyline>{},
     this.onMapCreated,
+    this.onTap,
   });
 
   final LatLng initialPosition;
   final Set<Marker> markers;
   final Set<Polyline> polylines;
   final ValueChanged<GoogleMapController>? onMapCreated;
+  final ValueChanged<LatLng>? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,7 @@ class RouteMap extends StatelessWidget {
             markers: markers,
             polylines: polylines,
             onMapCreated: onMapCreated,
+            onTap: onTap,
             myLocationButtonEnabled: false,
             zoomControlsEnabled: true,
             compassEnabled: true,

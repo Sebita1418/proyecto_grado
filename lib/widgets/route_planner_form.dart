@@ -10,6 +10,8 @@ class RoutePlannerForm extends StatelessWidget {
   final String? destinationError;
   final Widget? originSuggestions;
   final Widget? destinationSuggestions;
+  final bool showOrigin;
+  final String title;
 
   const RoutePlannerForm({
     super.key,
@@ -21,6 +23,8 @@ class RoutePlannerForm extends StatelessWidget {
     this.destinationError,
     this.originSuggestions,
     this.destinationSuggestions,
+    this.showOrigin = true,
+    this.title = 'Planifica tu ruta',
   });
 
   @override
@@ -31,26 +35,27 @@ class RoutePlannerForm extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Planifica tu ruta',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
-            TextField(
-              controller: originController,
-              enabled: !isLoading,
-              textInputAction: TextInputAction.next,
-              decoration: InputDecoration(
-                labelText: 'Origen',
-                hintText: 'Ingresa el punto de origen',
-                prefixIcon: const Icon(Icons.trip_origin),
-                border: const OutlineInputBorder(),
-                errorText: originError,
+            if (showOrigin)
+              TextField(
+                controller: originController,
+                enabled: !isLoading,
+                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(
+                  labelText: 'Origen',
+                  hintText: 'Ingresa el punto de origen',
+                  prefixIcon: const Icon(Icons.trip_origin),
+                  border: const OutlineInputBorder(),
+                  errorText: originError,
+                ),
               ),
-            ),
 
-            ?originSuggestions,
+            if (showOrigin) ?originSuggestions,
 
             const SizedBox(height: 12),
 

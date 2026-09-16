@@ -10,6 +10,7 @@ class RouteMap extends StatefulWidget {
     this.polylines = const <Polyline>[],
     this.mapController,
     this.onTap,
+    this.expand = false,
   });
 
   final LatLng initialPosition;
@@ -17,6 +18,7 @@ class RouteMap extends StatefulWidget {
   final List<Polyline> polylines;
   final MapController? mapController;
   final ValueChanged<LatLng>? onTap;
+  final bool expand;
 
   @override
   State<RouteMap> createState() => _RouteMapState();
@@ -81,10 +83,10 @@ class _RouteMapState extends State<RouteMap> {
       label: 'Mapa de consulta de ruta',
       container: true,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(widget.expand ? 0 : 16),
         child: SizedBox(
           width: double.infinity,
-          height: 320,
+          height: widget.expand ? double.infinity : 320,
           child: FlutterMap(
             mapController: _mapController,
             options: MapOptions(

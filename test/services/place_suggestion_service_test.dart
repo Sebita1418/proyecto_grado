@@ -5,6 +5,19 @@ import 'package:transporte_inteligente/services/place_suggestion_service.dart';
 
 void main() {
   group('PlaceSuggestionService', () {
+    test('termina una solicitud que no responde', () async {
+      final service = PlaceSuggestionService(
+        client: MockClient((_) async {
+          await Future<void>.delayed(const Duration(seconds: 1));
+          return http.Response('{}', 200);
+        }),
+        timeout: const Duration(milliseconds: 10),
+      );
+      expect(
+        () => service.search('parque'),
+        throwsA(isA<PlaceSuggestionException>()),
+      );
+    });
     test('consulta Photon y parsea varios resultados', () async {
       late http.Request request;
       final service = PlaceSuggestionService(

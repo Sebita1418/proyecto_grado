@@ -1,5 +1,7 @@
 # transporte_inteligente
 
+La ubicación actual utiliza geolocalización del dispositivo solo mientras se usa la aplicación. En web requiere un contexto seguro (HTTPS o `localhost` durante desarrollo) y permiso del navegador. Si no está disponible, el usuario puede escribir el origen manualmente.
+
 A new Flutter project.
 
 ## Getting Started

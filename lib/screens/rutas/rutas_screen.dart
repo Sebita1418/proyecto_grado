@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../controllers/route_planner_controller.dart';
 import '../../models/ruta_model.dart';
 import '../../services/ruta_service.dart';
+import '../../utils/polyline_decoder.dart';
+import '../../utils/route_polyline.dart';
 import '../../widgets/route_map.dart';
 import '../../widgets/route_planner_form.dart';
 
@@ -16,15 +19,23 @@ class RutasScreen extends StatefulWidget {
 class _RutasScreenState extends State<RutasScreen> {
   final RutaService _rutaService = RutaService();
 
-  static const LatLng _initialMapPosition = LatLng(4.7110, -74.0721);
+  late final RoutePlannerController _routePlannerController;
+
+  // Centro aproximado de Bucaramanga.
+  static const LatLng _initialMapPosition = LatLng(7.1193, -73.1227);
 
   bool cargando = true;
   bool calculandoRuta = false;
-  String? error;
 
-  // Errores visuales del formulario de planificación.
+  String? error;
   String? originError;
   String? destinationError;
+  String? routeError;
+
+  LatLng? _originPosition;
+  LatLng? _destinationPosition;
+
+  Set<Polyline> _routePolylines = const <Polyline>{};
 
   List<Ruta> rutas = [];
   List<Ruta> rutasFiltradas = [];
@@ -33,9 +44,41 @@ class _RutasScreenState extends State<RutasScreen> {
   final TextEditingController originController = TextEditingController();
   final TextEditingController destinationController = TextEditingController();
 
+  Set<Marker> get _routeMarkers {
+    final markers = <Marker>{};
+
+    if (_originPosition != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('route_origin'),
+          position: _originPosition!,
+          infoWindow: const InfoWindow(title: 'Origen'),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueGreen,
+          ),
+        ),
+      );
+    }
+
+    if (_destinationPosition != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('route_destination'),
+          position: _destinationPosition!,
+          infoWindow: const InfoWindow(title: 'Destino'),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        ),
+      );
+    }
+
+    return markers;
+  }
+
   @override
   void initState() {
     super.initState();
+
+    _routePlannerController = RoutePlannerController.fromEnvironment();
 
     cargarRutas();
     buscarController.addListener(filtrarRutas);
@@ -95,49 +138,174 @@ class _RutasScreenState extends State<RutasScreen> {
     await cargarRutas();
   }
 
-  Future<void> calcularRuta() async {
-    final origen = originController.text.trim();
-    final destino = destinationController.text.trim();
+  void _seleccionarPunto(LatLng position) {
+    setState(() {
+      routeError = null;
+      _routePolylines = const <Polyline>{};
+
+      if (_originPosition == null) {
+        _originPosition = position;
+
+        originController.text =
+            '${position.latitude.toStringAsFixed(6)}, '
+            '${position.longitude.toStringAsFixed(6)}';
+
+        originError = null;
+        return;
+      }
+
+      if (_destinationPosition == null) {
+        _destinationPosition = position;
+
+        destinationController.text =
+            '${position.latitude.toStringAsFixed(6)}, '
+            '${position.longitude.toStringAsFixed(6)}';
+
+        destinationError = null;
+        return;
+      }
+
+      // Si ya existen ambos puntos, comienza una selección nueva.
+      _routePlannerController.reset();
+
+      _originPosition = position;
+      _destinationPosition = null;
+
+      originController.text =
+          '${position.latitude.toStringAsFixed(6)}, '
+          '${position.longitude.toStringAsFixed(6)}';
+
+      destinationController.clear();
+
+      originError = null;
+      destinationError = null;
+    });
+  }
+
+  void _limpiarSeleccion() {
+    _routePlannerController.reset();
 
     setState(() {
-      originError = origen.isEmpty ? 'Ingresa el punto de origen.' : null;
-      destinationError = destino.isEmpty
-          ? 'Ingresa el punto de destino.'
+      _originPosition = null;
+      _destinationPosition = null;
+
+      _routePolylines = const <Polyline>{};
+
+      originController.clear();
+      destinationController.clear();
+
+      originError = null;
+      destinationError = null;
+      routeError = null;
+      calculandoRuta = false;
+    });
+  }
+
+  Future<void> calcularRuta() async {
+    setState(() {
+      originError = _originPosition == null
+          ? 'Selecciona el origen tocando el mapa.'
           : null;
+
+      destinationError = _destinationPosition == null
+          ? 'Selecciona el destino tocando el mapa.'
+          : null;
+
+      routeError = null;
     });
 
-    if (origen.isEmpty || destino.isEmpty) {
+    final origin = _originPosition;
+    final destination = _destinationPosition;
+
+    if (origin == null || destination == null) {
       return;
     }
 
     setState(() {
       calculandoRuta = true;
+      _routePolylines = const <Polyline>{};
     });
 
-    // Simulación temporal del tiempo de consulta.
-    // Se reemplazará cuando se integre Google Routes API.
-    await Future<void>.delayed(const Duration(seconds: 1));
+    await _routePlannerController.calculateRoute(
+      originLatitude: origin.latitude,
+      originLongitude: origin.longitude,
+      destinationLatitude: destination.latitude,
+      destinationLongitude: destination.longitude,
+    );
 
     if (!mounted) return;
 
+    if (_routePlannerController.hasRoute) {
+      final route = _routePlannerController.route!;
+
+      try {
+        final points = PolylineDecoder.decode(route.encodedPolyline);
+        final polylines = RoutePolyline.build(points: points);
+
+        setState(() {
+          calculandoRuta = false;
+          _routePolylines = polylines;
+          routeError = null;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Ruta calculada: '
+              '${route.distanceKilometers.toStringAsFixed(2)} km, '
+              '${_formatearDuracion(route.duration)}.',
+            ),
+          ),
+        );
+      } on FormatException catch (e) {
+        setState(() {
+          calculandoRuta = false;
+          _routePolylines = const <Polyline>{};
+          routeError = 'No fue posible interpretar la ruta: ${e.message}';
+        });
+      }
+
+      return;
+    }
+
     setState(() {
       calculandoRuta = false;
+      _routePolylines = const <Polyline>{};
+
+      routeError =
+          _routePlannerController.errorMessage ??
+          'No fue posible calcular la ruta.';
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Origen y destino válidos. Pendiente integración con Google Routes API.',
-        ),
-      ),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(routeError!)));
+  }
+
+  String _formatearDuracion(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+
+    if (hours > 0 && minutes > 0) {
+      return '$hours h $minutes min';
+    }
+
+    if (hours > 0) {
+      return '$hours h';
+    }
+
+    return '$minutes min';
   }
 
   @override
   void dispose() {
+    buscarController.removeListener(filtrarRutas);
+
     buscarController.dispose();
     originController.dispose();
     destinationController.dispose();
+
+    _routePlannerController.dispose();
+
     super.dispose();
   }
 
@@ -187,17 +355,14 @@ class _RutasScreenState extends State<RutasScreen> {
         padding: const EdgeInsets.all(20),
         children: [
           const Text(
-            'Consulta de rutas',
+            'Planificación de rutas',
             style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
           ),
-
           const SizedBox(height: 6),
-
           Text(
-            'Encuentra una ruta por nombre, origen o destino.',
+            'Selecciona el origen y el destino directamente en el mapa.',
             style: TextStyle(fontSize: 15, color: Colors.grey[600]),
           ),
-
           const SizedBox(height: 20),
 
           RoutePlannerForm(
@@ -211,24 +376,56 @@ class _RutasScreenState extends State<RutasScreen> {
 
           const SizedBox(height: 24),
 
-          const Text(
-            'Mapa de ruta',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Mapa de ruta - Bucaramanga',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+              ),
+              if (_originPosition != null || _destinationPosition != null)
+                TextButton.icon(
+                  onPressed: calculandoRuta ? null : _limpiarSeleccion,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Reiniciar'),
+                ),
+            ],
           ),
 
           const SizedBox(height: 10),
 
-          const RouteMap(initialPosition: _initialMapPosition),
-
-          const SizedBox(height: 8),
-
-          Text(
-            'La ruta calculada se mostrará aquí cuando se complete '
-            'la integración con el servicio de rutas.',
-            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+          RouteMap(
+            initialPosition: _initialMapPosition,
+            markers: _routeMarkers,
+            polylines: _routePolylines,
+            onTap: calculandoRuta ? null : _seleccionarPunto,
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
+
+          _SelectionStatus(
+            originSelected: _originPosition != null,
+            destinationSelected: _destinationPosition != null,
+          ),
+
+          if (routeError != null) ...[
+            const SizedBox(height: 12),
+            _RouteErrorMessage(message: routeError!),
+          ],
+
+          const SizedBox(height: 28),
+
+          const Divider(),
+
+          const SizedBox(height: 20),
+
+          const Text(
+            'Rutas disponibles',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+
+          const SizedBox(height: 12),
 
           TextField(
             controller: buscarController,
@@ -283,10 +480,79 @@ class _RutasScreenState extends State<RutasScreen> {
   }
 }
 
-class _RutaCard extends StatelessWidget {
-  final Ruta ruta;
+class _SelectionStatus extends StatelessWidget {
+  const _SelectionStatus({
+    required this.originSelected,
+    required this.destinationSelected,
+  });
 
+  final bool originSelected;
+  final bool destinationSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    String message;
+    IconData icon;
+
+    if (!originSelected) {
+      message = 'Toca el mapa para seleccionar el punto de origen.';
+      icon = Icons.touch_app_outlined;
+    } else if (!destinationSelected) {
+      message = 'Origen seleccionado. Ahora selecciona el destino.';
+      icon = Icons.location_on_outlined;
+    } else {
+      message = 'Origen y destino seleccionados. Ya puedes calcular la ruta.';
+      icon = Icons.check_circle_outline;
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20),
+        const SizedBox(width: 8),
+        Expanded(child: Text(message)),
+      ],
+    );
+  }
+}
+
+class _RouteErrorMessage extends StatelessWidget {
+  const _RouteErrorMessage({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: colors.errorContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.error_outline, color: colors.onErrorContainer),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(color: colors.onErrorContainer),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RutaCard extends StatelessWidget {
   const _RutaCard({required this.ruta});
+
+  final Ruta ruta;
 
   @override
   Widget build(BuildContext context) {
@@ -300,9 +566,7 @@ class _RutaCard extends StatelessWidget {
               radius: 27,
               child: Icon(Icons.directions_bus_outlined),
             ),
-
             const SizedBox(width: 16),
-
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,15 +578,10 @@ class _RutaCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
                   const SizedBox(height: 10),
-
                   Text('Origen: ${ruta.origen}'),
-
                   const SizedBox(height: 6),
-
                   Text('Destino: ${ruta.destino}'),
-
                   if (ruta.descripcion != null &&
                       ruta.descripcion!.isNotEmpty) ...[
                     const SizedBox(height: 10),

@@ -13,71 +13,118 @@ class AppNavigationDrawer extends StatelessWidget {
     required this.onSignOut,
     this.onAdmin,
   });
+
   final Perfil? perfil;
   final VoidCallback onHome, onRoutes, onNearby, onProfile, onSignOut;
   final VoidCallback? onAdmin;
 
   @override
-  Widget build(BuildContext context) => Drawer(
-    child: SafeArea(
-      child: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Transporte Inteligente',
-                  style: Theme.of(context).textTheme.titleLarge,
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Drawer(
+      child: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: colors.primaryContainer,
+                    foregroundColor: colors.onPrimaryContainer,
+                    child: const Icon(Icons.directions_bus_outlined),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Transporte Inteligente',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        Text(
+                          'Muévete mejor. Decide tu ruta.',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (perfil != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
                 ),
-                if (perfil != null) ...[
-                  const SizedBox(height: 8),
-                  Text(perfil!.nombre),
-                  Text(
+                child: ListTile(
+                  tileColor: colors.surfaceContainerLow,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  leading: const Icon(Icons.account_circle_outlined),
+                  title: Text(
+                    perfil!.nombre,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
                     perfil!.correo,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                ),
+              ),
+            const Divider(indent: 16, endIndent: 16),
+            Expanded(
+              child: ListView(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.map_outlined),
+                    title: const Text('Mapa / Inicio'),
+                    selected: true,
+                    selectedTileColor: colors.primaryContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    onTap: onHome,
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.directions_bus_outlined),
+                    title: const Text('Rutas'),
+                    onTap: onRoutes,
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.place_outlined),
+                    title: const Text('Puntos cercanos'),
+                    onTap: onNearby,
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.person_outline),
+                    title: const Text('Perfil'),
+                    onTap: onProfile,
+                  ),
+                  if (onAdmin != null)
+                    ListTile(
+                      leading: const Icon(Icons.admin_panel_settings_outlined),
+                      title: const Text('Administración'),
+                      onTap: onAdmin,
+                    ),
                 ],
-              ],
+              ),
             ),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.map_outlined),
-            title: const Text('Mapa / Inicio'),
-            onTap: onHome,
-          ),
-          ListTile(
-            leading: const Icon(Icons.directions_bus_outlined),
-            title: const Text('Rutas'),
-            onTap: onRoutes,
-          ),
-          ListTile(
-            leading: const Icon(Icons.place_outlined),
-            title: const Text('Puntos cercanos'),
-            onTap: onNearby,
-          ),
-          ListTile(
-            leading: const Icon(Icons.person_outline),
-            title: const Text('Perfil'),
-            onTap: onProfile,
-          ),
-          if (onAdmin != null)
+            const Divider(indent: 16, endIndent: 16),
             ListTile(
-              leading: const Icon(Icons.admin_panel_settings_outlined),
-              title: const Text('Administración'),
-              onTap: onAdmin,
+              leading: const Icon(Icons.logout),
+              title: const Text('Cerrar sesión'),
+              onTap: onSignOut,
             ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Cerrar sesión'),
-            onTap: onSignOut,
-          ),
-        ],
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

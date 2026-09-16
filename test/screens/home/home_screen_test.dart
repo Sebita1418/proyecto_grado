@@ -36,13 +36,25 @@ void main() {
     );
     expect(find.byType(RouteMap), findsOneWidget);
     expect(find.byType(FlutterMap), findsOneWidget);
-    expect(find.byTooltip('Centrar en mi ubicación'), findsOneWidget);
+    expect(find.byTooltip('Mi ubicación'), findsWidgets);
     expect(find.text('Hola,'), findsNothing);
     expect(find.text('¿Qué deseas consultar?'), findsNothing);
-    expect(find.byTooltip('Mi ubicación'), findsOneWidget);
+    expect(find.byTooltip('Mi ubicación'), findsNWidgets(2));
     await tester.tap(find.byTooltip('Open navigation menu'));
     await tester.pump();
+    expect(find.text('Muévete mejor. Decide tu ruta.'), findsNWidgets(2));
     expect(find.text('Mapa / Inicio'), findsOneWidget);
+    expect(
+      tester
+          .widget<ListTile>(
+            find.ancestor(
+              of: find.text('Mapa / Inicio'),
+              matching: find.byType(ListTile),
+            ),
+          )
+          .selected,
+      isTrue,
+    );
     expect(find.text('Rutas'), findsOneWidget);
     expect(find.text('Puntos cercanos'), findsOneWidget);
     expect(find.text('Perfil'), findsOneWidget);
@@ -53,6 +65,6 @@ void main() {
     await render(tester, const LocationResult(LocationStatus.permissionDenied));
     expect(find.byType(RouteMap), findsOneWidget);
     expect(find.text('Origen'), findsOneWidget);
-    expect(find.byTooltip('Centrar en mi ubicación'), findsOneWidget);
+    expect(find.byTooltip('Mi ubicación'), findsOneWidget);
   });
 }

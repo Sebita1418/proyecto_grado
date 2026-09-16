@@ -6,6 +6,7 @@ import '../../services/perfil_service.dart';
 
 import '../admin/admin_screen.dart';
 import '../login/login_screen.dart';
+import '../perfil/perfil_screen.dart';
 import '../rutas/rutas_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -33,8 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> cargarPerfil() async {
     try {
-      final perfilActual =
-          await _perfilService.obtenerPerfilActual();
+      final perfilActual = await _perfilService.obtenerPerfilActual();
 
       if (!mounted) return;
 
@@ -59,9 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) {
         return AlertDialog(
           title: const Text('Cerrar sesión'),
-          content: const Text(
-            '¿Deseas cerrar la sesión actual?',
-          ),
+          content: const Text('¿Deseas cerrar la sesión actual?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -95,9 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
         (route) => false,
       );
     } catch (e) {
@@ -108,11 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'No fue posible cerrar la sesión: $e',
-          ),
-        ),
+        SnackBar(content: Text('No fue posible cerrar la sesión: $e')),
       );
     }
   }
@@ -120,44 +112,26 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     if (cargando) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (error != null) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Transporte Inteligente',
-          ),
-        ),
+        appBar: AppBar(title: const Text('Transporte Inteligente')),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.error_outline,
-                  size: 60,
-                  color: Colors.red,
-                ),
+                const Icon(Icons.error_outline, size: 60, color: Colors.red),
                 const SizedBox(height: 16),
                 const Text(
                   'No fue posible cargar el perfil.',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  error!,
-                  textAlign: TextAlign.center,
-                ),
+                Text(error!, textAlign: TextAlign.center),
               ],
             ),
           ),
@@ -169,26 +143,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Transporte Inteligente',
-        ),
+        title: const Text('Transporte Inteligente'),
         centerTitle: true,
         actions: [
           IconButton(
             tooltip: 'Cerrar sesión',
-            onPressed:
-                cerrandoSesion ? null : cerrarSesion,
+            onPressed: cerrandoSesion ? null : cerrarSesion,
             icon: cerrandoSesion
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Icon(
-                    Icons.logout,
-                  ),
+                : const Icon(Icons.logout),
           ),
           const SizedBox(width: 8),
         ],
@@ -196,35 +163,25 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Hola, ${perfilActual.nombre} 👋',
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 6),
 
             Text(
               'Rol: ${perfilActual.rol}',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
 
             const SizedBox(height: 6),
 
             Text(
               '¿Qué deseas consultar?',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
 
             const SizedBox(height: 30),
@@ -235,10 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 children: [
-                  const _MenuCard(
-                    icon: Icons.map_outlined,
-                    title: 'Mapa',
-                  ),
+                  const _MenuCard(icon: Icons.map_outlined, title: 'Mapa'),
 
                   _MenuCard(
                     icon: Icons.directions_bus_outlined,
@@ -247,35 +201,40 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              const RutasScreen(),
+                          builder: (context) => const RutasScreen(),
                         ),
                       );
                     },
                   ),
 
                   const _MenuCard(
-                    icon:
-                        Icons.location_on_outlined,
+                    icon: Icons.location_on_outlined,
                     title: 'Puntos cercanos',
                   ),
 
-                  const _MenuCard(
+                  _MenuCard(
                     icon: Icons.person_outline,
                     title: 'Perfil',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PerfilScreen(perfil: perfilActual),
+                        ),
+                      );
+                    },
                   ),
 
                   if (perfilActual.esAdministrador)
                     _MenuCard(
-                      icon: Icons
-                          .admin_panel_settings_outlined,
+                      icon: Icons.admin_panel_settings_outlined,
                       title: 'Administración',
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                const AdminScreen(),
+                            builder: (context) => const AdminScreen(),
                           ),
                         );
                       },
@@ -295,37 +254,23 @@ class _MenuCard extends StatelessWidget {
   final String title;
   final VoidCallback? onTap;
 
-  const _MenuCard({
-    required this.icon,
-    required this.title,
-    this.onTap,
-  });
+  const _MenuCard({required this.icon, required this.title, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
-        borderRadius:
-            BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 50,
-              color: Colors.blue,
-            ),
+            Icon(icon, size: 50, color: Colors.blue),
             const SizedBox(height: 12),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight:
-                    FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
             ),
           ],
         ),

@@ -8,6 +8,8 @@ class RoutePlannerForm extends StatelessWidget {
 
   final String? originError;
   final String? destinationError;
+  final Widget? originSuggestions;
+  final Widget? destinationSuggestions;
 
   const RoutePlannerForm({
     super.key,
@@ -17,6 +19,8 @@ class RoutePlannerForm extends StatelessWidget {
     this.isLoading = false,
     this.originError,
     this.destinationError,
+    this.originSuggestions,
+    this.destinationSuggestions,
   });
 
   @override
@@ -46,6 +50,8 @@ class RoutePlannerForm extends StatelessWidget {
               ),
             ),
 
+            ?originSuggestions,
+
             const SizedBox(height: 12),
 
             TextField(
@@ -65,6 +71,8 @@ class RoutePlannerForm extends StatelessWidget {
                 }
               },
             ),
+
+            ?destinationSuggestions,
 
             const SizedBox(height: 16),
 

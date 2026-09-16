@@ -1,28 +1,43 @@
-import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:async';
 
-import '../../controllers/route_planner_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+
 import '../../models/ruta_model.dart';
+import '../../models/geocoding_result.dart';
+import '../../models/place_suggestion.dart';
+import '../../services/geocoding_service.dart';
+import '../../services/place_suggestion_service.dart';
 import '../../services/ruta_service.dart';
-import '../../utils/polyline_decoder.dart';
-import '../../utils/route_polyline.dart';
 import '../../widgets/route_map.dart';
 import '../../widgets/route_planner_form.dart';
 
 class RutasScreen extends StatefulWidget {
-  const RutasScreen({super.key});
+  const RutasScreen({
+    super.key,
+    this.loadRoutes,
+    this.geocodingService,
+    this.placeSuggestionService,
+  });
+
+  final Future<List<Ruta>> Function()? loadRoutes;
+  final GeocodingService? geocodingService;
+  final PlaceSuggestionService? placeSuggestionService;
 
   @override
   State<RutasScreen> createState() => _RutasScreenState();
 }
 
 class _RutasScreenState extends State<RutasScreen> {
-  final RutaService _rutaService = RutaService();
+  late final Future<List<Ruta>> Function() _loadRoutes =
+      widget.loadRoutes ?? RutaService().obtenerRutasActivas;
+  late final GeocodingService _geocodingService =
+      widget.geocodingService ?? GeocodingService();
+  late final PlaceSuggestionService _placeSuggestionService =
+      widget.placeSuggestionService ?? PlaceSuggestionService();
 
-  late final RoutePlannerController _routePlannerController;
-
-  // Centro aproximado de Bucaramanga.
-  static const LatLng _initialMapPosition = LatLng(7.1193, -73.1227);
+  static const LatLng _initialMapPosition = LatLng(7.119349, -73.122742);
 
   bool cargando = true;
   bool calculandoRuta = false;
@@ -30,65 +45,50 @@ class _RutasScreenState extends State<RutasScreen> {
   String? error;
   String? originError;
   String? destinationError;
-  String? routeError;
-
-  LatLng? _originPosition;
-  LatLng? _destinationPosition;
-
-  Set<Polyline> _routePolylines = const <Polyline>{};
 
   List<Ruta> rutas = [];
   List<Ruta> rutasFiltradas = [];
+  GeocodingResult? origenGeocodificado;
+  GeocodingResult? destinoGeocodificado;
+  List<PlaceSuggestion> sugerenciasOrigen = [];
+  List<PlaceSuggestion> sugerenciasDestino = [];
+  PlaceSuggestion? origenSeleccionado;
+  PlaceSuggestion? destinoSeleccionado;
+  bool cargandoSugerenciasOrigen = false;
+  bool cargandoSugerenciasDestino = false;
+  String? errorSugerenciasOrigen;
+  String? errorSugerenciasDestino;
+
+  Timer? _debounceOrigen;
+  Timer? _debounceDestino;
+  int _solicitudOrigen = 0;
+  int _solicitudDestino = 0;
+  bool _actualizandoOrigen = false;
+  bool _actualizandoDestino = false;
+  String _ultimoTextoOrigen = '';
+  String _ultimoTextoDestino = '';
 
   final TextEditingController buscarController = TextEditingController();
   final TextEditingController originController = TextEditingController();
   final TextEditingController destinationController = TextEditingController();
 
-  Set<Marker> get _routeMarkers {
-    final markers = <Marker>{};
-
-    if (_originPosition != null) {
-      markers.add(
-        Marker(
-          markerId: const MarkerId('route_origin'),
-          position: _originPosition!,
-          infoWindow: const InfoWindow(title: 'Origen'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueGreen,
-          ),
-        ),
-      );
-    }
-
-    if (_destinationPosition != null) {
-      markers.add(
-        Marker(
-          markerId: const MarkerId('route_destination'),
-          position: _destinationPosition!,
-          infoWindow: const InfoWindow(title: 'Destino'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-        ),
-      );
-    }
-
-    return markers;
-  }
-
   @override
   void initState() {
     super.initState();
 
-    _routePlannerController = RoutePlannerController.fromEnvironment();
-
     cargarRutas();
     buscarController.addListener(filtrarRutas);
+    originController.addListener(_alCambiarOrigen);
+    destinationController.addListener(_alCambiarDestino);
   }
 
   Future<void> cargarRutas() async {
     try {
-      final resultado = await _rutaService.obtenerRutasActivas();
+      final resultado = await _loadRoutes();
 
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       setState(() {
         rutas = resultado;
@@ -97,7 +97,9 @@ class _RutasScreenState extends State<RutasScreen> {
         error = null;
       });
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       setState(() {
         error = e.toString();
@@ -138,175 +140,341 @@ class _RutasScreenState extends State<RutasScreen> {
     await cargarRutas();
   }
 
-  void _seleccionarPunto(LatLng position) {
+  void _alCambiarOrigen() {
+    final text = originController.text;
+    if (text == _ultimoTextoOrigen) return;
+    _ultimoTextoOrigen = text;
+    if (_actualizandoOrigen) return;
+    _programarSugerencias(esOrigen: true);
+  }
+
+  void _alCambiarDestino() {
+    final text = destinationController.text;
+    if (text == _ultimoTextoDestino) return;
+    _ultimoTextoDestino = text;
+    if (_actualizandoDestino) return;
+    _programarSugerencias(esOrigen: false);
+  }
+
+  void _programarSugerencias({required bool esOrigen}) {
+    final controller = esOrigen ? originController : destinationController;
+    final consulta = controller.text.trim();
+    final solicitud = esOrigen ? ++_solicitudOrigen : ++_solicitudDestino;
+
+    if (esOrigen) {
+      _debounceOrigen?.cancel();
+    } else {
+      _debounceDestino?.cancel();
+    }
+
     setState(() {
-      routeError = null;
-      _routePolylines = const <Polyline>{};
-
-      if (_originPosition == null) {
-        _originPosition = position;
-
-        originController.text =
-            '${position.latitude.toStringAsFixed(6)}, '
-            '${position.longitude.toStringAsFixed(6)}';
-
+      if (esOrigen) {
         originError = null;
-        return;
-      }
-
-      if (_destinationPosition == null) {
-        _destinationPosition = position;
-
-        destinationController.text =
-            '${position.latitude.toStringAsFixed(6)}, '
-            '${position.longitude.toStringAsFixed(6)}';
-
+        origenSeleccionado = null;
+        origenGeocodificado = null;
+        sugerenciasOrigen = [];
+        errorSugerenciasOrigen = null;
+        cargandoSugerenciasOrigen = consulta.length >= 3;
+      } else {
         destinationError = null;
-        return;
+        destinoSeleccionado = null;
+        destinoGeocodificado = null;
+        sugerenciasDestino = [];
+        errorSugerenciasDestino = null;
+        cargandoSugerenciasDestino = consulta.length >= 3;
       }
-
-      // Si ya existen ambos puntos, comienza una selección nueva.
-      _routePlannerController.reset();
-
-      _originPosition = position;
-      _destinationPosition = null;
-
-      originController.text =
-          '${position.latitude.toStringAsFixed(6)}, '
-          '${position.longitude.toStringAsFixed(6)}';
-
-      destinationController.clear();
-
-      originError = null;
-      destinationError = null;
     });
+
+    if (consulta.length < 3) return;
+
+    final timer = Timer(const Duration(milliseconds: 450), () {
+      _buscarSugerencias(
+        consulta: consulta,
+        solicitud: solicitud,
+        esOrigen: esOrigen,
+      );
+    });
+
+    if (esOrigen) {
+      _debounceOrigen = timer;
+    } else {
+      _debounceDestino = timer;
+    }
+  }
+
+  Future<void> _buscarSugerencias({
+    required String consulta,
+    required int solicitud,
+    required bool esOrigen,
+  }) async {
+    try {
+      final resultados = await _placeSuggestionService.search(consulta);
+      if (!mounted || !_esSolicitudActual(solicitud, esOrigen)) return;
+
+      setState(() {
+        if (esOrigen) {
+          sugerenciasOrigen = resultados;
+          cargandoSugerenciasOrigen = false;
+        } else {
+          sugerenciasDestino = resultados;
+          cargandoSugerenciasDestino = false;
+        }
+      });
+    } on PlaceSuggestionException catch (error) {
+      if (!mounted || !_esSolicitudActual(solicitud, esOrigen)) return;
+
+      setState(() {
+        if (esOrigen) {
+          cargandoSugerenciasOrigen = false;
+          errorSugerenciasOrigen = error.message;
+        } else {
+          cargandoSugerenciasDestino = false;
+          errorSugerenciasDestino = error.message;
+        }
+      });
+    }
+  }
+
+  bool _esSolicitudActual(int solicitud, bool esOrigen) {
+    return solicitud == (esOrigen ? _solicitudOrigen : _solicitudDestino);
+  }
+
+  void _seleccionarSugerencia(
+    PlaceSuggestion suggestion, {
+    required bool esOrigen,
+  }) {
+    if (calculandoRuta) return;
+    if (esOrigen) {
+      _debounceOrigen?.cancel();
+      _solicitudOrigen++;
+      _actualizandoOrigen = true;
+      originController.text = suggestion.displayText;
+      originController.selection = TextSelection.collapsed(
+        offset: originController.text.length,
+      );
+      _actualizandoOrigen = false;
+    } else {
+      _debounceDestino?.cancel();
+      _solicitudDestino++;
+      _actualizandoDestino = true;
+      destinationController.text = suggestion.displayText;
+      destinationController.selection = TextSelection.collapsed(
+        offset: destinationController.text.length,
+      );
+      _actualizandoDestino = false;
+    }
+
+    setState(() {
+      if (esOrigen) {
+        origenSeleccionado = suggestion;
+        origenGeocodificado = _resultadoDeSugerencia(suggestion);
+        originError = null;
+        sugerenciasOrigen = [];
+        cargandoSugerenciasOrigen = false;
+        errorSugerenciasOrigen = null;
+      } else {
+        destinoSeleccionado = suggestion;
+        destinoGeocodificado = _resultadoDeSugerencia(suggestion);
+        destinationError = null;
+        sugerenciasDestino = [];
+        cargandoSugerenciasDestino = false;
+        errorSugerenciasDestino = null;
+      }
+    });
+    FocusScope.of(context).unfocus();
+  }
+
+  GeocodingResult _resultadoDeSugerencia(PlaceSuggestion suggestion) {
+    return GeocodingResult(
+      latitude: suggestion.latitude,
+      longitude: suggestion.longitude,
+      displayName: suggestion.displayText,
+    );
+  }
+
+  // Conserva la selección por tap y el reinicio de #16 con coordenadas OSM.
+  void _seleccionarPunto(LatLng point) {
+    if (calculandoRuta) return;
+    if (origenSeleccionado != null && destinoSeleccionado != null) {
+      _limpiarSeleccion();
+    }
+    _seleccionarSugerencia(
+      PlaceSuggestion(
+        name:
+            '${point.latitude.toStringAsFixed(6)}, '
+            '${point.longitude.toStringAsFixed(6)}',
+        description: '',
+        latitude: point.latitude,
+        longitude: point.longitude,
+      ),
+      esOrigen: origenSeleccionado == null,
+    );
   }
 
   void _limpiarSeleccion() {
-    _routePlannerController.reset();
+    if (calculandoRuta) return;
+    originController.clear();
+    destinationController.clear();
+  }
 
-    setState(() {
-      _originPosition = null;
-      _destinationPosition = null;
-
-      _routePolylines = const <Polyline>{};
-
-      originController.clear();
-      destinationController.clear();
-
-      originError = null;
-      destinationError = null;
-      routeError = null;
-      calculandoRuta = false;
-    });
+  void _cancelarSugerenciasPendientes() {
+    _debounceOrigen?.cancel();
+    _debounceDestino?.cancel();
+    _solicitudOrigen++;
+    _solicitudDestino++;
+    sugerenciasOrigen = [];
+    sugerenciasDestino = [];
+    cargandoSugerenciasOrigen = false;
+    cargandoSugerenciasDestino = false;
+    errorSugerenciasOrigen = null;
+    errorSugerenciasDestino = null;
   }
 
   Future<void> calcularRuta() async {
+    if (calculandoRuta) return;
+
+    final origen = originController.text.trim();
+    final destino = destinationController.text.trim();
+
     setState(() {
-      originError = _originPosition == null
-          ? 'Selecciona el origen tocando el mapa.'
-          : null;
+      originError = origen.isEmpty ? 'Ingresa el punto de origen.' : null;
 
-      destinationError = _destinationPosition == null
-          ? 'Selecciona el destino tocando el mapa.'
+      destinationError = destino.isEmpty
+          ? 'Ingresa el punto de destino.'
           : null;
-
-      routeError = null;
     });
 
-    final origin = _originPosition;
-    final destination = _destinationPosition;
-
-    if (origin == null || destination == null) {
+    if (origen.isEmpty || destino.isEmpty) {
       return;
     }
 
     setState(() {
       calculandoRuta = true;
-      _routePolylines = const <Polyline>{};
+      _cancelarSugerenciasPendientes();
+      origenGeocodificado = null;
+      destinoGeocodificado = null;
     });
 
-    await _routePlannerController.calculateRoute(
-      originLatitude: origin.latitude,
-      originLongitude: origin.longitude,
-      destinationLatitude: destination.latitude,
-      destinationLongitude: destination.longitude,
-    );
-
-    if (!mounted) return;
-
-    if (_routePlannerController.hasRoute) {
-      final route = _routePlannerController.route!;
-
-      try {
-        final points = PolylineDecoder.decode(route.encodedPolyline);
-        final polylines = RoutePolyline.build(points: points);
-
-        setState(() {
-          calculandoRuta = false;
-          _routePolylines = polylines;
-          routeError = null;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Ruta calculada: '
-              '${route.distanceKilometers.toStringAsFixed(2)} km, '
-              '${_formatearDuracion(route.duration)}.',
-            ),
-          ),
-        );
-      } on FormatException catch (e) {
-        setState(() {
-          calculandoRuta = false;
-          _routePolylines = const <Polyline>{};
-          routeError = 'No fue posible interpretar la ruta: ${e.message}';
-        });
+    try {
+      final origenEncontrado = origenSeleccionado != null
+          ? _resultadoDeSugerencia(origenSeleccionado!)
+          : await _geocodingService.search(origen);
+      if (!mounted) return;
+      if (origenEncontrado == null) {
+        _mostrarMensaje('No se encontró el origen: $origen.');
+        return;
       }
 
-      return;
+      final destinoEncontrado = destinoSeleccionado != null
+          ? _resultadoDeSugerencia(destinoSeleccionado!)
+          : await _geocodingService.search(destino);
+      if (!mounted) return;
+      if (destinoEncontrado == null) {
+        _mostrarMensaje('No se encontró el destino: $destino.');
+        return;
+      }
+
+      setState(() {
+        origenGeocodificado = origenEncontrado;
+        destinoGeocodificado = destinoEncontrado;
+        origenSeleccionado = PlaceSuggestion(
+          name: origen,
+          description: '',
+          latitude: origenEncontrado.latitude,
+          longitude: origenEncontrado.longitude,
+        );
+        destinoSeleccionado = PlaceSuggestion(
+          name: destino,
+          description: '',
+          latitude: destinoEncontrado.latitude,
+          longitude: destinoEncontrado.longitude,
+        );
+      });
+      _mostrarMensaje(
+        'Origen y destino encontrados. El cálculo de ruta está pendiente.',
+      );
+    } on GeocodingException catch (error) {
+      if (mounted) _mostrarMensaje(error.message);
+    } finally {
+      if (mounted) setState(() => calculandoRuta = false);
     }
-
-    setState(() {
-      calculandoRuta = false;
-      _routePolylines = const <Polyline>{};
-
-      routeError =
-          _routePlannerController.errorMessage ??
-          'No fue posible calcular la ruta.';
-    });
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(routeError!)));
   }
 
-  String _formatearDuracion(Duration duration) {
-    final hours = duration.inHours;
-    final minutes = duration.inMinutes.remainder(60);
-
-    if (hours > 0 && minutes > 0) {
-      return '$hours h $minutes min';
-    }
-
-    if (hours > 0) {
-      return '$hours h';
-    }
-
-    return '$minutes min';
+  void _mostrarMensaje(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   void dispose() {
-    buscarController.removeListener(filtrarRutas);
-
+    _debounceOrigen?.cancel();
+    _debounceDestino?.cancel();
+    if (widget.geocodingService == null) _geocodingService.dispose();
+    if (widget.placeSuggestionService == null) {
+      _placeSuggestionService.dispose();
+    }
     buscarController.dispose();
     originController.dispose();
     destinationController.dispose();
 
-    _routePlannerController.dispose();
-
     super.dispose();
+  }
+
+  Widget? _construirSugerencias({required bool esOrigen}) {
+    final sugerencias = esOrigen ? sugerenciasOrigen : sugerenciasDestino;
+    final cargando = esOrigen
+        ? cargandoSugerenciasOrigen
+        : cargandoSugerenciasDestino;
+    final error = esOrigen ? errorSugerenciasOrigen : errorSugerenciasDestino;
+
+    if (!cargando && sugerencias.isEmpty && error == null) return null;
+
+    return Container(
+      margin: const EdgeInsets.only(top: 6),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: cargando
+          ? const Padding(
+              padding: EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                  SizedBox(width: 12),
+                  Text('Buscando lugares...'),
+                ],
+              ),
+            )
+          : error != null
+          ? Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(error, style: const TextStyle(color: Colors.red)),
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: sugerencias
+                  .map(
+                    (suggestion) => ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.location_on_outlined),
+                      title: Text(suggestion.name),
+                      subtitle: suggestion.description.isEmpty
+                          ? null
+                          : Text(suggestion.description),
+                      onTap: () => _seleccionarSugerencia(
+                        suggestion,
+                        esOrigen: esOrigen,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+    );
   }
 
   @override
@@ -349,22 +517,56 @@ class _RutasScreenState extends State<RutasScreen> {
   }
 
   Widget _construirContenido() {
+    final origen = origenGeocodificado;
+    final destino = destinoGeocodificado;
+    final List<Marker> marcadores = [
+      if (origen != null)
+        Marker(
+          point: LatLng(origen.latitude, origen.longitude),
+          width: 50,
+          height: 50,
+          child: Tooltip(
+            message: 'Origen: ${origen.displayName}',
+            child: const Icon(Icons.trip_origin, size: 38, color: Colors.green),
+          ),
+        ),
+      if (destino != null)
+        Marker(
+          point: LatLng(destino.latitude, destino.longitude),
+          width: 50,
+          height: 50,
+          child: Tooltip(
+            message: 'Destino: ${destino.displayName}',
+            child: const Icon(Icons.location_on, size: 42, color: Colors.red),
+          ),
+        ),
+      if (origen == null && destino == null)
+        Marker(
+          point: _initialMapPosition,
+          width: 50,
+          height: 50,
+          child: Tooltip(
+            message: 'Bucaramanga',
+            child: const Icon(Icons.location_on, size: 42, color: Colors.red),
+          ),
+        ),
+    ];
+
     return RefreshIndicator(
       onRefresh: refrescar,
       child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           const Text(
-            'Planificación de rutas',
+            'Consulta de rutas',
             style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
           Text(
-            'Selecciona el origen y el destino directamente en el mapa.',
+            'Busca lugares o toca el mapa para elegir origen y destino.',
             style: TextStyle(fontSize: 15, color: Colors.grey[600]),
           ),
           const SizedBox(height: 20),
-
           RoutePlannerForm(
             originController: originController,
             destinationController: destinationController,
@@ -372,61 +574,41 @@ class _RutasScreenState extends State<RutasScreen> {
             isLoading: calculandoRuta,
             originError: originError,
             destinationError: destinationError,
+            originSuggestions: _construirSugerencias(esOrigen: true),
+            destinationSuggestions: _construirSugerencias(esOrigen: false),
           ),
-
           const SizedBox(height: 24),
-
           Row(
             children: [
+              const Icon(Icons.map_outlined),
+              const SizedBox(width: 8),
               const Expanded(
                 child: Text(
-                  'Mapa de ruta - Bucaramanga',
+                  'Mapa de Bucaramanga',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
               ),
-              if (_originPosition != null || _destinationPosition != null)
-                TextButton.icon(
-                  onPressed: calculandoRuta ? null : _limpiarSeleccion,
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Reiniciar'),
-                ),
+              TextButton.icon(
+                onPressed: calculandoRuta ? null : _limpiarSeleccion,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Reiniciar'),
+              ),
             ],
           ),
-
           const SizedBox(height: 10),
-
           RouteMap(
             initialPosition: _initialMapPosition,
-            markers: _routeMarkers,
-            polylines: _routePolylines,
+            markers: marcadores,
             onTap: calculandoRuta ? null : _seleccionarPunto,
           ),
-
-          const SizedBox(height: 12),
-
-          _SelectionStatus(
-            originSelected: _originPosition != null,
-            destinationSelected: _destinationPosition != null,
+          const SizedBox(height: 8),
+          Text(
+            'El mapa muestra las ubicaciones seleccionadas. '
+            'El cálculo vehicular de la ruta está pendiente; '
+            'todavía no se muestran recorridos, distancias ni tiempos.',
+            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
           ),
-
-          if (routeError != null) ...[
-            const SizedBox(height: 12),
-            _RouteErrorMessage(message: routeError!),
-          ],
-
-          const SizedBox(height: 28),
-
-          const Divider(),
-
-          const SizedBox(height: 20),
-
-          const Text(
-            'Rutas disponibles',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-
-          const SizedBox(height: 12),
-
+          const SizedBox(height: 24),
           TextField(
             controller: buscarController,
             decoration: InputDecoration(
@@ -443,16 +625,12 @@ class _RutasScreenState extends State<RutasScreen> {
               ),
             ),
           ),
-
           const SizedBox(height: 20),
-
           Text(
             '${rutasFiltradas.length} ruta(s) disponible(s)',
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
-
           const SizedBox(height: 12),
-
           if (rutasFiltradas.isEmpty)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 60),
@@ -474,75 +652,6 @@ class _RutasScreenState extends State<RutasScreen> {
                 child: _RutaCard(ruta: ruta),
               ),
             ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SelectionStatus extends StatelessWidget {
-  const _SelectionStatus({
-    required this.originSelected,
-    required this.destinationSelected,
-  });
-
-  final bool originSelected;
-  final bool destinationSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    String message;
-    IconData icon;
-
-    if (!originSelected) {
-      message = 'Toca el mapa para seleccionar el punto de origen.';
-      icon = Icons.touch_app_outlined;
-    } else if (!destinationSelected) {
-      message = 'Origen seleccionado. Ahora selecciona el destino.';
-      icon = Icons.location_on_outlined;
-    } else {
-      message = 'Origen y destino seleccionados. Ya puedes calcular la ruta.';
-      icon = Icons.check_circle_outline;
-    }
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, size: 20),
-        const SizedBox(width: 8),
-        Expanded(child: Text(message)),
-      ],
-    );
-  }
-}
-
-class _RouteErrorMessage extends StatelessWidget {
-  const _RouteErrorMessage({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: colors.errorContainer,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.error_outline, color: colors.onErrorContainer),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              message,
-              style: TextStyle(color: colors.onErrorContainer),
-            ),
-          ),
         ],
       ),
     );

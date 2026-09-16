@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -14,15 +15,18 @@ class PlaceSuggestionException implements Exception {
 }
 
 class PlaceSuggestionService {
-  PlaceSuggestionService({http.Client? client})
-    : _client = client ?? http.Client(),
-      _ownsClient = client == null;
+  PlaceSuggestionService({
+    http.Client? client,
+    this.timeout = const Duration(seconds: 8),
+  }) : _client = client ?? http.Client(),
+       _ownsClient = client == null;
 
   static const double _bucaramangaLatitude = 7.119349;
   static const double _bucaramangaLongitude = -73.122742;
 
   final http.Client _client;
   final bool _ownsClient;
+  final Duration timeout;
 
   Future<List<PlaceSuggestion>> search(String query) async {
     final uri = Uri.https('photon.komoot.io', '/api/', {
@@ -35,16 +39,27 @@ class PlaceSuggestionService {
 
     http.Response response;
     try {
-      response = await _client.get(
-        uri,
-        headers: {
-          'User-Agent': 'TransporteInteligente/1.0 (Flutter; Bucaramanga, CO)',
-          'Accept': 'application/json',
-        },
+      response = await _client
+          .get(
+            uri,
+            headers: {
+              'User-Agent':
+                  'TransporteInteligente/1.0 (Flutter; Bucaramanga, CO)',
+              'Accept': 'application/json',
+            },
+          )
+          .timeout(timeout);
+    } on TimeoutException {
+      throw const PlaceSuggestionException(
+        'Photon tardó demasiado. Intenta de nuevo o calcula con la dirección escrita.',
       );
     } on http.ClientException catch (error) {
       throw PlaceSuggestionException(
         'No fue posible conectar con Photon: ${error.message}',
+      );
+    } catch (_) {
+      throw const PlaceSuggestionException(
+        'No fue posible buscar lugares. Intenta de nuevo.',
       );
     }
 

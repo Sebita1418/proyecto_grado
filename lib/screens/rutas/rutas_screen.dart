@@ -208,7 +208,9 @@ class _RutasScreenState extends State<RutasScreen> {
     required bool esOrigen,
   }) async {
     try {
-      final resultados = await _placeSuggestionService.search(consulta);
+      final resultados = await _placeSuggestionService
+          .search(consulta)
+          .timeout(const Duration(seconds: 10));
       if (!mounted || !_esSolicitudActual(solicitud, esOrigen)) return;
 
       setState(() {
@@ -230,6 +232,19 @@ class _RutasScreenState extends State<RutasScreen> {
         } else {
           cargandoSugerenciasDestino = false;
           errorSugerenciasDestino = error.message;
+        }
+      });
+    } catch (_) {
+      if (!mounted || !_esSolicitudActual(solicitud, esOrigen)) return;
+      setState(() {
+        if (esOrigen) {
+          cargandoSugerenciasOrigen = false;
+          errorSugerenciasOrigen =
+              'No fue posible buscar lugares. Intenta de nuevo.';
+        } else {
+          cargandoSugerenciasDestino = false;
+          errorSugerenciasDestino =
+              'No fue posible buscar lugares. Intenta de nuevo.';
         }
       });
     }

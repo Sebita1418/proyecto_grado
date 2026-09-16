@@ -1,279 +1,240 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../models/perfil_model.dart';
+import '../../services/location_service.dart';
 import '../../services/perfil_service.dart';
-
+import '../../widgets/app_navigation_drawer.dart';
+import '../../widgets/map_search_panel.dart';
+import '../../widgets/route_map.dart';
 import '../admin/admin_screen.dart';
 import '../login/login_screen.dart';
 import '../perfil/perfil_screen.dart';
 import '../rutas/rutas_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
+  const HomeScreen({super.key, this.locationService, this.loadProfile});
+  final LocationService? locationService;
+  final Future<Perfil?> Function()? loadProfile;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final PerfilService _perfilService = PerfilService();
-
-  Perfil? perfil;
-
-  bool cargando = true;
-  bool cerrandoSesion = false;
-
-  String? error;
+  static const _initialCenter = LatLng(7.119349, -73.122742);
+  final MapController _mapController = MapController();
+  Perfil? _perfil;
+  LatLng? _position;
+  LocationStatus _locationStatus = LocationStatus.permissionNotRequested;
+  bool _locating = false;
+  bool _signingOut = false;
 
   @override
   void initState() {
     super.initState();
-    cargarPerfil();
+    _loadProfile();
+    _locate();
   }
 
-  Future<void> cargarPerfil() async {
+  Future<void> _loadProfile() async {
     try {
-      final perfilActual = await _perfilService.obtenerPerfilActual();
-
-      if (!mounted) return;
-
-      setState(() {
-        perfil = perfilActual;
-        cargando = false;
-        error = null;
-      });
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        error = e.toString();
-        cargando = false;
-      });
+      final perfil =
+          await (widget.loadProfile ?? PerfilService().obtenerPerfilActual)();
+      if (mounted) setState(() => _perfil = perfil);
+    } catch (_) {
+      // The map remains available when profile loading fails.
     }
   }
 
-  Future<void> cerrarSesion() async {
-    final confirmar = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Cerrar sesión'),
-          content: const Text('¿Deseas cerrar la sesión actual?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, false);
-              },
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              child: const Text('Cerrar sesión'),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (confirmar != true) return;
-
+  Future<void> _locate() async {
+    if (_locating) return;
+    setState(() => _locating = true);
+    final result = await (widget.locationService ?? LocationService()).locate();
     if (!mounted) return;
-
     setState(() {
-      cerrandoSesion = true;
+      _locating = false;
+      _locationStatus = result.status;
+      _position = result.coordinates;
     });
-
-    try {
-      await Supabase.instance.client.auth.signOut();
-
-      if (!mounted) return;
-
-      Navigator.pushAndRemoveUntil(
+    if (result.coordinates != null) {
+      _mapController.move(result.coordinates!, 15);
+    } else {
+      ScaffoldMessenger.of(
         context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-        (route) => false,
-      );
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        cerrandoSesion = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No fue posible cerrar la sesión: $e')),
-      );
+      ).showSnackBar(SnackBar(content: Text(_locationMessage(result.status))));
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (cargando) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+  String _locationMessage(LocationStatus status) => switch (status) {
+    LocationStatus.serviceDisabled =>
+      'Activa la ubicación del dispositivo o escribe un origen.',
+    LocationStatus.permissionDenied =>
+      'Permiso de ubicación denegado. Puedes escribir un origen.',
+    LocationStatus.permissionDeniedForever =>
+      'Habilita la ubicación en ajustes o escribe un origen.',
+    _ => 'No pudimos obtener tu ubicación. Puedes escribir un origen.',
+  };
 
-    if (error != null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Transporte Inteligente')),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 60, color: Colors.red),
-                const SizedBox(height: 16),
-                const Text(
-                  'No fue posible cargar el perfil.',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Text(error!, textAlign: TextAlign.center),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
+  void _open(Widget page) {
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+  }
 
-    final perfilActual = perfil!;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Transporte Inteligente'),
-        centerTitle: true,
+  Future<void> _signOut() async {
+    Navigator.pop(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cerrar sesión'),
+        content: const Text('¿Deseas cerrar la sesión actual?'),
         actions: [
-          IconButton(
-            tooltip: 'Cerrar sesión',
-            onPressed: cerrandoSesion ? null : cerrarSesion,
-            icon: cerrandoSesion
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.logout),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
           ),
-          const SizedBox(width: 8),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Cerrar sesión'),
+          ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
+    );
+    if (confirmed != true || !mounted) return;
+    setState(() => _signingOut = true);
+    try {
+      await Supabase.instance.client.auth.signOut();
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        (_) => false,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _signingOut = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No fue posible cerrar la sesión.')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final position = _position;
+    return Scaffold(
+      appBar: AppBar(
+        titleSpacing: 0,
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Hola, ${perfilActual.nombre} 👋',
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              'Transporte Inteligente',
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-
-            const SizedBox(height: 6),
-
             Text(
-              'Rol: ${perfilActual.rol}',
-              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-            ),
-
-            const SizedBox(height: 6),
-
-            Text(
-              '¿Qué deseas consultar?',
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-            ),
-
-            const SizedBox(height: 30),
-
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                children: [
-                  const _MenuCard(icon: Icons.map_outlined, title: 'Mapa'),
-
-                  _MenuCard(
-                    icon: Icons.directions_bus_outlined,
-                    title: 'Rutas',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RutasScreen(),
-                        ),
-                      );
-                    },
-                  ),
-
-                  const _MenuCard(
-                    icon: Icons.location_on_outlined,
-                    title: 'Puntos cercanos',
-                  ),
-
-                  _MenuCard(
-                    icon: Icons.person_outline,
-                    title: 'Perfil',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              PerfilScreen(perfil: perfilActual),
-                        ),
-                      );
-                    },
-                  ),
-
-                  if (perfilActual.esAdministrador)
-                    _MenuCard(
-                      icon: Icons.admin_panel_settings_outlined,
-                      title: 'Administración',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AdminScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                ],
-              ),
+              'Muévete mejor. Decide tu ruta.',
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _MenuCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback? onTap;
-
-  const _MenuCard({required this.icon, required this.title, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 50, color: Colors.blue),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+      drawer: AppNavigationDrawer(
+        perfil: _perfil,
+        onHome: () => Navigator.pop(context),
+        onRoutes: () => _open(const RutasScreen()),
+        onNearby: () {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Puntos cercanos aún no está disponible.'),
             ),
-          ],
-        ),
+          );
+        },
+        onProfile: () {
+          if (_perfil != null) _open(PerfilScreen(perfil: _perfil!));
+        },
+        onAdmin: _perfil?.esAdministrador == true
+            ? () => _open(const AdminScreen())
+            : null,
+        onSignOut: _signingOut ? () {} : _signOut,
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final wide = constraints.maxWidth >= 700;
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: RouteMap(
+                  initialPosition: _initialCenter,
+                  mapController: _mapController,
+                  expand: true,
+                  markers: [
+                    if (position != null)
+                      Marker(
+                        point: position,
+                        width: 52,
+                        height: 52,
+                        child: Tooltip(
+                          message: 'Mi ubicación',
+                          child: Semantics(
+                            label: 'Marcador de mi ubicación',
+                            child: Icon(
+                              Icons.my_location,
+                              size: 36,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Positioned(
+                right: 16,
+                top: 16,
+                child: FloatingActionButton.small(
+                  heroTag: 'current-location',
+                  tooltip: 'Centrar en mi ubicación',
+                  onPressed: _locating
+                      ? null
+                      : () {
+                          if (_position != null) {
+                            _mapController.move(_position!, 15);
+                          } else {
+                            _locate();
+                          }
+                        },
+                  child: _locating
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.my_location),
+                ),
+              ),
+              Positioned(
+                left: wide ? 20 : 8,
+                bottom: wide ? 20 : 8,
+                width: wide ? 420 : constraints.maxWidth - 16,
+                child: MapSearchPanel(
+                  currentPosition: position,
+                  locationStatus: _locationStatus,
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

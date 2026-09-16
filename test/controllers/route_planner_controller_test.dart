@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:transporte_inteligente/controllers/route_planner_controller.dart';
 import 'package:transporte_inteligente/models/google_route_result.dart';
@@ -192,6 +194,48 @@ void main() {
       );
 
       expect(notificationCount, 2);
+    });
+
+    test('remains loading while route computation is pending', () async {
+      final completer = Completer<GoogleRouteResult>();
+
+      final controller = RoutePlannerController(
+        computeRoute:
+            ({
+              required originLatitude,
+              required originLongitude,
+              required destinationLatitude,
+              required destinationLongitude,
+            }) {
+              return completer.future;
+            },
+      );
+
+      final calculation = controller.calculateRoute(
+        originLatitude: 7.1193,
+        originLongitude: -73.1227,
+        destinationLatitude: 7.1254,
+        destinationLongitude: -73.1198,
+      );
+
+      expect(controller.status, RoutePlannerStatus.loading);
+      expect(controller.isLoading, isTrue);
+      expect(controller.hasRoute, isFalse);
+      expect(controller.hasError, isFalse);
+
+      completer.complete(
+        const GoogleRouteResult(
+          distanceMeters: 2500,
+          durationSeconds: 600,
+          encodedPolyline: 'encoded-polyline',
+        ),
+      );
+
+      await calculation;
+
+      expect(controller.status, RoutePlannerStatus.success);
+      expect(controller.isLoading, isFalse);
+      expect(controller.hasRoute, isTrue);
     });
 
     test('reset returns controller to idle state', () async {

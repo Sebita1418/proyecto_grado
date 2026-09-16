@@ -4,7 +4,10 @@ import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../models/perfil_model.dart';
+import '../../models/route_result.dart';
 import '../../services/location_service.dart';
+import '../../services/geocoding_service.dart';
+import '../../services/osrm_routing_service.dart';
 import '../../services/perfil_service.dart';
 import '../../widgets/app_navigation_drawer.dart';
 import '../../widgets/map_search_panel.dart';
@@ -15,9 +18,17 @@ import '../perfil/perfil_screen.dart';
 import '../rutas/rutas_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, this.locationService, this.loadProfile});
+  const HomeScreen({
+    super.key,
+    this.locationService,
+    this.loadProfile,
+    this.geocodingService,
+    this.routingService,
+  });
   final LocationService? locationService;
   final Future<Perfil?> Function()? loadProfile;
+  final GeocodingService? geocodingService;
+  final OsrmRoutingService? routingService;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -30,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   LocationStatus _locationStatus = LocationStatus.permissionNotRequested;
   bool _locating = false;
   bool _signingOut = false;
+  RouteResult? _route;
 
   @override
   void initState() {
@@ -57,6 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _locating = false;
       _locationStatus = result.status;
       _position = result.coordinates;
+      _route = null;
     });
     if (result.coordinates != null) {
       _mapController.move(result.coordinates!, 15);
@@ -126,6 +139,24 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  EdgeInsets _routePadding(Size size, bool wide) => EdgeInsets.fromLTRB(
+    wide ? 440 : 48,
+    48,
+    48,
+    wide ? 48 : size.height * .58 + 16,
+  );
+
+  void _fitRoute(Size size, bool wide) {
+    final route = _route;
+    if (route == null || route.points.length < 2) return;
+    _mapController.fitCamera(
+      CameraFit.bounds(
+        bounds: LatLngBounds.fromPoints(route.points),
+        padding: _routePadding(size, wide),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -133,17 +164,25 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+        title: Row(
           children: [
-            Text(
-              'Transporte Inteligente',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            Text(
-              'Muévete mejor. Decide tu ruta.',
-              style: Theme.of(context).textTheme.bodySmall,
+            Icon(Icons.directions_bus_outlined, color: colorScheme.primary),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Transporte Inteligente',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  Text(
+                    'Muévete mejor. Decide tu ruta.',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -178,6 +217,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   initialPosition: _initialCenter,
                   mapController: _mapController,
                   expand: true,
+                  fitPadding: _route == null
+                      ? const EdgeInsets.all(48)
+                      : _routePadding(constraints.biggest, wide),
                   markers: [
                     if (position != null)
                       Marker(
@@ -188,13 +230,69 @@ class _HomeScreenState extends State<HomeScreen> {
                           message: 'Mi ubicación',
                           child: Semantics(
                             label: 'Marcador de mi ubicación',
-                            child: Icon(
-                              Icons.my_location,
-                              size: 36,
-                              color: colorScheme.primary,
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: colorScheme.primary,
+                                border: Border.all(
+                                  color: colorScheme.surface,
+                                  width: 3,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: colorScheme.shadow.withValues(
+                                      alpha: .25,
+                                    ),
+                                    blurRadius: 6,
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Icons.circle,
+                                size: 10,
+                                color: colorScheme.onPrimary,
+                              ),
                             ),
                           ),
                         ),
+                      ),
+                    if (_route != null && _route!.origin != position)
+                      Marker(
+                        point: _route!.origin,
+                        width: 48,
+                        height: 48,
+                        child: Tooltip(
+                          message: 'Origen',
+                          child: Icon(
+                            Icons.trip_origin,
+                            size: 32,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    if (_route != null)
+                      Marker(
+                        point: _route!.destination,
+                        width: 48,
+                        height: 48,
+                        child: Tooltip(
+                          message: 'Destino',
+                          child: Icon(
+                            Icons.location_on,
+                            size: 38,
+                            color: colorScheme.tertiary,
+                          ),
+                        ),
+                      ),
+                  ],
+                  polylines: [
+                    if (_route != null)
+                      Polyline(
+                        points: _route!.points,
+                        strokeWidth: 5,
+                        color: colorScheme.primary,
                       ),
                   ],
                 ),
@@ -202,25 +300,39 @@ class _HomeScreenState extends State<HomeScreen> {
               Positioned(
                 right: 16,
                 top: 16,
-                child: FloatingActionButton.small(
-                  heroTag: 'current-location',
-                  tooltip: 'Centrar en mi ubicación',
-                  onPressed: _locating
-                      ? null
-                      : () {
-                          if (_position != null) {
-                            _mapController.move(_position!, 15);
-                          } else {
-                            _locate();
-                          }
-                        },
-                  child: _locating
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.my_location),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FloatingActionButton.small(
+                      heroTag: 'current-location',
+                      tooltip: 'Mi ubicación',
+                      onPressed: _locating
+                          ? null
+                          : () {
+                              if (_position != null) {
+                                _mapController.move(_position!, 15);
+                              } else {
+                                _locate();
+                              }
+                            },
+                      child: _locating
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.my_location),
+                    ),
+                    if (_route != null) ...[
+                      const SizedBox(height: 8),
+                      FloatingActionButton.small(
+                        heroTag: 'full-route',
+                        tooltip: 'Ver ruta completa',
+                        onPressed: () => _fitRoute(constraints.biggest, wide),
+                        child: const Icon(Icons.fit_screen),
+                      ),
+                    ],
+                  ],
                 ),
               ),
               Positioned(
@@ -230,6 +342,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: MapSearchPanel(
                   currentPosition: position,
                   locationStatus: _locationStatus,
+                  geocodingService: widget.geocodingService,
+                  routingService: widget.routingService,
+                  onRouteChanged: (result) => setState(() => _route = result),
                 ),
               ),
             ],

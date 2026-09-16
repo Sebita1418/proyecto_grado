@@ -34,7 +34,6 @@ class PlaceSuggestionService {
       'lat': _bucaramangaLatitude.toString(),
       'lon': _bucaramangaLongitude.toString(),
       'limit': '5',
-      'lang': 'es',
     });
 
     http.Response response;

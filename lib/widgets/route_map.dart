@@ -11,6 +11,7 @@ class RouteMap extends StatefulWidget {
     this.mapController,
     this.onTap,
     this.expand = false,
+    this.fitPadding = const EdgeInsets.all(48),
   });
 
   final LatLng initialPosition;
@@ -19,6 +20,7 @@ class RouteMap extends StatefulWidget {
   final MapController? mapController;
   final ValueChanged<LatLng>? onTap;
   final bool expand;
+  final EdgeInsets fitPadding;
 
   @override
   State<RouteMap> createState() => _RouteMapState();
@@ -40,7 +42,8 @@ class _RouteMapState extends State<RouteMap> {
   void didUpdateWidget(covariant RouteMap oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (!_haveSameMarkerPoints(oldWidget.markers, widget.markers)) {
+    if (!_haveSameMarkerPoints(oldWidget.markers, widget.markers) ||
+        oldWidget.polylines != widget.polylines) {
       _scheduleMarkerFit();
     }
   }
@@ -61,17 +64,19 @@ class _RouteMapState extends State<RouteMap> {
   }
 
   void _scheduleMarkerFit() {
-    if (!_mapIsReady || widget.markers.length < 2) return;
+    if (!_mapIsReady) return;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_mapIsReady || widget.markers.length < 2) return;
+      if (!mounted || !_mapIsReady) return;
+      final points = widget.polylines.isNotEmpty
+          ? widget.polylines.expand((line) => line.points).toList()
+          : widget.markers.map((marker) => marker.point).toList();
+      if (points.length < 2) return;
 
       _mapController.fitCamera(
         CameraFit.bounds(
-          bounds: LatLngBounds.fromPoints(
-            widget.markers.map((marker) => marker.point).toList(),
-          ),
-          padding: const EdgeInsets.all(48),
+          bounds: LatLngBounds.fromPoints(points),
+          padding: widget.fitPadding,
         ),
       );
     });

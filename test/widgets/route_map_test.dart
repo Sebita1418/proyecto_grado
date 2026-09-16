@@ -7,6 +7,33 @@ import 'package:transporte_inteligente/widgets/route_map.dart';
 void main() {
   const initialPosition = LatLng(7.119349, -73.122742);
 
+  testWidgets('auto-fit considera toda la geometría de la ruta', (
+    tester,
+  ) async {
+    final controller = MapController();
+    final points = [
+      const LatLng(7.1, -73.1),
+      const LatLng(7.5, -73.5),
+      const LatLng(7.2, -73.2),
+    ];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: RouteMap(
+            initialPosition: initialPosition,
+            mapController: controller,
+            polylines: [Polyline(points: points)],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    final bounds = controller.camera.visibleBounds;
+    expect(bounds.contains(points[1]), isTrue);
+    await tester.pumpWidget(const SizedBox.shrink());
+    controller.dispose();
+  });
+
   testWidgets('transmite el tap OSM y acepta polylines opcionales', (
     tester,
   ) async {

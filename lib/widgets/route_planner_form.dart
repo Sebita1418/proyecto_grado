@@ -12,6 +12,7 @@ class RoutePlannerForm extends StatelessWidget {
   final Widget? destinationSuggestions;
   final bool showOrigin;
   final String title;
+  final bool embedded;
 
   const RoutePlannerForm({
     super.key,
@@ -25,76 +26,76 @@ class RoutePlannerForm extends StatelessWidget {
     this.destinationSuggestions,
     this.showOrigin = true,
     this.title = 'Planifica tu ruta',
+    this.embedded = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
+    final content = Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
 
-            if (showOrigin)
-              TextField(
-                controller: originController,
-                enabled: !isLoading,
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  labelText: 'Origen',
-                  hintText: 'Ingresa el punto de origen',
-                  prefixIcon: const Icon(Icons.trip_origin),
-                  border: const OutlineInputBorder(),
-                  errorText: originError,
-                ),
-              ),
-
-            if (showOrigin) ?originSuggestions,
-
-            const SizedBox(height: 12),
-
+          if (showOrigin)
             TextField(
-              controller: destinationController,
+              controller: originController,
               enabled: !isLoading,
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
-                labelText: 'Destino',
-                hintText: 'Ingresa el punto de destino',
-                prefixIcon: const Icon(Icons.location_on_outlined),
+                labelText: 'Origen',
+                hintText: 'Ingresa el punto de origen',
+                prefixIcon: const Icon(Icons.trip_origin),
                 border: const OutlineInputBorder(),
-                errorText: destinationError,
+                errorText: originError,
               ),
-              onSubmitted: (_) {
-                if (!isLoading) {
-                  onCalculate();
-                }
-              },
             ),
 
-            ?destinationSuggestions,
+          if (showOrigin) ?originSuggestions,
 
-            const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
-            FilledButton.icon(
-              onPressed: isLoading ? null : onCalculate,
-              icon: isLoading
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.route),
-              label: Text(isLoading ? 'Calculando...' : 'Calcular ruta'),
+          TextField(
+            controller: destinationController,
+            enabled: !isLoading,
+            textInputAction: TextInputAction.done,
+            decoration: InputDecoration(
+              labelText: 'Destino',
+              hintText: 'Ingresa el punto de destino',
+              prefixIcon: const Icon(Icons.location_on_outlined),
+              border: const OutlineInputBorder(),
+              errorText: destinationError,
             ),
-          ],
-        ),
+            onSubmitted: (_) {
+              if (!isLoading) {
+                onCalculate();
+              }
+            },
+          ),
+
+          ?destinationSuggestions,
+
+          const SizedBox(height: 16),
+
+          FilledButton.icon(
+            onPressed: isLoading ? null : onCalculate,
+            icon: isLoading
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.route),
+            label: Text(isLoading ? 'Calculando...' : 'Calcular ruta'),
+          ),
+        ],
       ),
     );
+    return embedded ? content : Card(child: content);
   }
 }

@@ -5,6 +5,31 @@ import 'package:transporte_inteligente/services/place_suggestion_service.dart';
 
 void main() {
   group('PlaceSuggestionService', () {
+    test(
+      'omite lang=es que el endpoint público rechaza con HTTP 400',
+      () async {
+        final service = PlaceSuggestionService(
+          client: MockClient((request) async {
+            if (request.url.queryParameters['lang'] == 'es') {
+              return http.Response(
+                '{"lang":[{"message":"Language is not supported. Supported are: default, de, en, fr"}]}',
+                400,
+              );
+            }
+            return http.Response('''
+            {"type":"FeatureCollection","features":[{
+              "geometry":{"type":"Point","coordinates":[-73.1072592,7.0992729]},
+              "properties":{"name":"Centro Comercial Cacique","city":"Bucaramanga"}
+            }]}
+          ''', 200);
+          }),
+        );
+
+        final results = await service.search('centro comercial cacique');
+        expect(results.single.name, 'Centro Comercial Cacique');
+        expect(results.single.latitude, 7.0992729);
+      },
+    );
     test('termina una solicitud que no responde', () async {
       final service = PlaceSuggestionService(
         client: MockClient((_) async {

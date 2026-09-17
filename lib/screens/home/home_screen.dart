@@ -8,6 +8,7 @@ import '../../models/route_result.dart';
 import '../../services/location_service.dart';
 import '../../services/geocoding_service.dart';
 import '../../services/osrm_routing_service.dart';
+import '../../services/place_suggestion_service.dart';
 import '../../services/perfil_service.dart';
 import '../../widgets/app_navigation_drawer.dart';
 import '../../widgets/map_search_panel.dart';
@@ -24,11 +25,13 @@ class HomeScreen extends StatefulWidget {
     this.loadProfile,
     this.geocodingService,
     this.routingService,
+    this.placeSuggestionService,
   });
   final LocationService? locationService;
   final Future<Perfil?> Function()? loadProfile;
   final GeocodingService? geocodingService;
   final OsrmRoutingService? routingService;
+  final PlaceSuggestionService? placeSuggestionService;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -343,6 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   currentPosition: position,
                   locationStatus: _locationStatus,
                   geocodingService: widget.geocodingService,
+                  placeSuggestionService: widget.placeSuggestionService,
                   routingService: widget.routingService,
                   onRouteChanged: (result) => setState(() => _route = result),
                 ),

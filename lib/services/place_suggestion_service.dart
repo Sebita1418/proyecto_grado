@@ -5,10 +5,20 @@ import 'package:http/http.dart' as http;
 
 import '../models/place_suggestion.dart';
 
+enum PlaceSuggestionFailure { timeout, connectivity, http, invalidResponse }
+
 class PlaceSuggestionException implements Exception {
-  const PlaceSuggestionException(this.message);
+  const PlaceSuggestionException(
+    this.message, {
+    this.failure,
+    this.statusCode,
+    this.cause,
+  });
 
   final String message;
+  final PlaceSuggestionFailure? failure;
+  final int? statusCode;
+  final Object? cause;
 
   @override
   String toString() => message;
@@ -28,13 +38,27 @@ class PlaceSuggestionService {
   final bool _ownsClient;
   final Duration timeout;
 
+  static Uri buildPhotonUri(String query) {
+    final encodedQuery = Uri.encodeQueryComponent(query.trim());
+    final encodedLatitude = Uri.encodeQueryComponent(
+      _bucaramangaLatitude.toString(),
+    );
+    final encodedLongitude = Uri.encodeQueryComponent(
+      _bucaramangaLongitude.toString(),
+    );
+    return Uri.parse(
+      'https://photon.komoot.io/api/'
+      '?q=$encodedQuery'
+      '&lat=$encodedLatitude'
+      '&lon=$encodedLongitude'
+      '&limit=5',
+    );
+  }
+
   Future<List<PlaceSuggestion>> search(String query) async {
-    final uri = Uri.https('photon.komoot.io', '/api/', {
-      'q': query.trim(),
-      'lat': _bucaramangaLatitude.toString(),
-      'lon': _bucaramangaLongitude.toString(),
-      'limit': '5',
-    });
+    final trimmedQuery = query.trim();
+    if (trimmedQuery.length < 3) return const [];
+    final uri = buildPhotonUri(trimmedQuery);
 
     http.Response response;
     try {
@@ -48,23 +72,31 @@ class PlaceSuggestionService {
             },
           )
           .timeout(timeout);
-    } on TimeoutException {
-      throw const PlaceSuggestionException(
+    } on TimeoutException catch (error) {
+      throw PlaceSuggestionException(
         'Photon tardó demasiado. Intenta de nuevo o calcula con la dirección escrita.',
+        failure: PlaceSuggestionFailure.timeout,
+        cause: error,
       );
     } on http.ClientException catch (error) {
       throw PlaceSuggestionException(
         'No fue posible conectar con Photon: ${error.message}',
+        failure: PlaceSuggestionFailure.connectivity,
+        cause: error,
       );
-    } catch (_) {
-      throw const PlaceSuggestionException(
+    } catch (error) {
+      throw PlaceSuggestionException(
         'No fue posible buscar lugares. Intenta de nuevo.',
+        failure: PlaceSuggestionFailure.connectivity,
+        cause: error,
       );
     }
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw PlaceSuggestionException(
         'Photon respondió con HTTP ${response.statusCode}.',
+        failure: PlaceSuggestionFailure.http,
+        statusCode: response.statusCode,
       );
     }
 
@@ -79,14 +111,18 @@ class PlaceSuggestionService {
         throw const FormatException('Falta la lista de features.');
       }
 
-      return features
-          .map(_parseFeature)
-          .whereType<PlaceSuggestion>()
-          .take(5)
-          .toList();
+      final suggestions = <PlaceSuggestion>[];
+      for (var index = 0; index < features.length; index++) {
+        final place = _parseFeature(features[index]);
+        if (place != null) suggestions.add(place);
+        if (suggestions.length == 5) break;
+      }
+      return suggestions;
     } on FormatException catch (error) {
       throw PlaceSuggestionException(
         'Respuesta inválida de Photon: ${error.message}',
+        failure: PlaceSuggestionFailure.invalidResponse,
+        cause: error,
       );
     }
   }

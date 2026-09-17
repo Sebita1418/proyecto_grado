@@ -5,6 +5,50 @@ import 'package:transporte_inteligente/services/place_suggestion_service.dart';
 
 void main() {
   group('PlaceSuggestionService', () {
+    for (final query in [
+      'cacique',
+      'centro comercial cacique',
+      'Clínica Chicamocha',
+      'calle 36 # 15-32',
+    ]) {
+      test('construye URI Photon sin HTTP para "$query"', () {
+        final uri = PlaceSuggestionService.buildPhotonUri(query);
+        expect(uri.scheme, 'https');
+        expect(uri.host, 'photon.komoot.io');
+        expect(uri.path, '/api/');
+        expect(uri.queryParameters['q'], query);
+        expect(uri.queryParameters['lat'], '7.119349');
+        expect(uri.queryParameters['lon'], '-73.122742');
+        expect(uri.queryParameters['limit'], '5');
+        expect(uri.queryParameters.containsKey('lang'), isFalse);
+        expect(uri.queryParameters, hasLength(4));
+      });
+    }
+
+    test('construye el URI Photon con parámetros de texto', () async {
+      Uri? requestedUri;
+      final service = PlaceSuggestionService(
+        client: MockClient((request) async {
+          requestedUri = request.url;
+          return http.Response('{"features":[]}', 200);
+        }),
+      );
+
+      expect(await service.search(' centro comercial cacique '), isEmpty);
+      final uri = requestedUri!;
+      expect(uri.scheme, 'https');
+      expect(uri.host, 'photon.komoot.io');
+      expect(uri.path, '/api/');
+      expect(uri.queryParameters, {
+        'q': 'centro comercial cacique',
+        'lat': '7.119349',
+        'lon': '-73.122742',
+        'limit': '5',
+      });
+      expect(uri.queryParameters.values, everyElement(isA<String>()));
+      expect(uri.queryParameters.containsKey('lang'), isFalse);
+    });
+
     test(
       'omite lang=es que el endpoint público rechaza con HTTP 400',
       () async {
@@ -40,7 +84,13 @@ void main() {
       );
       expect(
         () => service.search('parque'),
-        throwsA(isA<PlaceSuggestionException>()),
+        throwsA(
+          isA<PlaceSuggestionException>().having(
+            (error) => error.failure,
+            'failure',
+            PlaceSuggestionFailure.timeout,
+          ),
+        ),
       );
     });
     test('consulta Photon y parsea varios resultados', () async {
@@ -88,12 +138,45 @@ void main() {
       expect(request.url.queryParameters['lat'], '7.119349');
       expect(request.url.queryParameters['lon'], '-73.122742');
       expect(request.url.queryParameters['limit'], '5');
+      expect(request.url.queryParameters.containsKey('lang'), isFalse);
       expect(request.headers['User-Agent'], contains('TransporteInteligente'));
       expect(results, hasLength(2));
       expect(results.first.name, 'Parque Santander');
       expect(results.first.description, 'Bucaramanga, Santander, Colombia');
       expect(results.first.latitude, 7.1193);
       expect(results.first.longitude, -73.1227);
+    });
+
+    test(
+      'no consulta Photon para texto vacío o de menos de tres caracteres',
+      () async {
+        var requests = 0;
+        final service = PlaceSuggestionService(
+          client: MockClient((_) async {
+            requests++;
+            return http.Response('{"features":[]}', 200);
+          }),
+        );
+        expect(await service.search('  '), isEmpty);
+        expect(await service.search('ab'), isEmpty);
+        expect(requests, 0);
+      },
+    );
+
+    test('clasifica fallo de conectividad del cliente', () async {
+      final service = PlaceSuggestionService(
+        client: MockClient((_) async => throw http.ClientException('sin red')),
+      );
+      await expectLater(
+        service.search('cacique'),
+        throwsA(
+          isA<PlaceSuggestionException>().having(
+            (error) => error.failure,
+            'failure',
+            PlaceSuggestionFailure.connectivity,
+          ),
+        ),
+      );
     });
 
     test('devuelve una lista vacía para un FeatureCollection vacío', () async {
@@ -115,11 +198,9 @@ void main() {
       expect(
         () => service.search('parque'),
         throwsA(
-          isA<PlaceSuggestionException>().having(
-            (error) => error.message,
-            'message',
-            contains('HTTP 503'),
-          ),
+          isA<PlaceSuggestionException>()
+              .having((error) => error.message, 'message', contains('HTTP 503'))
+              .having((error) => error.statusCode, 'statusCode', 503),
         ),
       );
     });
@@ -132,7 +213,13 @@ void main() {
 
         expect(
           () => service.search('parque'),
-          throwsA(isA<PlaceSuggestionException>()),
+          throwsA(
+            isA<PlaceSuggestionException>().having(
+              (error) => error.failure,
+              'failure',
+              PlaceSuggestionFailure.invalidResponse,
+            ),
+          ),
         );
       }
     });

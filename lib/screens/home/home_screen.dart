@@ -15,6 +15,7 @@ import '../../widgets/map_search_panel.dart';
 import '../../widgets/route_map.dart';
 import '../admin/admin_screen.dart';
 import '../login/login_screen.dart';
+import '../nearby/nearby_places_screen.dart';
 import '../perfil/perfil_screen.dart';
 import '../rutas/rutas_screen.dart';
 
@@ -194,14 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
         perfil: _perfil,
         onHome: () => Navigator.pop(context),
         onRoutes: () => _open(const RutasScreen()),
-        onNearby: () {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Puntos cercanos aún no está disponible.'),
-            ),
-          );
-        },
+        onNearby: () => _open(const NearbyPlacesScreen()),
         onProfile: () {
           if (_perfil != null) _open(PerfilScreen(perfil: _perfil!));
         },

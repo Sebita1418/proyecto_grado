@@ -74,6 +74,111 @@ class ForbiddenGeocoding extends GeocodingService {
 }
 
 void main() {
+  for (final fieldIndex in [0, 1]) {
+    final fieldName = fieldIndex == 0 ? 'origen' : 'destino';
+    testWidgets(
+      'cursor conserva selección y ruta; editar invalida $fieldName',
+      (tester) async {
+        final routing = ControlledRouting();
+        final geocoding = FixedGeocoding();
+        final suggestions = FixedSuggestions();
+        addTearDown(routing.dispose);
+        addTearDown(geocoding.dispose);
+        addTearDown(suggestions.dispose);
+        final changes = <RouteResult?>[];
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: MapSearchPanel(
+                currentPosition: null,
+                locationStatus: LocationStatus.permissionDenied,
+                geocodingService: geocoding,
+                placeSuggestionService: suggestions,
+                routingService: routing,
+                onRouteChanged: changes.add,
+              ),
+            ),
+          ),
+        );
+        for (final entry in ['Origen', 'Destino'].asMap().entries) {
+          await tester.enterText(
+            find.byType(TextField).at(entry.key),
+            entry.value,
+          );
+          await tester.pump(const Duration(milliseconds: 450));
+          await tester.pump();
+          final place = find.text(
+            entry.key == 0 ? 'Plaza origen' : 'Plaza destino',
+          );
+          await tester.ensureVisible(place);
+          await tester.tap(place);
+          await tester.pump();
+        }
+        final controller = tester
+            .widget<TextField>(find.byType(TextField).at(fieldIndex))
+            .controller!;
+        controller.selection = const TextSelection.collapsed(offset: 0);
+        await tester.pump();
+        expect(find.text('Buscando lugares...'), findsNothing);
+        await tester.ensureVisible(find.text('Calcular ruta'));
+        await tester.tap(find.text('Calcular ruta'));
+        await tester.pump();
+        expect(routing.calls, 1);
+        expect(routing.lastOrigin, const LatLng(7.11, -73.11));
+        expect(routing.lastDestination, const LatLng(7.22, -73.22));
+
+        controller.selection = const TextSelection(
+          baseOffset: 0,
+          extentOffset: 3,
+        );
+        await tester.pump();
+        expect(find.text('Calculando...'), findsOneWidget);
+        const result = RouteResult(
+          origin: LatLng(7.11, -73.11),
+          destination: LatLng(7.22, -73.22),
+          points: [LatLng(7.11, -73.11), LatLng(7.22, -73.22)],
+          distanceMeters: 1000,
+          durationSeconds: 120,
+        );
+        routing.pending.complete(result);
+        await tester.pump();
+        expect(find.byType(RouteResultCard), findsOneWidget);
+        expect(changes, [null, result]);
+
+        controller.selection = const TextSelection.collapsed(offset: 1);
+        controller.value = controller.value.copyWith(
+          composing: const TextRange(start: 0, end: 2),
+        );
+        await tester.pump();
+        expect(find.byType(RouteResultCard), findsOneWidget);
+        expect(changes, [null, result]);
+
+        await tester.ensureVisible(find.text('Modificar ruta'));
+        await tester.tap(find.text('Modificar ruta'));
+        await tester.pump();
+        await tester.enterText(
+          find.byType(TextField).at(fieldIndex),
+          'Otro lugar',
+        );
+        await tester.pump();
+        expect(changes, [null, result, null]);
+        expect(find.byType(RouteResultCard), findsNothing);
+        await tester.ensureVisible(find.text('Calcular ruta'));
+        await tester.tap(find.text('Calcular ruta'));
+        await tester.pump();
+        expect(routing.calls, 2);
+        expect(
+          routing.lastOrigin,
+          fieldIndex == 0 ? const LatLng(7.2, -73.2) : result.origin,
+        );
+        expect(
+          routing.lastDestination,
+          fieldIndex == 1 ? const LatLng(7.2, -73.2) : result.destination,
+        );
+        await tester.pumpWidget(const SizedBox.shrink());
+      },
+    );
+  }
   testWidgets('fallo Photon es discreto y permite calcular con Nominatim', (
     tester,
   ) async {

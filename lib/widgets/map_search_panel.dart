@@ -36,6 +36,8 @@ class MapSearchPanel extends StatefulWidget {
 class _MapSearchPanelState extends State<MapSearchPanel> {
   final _origin = TextEditingController();
   final _destination = TextEditingController();
+  String _lastOriginText = '';
+  String _lastDestinationText = '';
   late final _geocoding = widget.geocodingService ?? GeocodingService();
   late final _suggestions =
       widget.placeSuggestionService ?? PlaceSuggestionService();
@@ -97,6 +99,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   }
 
   void _onOriginChanged() {
+    final text = _origin.text;
+    if (text == _lastOriginText) return;
+    _lastOriginText = text;
     _invalidate();
     _selectedOrigin = null;
     final query = _origin.text.trim();
@@ -139,6 +144,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     ++_originRequest;
     _origin.removeListener(_onOriginChanged);
     _origin.text = place.displayText;
+    _lastOriginText = _origin.text;
     _origin.addListener(_onOriginChanged);
     setState(() {
       _selectedOrigin = place;
@@ -150,6 +156,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   }
 
   void _onDestinationChanged() {
+    final text = _destination.text;
+    if (text == _lastDestinationText) return;
+    _lastDestinationText = text;
     _invalidate();
     _selected = null;
     final query = _destination.text.trim();
@@ -200,6 +209,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     ++_request;
     _destination.removeListener(_onDestinationChanged);
     _destination.text = place.displayText;
+    _lastDestinationText = _destination.text;
     _destination.addListener(_onDestinationChanged);
     setState(() {
       _selected = place;

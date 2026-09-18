@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:transporte_inteligente/screens/home/home_screen.dart';
+import 'package:transporte_inteligente/screens/nearby/nearby_places_screen.dart';
 import 'package:transporte_inteligente/services/location_service.dart';
 import 'package:transporte_inteligente/widgets/route_map.dart';
 
@@ -66,5 +67,35 @@ void main() {
     expect(find.byType(RouteMap), findsOneWidget);
     expect(find.text('Origen'), findsOneWidget);
     expect(find.byTooltip('Mi ubicación'), findsOneWidget);
+  });
+
+  testWidgets('Puntos cercanos abre la pantalla y permite volver al mapa', (
+    tester,
+  ) async {
+    await render(
+      tester,
+      const LocationResult(
+        LocationStatus.coordinatesObtained,
+        coordinates: LatLng(7.1, -73.1),
+      ),
+    );
+    for (final useBackButton in [false, true]) {
+      await tester.tap(find.byTooltip('Open navigation menu'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Puntos cercanos'));
+      await tester.pumpAndSettle();
+      expect(find.byType(NearbyPlacesScreen), findsOneWidget);
+      expect(find.text('Aún no disponible'), findsOneWidget);
+      if (useBackButton) {
+        await tester.tap(find.byType(BackButton));
+      } else {
+        await tester.ensureVisible(find.text('Volver al mapa'));
+        await tester.tap(find.text('Volver al mapa'));
+      }
+      await tester.pumpAndSettle();
+      expect(find.byType(NearbyPlacesScreen), findsNothing);
+      expect(find.byType(RouteMap), findsOneWidget);
+      expect(find.byType(Drawer), findsNothing);
+    }
   });
 }

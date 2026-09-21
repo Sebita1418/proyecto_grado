@@ -96,13 +96,13 @@ class _RutasScreenState extends State<RutasScreen> {
         cargando = false;
         error = null;
       });
-    } catch (e) {
+    } catch (_) {
       if (!mounted) {
         return;
       }
 
       setState(() {
-        error = e.toString();
+        error = 'Comprueba tu conexión e intenta de nuevo.';
         cargando = false;
       });
     }
@@ -222,16 +222,18 @@ class _RutasScreenState extends State<RutasScreen> {
           cargandoSugerenciasDestino = false;
         }
       });
-    } on PlaceSuggestionException catch (error) {
+    } on PlaceSuggestionException {
       if (!mounted || !_esSolicitudActual(solicitud, esOrigen)) return;
 
       setState(() {
         if (esOrigen) {
           cargandoSugerenciasOrigen = false;
-          errorSugerenciasOrigen = error.message;
+          errorSugerenciasOrigen =
+              'No fue posible buscar lugares. Intenta de nuevo.';
         } else {
           cargandoSugerenciasDestino = false;
-          errorSugerenciasDestino = error.message;
+          errorSugerenciasDestino =
+              'No fue posible buscar lugares. Intenta de nuevo.';
         }
       });
     } catch (_) {
@@ -373,7 +375,9 @@ class _RutasScreenState extends State<RutasScreen> {
     try {
       final origenEncontrado = origenSeleccionado != null
           ? _resultadoDeSugerencia(origenSeleccionado!)
-          : await _geocodingService.search(origen);
+          : await _geocodingService
+                .search(origen)
+                .timeout(const Duration(seconds: 10));
       if (!mounted) return;
       if (origenEncontrado == null) {
         _mostrarMensaje('No se encontró el origen: $origen.');
@@ -382,7 +386,9 @@ class _RutasScreenState extends State<RutasScreen> {
 
       final destinoEncontrado = destinoSeleccionado != null
           ? _resultadoDeSugerencia(destinoSeleccionado!)
-          : await _geocodingService.search(destino);
+          : await _geocodingService
+                .search(destino)
+                .timeout(const Duration(seconds: 10));
       if (!mounted) return;
       if (destinoEncontrado == null) {
         _mostrarMensaje('No se encontró el destino: $destino.');
@@ -408,8 +414,12 @@ class _RutasScreenState extends State<RutasScreen> {
       _mostrarMensaje(
         'Origen y destino encontrados. El cálculo de ruta está pendiente.',
       );
-    } on GeocodingException catch (error) {
-      if (mounted) _mostrarMensaje(error.message);
+    } catch (_) {
+      if (mounted) {
+        _mostrarMensaje(
+          'No fue posible localizar los puntos. Intenta de nuevo.',
+        );
+      }
     } finally {
       if (mounted) setState(() => calculandoRuta = false);
     }
@@ -578,7 +588,8 @@ class _RutasScreenState extends State<RutasScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            'Busca lugares o toca el mapa para elegir origen y destino.',
+            'Busca lugares o toca el mapa para elegir origen y destino. '
+            'Para calcular un recorrido, vuelve a Mapa / Inicio.',
             style: TextStyle(fontSize: 15, color: Colors.grey[600]),
           ),
           const SizedBox(height: 20),
@@ -586,6 +597,9 @@ class _RutasScreenState extends State<RutasScreen> {
             originController: originController,
             destinationController: destinationController,
             onCalculate: calcularRuta,
+            title: 'Localiza origen y destino',
+            actionLabel: 'Mostrar puntos',
+            loadingLabel: 'Localizando...',
             isLoading: calculandoRuta,
             originError: originError,
             destinationError: destinationError,

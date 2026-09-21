@@ -92,15 +92,17 @@ class RouteResultCard extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Ruta recomendada',
+                  'Ruta calculada',
                   style: theme.textTheme.titleMedium,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          Wrap(
+            spacing: 12,
+            runSpacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.end,
             children: [
               Text(
                 duration,
@@ -109,7 +111,6 @@ class RouteResultCard extends StatelessWidget {
                   color: colors.primary,
                 ),
               ),
-              const SizedBox(width: 12),
               Padding(
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Text(distance, style: theme.textTheme.titleMedium),

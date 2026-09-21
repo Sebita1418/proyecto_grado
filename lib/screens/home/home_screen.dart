@@ -60,7 +60,14 @@ class _HomeScreenState extends State<HomeScreen> {
           await (widget.loadProfile ?? PerfilService().obtenerPerfilActual)();
       if (mounted) setState(() => _perfil = perfil);
     } catch (_) {
-      // The map remains available when profile loading fails.
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'No fue posible cargar tu perfil. Puedes seguir usando el mapa.',
+          ),
+        ),
+      );
     }
   }
 
@@ -197,7 +204,23 @@ class _HomeScreenState extends State<HomeScreen> {
         onRoutes: () => _open(const RutasScreen()),
         onNearby: () => _open(const NearbyPlacesScreen()),
         onProfile: () {
-          if (_perfil != null) _open(PerfilScreen(perfil: _perfil!));
+          if (_perfil != null) {
+            _open(PerfilScreen(perfil: _perfil!));
+          } else {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text(
+                  'Tu perfil no está disponible. Intenta cargarlo de nuevo.',
+                ),
+                action: SnackBarAction(
+                  label: 'Reintentar',
+                  onPressed: _loadProfile,
+                ),
+              ),
+            );
+          }
         },
         onAdmin: _perfil?.esAdministrador == true
             ? () => _open(const AdminScreen())

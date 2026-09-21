@@ -31,6 +31,29 @@ class OsrmRoutingService {
   Future<RouteResult> route({
     required LatLng origin,
     required LatLng destination,
+  }) async => (await _requestRoutes(
+    origin: origin,
+    destination: destination,
+    alternatives: false,
+  )).first;
+
+  /// Requests every vehicle route returned by OSRM, in provider order.
+  /// OSRM may return only one route even when alternatives are enabled.
+  /// A malformed candidate rejects the entire response instead of silently
+  /// presenting an incomplete set of candidates.
+  Future<List<RouteResult>> routeAlternatives({
+    required LatLng origin,
+    required LatLng destination,
+  }) => _requestRoutes(
+    origin: origin,
+    destination: destination,
+    alternatives: true,
+  );
+
+  Future<List<RouteResult>> _requestRoutes({
+    required LatLng origin,
+    required LatLng destination,
+    required bool alternatives,
   }) async {
     if (!_validPoint(origin) || !_validPoint(destination)) {
       throw const OsrmRoutingException(
@@ -43,7 +66,7 @@ class OsrmRoutingService {
       path: '${endpoint.path}/route/v1/driving/$coordinates',
       queryParameters: {
         'steps': 'false',
-        'alternatives': 'false',
+        'alternatives': alternatives.toString(),
         'overview': 'full',
         'geometries': 'geojson',
       },
@@ -82,67 +105,76 @@ class OsrmRoutingService {
         );
       }
       final routes = body['routes'];
-      if (routes is! List ||
-          routes.isEmpty ||
-          routes.first is! Map<String, dynamic>) {
+      if (routes is! List || routes.isEmpty) {
         throw const OsrmRoutingException('El servicio no devolvió una ruta.');
       }
-      final route = routes.first as Map<String, dynamic>;
-      final geometry = route['geometry'];
-      if (geometry is! Map<String, dynamic> ||
-          geometry['type'] != 'LineString') {
-        throw const OsrmRoutingException(
-          'La geometría de la ruta es inválida.',
-        );
-      }
-      final coordinates = geometry['coordinates'];
-      if (coordinates is! List || coordinates.length < 2) {
-        throw const OsrmRoutingException('La geometría de la ruta está vacía.');
-      }
-      final points = <LatLng>[];
-      for (final coordinate in coordinates) {
-        if (coordinate is! List ||
-            coordinate.length < 2 ||
-            coordinate[0] is! num ||
-            coordinate[1] is! num) {
-          throw const OsrmRoutingException(
-            'La geometría de la ruta es inválida.',
-          );
-        }
-        // GeoJSON stores [longitude, latitude]; latlong2 expects LatLng(latitude, longitude).
-        final point = LatLng(
-          (coordinate[1] as num).toDouble(),
-          (coordinate[0] as num).toDouble(),
-        );
-        if (!_validPoint(point)) {
-          throw const OsrmRoutingException(
-            'La geometría contiene coordenadas inválidas.',
-          );
-        }
-        points.add(point);
-      }
-      final distance = route['distance'];
-      final duration = route['duration'];
-      if (distance is! num || !distance.isFinite || distance < 0) {
-        throw const OsrmRoutingException(
-          'La distancia de la ruta es inválida.',
-        );
-      }
-      if (duration is! num || !duration.isFinite || duration < 0) {
-        throw const OsrmRoutingException('La duración de la ruta es inválida.');
-      }
-      return RouteResult(
-        origin: origin,
-        destination: destination,
-        points: List.unmodifiable(points),
-        distanceMeters: distance.toDouble(),
-        durationSeconds: duration.toDouble(),
-      );
+      // Keep route() compatible: it has always consumed only routes.first.
+      final candidates = alternatives ? routes : [routes.first];
+      return List<RouteResult>.unmodifiable([
+        for (final candidate in candidates)
+          _parseRoute(candidate, origin: origin, destination: destination),
+      ]);
     } on FormatException {
       throw const OsrmRoutingException(
         'La respuesta del servicio de rutas no es válida.',
       );
     }
+  }
+
+  RouteResult _parseRoute(
+    Object? candidate, {
+    required LatLng origin,
+    required LatLng destination,
+  }) {
+    if (candidate is! Map<String, dynamic>) {
+      throw const OsrmRoutingException('La alternativa de ruta es inválida.');
+    }
+    final route = candidate;
+    final geometry = route['geometry'];
+    if (geometry is! Map<String, dynamic> || geometry['type'] != 'LineString') {
+      throw const OsrmRoutingException('La geometría de la ruta es inválida.');
+    }
+    final coordinates = geometry['coordinates'];
+    if (coordinates is! List || coordinates.length < 2) {
+      throw const OsrmRoutingException('La geometría de la ruta está vacía.');
+    }
+    final points = <LatLng>[];
+    for (final coordinate in coordinates) {
+      if (coordinate is! List ||
+          coordinate.length < 2 ||
+          coordinate[0] is! num ||
+          coordinate[1] is! num) {
+        throw const OsrmRoutingException(
+          'La geometría de la ruta es inválida.',
+        );
+      }
+      // GeoJSON stores [longitude, latitude]; latlong2 expects LatLng(latitude, longitude).
+      final point = LatLng(
+        (coordinate[1] as num).toDouble(),
+        (coordinate[0] as num).toDouble(),
+      );
+      if (!_validPoint(point)) {
+        throw const OsrmRoutingException(
+          'La geometría contiene coordenadas inválidas.',
+        );
+      }
+      points.add(point);
+    }
+    final distance = route['distance'];
+    final duration = route['duration'];
+    if (distance is! num || !distance.isFinite || distance < 0) {
+      throw const OsrmRoutingException('La distancia de la ruta es inválida.');
+    }
+    if (duration is! num || !duration.isFinite || duration < 0) {
+      throw const OsrmRoutingException('La duración de la ruta es inválida.');
+    }
+    return RouteResult(
+      origin: origin,
+      destination: destination,
+      points: List.unmodifiable(points),
+      distanceMeters: distance.toDouble(),
+      durationSeconds: duration.toDouble(),
+    );
   }
 
   bool _validPoint(LatLng point) =>

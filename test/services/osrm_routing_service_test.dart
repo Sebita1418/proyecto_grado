@@ -12,6 +12,154 @@ const validBody = '''
 ''';
 
 void main() {
+  Future<List<LatLng>> alternativesFor(String body) async {
+    final service = OsrmRoutingService(
+      client: MockClient((request) async {
+        expect(request.url.path, '/route/v1/driving/-73.1,7.1;-73.2,7.2');
+        expect(request.url.queryParameters, {
+          'steps': 'false',
+          'alternatives': 'true',
+          'overview': 'full',
+          'geometries': 'geojson',
+        });
+        return http.Response(body, 200);
+      }),
+    );
+    final routes = await service.routeAlternatives(
+      origin: origin,
+      destination: destination,
+    );
+    return routes.first.points;
+  }
+
+  test('alternativas admite una sola ruta sin fabricar más', () async {
+    expect(await alternativesFor(validBody), [
+      origin,
+      const LatLng(7.14, -73.15),
+      destination,
+    ]);
+  });
+
+  test(
+    'alternativas conserva orden, geometrías y métricas independientes',
+    () async {
+      final body = '''{"code":"Ok","routes":[
+      {"distance":7400,"duration":1080,"geometry":{"type":"LineString",
+       "coordinates":[[-73.1,7.1],[-73.15,7.14],[-73.2,7.2]]}},
+      {"distance":9100,"duration":900,"geometry":{"type":"LineString",
+       "coordinates":[[-73.1,7.1],[-73.12,7.18],[-73.17,7.19],[-73.2,7.2]]}}
+    ]}''';
+      final service = OsrmRoutingService(
+        client: MockClient((_) async => http.Response(body, 200)),
+      );
+      final routes = await service.routeAlternatives(
+        origin: origin,
+        destination: destination,
+      );
+      expect(routes, hasLength(2));
+      expect(routes.map((r) => r.points), [
+        [origin, const LatLng(7.14, -73.15), destination],
+        [
+          origin,
+          const LatLng(7.18, -73.12),
+          const LatLng(7.19, -73.17),
+          destination,
+        ],
+      ]);
+      expect(routes.map((r) => r.distanceMeters), [7400, 9100]);
+      expect(routes.map((r) => r.durationSeconds), [1080, 900]);
+      expect(
+        routes.every((r) => r.origin == origin && r.destination == destination),
+        isTrue,
+      );
+      expect(() => routes.clear(), throwsUnsupportedError);
+    },
+  );
+
+  test('alternativa defectuosa invalida toda la respuesta', () async {
+    const valid =
+        '{"distance":1,"duration":2,"geometry":{"type":"LineString","coordinates":[[0,0],[1,1]]}}';
+    for (final invalid in [
+      '{"distance":1,"duration":2,"geometry":{"type":"LineString","coordinates":[[0,0],[200,95]]}}',
+      '{"distance":-1,"duration":2,"geometry":{"type":"LineString","coordinates":[[0,0],[1,1]]}}',
+      '{"distance":1,"duration":"2","geometry":{"type":"LineString","coordinates":[[0,0],[1,1]]}}',
+      'null',
+    ]) {
+      final service = OsrmRoutingService(
+        client: MockClient(
+          (_) async =>
+              http.Response('{"code":"Ok","routes":[$valid,$invalid]}', 200),
+        ),
+      );
+      await expectLater(
+        service.routeAlternatives(origin: origin, destination: destination),
+        throwsA(isA<OsrmRoutingException>()),
+      );
+    }
+  });
+
+  test('alternativas rechaza respuesta vacía, JSON y code inválidos', () async {
+    for (final body in [
+      '{',
+      '{"code":"NoRoute"}',
+      '{"code":"Ok"}',
+      '{"code":"Ok","routes":[]}',
+    ]) {
+      final service = OsrmRoutingService(
+        client: MockClient((_) async => http.Response(body, 200)),
+      );
+      await expectLater(
+        service.routeAlternatives(origin: origin, destination: destination),
+        throwsA(isA<OsrmRoutingException>()),
+      );
+    }
+  });
+
+  test('alternativas rechaza HTTP, timeout y red', () async {
+    final services = [
+      OsrmRoutingService(
+        client: MockClient((_) async => http.Response('', 503)),
+      ),
+      OsrmRoutingService(
+        client: MockClient((_) async {
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+          return http.Response(validBody, 200);
+        }),
+        timeout: const Duration(milliseconds: 1),
+      ),
+      OsrmRoutingService(
+        client: MockClient((_) async => throw http.ClientException('offline')),
+      ),
+    ];
+    for (final service in services) {
+      await expectLater(
+        service.routeAlternatives(origin: origin, destination: destination),
+        throwsA(isA<OsrmRoutingException>()),
+      );
+    }
+  });
+
+  test(
+    'route conserva la primera ruta y su solicitud sin alternativas',
+    () async {
+      final service = OsrmRoutingService(
+        client: MockClient((request) async {
+          expect(request.url.queryParameters['alternatives'], 'false');
+          return http.Response(
+            '''{"code":"Ok","routes":[
+          {"distance":7400,"duration":1080,"geometry":{"type":"LineString",
+           "coordinates":[[-73.1,7.1],[-73.15,7.14],[-73.2,7.2]]}},null]}''',
+            200,
+          );
+        }),
+      );
+      final route = await service.route(
+        origin: origin,
+        destination: destination,
+      );
+      expect(route.distanceMeters, 7400);
+    },
+  );
   test(
     'envía contrato OSRM y conserva orden, coordenadas y métricas',
     () async {

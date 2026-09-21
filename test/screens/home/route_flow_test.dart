@@ -357,11 +357,17 @@ void main() {
     final routing = ControlledRouting();
     await render(tester, routing);
     routing.pending.completeError(
-      const OsrmRoutingException('No se encontró una ruta.'),
+      const OsrmRoutingException('OSRM HTTP 503: {internal error}'),
     );
     await tester.pump();
     expect(find.text('Calculando...'), findsNothing);
     expect(tester.widget<RouteMap>(find.byType(RouteMap)).polylines, isEmpty);
-    expect(find.text('No se encontró una ruta.'), findsOneWidget);
+    expect(
+      find.text(
+        'No fue posible calcular la ruta. Revisa los puntos e intenta de nuevo.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('HTTP'), findsNothing);
   });
 }

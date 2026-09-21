@@ -188,9 +188,11 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       setState(
         () => _suggestionError = 'La búsqueda tardó demasiado. Puedes calcular con el texto escrito.',
       );
-    } on PlaceSuggestionException catch (error) {
+    } on PlaceSuggestionException {
       if (!mounted || request != _request) return;
-      setState(() => _suggestionError = error.message);
+      setState(
+        () => _suggestionError = 'No fue posible buscar lugares. Puedes calcular con el texto escrito.',
+      );
     } catch (_) {
       if (!mounted || request != _request) return;
       setState(
@@ -253,7 +255,8 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
             );
       if (!mounted || calculation != _calculation) return;
       if (origin == null) {
-        throw const GeocodingException('No se encontró el origen.');
+        _message('No se encontró el origen.');
+        return;
       }
       final destination = _selected != null
           ? LatLng(_selected!.latitude, _selected!.longitude)
@@ -264,7 +267,8 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
             );
       if (!mounted || calculation != _calculation) return;
       if (destination == null) {
-        throw const GeocodingException('No se encontró el destino.');
+        _message('No se encontró el destino.');
+        return;
       }
       setState(() => _phase = 'Calculando ruta...');
       final result = await _routing
@@ -282,10 +286,16 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       if (mounted && calculation == _calculation) {
         _message('La consulta tardó demasiado. Intenta de nuevo.');
       }
-    } on OsrmRoutingException catch (error) {
-      if (mounted && calculation == _calculation) _message(error.message);
-    } on GeocodingException catch (error) {
-      if (mounted && calculation == _calculation) _message(error.message);
+    } on OsrmRoutingException {
+      if (mounted && calculation == _calculation) {
+        _message(
+          'No fue posible calcular la ruta. Revisa los puntos e intenta de nuevo.',
+        );
+      }
+    } on GeocodingException {
+      if (mounted && calculation == _calculation) {
+        _message('No fue posible buscar los lugares. Intenta de nuevo.');
+      }
     } catch (_) {
       if (mounted && calculation == _calculation) {
         _message('No fue posible calcular la ruta. Intenta de nuevo.');

@@ -5,9 +5,16 @@ import 'package:transporte_inteligente/models/route_result.dart';
 import 'package:transporte_inteligente/widgets/route_result_card.dart';
 
 void main() {
-  for (final width in [390.0, 768.0, 1440.0]) {
+  for (final width in [390.0, 768.0, 1366.0]) {
     testWidgets('resumen se adapta a ${width.toInt()} px', (tester) async {
-      tester.view.physicalSize = Size(width, 844);
+      tester.view.physicalSize = Size(
+        width,
+        width == 768
+            ? 1024
+            : width == 1366
+            ? 768
+            : 844,
+      );
       tester.view.devicePixelRatio = 1;
       addTearDown(() {
         tester.view.resetPhysicalSize();
@@ -38,6 +45,8 @@ void main() {
         ),
       );
       expect(tester.takeException(), isNull);
+      expect(find.text('Ruta calculada'), findsOneWidget);
+      expect(find.text('Ruta recomendada'), findsNothing);
       expect(find.text('9.8 km'), findsOneWidget);
       expect(find.text('11 min'), findsOneWidget);
     });

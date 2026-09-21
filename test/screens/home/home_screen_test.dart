@@ -69,6 +69,20 @@ void main() {
     expect(find.byTooltip('Mi ubicación'), findsOneWidget);
   });
 
+  testWidgets('perfil sin datos informa y permite reintentar', (tester) async {
+    await render(tester, const LocationResult(LocationStatus.permissionDenied));
+    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Perfil'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Tu perfil no está disponible. Intenta cargarlo de nuevo.'),
+      findsOneWidget,
+    );
+    expect(find.text('Reintentar'), findsOneWidget);
+    expect(find.byType(RouteMap), findsOneWidget);
+  });
+
   testWidgets('Puntos cercanos abre la pantalla y permite volver al mapa', (
     tester,
   ) async {

@@ -13,6 +13,8 @@ class RoutePlannerForm extends StatelessWidget {
   final bool showOrigin;
   final String title;
   final bool embedded;
+  final String actionLabel;
+  final String loadingLabel;
 
   const RoutePlannerForm({
     super.key,
@@ -27,6 +29,8 @@ class RoutePlannerForm extends StatelessWidget {
     this.showOrigin = true,
     this.title = 'Planifica tu ruta',
     this.embedded = false,
+    this.actionLabel = 'Calcular ruta',
+    this.loadingLabel = 'Calculando...',
   });
 
   @override
@@ -91,7 +95,7 @@ class RoutePlannerForm extends StatelessWidget {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.route),
-            label: Text(isLoading ? 'Calculando...' : 'Calcular ruta'),
+            label: Text(isLoading ? loadingLabel : actionLabel),
           ),
         ],
       ),

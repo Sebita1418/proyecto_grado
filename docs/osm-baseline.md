@@ -2,6 +2,13 @@
 
 Base: develop cc0dfc5. Referencias adaptadas: ecec4cf y 4c1bce2.
 
+> Registro histórico de esa integración. «Flujo activo», pendientes y pruebas
+> de abajo describen cc0dfc5, no el estado actual. En `f2009b2`, Home ya consulta
+> alternativas OSRM y permite selección manual; RutasScreen conserva el cálculo
+> pendiente. El dominio neutral y la UI local de preferencias también existen.
+> Consultar [trazabilidad B5](requirements/traceability_matrix.md),
+> [alternativas](route-alternatives.md) y [preferencias](mobility-preferences.md).
+
 ## Flujo activo
 
 - Supabase OAuth de Google y creación del perfil al iniciar sesión. Home,

@@ -1,8 +1,9 @@
 # Dominio de movilidad
 
 Este paquete define datos y contratos independientes de Photon, OSRM, Google,
-Supabase y la interfaz. El flujo actual de Home sigue calculando una ruta
-vehicular con OSRM y mostrando su `RouteResult`; este incremento no lo cambia.
+Supabase y la interfaz. En el baseline B5 `f2009b2`, Home consulta alternativas
+vehiculares OSRM y muestra el `RouteResult` seleccionado manualmente; todavía
+no utiliza un motor de recomendaciones. Ver [B4](route-alternatives.md).
 
 ## Modelos y relaciones
 
@@ -26,14 +27,17 @@ vehicular con OSRM y mostrando su `RouteResult`; este incremento no lo cambia.
 
 ## Integración actual y pendientes
 
-`OsrmRoutingService` devuelve un `RouteResult`. Un consumidor futuro puede
-envolverlo con `RouteOption.fromRouteResult`, indicando `TransportMode.driving`
+`OsrmRoutingService.route` devuelve un `RouteResult`; `routeAlternatives`
+devuelve la lista de candidatas que usa Home. Un consumidor futuro puede
+envolver cada resultado con `RouteOption.fromRouteResult`, indicando `TransportMode.driving`
 y `source: 'osrm'`, sin depender de clases OSRM dentro del dominio. El modelo
 legado `GoogleRouteResult` permanece separado.
 
-Tráfico, reportes y preferencias podrán alimentar condiciones y razones cuando
-existan fuentes y reglas verificables. Hoy no se consultan esas fuentes ni se
-combinan opciones de distintos modos. Falta definir e implementar una
+Tráfico y reportes no tienen proveedor activo. [B3](mobility-preferences.md)
+captura modos localmente, compatibles con `MobilityContext.allowedModes`,
+sin persistencia ni conexión con un consumidor desde Perfil. Esas preferencias
+todavía no alimentan condiciones, razones o rutas. No se combinan opciones de
+distintos modos. Falta definir e implementar una
 estrategia real para comparar alternativas y explicar la elección.
 
 **El dominio no constituye por sí mismo un motor inteligente.**

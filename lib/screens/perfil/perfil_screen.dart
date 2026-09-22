@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/perfil_model.dart';
+import '../preferences/mobility_preferences_screen.dart';
 
 class PerfilScreen extends StatelessWidget {
   const PerfilScreen({super.key, required this.perfil});
@@ -41,6 +42,22 @@ class PerfilScreen extends StatelessWidget {
           ),
 
           const SizedBox(height: 28),
+
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.tune),
+              title: const Text('Preferencias de movilidad'),
+              subtitle: const Text('Configura tus modos de transporte'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) => const MobilityPreferencesScreen(),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
 
           _PerfilInfoCard(
             icon: Icons.person_outline,

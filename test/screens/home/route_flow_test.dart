@@ -14,6 +14,33 @@ import 'package:transporte_inteligente/services/place_suggestion_service.dart';
 import 'package:transporte_inteligente/widgets/map_search_panel.dart';
 import 'package:transporte_inteligente/widgets/route_map.dart';
 import 'package:transporte_inteligente/widgets/route_result_card.dart';
+import 'package:transporte_inteligente/widgets/route_alternatives_selector.dart';
+
+const firstRoute = RouteResult(
+  origin: LatLng(7.1, -73.1),
+  destination: LatLng(7.2, -73.2),
+  points: [LatLng(7.1, -73.1), LatLng(7.14, -73.15), LatLng(7.2, -73.2)],
+  distanceMeters: 7400,
+  durationSeconds: 1080,
+);
+const secondRoute = RouteResult(
+  origin: LatLng(7.1, -73.1),
+  destination: LatLng(7.2, -73.2),
+  points: [
+    LatLng(7.1, -73.1),
+    LatLng(7.18, -73.12),
+    LatLng(7.19, -73.17),
+    LatLng(7.2, -73.2),
+  ],
+  distanceMeters: 9100,
+  durationSeconds: 900,
+);
+
+Future<void> tapLabel(WidgetTester tester, String label) async {
+  await tester.ensureVisible(find.text(label));
+  await tester.tap(find.text(label));
+  await tester.pumpAndSettle();
+}
 
 class FixedLocation extends LocationService {
   @override
@@ -33,16 +60,24 @@ class FixedGeocoding extends GeocodingService {
 }
 
 class ControlledRouting extends OsrmRoutingService {
-  final Completer<RouteResult> pending = Completer<RouteResult>();
-  int calls = 0;
+  final requests = <Completer<List<RouteResult>>>[];
+  Completer<List<RouteResult>> get pending => requests.last;
+  int get calls => requests.length;
+  void completeSingle(RouteResult route) => pending.complete([route]);
   LatLng? lastOrigin;
   LatLng? lastDestination;
   @override
   Future<RouteResult> route({
     required LatLng origin,
     required LatLng destination,
+  }) => throw StateError('Home debe solicitar routeAlternatives');
+
+  @override
+  Future<List<RouteResult>> routeAlternatives({
+    required LatLng origin,
+    required LatLng destination,
   }) {
-    calls++;
+    requests.add(Completer<List<RouteResult>>());
     lastOrigin = origin;
     lastDestination = destination;
     return pending.future;
@@ -74,6 +109,284 @@ class ForbiddenGeocoding extends GeocodingService {
 }
 
 void main() {
+  Future<void> panel(
+    WidgetTester tester,
+    ControlledRouting routing,
+    List<RouteResult?> changes, {
+    LatLng position = const LatLng(7.1, -73.1),
+  }) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MapSearchPanel(
+            currentPosition: position,
+            locationStatus: LocationStatus.coordinatesObtained,
+            routingService: routing,
+            geocodingService: FixedGeocoding(),
+            placeSuggestionService: FixedSuggestions(),
+            onRouteChanged: changes.add,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+  }
+
+  Future<void> calculate(WidgetTester tester) async {
+    await tester.enterText(find.byType(TextField).last, 'Destino');
+    await tester.ensureVisible(find.text('Calcular ruta'));
+    await tester.tap(find.text('Calcular ruta'));
+    await tester.pump();
+  }
+
+  for (final width in [320.0, 390.0, 768.0, 1440.0]) {
+    testWidgets('alternativas sincronizan Home, mapa y detalles a $width px', (
+      tester,
+    ) async {
+      tester.view.physicalSize = Size(width, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final routing = ControlledRouting();
+      addTearDown(routing.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(1.5)),
+            child: child!,
+          ),
+          home: HomeScreen(
+            locationService: FixedLocation(),
+            loadProfile: () async => null,
+            geocodingService: FixedGeocoding(),
+            placeSuggestionService: FixedSuggestions(),
+            routingService: routing,
+          ),
+        ),
+      );
+      await tester.pump();
+      await calculate(tester);
+      expect(routing.calls, 1);
+      expect(find.text('Calculando...'), findsOneWidget);
+      routing.pending.complete([firstRoute, secondRoute]);
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<RouteResultCard>(find.byType(RouteResultCard)).route,
+        same(firstRoute),
+      );
+      expect(
+        tester.widget<RouteMap>(find.byType(RouteMap)).polylines.single.points,
+        firstRoute.points,
+      );
+      expect(find.text('Alternativa 1 de 2 seleccionada'), findsOneWidget);
+      expect(find.text('Ruta recomendada'), findsNothing);
+      await tapLabel(tester, 'Cambiar alternativa');
+      expect(find.text('Alternativa 1'), findsOneWidget);
+      expect(
+        find.textContaining('7.4 km · Duración estimada: 18 min'),
+        findsOneWidget,
+      );
+      await tester.scrollUntilVisible(
+        find.text('Alternativa 2'),
+        150,
+        scrollable: find.byType(Scrollable).last,
+      );
+      expect(find.text('Alternativa 2'), findsOneWidget);
+      expect(
+        find.textContaining('9.1 km · Duración estimada: 15 min'),
+        findsOneWidget,
+      );
+      await tapLabel(tester, 'Alternativa 2');
+      final card = tester.widget<RouteResultCard>(find.byType(RouteResultCard));
+      expect(card.route, same(secondRoute));
+      expect(card.originLabel, 'Tu ubicación actual');
+      expect(card.destinationLabel, 'Destino');
+      expect(find.text('9.1 km'), findsOneWidget);
+      expect(find.text('15 min'), findsOneWidget);
+      expect(find.text('7.4 km'), findsNothing);
+      expect(find.text('Alternativa 2 de 2 seleccionada'), findsOneWidget);
+      expect(
+        tester.widget<RouteMap>(find.byType(RouteMap)).polylines.single.points,
+        secondRoute.points,
+      );
+      expect(routing.calls, 1);
+      await tapLabel(tester, 'Ver detalles');
+      expect(find.text('9.1 km'), findsNWidgets(2));
+      expect(find.text('15 min'), findsNWidgets(2));
+      expect(find.text('Duración estimada'), findsOneWidget);
+      Navigator.of(tester.element(find.text('Detalles de la ruta'))).pop();
+      await tester.pumpAndSettle();
+      await tapLabel(tester, 'Cambiar alternativa');
+      await tapLabel(tester, 'Alternativa 1');
+      expect(
+        tester.widget<RouteMap>(find.byType(RouteMap)).polylines.single.points,
+        firstRoute.points,
+      );
+      expect(routing.calls, 1);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets(
+    'recalcular reemplaza candidatas; error limpia y permite reintentar',
+    (tester) async {
+      final routing = ControlledRouting();
+      addTearDown(routing.dispose);
+      final changes = <RouteResult?>[];
+      await panel(tester, routing, changes);
+      await calculate(tester);
+      routing.pending.complete([firstRoute, secondRoute]);
+      await tester.pumpAndSettle();
+      await tapLabel(tester, 'Cambiar alternativa');
+      await tapLabel(tester, 'Alternativa 2');
+      expect(changes, [null, firstRoute, secondRoute]);
+      await tapLabel(tester, 'Modificar ruta');
+      await calculate(tester);
+      expect(changes.last, isNull);
+      expect(find.byType(RouteAlternativesSelector), findsNothing);
+      routing.completeSingle(firstRoute);
+      await tester.pumpAndSettle();
+      expect(find.text('Se recibió una sola ruta vehicular.'), findsOneWidget);
+      expect(find.text('Cambiar alternativa'), findsNothing);
+      expect(
+        tester.widget<RouteResultCard>(find.byType(RouteResultCard)).route,
+        same(firstRoute),
+      );
+      await tapLabel(tester, 'Modificar ruta');
+      await calculate(tester);
+      routing.pending.completeError(
+        const OsrmRoutingException('Servicio no disponible'),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Servicio no disponible'), findsOneWidget);
+      expect(find.byType(RouteAlternativesSelector), findsNothing);
+      expect(find.byType(RouteResultCard), findsNothing);
+      expect(changes.last, isNull);
+      expect(find.text('Calculando...'), findsNothing);
+      await calculate(tester);
+      routing.completeSingle(secondRoute);
+      await tester.pumpAndSettle();
+      expect(changes.last, same(secondRoute));
+      expect(routing.calls, 4);
+    },
+  );
+
+  for (final oldFails in [false, true]) {
+    testWidgets(
+      'GPS invalida solicitud; respuesta obsoleta (error=$oldFails) no reemplaza actual',
+      (tester) async {
+        final routing = ControlledRouting();
+        addTearDown(routing.dispose);
+        final changes = <RouteResult?>[];
+        await panel(tester, routing, changes);
+        await calculate(tester);
+        final oldRequest = routing.pending;
+        await panel(
+          tester,
+          routing,
+          changes,
+          position: const LatLng(7.11, -73.11),
+        );
+        await calculate(tester);
+        expect(routing.calls, 2);
+        routing.completeSingle(secondRoute);
+        await tester.pumpAndSettle();
+        final currentChanges = List<RouteResult?>.of(changes);
+        if (oldFails) {
+          oldRequest.completeError(
+            const OsrmRoutingException('Error obsoleto'),
+          );
+        } else {
+          oldRequest.complete([firstRoute, secondRoute]);
+        }
+        await tester.pumpAndSettle();
+        expect(changes, currentChanges);
+        expect(
+          tester.widget<RouteResultCard>(find.byType(RouteResultCard)).route,
+          same(secondRoute),
+        );
+        expect(
+          find.text('Se recibió una sola ruta vehicular.'),
+          findsOneWidget,
+        );
+        expect(find.text('Error obsoleto'), findsNothing);
+        expect(find.text('Calculando...'), findsNothing);
+      },
+    );
+  }
+
+  testWidgets('respuesta obsoleta no termina la carga vigente', (tester) async {
+    final routing = ControlledRouting();
+    addTearDown(routing.dispose);
+    final changes = <RouteResult?>[];
+    await panel(tester, routing, changes);
+    await calculate(tester);
+    final oldRequest = routing.pending;
+    await panel(tester, routing, changes, position: const LatLng(7.11, -73.11));
+    await calculate(tester);
+    final currentChanges = List<RouteResult?>.of(changes);
+    oldRequest.complete([firstRoute, secondRoute]);
+    await tester.pump();
+    expect(changes, currentChanges);
+    expect(find.text('Calculando...'), findsOneWidget);
+    expect(find.byType(RouteAlternativesSelector), findsNothing);
+    expect(
+      tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+      isNull,
+    );
+    routing.completeSingle(secondRoute);
+    await tester.pumpAndSettle();
+    expect(changes.last, same(secondRoute));
+    expect(find.text('Calculando...'), findsNothing);
+  });
+
+  testWidgets('GPS invalida lista y cierra selector abierto', (tester) async {
+    final routing = ControlledRouting();
+    addTearDown(routing.dispose);
+    final changes = <RouteResult?>[];
+    await panel(tester, routing, changes);
+    await calculate(tester);
+    routing.pending.complete([firstRoute, secondRoute]);
+    await tester.pumpAndSettle();
+    await tapLabel(tester, 'Cambiar alternativa');
+    await panel(tester, routing, changes, position: const LatLng(7.11, -73.11));
+    await tester.pumpAndSettle();
+    expect(find.text('Alternativas de ruta vehicular'), findsNothing);
+    expect(find.byType(RouteAlternativesSelector), findsNothing);
+    expect(find.byType(RouteResultCard), findsNothing);
+    expect(changes.last, isNull);
+    expect(routing.calls, 1);
+  });
+
+  testWidgets('dispose descarta una consulta pendiente', (tester) async {
+    final routing = ControlledRouting();
+    addTearDown(routing.dispose);
+    final changes = <RouteResult?>[];
+    await panel(tester, routing, changes);
+    await calculate(tester);
+    final beforeDispose = List<RouteResult?>.of(changes);
+    await tester.pumpWidget(const SizedBox.shrink());
+    routing.pending.complete([firstRoute, secondRoute]);
+    await tester.pumpAndSettle();
+    expect(changes, beforeDispose);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('respuesta vacía no fabrica rutas', (tester) async {
+    final routing = ControlledRouting();
+    addTearDown(routing.dispose);
+    final changes = <RouteResult?>[];
+    await panel(tester, routing, changes);
+    await calculate(tester);
+    routing.pending.complete([]);
+    await tester.pumpAndSettle();
+    expect(find.text('El servicio no devolvió una ruta.'), findsOneWidget);
+    expect(find.byType(RouteResultCard), findsNothing);
+    expect(find.byType(RouteAlternativesSelector), findsNothing);
+    expect(changes, [null]);
+  });
+
   for (final fieldIndex in [0, 1]) {
     final fieldName = fieldIndex == 0 ? 'origen' : 'destino';
     testWidgets(
@@ -140,9 +453,17 @@ void main() {
           distanceMeters: 1000,
           durationSeconds: 120,
         );
-        routing.pending.complete(result);
+        routing.pending.complete([result, secondRoute]);
         await tester.pump();
         expect(find.byType(RouteResultCard), findsOneWidget);
+        expect(
+          tester
+              .widget<RouteAlternativesSelector>(
+                find.byType(RouteAlternativesSelector),
+              )
+              .alternatives,
+          [result, secondRoute],
+        );
         expect(changes, [null, result]);
 
         controller.selection = const TextSelection.collapsed(offset: 1);
@@ -151,6 +472,14 @@ void main() {
         );
         await tester.pump();
         expect(find.byType(RouteResultCard), findsOneWidget);
+        expect(
+          tester
+              .widget<RouteAlternativesSelector>(
+                find.byType(RouteAlternativesSelector),
+              )
+              .alternatives,
+          [result, secondRoute],
+        );
         expect(changes, [null, result]);
 
         await tester.ensureVisible(find.text('Modificar ruta'));
@@ -163,6 +492,7 @@ void main() {
         await tester.pump();
         expect(changes, [null, result, null]);
         expect(find.byType(RouteResultCard), findsNothing);
+        expect(find.byType(RouteAlternativesSelector), findsNothing);
         await tester.ensureVisible(find.text('Calcular ruta'));
         await tester.tap(find.text('Calcular ruta'));
         await tester.pump();
@@ -174,6 +504,16 @@ void main() {
         expect(
           routing.lastDestination,
           fieldIndex == 1 ? const LatLng(7.2, -73.2) : result.destination,
+        );
+        routing.completeSingle(result);
+        await tester.pump();
+        expect(
+          tester
+              .widget<RouteAlternativesSelector>(
+                find.byType(RouteAlternativesSelector),
+              )
+              .alternatives,
+          [result],
         );
         await tester.pumpWidget(const SizedBox.shrink());
       },
@@ -213,7 +553,7 @@ void main() {
     await tester.pump();
     expect(routing.calls, 1);
     expect(routing.lastDestination, const LatLng(7.2, -73.2));
-    routing.pending.complete(
+    routing.completeSingle(
       const RouteResult(
         origin: LatLng(7.1, -73.1),
         destination: LatLng(7.2, -73.2),
@@ -264,7 +604,7 @@ void main() {
     await tester.pump();
     expect(routing.lastOrigin, const LatLng(7.11, -73.11));
     expect(routing.lastDestination, const LatLng(7.22, -73.22));
-    routing.pending.complete(
+    routing.completeSingle(
       const RouteResult(
         origin: LatLng(7.11, -73.11),
         destination: LatLng(7.22, -73.22),
@@ -303,7 +643,7 @@ void main() {
         tester.widget<FilledButton>(find.byType(FilledButton).last).onPressed,
         isNull,
       );
-      routing.pending.complete(
+      routing.completeSingle(
         const RouteResult(
           origin: LatLng(7.1, -73.1),
           destination: LatLng(7.2, -73.2),

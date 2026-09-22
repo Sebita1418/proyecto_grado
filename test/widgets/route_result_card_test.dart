@@ -5,7 +5,7 @@ import 'package:transporte_inteligente/models/route_result.dart';
 import 'package:transporte_inteligente/widgets/route_result_card.dart';
 
 void main() {
-  for (final width in [390.0, 768.0, 1440.0]) {
+  for (final width in [320.0, 390.0, 768.0, 1440.0]) {
     testWidgets('resumen se adapta a ${width.toInt()} px', (tester) async {
       tester.view.physicalSize = Size(width, 844);
       tester.view.devicePixelRatio = 1;
@@ -15,6 +15,11 @@ void main() {
       });
       await tester.pumpWidget(
         MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(1.5)),
+            child: child!,
+          ),
           home: Scaffold(
             body: Align(
               alignment: Alignment.bottomLeft,
@@ -40,6 +45,12 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.text('9.8 km'), findsOneWidget);
       expect(find.text('11 min'), findsOneWidget);
+      expect(find.text('Ruta seleccionada'), findsOneWidget);
+      expect(find.text('Ruta recomendada'), findsNothing);
+      await tester.tap(find.text('Ver detalles'));
+      await tester.pumpAndSettle();
+      expect(find.text('Duración estimada'), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
   }
 }

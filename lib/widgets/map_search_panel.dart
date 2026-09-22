@@ -12,6 +12,7 @@ import '../services/place_suggestion_service.dart';
 import '../services/osrm_routing_service.dart';
 import 'route_planner_form.dart';
 import 'route_result_card.dart';
+import 'route_alternatives_selector.dart';
 
 class MapSearchPanel extends StatefulWidget {
   const MapSearchPanel({
@@ -51,7 +52,11 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   bool _loadingOriginSuggestions = false;
   bool _checking = false;
   String? _phase;
-  RouteResult? _route;
+  List<RouteResult> _alternatives = const [];
+  int? _selectedAlternative;
+  RouteResult? get _route => _selectedAlternative == null
+      ? null
+      : _alternatives[_selectedAlternative!];
   bool _showEditor = true;
   String _routeOriginLabel = '';
   String _routeDestinationLabel = '';
@@ -72,7 +77,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       ++_calculation;
       _checking = false;
       _phase = null;
-      _route = null;
+      _clearAlternatives();
       _showEditor = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) widget.onRouteChanged?.call(null);
@@ -85,10 +90,29 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     _checking = false;
     _phase = null;
     if (_route != null) {
-      _route = null;
+      _clearAlternatives();
       _showEditor = true;
       widget.onRouteChanged?.call(null);
     }
+  }
+
+  void _clearAlternatives() {
+    _alternatives = const [];
+    _selectedAlternative = null;
+  }
+
+  void _selectAlternative(int index, int calculation) {
+    // A picker opened for an earlier calculation must not change current data.
+    if (!mounted ||
+        calculation != _calculation ||
+        _checking ||
+        index < 0 ||
+        index >= _alternatives.length ||
+        index == _selectedAlternative) {
+      return;
+    }
+    setState(() => _selectedAlternative = index);
+    widget.onRouteChanged?.call(_route);
   }
 
   @override
@@ -238,7 +262,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     setState(() {
       _checking = true;
       _phase = 'Buscando lugares...';
-      _route = null;
+      _clearAlternatives();
     });
     widget.onRouteChanged?.call(null);
     try {
@@ -267,17 +291,21 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         throw const GeocodingException('No se encontró el destino.');
       }
       setState(() => _phase = 'Calculando ruta...');
-      final result = await _routing
-          .route(origin: origin, destination: destination)
+      final results = await _routing
+          .routeAlternatives(origin: origin, destination: destination)
           .timeout(const Duration(seconds: 20));
       if (!mounted || calculation != _calculation) return;
+      if (results.isEmpty) {
+        throw const OsrmRoutingException('El servicio no devolvió una ruta.');
+      }
       setState(() {
-        _route = result;
+        _alternatives = List.unmodifiable(results);
+        _selectedAlternative = 0;
         _showEditor = false;
         _routeOriginLabel = hasGps ? 'Tu ubicación actual' : originText;
         _routeDestinationLabel = _selected?.name ?? destinationText;
       });
-      widget.onRouteChanged?.call(result);
+      widget.onRouteChanged?.call(_route);
     } on TimeoutException {
       if (mounted && calculation == _calculation) {
         _message('La consulta tardó demasiado. Intenta de nuevo.');
@@ -350,6 +378,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   Widget build(BuildContext context) {
     final hasGps = widget.currentPosition != null && !_manualOrigin;
     final height = MediaQuery.sizeOf(context).height;
+    final calculation = _calculation;
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: height * .58),
       child: Material(
@@ -360,14 +389,19 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (_route != null && !_showEditor)
+              if (_route != null && !_showEditor) ...[
                 RouteResultCard(
                   route: _route!,
                   originLabel: _routeOriginLabel,
                   destinationLabel: _routeDestinationLabel,
                   onModify: () => setState(() => _showEditor = true),
-                )
-              else ...[
+                ),
+                RouteAlternativesSelector(
+                  alternatives: _alternatives,
+                  selectedIndex: _selectedAlternative!,
+                  onSelected: (index) => _selectAlternative(index, calculation),
+                ),
+              ] else ...[
                 if (hasGps)
                   ListTile(
                     leading: const Icon(Icons.my_location),

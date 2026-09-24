@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:transporte_inteligente/models/perfil_model.dart';
@@ -5,8 +6,9 @@ import 'package:transporte_inteligente/screens/perfil/perfil_screen.dart';
 import 'package:transporte_inteligente/screens/preferences/mobility_preferences_screen.dart';
 
 void main() {
+  setUp(() => SharedPreferences.setMockInitialValues({}));
   testWidgets(
-    'Perfil abre preferencias; salir descarta la confirmación local',
+    'Perfil abre preferencias; reabrir recupera la confirmación local',
     (tester) async {
       final perfil = Perfil(
         id: 'usuario-1',
@@ -22,12 +24,12 @@ void main() {
       expect(find.byType(MobilityPreferencesScreen), findsOneWidget);
       await tester.ensureVisible(find.text('A pie'));
       await tester.tap(find.text('A pie'));
-      await tester.pump();
+      await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('Confirmar selección'));
       await tester.tap(find.text('Confirmar selección'));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(
-        find.text('Preferencias confirmadas en esta pantalla.'),
+        find.text('Preferencias guardadas en este dispositivo.'),
         findsOneWidget,
       );
       await tester.tap(find.byType(BackButton));
@@ -42,10 +44,10 @@ void main() {
               find.widgetWithText(CheckboxListTile, 'A pie'),
             )
             .value,
-        isFalse,
+        isTrue,
       );
       expect(
-        find.text('Selecciona al menos un modo para confirmar.'),
+        find.text('Preferencias guardadas en este dispositivo.'),
         findsOneWidget,
       );
     },

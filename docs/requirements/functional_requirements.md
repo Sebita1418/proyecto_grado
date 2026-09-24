@@ -2,7 +2,7 @@
 
 > **BASE PROVISIONAL — EN REVISIÓN — PENDIENTE CONTRASTE CON FDC-124**
 >
-> Responsable: Brayan. Rama: `feature/fdc-requirements-baseline`. Baseline auditado: `e1883e255bc6f00ae1f34a065dcde9623406e0e9`.
+> Responsable: Brayan. Actualización B5: `feature/implementation-traceability-update`. Baseline auditado: `f2009b2de71a5a36a97b1b1e422a865aeaf93e8c` (2026-09-21).
 > FDC-124 NO LOCALIZADO. No hay citas institucionales verificadas ni cumplimiento académico certificado. Las asociaciones a objetivos son propuestas revisables.
 
 Los objetivos y las reglas de evidencia están definidos en [la matriz](traceability_matrix.md). IMPLEMENTADO significa capacidad observada en código y pruebas locales; no certifica operación remota ni cumplimiento del FDC. PARCIAL distingue capacidades incompletas o integraciones cuya verificación integral falta.
@@ -147,7 +147,8 @@ Los objetivos y las reglas de evidencia están definidos en [la matriz](traceabi
 - **Estado técnico:** IMPLEMENTADO.
 - **Evidencia de código:** [lib/services/osrm_routing_service.dart](../../lib/services/osrm_routing_service.dart); [lib/widgets/map_search_panel.dart](../../lib/widgets/map_search_panel.dart).
 - **Prueba/evidencia:** [test/services/osrm_routing_service_test.dart](../../test/services/osrm_routing_service_test.dart); [test/screens/home/route_flow_test.dart](../../test/screens/home/route_flow_test.dart)
-- **Brecha:** Una ruta, alternatives=false; sin comparación ni multimodalidad.
+- **Evidencia integrada:** Home consulta `routeAlternatives` con `alternatives=true` y conserva todas las candidatas en orden del proveedor. [Selector](../../lib/widgets/route_alternatives_selector.dart), [prueba del selector](../../test/widgets/route_alternatives_selector_test.dart) y [B4](../route-alternatives.md) verifican selección manual sin otra consulta. `route()` conserva su contrato de una ruta.
+- **Brecha:** OSRM puede devolver una sola ruta; solo driving, sin ranking ni personalización automática.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RF-ROUTE-02 — Geometría y métricas
@@ -160,7 +161,8 @@ Los objetivos y las reglas de evidencia están definidos en [la matriz](traceabi
 - **Estado técnico:** IMPLEMENTADO.
 - **Evidencia de código:** [lib/models/route_result.dart](../../lib/models/route_result.dart); [lib/widgets/route_map.dart](../../lib/widgets/route_map.dart); [lib/widgets/route_result_card.dart](../../lib/widgets/route_result_card.dart).
 - **Prueba/evidencia:** [test/widgets/route_map_test.dart](../../test/widgets/route_map_test.dart); [test/widgets/route_result_card_test.dart](../../test/widgets/route_result_card_test.dart); [test/screens/home/route_flow_test.dart](../../test/screens/home/route_flow_test.dart)
-- **Brecha:** Duración estimada, no tráfico observado ni hora de llegada garantizada.
+- **Evidencia integrada:** La alternativa seleccionada sincroniza geometría, distancia, duración y detalles en Home sin nueva consulta; se dibuja un recorrido a la vez.
+- **Brecha:** Duración estimada por OSRM, no tráfico observado ni hora de llegada garantizada. No son mediciones de un viaje realizado.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RF-ROUTE-03 — Integridad del estado
@@ -170,10 +172,11 @@ Los objetivos y las reglas de evidencia están definidos en [la matriz](traceabi
 - **Origen:** Coherencia del planificador.
 - **Objetivo provisional:** OE2, OE4.
 - **Módulo:** Estado de ruta.
-- **Estado técnico:** PARCIAL.
+- **Estado técnico:** IMPLEMENTADO.
 - **Evidencia de código:** [lib/widgets/map_search_panel.dart](../../lib/widgets/map_search_panel.dart); [lib/screens/rutas/rutas_screen.dart](../../lib/screens/rutas/rutas_screen.dart).
 - **Prueba/evidencia:** [test/screens/home/route_flow_test.dart](../../test/screens/home/route_flow_test.dart); [test/screens/rutas/rutas_screen_test.dart](../../test/screens/rutas/rutas_screen_test.dart)
-- **Brecha:** Home invalida en cada notificación del controlador sin comparar texto. PR #21 excluido; no acreditar sus regresiones.
+- **Evidencia integrada:** Los listeners comparan texto. Home conserva resultados ante cursor/selección/composición sin edición; una edición, cambio de origen manual/GPS o coordenadas GPS limpia alternativas. Identificador de cálculo y `mounted` descartan respuestas obsoletas y posteriores al desmontaje. Las regresiones citadas están en este baseline.
+- **Brecha:** Evidencia local de los flujos probados; RutasScreen conserva selección de puntos, pero no calcula rutas OSRM.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RF-ROUTE-04 — Carga y errores
@@ -238,7 +241,8 @@ Los objetivos y las reglas de evidencia están definidos en [la matriz](traceabi
 - **Estado técnico:** IMPLEMENTADO.
 - **Evidencia de código:** [lib/widgets/route_result_card.dart](../../lib/widgets/route_result_card.dart); [lib/widgets/map_search_panel.dart](../../lib/widgets/map_search_panel.dart).
 - **Prueba/evidencia:** [test/screens/home/route_flow_test.dart](../../test/screens/home/route_flow_test.dart); [test/widgets/route_result_card_test.dart](../../test/widgets/route_result_card_test.dart)
-- **Brecha:** Comprensión por público general pendiente de evaluación con usuarios.
+- **Evidencia integrada:** Título neutral «Ruta seleccionada», detalles de la candidata vigente y [selector de alternativas](../../lib/widgets/route_alternatives_selector.dart), probado en [test/widgets/route_alternatives_selector_test.dart](../../test/widgets/route_alternatives_selector_test.dart).
+- **Brecha:** Comprensión por público general pendiente de evaluación con usuarios; elegir manualmente no equivale a recomendación personalizada.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RF-MOB-01 — Recomendación personalizada
@@ -249,9 +253,9 @@ Los objetivos y las reglas de evidencia están definidos en [la matriz](traceabi
 - **Objetivo provisional:** OE3.
 - **Módulo:** Recomendaciones.
 - **Estado técnico:** PENDIENTE.
-- **Evidencia de código:** [lib/services/osrm_routing_service.dart](../../lib/services/osrm_routing_service.dart); [lib/models/perfil_model.dart](../../lib/models/perfil_model.dart).
-- **Prueba/evidencia:** Sin prueba dedicada identificada.
-- **Brecha:** No se encontró modelo de recomendación, preferencias de movilidad ni ranking; evidencia citada delimita lo existente.
+- **Evidencia de código:** [Contrato del motor](../../lib/mobility/mobility_recommendation_engine.dart); [modelo de recomendación](../../lib/mobility/mobility_recommendation.dart); [contexto](../../lib/mobility/mobility_context.dart); [preferencias](../../lib/screens/preferences/mobility_preferences_screen.dart); [alternativas OSRM](../../lib/services/osrm_routing_service.dart).
+- **Prueba/evidencia:** [Dominio](../../test/mobility/mobility_domain_test.dart), [preferencias](../../test/screens/preferences/mobility_preferences_screen_test.dart) y [flujo de alternativas](../../test/screens/home/route_flow_test.dart) prueban componentes habilitadores, no una estrategia productiva.
+- **Brecha:** La capacidad de producir recomendaciones permanece PENDIENTE: hay modelos, contrato, captura local de modos y candidatas, pero no implementación productiva del motor, scoring, ranking ni evaluación de recomendaciones. Perfil abre B3 sin consumidor; las elecciones se pierden al salir y no alimentan OSRM ni el motor. La primera candidata es selección inicial del proveedor, no recomendación inteligente propia.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RF-MOB-02 — Horarios y modos
@@ -264,5 +268,6 @@ Los objetivos y las reglas de evidencia están definidos en [la matriz](traceabi
 - **Estado técnico:** PENDIENTE.
 - **Evidencia de código:** [lib/models/ruta_model.dart](../../lib/models/ruta_model.dart); [lib/services/osrm_routing_service.dart](../../lib/services/osrm_routing_service.dart).
 - **Prueba/evidencia:** Sin prueba dedicada identificada.
-- **Brecha:** Catálogo sin horarios; OSRM usa driving fijo. Fuentes y criterios por definir.
+- **Evidencia integrada:** [TransportMode](../../lib/mobility/transport_mode.dart) representa cuatro modos y [B3](../mobility-preferences.md) permite seleccionarlos localmente; no cambia el perfil de OSRM.
+- **Brecha:** Catálogo sin horarios; OSRM usa driving fijo. Consulta y comparación real entre horarios/modos permanecen PENDIENTES; faltan fuentes y procesamiento.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.

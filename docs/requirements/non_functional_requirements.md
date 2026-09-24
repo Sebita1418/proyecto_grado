@@ -2,7 +2,7 @@
 
 > **BASE PROVISIONAL — EN REVISIÓN — PENDIENTE CONTRASTE CON FDC-124**
 >
-> Responsable: Brayan. Rama: `feature/fdc-requirements-baseline`. Baseline auditado: `e1883e255bc6f00ae1f34a065dcde9623406e0e9`.
+> Responsable: Brayan. Actualización B5: `feature/implementation-traceability-update`. Baseline auditado: `f2009b2de71a5a36a97b1b1e422a865aeaf93e8c` (2026-09-21).
 > FDC-124 NO LOCALIZADO. No hay citas institucionales verificadas ni cumplimiento académico certificado. Las asociaciones a objetivos son propuestas revisables.
 
 Origen técnico o UX; no constituyen mandatos institucionales. Para todos los RNF: **criterio cuantitativo pendiente de FDC/validación académica**. No se establecen SLA ni umbrales nuevos. Los tamaños y temporizadores citados describen pruebas o implementación existentes.
@@ -30,7 +30,7 @@ Origen técnico o UX; no constituyen mandatos institucionales. Para todos los RN
 - **Estado técnico:** PARCIAL.
 - **Evidencia de código:** [lib/services/osrm_routing_service.dart](../../lib/services/osrm_routing_service.dart); [lib/services/geocoding_service.dart](../../lib/services/geocoding_service.dart); [lib/widgets/map_search_panel.dart](../../lib/widgets/map_search_panel.dart).
 - **Prueba/evidencia:** [test/services/osrm_routing_service_test.dart](../../test/services/osrm_routing_service_test.dart); [test/services/place_suggestion_service_test.dart](../../test/services/place_suggestion_service_test.dart)
-- **Brecha:** Nominatim no impone timeout propio; cobertura depende del llamador. Sin medición de latencia real.
+- **Brecha:** Photon limita a 8 s en servicio y 10 s en UI; OSRM a 15 s en servicio y 20 s en Home. Nominatim no impone timeout propio: Home envuelve cada búsqueda en 10 s, pero RutasScreen llama sin timeout. No hay medición de latencia real ni SLA; los límites por etapa no son un límite total del viaje.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RNF-SEC-01 — Autorización efectiva
@@ -69,7 +69,8 @@ Origen técnico o UX; no constituyen mandatos institucionales. Para todos los RN
 - **Estado técnico:** PARCIAL.
 - **Evidencia de código:** [lib/widgets/route_result_card.dart](../../lib/widgets/route_result_card.dart); [lib/widgets/map_search_panel.dart](../../lib/widgets/map_search_panel.dart); [lib/main.dart](../../lib/main.dart).
 - **Prueba/evidencia:** [test/widgets/route_result_card_test.dart](../../test/widgets/route_result_card_test.dart)
-- **Brecha:** Resumen probado a 390, 768 y 1440 px; no equivale a auditoría responsive global.
+- **Pruebas adicionales:** [Flujo Home](../../test/screens/home/route_flow_test.dart), [selector](../../test/widgets/route_alternatives_selector_test.dart), [preferencias](../../test/screens/preferences/mobility_preferences_screen_test.dart) y [Nearby](../../test/screens/nearby/nearby_places_screen_test.dart).
+- **Brecha:** Home/selector/tarjeta y preferencias tienen pruebas a 320, 390, 768 y 1440 px con texto al 150 %; no equivale a auditoría responsive global.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RNF-USA-02 — Accesibilidad y comprensión
@@ -82,7 +83,8 @@ Origen técnico o UX; no constituyen mandatos institucionales. Para todos los RN
 - **Estado técnico:** PARCIAL.
 - **Evidencia de código:** [lib/widgets/route_map.dart](../../lib/widgets/route_map.dart); [lib/widgets/route_planner_form.dart](../../lib/widgets/route_planner_form.dart).
 - **Prueba/evidencia:** [test/widgets/route_map_test.dart](../../test/widgets/route_map_test.dart); [test/widgets/route_planner_form_test.dart](../../test/widgets/route_planner_form_test.dart)
-- **Brecha:** Semántica parcial; faltan usuarios, lector de pantalla, teclado y contraste.
+- **Evidencia adicional:** [Selector](../../lib/widgets/route_alternatives_selector.dart) con texto, icono y semántica de selección; [pruebas](../../test/widgets/route_alternatives_selector_test.dart). Preferencias y Nearby comunican sus límites en la UI.
+- **Brecha:** Semántica local probada; faltan evaluación con usuarios, lector de pantalla, teclado y contraste en ejecución real.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RNF-MAINT-01 — Separación y verificabilidad
@@ -95,7 +97,8 @@ Origen técnico o UX; no constituyen mandatos institucionales. Para todos los RN
 - **Estado técnico:** IMPLEMENTADO.
 - **Evidencia de código:** [lib/models/route_result.dart](../../lib/models/route_result.dart); [lib/services/osrm_routing_service.dart](../../lib/services/osrm_routing_service.dart); [lib/widgets/map_search_panel.dart](../../lib/widgets/map_search_panel.dart).
 - **Prueba/evidencia:** [test/services/osrm_routing_service_test.dart](../../test/services/osrm_routing_service_test.dart); [test/screens/home/route_flow_test.dart](../../test/screens/home/route_flow_test.dart)
-- **Brecha:** Existe legado Google y duplicación Home/Rutas; no se acredita cobertura total.
+- **Evidencia adicional:** [Dominio neutral](../mobility-domain.md), [contrato](../../lib/mobility/mobility_recommendation_engine.dart) y [pruebas de dominio](../../test/mobility/mobility_domain_test.dart). La interfaz del motor permite un doble, pero no hay estrategia productiva.
+- **Brecha:** Existe legado Google y duplicación Home/Rutas; no se acredita cobertura total ni integración productiva del dominio con recomendaciones.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RNF-MAINT-02 — Integridad de datos externos
@@ -118,10 +121,10 @@ Origen técnico o UX; no constituyen mandatos institucionales. Para todos los RN
 - **Origen:** Flutter y directorios de plataforma.
 - **Objetivo provisional:** OE2, OE4.
 - **Módulo:** Plataformas.
-- **Estado técnico:** NO VERIFICADO.
+- **Estado técnico:** PARCIAL.
 - **Evidencia de código:** [pubspec.yaml](../../pubspec.yaml); [README.md](../../README.md).
-- **Prueba/evidencia:** [test/widgets/route_result_card_test.dart](../../test/widgets/route_result_card_test.dart)
-- **Brecha:** Tamaños de widget no prueban compilación ni funcionamiento nativo; matriz objetivo pendiente.
+- **Prueba/evidencia:** [test/widgets/route_result_card_test.dart](../../test/widgets/route_result_card_test.dart); [registro de compilación web de B4](../route-alternatives.md).
+- **Brecha:** B4 registra compilación web correcta; B5 no la repite. No acredita flujo OAuth/permisos en navegador real ni ejecución nativa; plataformas objetivo y matriz de aceptación pendientes.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RNF-MAINT-03 — Operación de proveedores
@@ -134,5 +137,5 @@ Origen técnico o UX; no constituyen mandatos institucionales. Para todos los RN
 - **Estado técnico:** PARCIAL.
 - **Evidencia de código:** [lib/config/osrm_config.dart](../../lib/config/osrm_config.dart); [README.md](../../README.md).
 - **Prueba/evidencia:** [test/services/osrm_routing_service_test.dart](../../test/services/osrm_routing_service_test.dart)
-- **Brecha:** Endpoint configurable; capacidad, disponibilidad y operación productiva no verificadas.
+- **Brecha:** OSRM usa endpoint público de demostración, sustituible mediante configuración/inyección; RouteMap usa tiles públicos OSM. Capacidad, disponibilidad y operación productiva no verificadas; definir infraestructura antes del despliegue estable.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.

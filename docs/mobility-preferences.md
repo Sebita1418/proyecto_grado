@@ -1,8 +1,8 @@
-# B3 — Preferencias de movilidad
+# B3 / B6 — Preferencias de movilidad
 
 Clasificación: DERIVADO FUNCIONAL / DERIVADO TÉCNICO / UX.
 PENDIENTE DE VERIFICACIÓN FDC-124. No se modifica la línea base documental B1.
-Baseline de implementación: `b321a75a6e5556c43ab6846c6f10fdb37865a261`.
+Baseline de implementación B3: `b321a75a6e5556c43ab6846c6f10fdb37865a261`.
 
 ## Alcance respaldado por el dominio
 
@@ -23,20 +23,44 @@ de tiempo, distancia, congestión, costo o ahorro.
 ## Navegación y estado
 
 Acceso: Home → Drawer → Perfil → Preferencias de movilidad. Home y Drawer no
-cambian. Al entrar no hay modos preseleccionados: no se supone una preferencia.
-Confirmar exige al menos un modo. Deshacer restaura la última selección confirmada
-o el conjunto vacío inicial. Salir descarta todo el estado de esta pantalla,
-incluida la selección confirmada. Reabrir comienza de nuevo.
+cambian. Antes de B6 las preferencias eran locales a la experiencia de pantalla:
+al salir se perdía incluso la confirmación. Después de B6 se persisten localmente
+en el dispositivo y se cargan al abrir. Sin datos guardados comienza vacío.
+Confirmar exige al menos un modo y guarda antes de actualizar la confirmación.
+Deshacer restaura la última selección confirmada o el conjunto vacío inicial;
+no escribe en almacenamiento. Salir descarta los cambios sin confirmar y reabrir
+recupera lo guardado.
 
 El callback opcional `onConfirmed` entrega un `Set<TransportMode>` inmutable,
 compatible directamente con `MobilityContext.allowedModes`. El acceso desde
 Perfil no conecta ningún consumidor todavía. No se fabrica un contexto con
 coordenadas o fecha ficticias ni se invoca un motor.
 
-Existe una dependencia shared_preferences pero no un mecanismo de preferencias
-de movilidad implementado. Su presencia no define una política de persistencia.
-El perfil Supabase actual contiene identidad, rol y estado, no preferencias.
-Se mantiene estado local de UI sin escritura local persistente ni remota.
+B6 reutiliza `shared_preferences 2.5.5`, ya instalado, reclasificado de
+`dev_dependencies` a `dependencies` mediante `flutter pub add`. No agrega paquetes
+ni cambia versiones. `MobilityPreferencesService` separa UI y almacenamiento y se
+puede inyectar en la pantalla para pruebas. Usa la API existente SharedPreferences
+con recarga previa a cada lectura para evitar datos de caché de escrituras fallidas.
+La clave `mobility_preferences.modes.v1` contiene los nombres de `TransportMode`
+(`driving`, `walking`, `cycling`, `publicTransport`), nunca etiquetas traducidas
+ni índices. Renombrar un valor del enum requerirá una migración explícita.
+Valores desconocidos, duplicados o un formato obsoleto se ignoran; si no queda
+ningún modo conocido, la selección es vacía. Cargar no reescribe los datos.
+
+La carga muestra progreso y tiene un límite de ocho segundos. Un fallo permite
+elegir y confirmar una nueva selección con un mensaje visible. Durante el guardado
+se deshabilitan selección y acciones para evitar escrituras superpuestas desde
+la pantalla. Solo una escritura exitosa actualiza la confirmación y emite el
+callback inmutable. Si falla, mantiene el borrador, informa y permite reintentar
+o deshacer. Se capturan excepciones de almacenamiento, no errores de programación.
+Salir mientras hay una escritura pendiente no cancela una confirmación solicitada.
+SharedPreferences es apropiado para preferencias simples, no datos críticos con
+garantía de durabilidad transaccional ante cierre abrupto.
+
+La preferencia es del dispositivo/instalación (del almacenamiento del navegador
+en web), compartida entre cuentas que usen esa instalación. No hay separación
+por usuario ni sincronización remota de preferencias en B6. El perfil Supabase
+contiene identidad, rol y estado; no se modifica su esquema.
 
 ## Relación provisional con objetivos y Diseño A
 
@@ -54,14 +78,49 @@ con Wrap. Las pruebas cubren anchos de 320, 390, 768 y 1440 px con texto al 150 
 
 ## Brechas
 
-- Acordar persistencia, ciclo de vida y tratamiento por usuario antes de conservar
-  elecciones fuera de la pantalla.
+- Definir tratamiento por usuario y sincronización si se requieren posteriormente.
 - Conectar selección confirmada con un contexto de viaje real y un consumidor.
 - Implementar y validar motor y fuentes de alternativas; representar un modo
   no implica que un proveedor lo soporte o que exista oferta disponible.
 - Contrastar preferencias y alcance con FDC-124.
 
 B3 no modifica el cálculo OSRM actual ni produce recomendaciones personalizadas.
+B6 tampoco conecta preferencias con routing: todavía NO alimentan un motor
+productivo de recomendaciones y todavía NO constituyen personalización inteligente.
+La relación con FDC-124 sigue pendiente de contraste.
+
+## Auditoría y alcance de B6
+
+Baseline: `develop@a386094e347b4c7b7f578a8f860612c81d9caf97`.
+Responsable: Brayan. Rama: `feature/mobility-preferences-persistence`.
+No existía servicio de preferencias ni almacenamiento de movilidad en Supabase.
+Se conservan Diseño A, el enum y la semántica de Deshacer de B3.
+Perfil no requiere cambios de producción. Su prueba está realmente en
+`test/perfil/perfil_screen_test.dart`; se actualiza la expectativa histórica
+de pérdida al salir porque contradice la persistencia requerida por B6.
+No se modifican archivos del PR #27, `lib/mobility/**` ni la matriz de trazabilidad.
+
+## Validación local de B6
+
+- Pruebas específicas del servicio, pantalla y Perfil: 27 aprobadas
+  (11 del servicio, 13 de preferencias y 3 de Perfil).
+- Cobertura: almacenamiento vacío, múltiples modos, actualización, identificadores
+  obsoletos, errores, escritura rechazada, carga agotada, respuesta tardía,
+  confirmación, borradores, Deshacer, reapertura y salida durante operaciones.
+- Layout: 320, 390, 768 y 1440 px, texto al 150 %, sin overflow.
+- `flutter pub get`: correcto; se conserva la versión 2.5.5 del paquete.
+- `flutter analyze`: falla exclusivamente por los cinco errores conocidos de
+  `test/widgets/route_summary_card_test.dart`, que importa un widget inexistente.
+- `flutter test`: 165 pruebas aprobadas; único fallo al compilar ese test histórico.
+- Validación equivalente con lista explícita obtenida mediante `git ls-files`
+  más los nuevos archivos B6: `dart analyze` sobre 71 Dart sin problemas y
+  `flutter test` sobre 26 archivos con 165 pruebas aprobadas.
+- `git diff --check`: correcto.
+- `flutter build web --no-pub`: correcto, salida en `build/web`; comprobación
+  preliminar de WebAssembly exitosa.
+
+El archivo histórico permanece intacto, no rastreado y fuera del commit.
+No se modificaron exclusiones del analizador ni se movió el archivo para validar.
 
 ## Validación local de B3
 

@@ -15,7 +15,7 @@ class RecommendationReason {
   final String explanation;
 }
 
-/// A future engine's decision; alternatives exclude [recommended].
+/// An engine's decision; alternatives exclude [recommended].
 class MobilityRecommendation {
   MobilityRecommendation({
     required this.recommended,

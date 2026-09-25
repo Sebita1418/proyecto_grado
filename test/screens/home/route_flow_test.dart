@@ -3,6 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:transporte_inteligente/mobility/mobility_context.dart';
+import 'package:transporte_inteligente/mobility/mobility_recommendation.dart';
+import 'package:transporte_inteligente/mobility/mobility_recommendation_engine.dart';
+import 'package:transporte_inteligente/mobility/route_option.dart';
+import 'package:transporte_inteligente/mobility/transport_mode.dart';
+import 'package:transporte_inteligente/mobility/vehicle_recommendation_engine.dart';
+import 'package:transporte_inteligente/services/mobility_preferences_service.dart';
+import 'package:transporte_inteligente/widgets/mobility_recommendation_summary.dart';
 import 'package:transporte_inteligente/models/geocoding_result.dart';
 import 'package:transporte_inteligente/models/place_suggestion.dart';
 import 'package:transporte_inteligente/models/route_result.dart';
@@ -37,7 +46,12 @@ const secondRoute = RouteResult(
 );
 
 Future<void> tapLabel(WidgetTester tester, String label) async {
-  await tester.ensureVisible(find.text(label));
+  final tile = find.ancestor(
+    of: find.text(label),
+    matching: find.byType(ListTile),
+  );
+  await tester.ensureVisible(tile.evaluate().isEmpty ? find.text(label) : tile);
+  await tester.pumpAndSettle();
   await tester.tap(find.text(label));
   await tester.pumpAndSettle();
 }
@@ -108,12 +122,36 @@ class ForbiddenGeocoding extends GeocodingService {
       throw StateError('No debe geocodificar una selección Photon');
 }
 
+class ControlledPreferences extends MobilityPreferencesService {
+  final pending = Completer<Set<TransportMode>>();
+  @override
+  Future<Set<TransportMode>> load() => pending.future;
+}
+
+class ControlledEngine implements MobilityRecommendationEngine {
+  final pending = Completer<MobilityRecommendation>();
+  MobilityContext? context;
+  List<RouteOption>? options;
+  @override
+  Future<MobilityRecommendation> recommend(
+    MobilityContext context,
+    List<RouteOption> options,
+  ) {
+    this.context = context;
+    this.options = options;
+    return pending.future;
+  }
+}
+
 void main() {
+  setUp(() => SharedPreferences.setMockInitialValues({}));
   Future<void> panel(
     WidgetTester tester,
     ControlledRouting routing,
     List<RouteResult?> changes, {
     LatLng position = const LatLng(7.1, -73.1),
+    MobilityPreferencesService preferences = const MobilityPreferencesService(),
+    MobilityRecommendationEngine? engine,
   }) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -122,6 +160,8 @@ void main() {
             currentPosition: position,
             locationStatus: LocationStatus.coordinatesObtained,
             routingService: routing,
+            preferencesService: preferences,
+            recommendationEngine: engine,
             geocodingService: FixedGeocoding(),
             placeSuggestionService: FixedSuggestions(),
             onRouteChanged: changes.add,
@@ -138,6 +178,188 @@ void main() {
     await tester.tap(find.text('Calcular ruta'));
     await tester.pump();
   }
+
+  Future<void> render(WidgetTester tester, ControlledRouting routing) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: HomeScreen(
+          locationService: FixedLocation(),
+          loadProfile: () async => null,
+          geocodingService: FixedGeocoding(),
+          routingService: routing,
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.enterText(find.byType(TextField).last, 'Parque');
+    await tester.tap(find.text('Calcular ruta'));
+    await tester.pump();
+  }
+
+  testWidgets(
+    'modos guardados con driving permiten sugerencia sin afirmar default',
+    (tester) async {
+      SharedPreferences.setMockInitialValues({
+        MobilityPreferencesService.storageKey: ['driving', 'walking'],
+      });
+      final routing = ControlledRouting();
+      addTearDown(routing.dispose);
+      final changes = <RouteResult?>[];
+      await panel(tester, routing, changes);
+      await calculate(tester);
+      routing.pending.complete([firstRoute, secondRoute]);
+      await tester.pumpAndSettle();
+      expect(changes.last, same(secondRoute));
+      expect(find.text('Ruta sugerida'), findsOneWidget);
+      expect(find.textContaining('por defecto'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'modos sin driving conservan entradas, no dibujan ni seleccionan; relee al reintentar',
+    (tester) async {
+      SharedPreferences.setMockInitialValues({
+        MobilityPreferencesService.storageKey: [
+          'walking',
+          'cycling',
+          'publicTransport',
+        ],
+      });
+      final routing = ControlledRouting();
+      addTearDown(routing.dispose);
+      await render(tester, routing);
+      routing.pending.complete([firstRoute, secondRoute]);
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Todavía no hay una ruta compatible'),
+        findsOneWidget,
+      );
+      expect(find.byType(MobilityRecommendationSummary), findsNothing);
+      expect(find.byType(RouteResultCard), findsNothing);
+      expect(tester.widget<RouteMap>(find.byType(RouteMap)).polylines, isEmpty);
+      expect(
+        tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+        'Parque',
+      );
+      final storage = await SharedPreferences.getInstance();
+      await storage.setStringList(MobilityPreferencesService.storageKey, [
+        'driving',
+      ]);
+      await tester.ensureVisible(find.text('Calcular ruta'));
+      await tester.tap(find.text('Calcular ruta'));
+      await tester.pump();
+      routing.completeSingle(firstRoute);
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Todavía no hay una ruta compatible'),
+        findsNothing,
+      );
+      expect(
+        find.textContaining('Única alternativa vehicular'),
+        findsOneWidget,
+      );
+      expect(
+        tester.widget<RouteMap>(find.byType(RouteMap)).polylines.single.points,
+        firstRoute.points,
+      );
+    },
+  );
+
+  testWidgets(
+    'fallo de almacenamiento no se trata como ausencia de preferencias',
+    (tester) async {
+      final routing = ControlledRouting();
+      addTearDown(routing.dispose);
+      final preferences = ControlledPreferences();
+      final changes = <RouteResult?>[];
+      await panel(tester, routing, changes, preferences: preferences);
+      await calculate(tester);
+      routing.completeSingle(firstRoute);
+      await tester.pump();
+      preferences.pending.completeError(
+        const MobilityPreferencesStorageException(),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('No se pudieron leer las preferencias'),
+        findsOneWidget,
+      );
+      expect(find.byType(RouteResultCard), findsNothing);
+      expect(find.textContaining('por defecto'), findsNothing);
+      expect(changes, [null]);
+      expect(
+        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+        isNotNull,
+      );
+    },
+  );
+
+  for (final dispose in [false, true]) {
+    testWidgets(
+      'preferencias tardías se descartan tras ${dispose ? 'dispose' : 'edición'}',
+      (tester) async {
+        final routing = ControlledRouting();
+        addTearDown(routing.dispose);
+        final preferences = ControlledPreferences();
+        final changes = <RouteResult?>[];
+        await panel(tester, routing, changes, preferences: preferences);
+        await calculate(tester);
+        routing.completeSingle(firstRoute);
+        await tester.pump();
+        if (dispose) {
+          await tester.pumpWidget(const SizedBox.shrink());
+        } else {
+          // Programmatic edits also invalidate a pending evaluation.
+          tester
+                  .widget<TextField>(find.byType(TextField).last)
+                  .controller!
+                  .text =
+              'Otro destino';
+          await tester.pump();
+        }
+        final before = List<RouteResult?>.of(changes);
+        preferences.pending.complete({TransportMode.driving});
+        await tester.pumpAndSettle();
+        expect(changes, before);
+        expect(find.byType(MobilityRecommendationSummary), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets('motor tardío no reemplaza un cálculo vigente', (tester) async {
+    final routing = ControlledRouting();
+    addTearDown(routing.dispose);
+    final engine = ControlledEngine();
+    final changes = <RouteResult?>[];
+    await panel(tester, routing, changes, engine: engine);
+    await calculate(tester);
+    routing.completeSingle(firstRoute);
+    await tester.pump();
+    expect(engine.options, isNotNull);
+    final oldContext = engine.context!;
+    final oldOptions = engine.options!;
+    await panel(
+      tester,
+      routing,
+      changes,
+      engine: engine,
+      position: const LatLng(7.11, -73.11),
+    );
+    await calculate(tester);
+    engine.pending.complete(
+      await VehicleRecommendationEngine().recommend(oldContext, oldOptions),
+    );
+    await tester.pump();
+    expect(changes, everyElement(isNull));
+    expect(find.byType(MobilityRecommendationSummary), findsNothing);
+    expect(find.text('Calculando...'), findsOneWidget);
+    routing.pending.completeError(
+      const OsrmRoutingException('Fin del cálculo vigente'),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Fin del cálculo vigente'), findsOneWidget);
+  });
 
   for (final width in [320.0, 390.0, 768.0, 1440.0]) {
     testWidgets('alternativas sincronizan Home, mapa y detalles a $width px', (
@@ -173,13 +395,15 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         tester.widget<RouteResultCard>(find.byType(RouteResultCard)).route,
-        same(firstRoute),
+        same(secondRoute),
       );
       expect(
         tester.widget<RouteMap>(find.byType(RouteMap)).polylines.single.points,
-        firstRoute.points,
+        secondRoute.points,
       );
-      expect(find.text('Alternativa 1 de 2 seleccionada'), findsOneWidget);
+      expect(find.text('Alternativa 2 de 2 seleccionada'), findsOneWidget);
+      expect(find.text('Ruta sugerida'), findsOneWidget);
+      expect(find.textContaining('por defecto'), findsOneWidget);
       expect(find.text('Ruta recomendada'), findsNothing);
       await tapLabel(tester, 'Cambiar alternativa');
       expect(find.text('Alternativa 1'), findsOneWidget);
@@ -197,31 +421,38 @@ void main() {
         find.textContaining('9.1 km · Duración estimada: 15 min'),
         findsOneWidget,
       );
-      await tapLabel(tester, 'Alternativa 2');
+      await tapLabel(tester, 'Alternativa 1');
       final card = tester.widget<RouteResultCard>(find.byType(RouteResultCard));
-      expect(card.route, same(secondRoute));
+      expect(card.route, same(firstRoute));
+      expect(find.text('Ruta sugerida'), findsNothing);
+      expect(find.text('Selección manual'), findsOneWidget);
       expect(card.originLabel, 'Tu ubicación actual');
       expect(card.destinationLabel, 'Destino');
-      expect(find.text('9.1 km'), findsOneWidget);
-      expect(find.text('15 min'), findsOneWidget);
-      expect(find.text('7.4 km'), findsNothing);
-      expect(find.text('Alternativa 2 de 2 seleccionada'), findsOneWidget);
+      expect(find.text('7.4 km'), findsOneWidget);
+      expect(find.text('18 min'), findsOneWidget);
+      expect(find.text('9.1 km'), findsNothing);
+      expect(find.text('Alternativa 1 de 2 seleccionada'), findsOneWidget);
       expect(
         tester.widget<RouteMap>(find.byType(RouteMap)).polylines.single.points,
-        secondRoute.points,
+        firstRoute.points,
       );
       expect(routing.calls, 1);
       await tapLabel(tester, 'Ver detalles');
-      expect(find.text('9.1 km'), findsNWidgets(2));
-      expect(find.text('15 min'), findsNWidgets(2));
+      expect(find.text('7.4 km'), findsNWidgets(2));
+      expect(find.text('18 min'), findsNWidgets(2));
       expect(find.text('Duración estimada'), findsOneWidget);
       Navigator.of(tester.element(find.text('Detalles de la ruta'))).pop();
       await tester.pumpAndSettle();
       await tapLabel(tester, 'Cambiar alternativa');
-      await tapLabel(tester, 'Alternativa 1');
+      await tester.scrollUntilVisible(
+        find.text('Alternativa 2'),
+        150,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tapLabel(tester, 'Alternativa 2');
       expect(
         tester.widget<RouteMap>(find.byType(RouteMap)).polylines.single.points,
-        firstRoute.points,
+        secondRoute.points,
       );
       expect(routing.calls, 1);
       expect(tester.takeException(), isNull);
@@ -239,8 +470,8 @@ void main() {
       routing.pending.complete([firstRoute, secondRoute]);
       await tester.pumpAndSettle();
       await tapLabel(tester, 'Cambiar alternativa');
-      await tapLabel(tester, 'Alternativa 2');
-      expect(changes, [null, firstRoute, secondRoute]);
+      await tapLabel(tester, 'Alternativa 1');
+      expect(changes, [null, secondRoute, firstRoute]);
       await tapLabel(tester, 'Modificar ruta');
       await calculate(tester);
       expect(changes.last, isNull);
@@ -493,6 +724,7 @@ void main() {
         expect(changes, [null, result, null]);
         expect(find.byType(RouteResultCard), findsNothing);
         expect(find.byType(RouteAlternativesSelector), findsNothing);
+        expect(find.byType(MobilityRecommendationSummary), findsNothing);
         await tester.ensureVisible(find.text('Calcular ruta'));
         await tester.tap(find.text('Calcular ruta'));
         await tester.pump();
@@ -615,23 +847,6 @@ void main() {
     );
     await tester.pump();
   });
-  Future<void> render(WidgetTester tester, ControlledRouting routing) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: HomeScreen(
-          locationService: FixedLocation(),
-          loadProfile: () async => null,
-          geocodingService: FixedGeocoding(),
-          routingService: routing,
-        ),
-      ),
-    );
-    await tester.pump();
-    await tester.enterText(find.byType(TextField).last, 'Parque');
-    await tester.tap(find.text('Calcular ruta'));
-    await tester.pump();
-  }
-
   testWidgets(
     'loading bloquea duplicados y éxito dibuja geometría y métricas',
     (tester) async {

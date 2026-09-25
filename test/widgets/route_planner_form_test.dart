@@ -4,6 +4,46 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:transporte_inteligente/widgets/route_planner_form.dart';
 
 void main() {
+  testWidgets(
+    'etiquetas de Rutas conservan callback y bloqueo durante localización',
+    (tester) async {
+      final origin = TextEditingController();
+      final destination = TextEditingController();
+      addTearDown(origin.dispose);
+      addTearDown(destination.dispose);
+      var calls = 0;
+      Future<void> render(bool loading) => tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: RoutePlannerForm(
+              originController: origin,
+              destinationController: destination,
+              onCalculate: () => calls++,
+              actionLabel: 'Mostrar puntos',
+              loadingLabel: 'Localizando…',
+              isLoading: loading,
+            ),
+          ),
+        ),
+      );
+      await render(false);
+      expect(find.text('Calcular ruta'), findsNothing);
+      await tester.tap(find.text('Mostrar puntos'));
+      expect(calls, 1);
+      await render(true);
+      expect(find.text('Localizando…'), findsOneWidget);
+      expect(
+        tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+        isNull,
+      );
+      expect(
+        tester.widget<TextField>(find.byType(TextField).first).enabled,
+        isFalse,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
+
   testWidgets('muestra los campos de origen y destino', (
     WidgetTester tester,
   ) async {

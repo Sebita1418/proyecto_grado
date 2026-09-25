@@ -1,7 +1,7 @@
-# B3 / B6 — Preferencias de movilidad
+# Preferencias de movilidad — estado tras #31 y #33
 
 Clasificación: DERIVADO FUNCIONAL / DERIVADO TÉCNICO / UX.
-PENDIENTE DE VERIFICACIÓN FDC-124. No se modifica la línea base documental B1.
+PENDIENTE DE VERIFICACIÓN FDC-124. Responsable actual: Sebastián. Baseline actual: `189cd0a1a208b45f03a05f104ab61716db7ee38a`, 206 pruebas. La evidencia actualiza B1 sin declarar cumplimiento académico.
 Baseline de implementación B3: `b321a75a6e5556c43ab6846c6f10fdb37865a261`.
 
 ## Alcance respaldado por el dominio
@@ -22,8 +22,7 @@ de tiempo, distancia, congestión, costo o ahorro.
 
 ## Navegación y estado
 
-Acceso: Home → Drawer → Perfil → Preferencias de movilidad. Home y Drawer no
-cambian. Antes de B6 las preferencias eran locales a la experiencia de pantalla:
+Acceso: Home → Drawer → Perfil → Preferencias de movilidad. En este incremento Home informa fallo/null de perfil mediante un aviso persistente con reintento; el mapa sigue disponible. Al recuperar los datos vuelve a estar disponible Perfil. Antes de B6 las preferencias eran locales a la experiencia de pantalla:
 al salir se perdía incluso la confirmación. Después de B6 se persisten localmente
 en el dispositivo y se cargan al abrir. Sin datos guardados comienza vacío.
 Confirmar exige al menos un modo y guarda antes de actualizar la confirmación.
@@ -32,9 +31,7 @@ no escribe en almacenamiento. Salir descarta los cambios sin confirmar y reabrir
 recupera lo guardado.
 
 El callback opcional `onConfirmed` entrega un `Set<TransportMode>` inmutable,
-compatible directamente con `MobilityContext.allowedModes`. El acceso desde
-Perfil no conecta ningún consumidor todavía. No se fabrica un contexto con
-coordenadas o fecha ficticias ni se invoca un motor.
+compatible directamente con `MobilityContext.allowedModes`. Perfil no necesita conectar ese callback: desde #33 MapSearchPanel relee el servicio al calcular y construye un contexto con coordenadas reales. Un cambio confirmado se aplica al recalcular, no retroactivamente a una ruta visible.
 
 B6 reutiliza `shared_preferences 2.5.5`, ya instalado, reclasificado de
 `dev_dependencies` a `dependencies` mediante `flutter pub add`. No agrega paquetes
@@ -79,15 +76,23 @@ con Wrap. Las pruebas cubren anchos de 320, 390, 768 y 1440 px con texto al 150 
 ## Brechas
 
 - Definir tratamiento por usuario y sincronización si se requieren posteriormente.
-- Conectar selección confirmada con un contexto de viaje real y un consumidor.
-- Implementar y validar motor y fuentes de alternativas; representar un modo
+- Evaluar con usuarios la elegibilidad ya conectada en #33; no confundirla con personalización completa.
+- Ampliar fuentes solo si se aprueba alcance posterior; representar un modo
   no implica que un proveedor lo soporte o que exista oferta disponible.
 - Contrastar preferencias y alcance con FDC-124.
 
-B3 no modifica el cálculo OSRM actual ni produce recomendaciones personalizadas.
-B6 tampoco conecta preferencias con routing: todavía NO alimentan un motor
-productivo de recomendaciones y todavía NO constituyen personalización inteligente.
-La relación con FDC-124 sigue pendiente de contraste.
+## Consumo productivo desde #33
+
+El motor vehicular evalúa candidatas OSRM elegibles con la regla técnica provisional menor duración → menor distancia → orden del proveedor. No son prioridades elegidas por el usuario.
+
+- Sin modos guardados: driving por defecto, comunicado sin atribuirlo al usuario.
+- Con driving: candidatas vehiculares elegibles; otros modos guardados no se simulan.
+- Con modos guardados sin driving: no se selecciona silenciosamente una ruta vehicular.
+- Error de lectura: se informa y permite recalcular; no se interpreta como ausencia de preferencias.
+
+La UI diferencia «Ruta sugerida» de «Selección manual» posterior sin nuevas consultas. Véase [recomendación](recommendation-model.md). No hay sincronización con Supabase, preferencias por cuenta, IA, horarios, tráfico en tiempo real ni recomendación multimodal. RF-MOB-01 sigue PARCIAL y RF-MOB-02 PENDIENTE; FDC-124 requiere contraste.
+
+Las secciones siguientes son registros históricos de B3/B6. Sus conteos y fallos del test no rastreado no describen el baseline actual: #33 quedó integrado con análisis global limpio y 206 pruebas aprobadas.
 
 ## Auditoría y alcance de B6
 

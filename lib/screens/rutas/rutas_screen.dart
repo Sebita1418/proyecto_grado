@@ -41,6 +41,7 @@ class _RutasScreenState extends State<RutasScreen> {
 
   bool cargando = true;
   bool calculandoRuta = false;
+  int _localizacion = 0;
 
   String? error;
   String? originError;
@@ -92,43 +93,39 @@ class _RutasScreenState extends State<RutasScreen> {
 
       setState(() {
         rutas = resultado;
-        rutasFiltradas = resultado;
+        rutasFiltradas = _filtrar(resultado);
         cargando = false;
         error = null;
       });
-    } catch (e) {
+    } catch (_) {
       if (!mounted) {
         return;
       }
 
       setState(() {
-        error = e.toString();
+        error = 'Comprueba tu conexión e intenta de nuevo.';
         cargando = false;
       });
     }
   }
 
-  void filtrarRutas() {
+  List<Ruta> _filtrar(List<Ruta> catalogo) {
     final texto = buscarController.text.trim().toLowerCase();
+    return catalogo.where((ruta) {
+      final nombre = ruta.nombre.toLowerCase();
+      final origen = ruta.origen.toLowerCase();
+      final destino = ruta.destino.toLowerCase();
+      final descripcion = ruta.descripcion?.toLowerCase() ?? '';
 
-    setState(() {
-      if (texto.isEmpty) {
-        rutasFiltradas = List<Ruta>.from(rutas);
-        return;
-      }
+      return nombre.contains(texto) ||
+          origen.contains(texto) ||
+          destino.contains(texto) ||
+          descripcion.contains(texto);
+    }).toList();
+  }
 
-      rutasFiltradas = rutas.where((ruta) {
-        final nombre = ruta.nombre.toLowerCase();
-        final origen = ruta.origen.toLowerCase();
-        final destino = ruta.destino.toLowerCase();
-        final descripcion = ruta.descripcion?.toLowerCase() ?? '';
-
-        return nombre.contains(texto) ||
-            origen.contains(texto) ||
-            destino.contains(texto) ||
-            descripcion.contains(texto);
-      }).toList();
-    });
+  void filtrarRutas() {
+    setState(() => rutasFiltradas = _filtrar(rutas));
   }
 
   Future<void> refrescar() async {
@@ -145,6 +142,8 @@ class _RutasScreenState extends State<RutasScreen> {
     if (text == _ultimoTextoOrigen) return;
     _ultimoTextoOrigen = text;
     if (_actualizandoOrigen) return;
+    _localizacion++;
+    calculandoRuta = false;
     _programarSugerencias(esOrigen: true);
   }
 
@@ -153,6 +152,8 @@ class _RutasScreenState extends State<RutasScreen> {
     if (text == _ultimoTextoDestino) return;
     _ultimoTextoDestino = text;
     if (_actualizandoDestino) return;
+    _localizacion++;
+    calculandoRuta = false;
     _programarSugerencias(esOrigen: false);
   }
 
@@ -220,18 +221,6 @@ class _RutasScreenState extends State<RutasScreen> {
         } else {
           sugerenciasDestino = resultados;
           cargandoSugerenciasDestino = false;
-        }
-      });
-    } on PlaceSuggestionException catch (error) {
-      if (!mounted || !_esSolicitudActual(solicitud, esOrigen)) return;
-
-      setState(() {
-        if (esOrigen) {
-          cargandoSugerenciasOrigen = false;
-          errorSugerenciasOrigen = error.message;
-        } else {
-          cargandoSugerenciasDestino = false;
-          errorSugerenciasDestino = error.message;
         }
       });
     } catch (_) {
@@ -363,6 +352,9 @@ class _RutasScreenState extends State<RutasScreen> {
       return;
     }
 
+    final solicitud = ++_localizacion;
+    final origenElegido = origenSeleccionado;
+    final destinoElegido = destinoSeleccionado;
     setState(() {
       calculandoRuta = true;
       _cancelarSugerenciasPendientes();
@@ -371,19 +363,23 @@ class _RutasScreenState extends State<RutasScreen> {
     });
 
     try {
-      final origenEncontrado = origenSeleccionado != null
-          ? _resultadoDeSugerencia(origenSeleccionado!)
-          : await _geocodingService.search(origen);
-      if (!mounted) return;
+      final origenEncontrado = origenElegido != null
+          ? _resultadoDeSugerencia(origenElegido)
+          : await _geocodingService
+                .search(origen)
+                .timeout(const Duration(seconds: 10));
+      if (!mounted || solicitud != _localizacion) return;
       if (origenEncontrado == null) {
         _mostrarMensaje('No se encontró el origen: $origen.');
         return;
       }
 
-      final destinoEncontrado = destinoSeleccionado != null
-          ? _resultadoDeSugerencia(destinoSeleccionado!)
-          : await _geocodingService.search(destino);
-      if (!mounted) return;
+      final destinoEncontrado = destinoElegido != null
+          ? _resultadoDeSugerencia(destinoElegido)
+          : await _geocodingService
+                .search(destino)
+                .timeout(const Duration(seconds: 10));
+      if (!mounted || solicitud != _localizacion) return;
       if (destinoEncontrado == null) {
         _mostrarMensaje('No se encontró el destino: $destino.');
         return;
@@ -406,18 +402,30 @@ class _RutasScreenState extends State<RutasScreen> {
         );
       });
       _mostrarMensaje(
-        'Origen y destino encontrados. El cálculo de ruta está pendiente.',
+        'Puntos localizados. Para calcular una ruta vehicular, vuelve a Mapa / Inicio.',
       );
-    } on GeocodingException catch (error) {
-      if (mounted) _mostrarMensaje(error.message);
+    } on TimeoutException {
+      if (mounted && solicitud == _localizacion) {
+        _mostrarMensaje('La búsqueda tardó demasiado. Intenta de nuevo.');
+      }
+    } catch (_) {
+      if (mounted && solicitud == _localizacion) {
+        _mostrarMensaje(
+          'No fue posible localizar los puntos. Intenta de nuevo.',
+        );
+      }
     } finally {
-      if (mounted) setState(() => calculandoRuta = false);
+      if (mounted && solicitud == _localizacion) {
+        setState(() => calculandoRuta = false);
+      }
     }
   }
 
   void _mostrarMensaje(String message) {
     ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+      ..clearSnackBars()
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -578,7 +586,8 @@ class _RutasScreenState extends State<RutasScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            'Busca lugares o toca el mapa para elegir origen y destino.',
+            'Busca lugares o toca el mapa para elegir origen y destino. '
+            'Para calcular una ruta vehicular, vuelve a Mapa / Inicio.',
             style: TextStyle(fontSize: 15, color: Colors.grey[600]),
           ),
           const SizedBox(height: 20),
@@ -586,6 +595,9 @@ class _RutasScreenState extends State<RutasScreen> {
             originController: originController,
             destinationController: destinationController,
             onCalculate: calcularRuta,
+            title: 'Localiza origen y destino',
+            actionLabel: 'Mostrar puntos',
+            loadingLabel: 'Localizando…',
             isLoading: calculandoRuta,
             originError: originError,
             destinationError: destinationError,
@@ -619,8 +631,8 @@ class _RutasScreenState extends State<RutasScreen> {
           const SizedBox(height: 8),
           Text(
             'El mapa muestra las ubicaciones seleccionadas. '
-            'El cálculo vehicular de la ruta está pendiente; '
-            'todavía no se muestran recorridos, distancias ni tiempos.',
+            'Aquí no se calculan recorridos, distancias ni tiempos. '
+            'El cálculo vehicular está disponible en Mapa / Inicio.',
             style: TextStyle(fontSize: 13, color: Colors.grey[600]),
           ),
           const SizedBox(height: 24),
@@ -647,14 +659,16 @@ class _RutasScreenState extends State<RutasScreen> {
           ),
           const SizedBox(height: 12),
           if (rutasFiltradas.isEmpty)
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(vertical: 60),
               child: Column(
                 children: [
                   Icon(Icons.route_outlined, size: 65, color: Colors.grey),
                   SizedBox(height: 16),
                   Text(
-                    'No hay rutas disponibles',
+                    rutas.isEmpty
+                        ? 'No hay rutas disponibles'
+                        : 'No hay rutas que coincidan con la búsqueda',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ],

@@ -2,7 +2,7 @@
 
 > **BASE PROVISIONAL — EN REVISIÓN — PENDIENTE CONTRASTE CON FDC-124**
 >
-> Responsable: Brayan. Actualización B5: `feature/implementation-traceability-update`. Baseline auditado: `f2009b2de71a5a36a97b1b1e422a865aeaf93e8c` (2026-09-21).
+> Responsable actual: Sebastián. Incremento: `feature/demo-flow-recovery-and-evidence`. Baseline: `189cd0a1a208b45f03a05f104ab61716db7ee38a` (PR #33 integrado, 206 pruebas; 2026-09-25).
 > FDC-124 NO LOCALIZADO. No hay citas institucionales verificadas ni cumplimiento académico certificado. Las asociaciones a objetivos son propuestas revisables.
 
 Origen técnico o UX; no constituyen mandatos institucionales. Para todos los RNF: **criterio cuantitativo pendiente de FDC/validación académica**. No se establecen SLA ni umbrales nuevos. Los tamaños y temporizadores citados describen pruebas o implementación existentes.
@@ -30,7 +30,7 @@ Origen técnico o UX; no constituyen mandatos institucionales. Para todos los RN
 - **Estado técnico:** PARCIAL.
 - **Evidencia de código:** [lib/services/osrm_routing_service.dart](../../lib/services/osrm_routing_service.dart); [lib/services/geocoding_service.dart](../../lib/services/geocoding_service.dart); [lib/widgets/map_search_panel.dart](../../lib/widgets/map_search_panel.dart).
 - **Prueba/evidencia:** [test/services/osrm_routing_service_test.dart](../../test/services/osrm_routing_service_test.dart); [test/services/place_suggestion_service_test.dart](../../test/services/place_suggestion_service_test.dart)
-- **Brecha:** Photon limita a 8 s en servicio y 10 s en UI; OSRM a 15 s en servicio y 20 s en Home. Nominatim no impone timeout propio: Home envuelve cada búsqueda en 10 s, pero RutasScreen llama sin timeout. No hay medición de latencia real ni SLA; los límites por etapa no son un límite total del viaje.
+- **Brecha:** Photon limita a 8 s en servicio y 10 s en UI; OSRM a 15 s en servicio y 20 s en Home. Nominatim no impone timeout propio: Home y RutasScreen envuelven cada búsqueda en 10 s; en Rutas se prueban origen/destino, liberación de carga, reintento, respuesta tardía y dispose. No hay medición de latencia real ni SLA; los límites por etapa no son un límite total del viaje.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RNF-SEC-01 — Autorización efectiva
@@ -97,8 +97,8 @@ Origen técnico o UX; no constituyen mandatos institucionales. Para todos los RN
 - **Estado técnico:** IMPLEMENTADO.
 - **Evidencia de código:** [lib/models/route_result.dart](../../lib/models/route_result.dart); [lib/services/osrm_routing_service.dart](../../lib/services/osrm_routing_service.dart); [lib/widgets/map_search_panel.dart](../../lib/widgets/map_search_panel.dart).
 - **Prueba/evidencia:** [test/services/osrm_routing_service_test.dart](../../test/services/osrm_routing_service_test.dart); [test/screens/home/route_flow_test.dart](../../test/screens/home/route_flow_test.dart)
-- **Evidencia adicional:** [Dominio neutral](../mobility-domain.md), [contrato](../../lib/mobility/mobility_recommendation_engine.dart) y [pruebas de dominio](../../test/mobility/mobility_domain_test.dart). La interfaz del motor permite un doble, pero no hay estrategia productiva.
-- **Brecha:** Existe legado Google y duplicación Home/Rutas; no se acredita cobertura total ni integración productiva del dominio con recomendaciones.
+- **Evidencia adicional:** [Dominio neutral](../mobility-domain.md), [contrato](../../lib/mobility/mobility_recommendation_engine.dart) y [pruebas de dominio](../../test/mobility/mobility_domain_test.dart). La interfaz admite dobles y #33 incorpora VehicleRecommendationEngine productivo, determinista y explicable; ver [modelo](../recommendation-model.md).
+- **Brecha:** Existe legado Google y duplicación Home/Rutas; la recomendación vehicular sí integra el dominio, sin acreditar cobertura total ni capacidades multimodales.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RNF-MAINT-02 — Integridad de datos externos
@@ -124,7 +124,7 @@ Origen técnico o UX; no constituyen mandatos institucionales. Para todos los RN
 - **Estado técnico:** PARCIAL.
 - **Evidencia de código:** [pubspec.yaml](../../pubspec.yaml); [README.md](../../README.md).
 - **Prueba/evidencia:** [test/widgets/route_result_card_test.dart](../../test/widgets/route_result_card_test.dart); [registro de compilación web de B4](../route-alternatives.md).
-- **Brecha:** B4 registra compilación web correcta; B5 no la repite. No acredita flujo OAuth/permisos en navegador real ni ejecución nativa; plataformas objetivo y matriz de aceptación pendientes.
+- **Brecha:** B4 registra compilación web correcta; este incremento no repite compilaciones. No acredita flujo OAuth/permisos en navegador real ni ejecución nativa; plataformas objetivo y matriz de aceptación pendientes.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RNF-MAINT-03 — Operación de proveedores

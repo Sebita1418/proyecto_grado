@@ -2,7 +2,7 @@
 
 > **BASE PROVISIONAL — EN REVISIÓN — PENDIENTE CONTRASTE CON FDC-124**
 >
-> Responsable: Brayan. Actualización B5: `feature/implementation-traceability-update`. Baseline auditado: `f2009b2de71a5a36a97b1b1e422a865aeaf93e8c` (2026-09-21).
+> Responsable actual: Sebastián. Incremento: `feature/demo-flow-recovery-and-evidence`. Baseline: `189cd0a1a208b45f03a05f104ab61716db7ee38a` (PR #33 integrado, 206 pruebas; 2026-09-25).
 > FDC-124 NO LOCALIZADO. No hay citas institucionales verificadas ni cumplimiento académico certificado. Las asociaciones a objetivos son propuestas revisables.
 
 Disponibilidad técnica significa que existe una integración o representación en código; no confirma respuesta en vivo. Las variables potenciales no son obligaciones institucionales. Ver [matriz](traceability_matrix.md).
@@ -30,7 +30,7 @@ Disponibilidad técnica significa que existe una integración o representación 
 - **Fuente actual/evidencia:** [lib/widgets/map_search_panel.dart](../../lib/widgets/map_search_panel.dart)
 - **Estado técnico:** IMPLEMENTADO.
 - **Disponibilidad:** DISPONIBLE TÉCNICAMENTE.
-- **Brecha:** Edición invalida y cursor conserva selección en el alcance probado de RF-ROUTE-03; aún no se utiliza en recomendaciones personalizadas.
+- **Brecha:** Edición invalida y cursor conserva selección en el alcance probado de RF-ROUTE-03; alimenta el contexto del motor vehicular de #33; no implica personalización completa.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## VM-03 — Destino
@@ -108,7 +108,7 @@ Disponibilidad técnica significa que existe una integración o representación 
 - **Fuente actual/evidencia:** [lib/services/osrm_routing_service.dart](../../lib/services/osrm_routing_service.dart)
 - **Estado técnico:** PARCIAL.
 - **Disponibilidad:** Cuatro modos definidos en [TransportMode](../../lib/mobility/transport_mode.dart) y seleccionables en [B3](../../lib/screens/preferences/mobility_preferences_screen.dart); routing disponible solo con driving fijo.
-- **Brecha:** La selección local no cambia OSRM; faltan proveedores para otros modos, comparación multimodal e integración con recomendaciones.
+- **Brecha:** Los modos persistidos determinan elegibilidad de driving en #33; no cambian el perfil OSRM. Faltan proveedores para otros modos y comparación multimodal.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## VM-09 — Metadatos del catálogo
@@ -131,10 +131,10 @@ Disponibilidad técnica significa que existe una integración o representación 
 - **Objetivo provisional:** OE1, OE3.
 - **Utilidad:** Definir personalización.
 - **Fuente requerida:** Captura consentida y esquema por aprobar.
-- **Fuente actual/evidencia:** [Pantalla B3](../../lib/screens/preferences/mobility_preferences_screen.dart), [acceso desde Perfil](../../lib/screens/perfil/perfil_screen.dart), [contrato de contexto](../../lib/mobility/mobility_context.dart); [pruebas](../../test/screens/preferences/mobility_preferences_screen_test.dart) y [descarte al salir](../../test/perfil/perfil_screen_test.dart).
+- **Fuente actual/evidencia:** [Pantalla B3](../../lib/screens/preferences/mobility_preferences_screen.dart), [acceso desde Perfil](../../lib/screens/perfil/perfil_screen.dart), [contrato de contexto](../../lib/mobility/mobility_context.dart); [pruebas](../../test/screens/preferences/mobility_preferences_screen_test.dart) y [persistencia al reabrir](../../test/perfil/perfil_screen_test.dart).
 - **Estado técnico:** PARCIAL.
-- **Disponibilidad:** CAPTURADA EN UI: selección de modos no vacía al confirmar, entregada como conjunto inmutable a callback opcional; el acceso desde Perfil no conecta un consumidor.
-- **Brecha:** Se pierde al salir de la pantalla, sin persistencia local/remota ni procesamiento para personalizar. Perfil Supabase mantiene solo identidad, rol y activo. No hay pesos o prioridades de tiempo/distancia capturados.
+- **Disponibilidad:** PERSISTIDA LOCALMENTE por #31 mediante [MobilityPreferencesService](../../lib/services/mobility_preferences_service.dart). #33 relee modos en cada cálculo y determina elegibilidad vehicular. No requiere callback conectado desde Perfil.
+- **Brecha:** Almacenamiento por instalación/navegador, compartido entre cuentas; no por cuenta ni sincronizado con Supabase. Perfil conserva identidad, rol y activo. No hay pesos o prioridades personales de tiempo/distancia; la regla es técnica provisional.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## VM-11 — Horarios
@@ -159,8 +159,8 @@ Disponibilidad técnica significa que existe una integración o representación 
 - **Fuente requerida:** Modelo, objetivos y fuentes aprobados.
 - **Fuente actual/evidencia:** [OSRM](../../lib/services/osrm_routing_service.dart), [panel](../../lib/widgets/map_search_panel.dart), [selector](../../lib/widgets/route_alternatives_selector.dart), [RouteOption](../../lib/mobility/route_option.dart); [pruebas de servicio](../../test/services/osrm_routing_service_test.dart) y [flujo](../../test/screens/home/route_flow_test.dart).
 - **Estado técnico:** PARCIAL.
-- **Disponibilidad:** Alternativas vehiculares obtenidas con `alternatives=true`, validadas y seleccionables manualmente; puede haber solo una. Contratos de razones y recomendación definidos.
-- **Brecha:** Puntuación, ranking y evaluación personalizada pendientes. Home conserva `RouteResult`, no genera `MobilityRecommendation`; el orden del proveedor no es scoring propio.
+- **Disponibilidad:** Alternativas vehiculares reales con `alternatives=true`; puede haber solo una. #32 compara mínimos y diferencias; #33 genera MobilityRecommendation y razones con el [motor vehicular](../../lib/mobility/vehicle_recommendation_engine.dart): duración → distancia → orden proveedor. Se conserva selección manual posterior.
+- **Brecha:** No hay puntuaciones ni pesos personales, comparación multimodal ni evaluación con usuarios. El motor elige entre candidatas elegibles sin reordenar la lista; no demuestra ruta óptima ni cumplimiento FDC.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## VM-13 — Condiciones de circulación
@@ -191,25 +191,25 @@ Disponibilidad técnica significa que existe una integración o representación 
 
 ## Límites del inventario
 
-Clima, ahorro y reportes ciudadanos no tienen fuente ni necesidad institucional demostradas; no se incorporan como requisitos confirmados ni datos disponibles. Un contraste futuro con FDC deberá justificar cualquier ampliación; B5 conserva todos los identificadores. Una recomendación es una salida de un motor pendiente, no un dato real aportado por OSRM.
+Clima, ahorro y reportes ciudadanos no tienen fuente ni necesidad institucional demostradas; no se incorporan como requisitos confirmados ni datos disponibles. Un contraste futuro con FDC deberá justificar cualquier ampliación; este incremento conserva todos los identificadores. La recomendación es salida del motor productivo de #33 sobre candidatas OSRM, no un dato de recomendación aportado por el proveedor. No utiliza condiciones de circulación desconocidas.
 
 ## Captura, uso y procesamiento actuales
 
-Esta tabla complementa los estados anteriores. «Sí» describe integración de código, no una consulta en vivo durante B5. Ninguna variable está integrada en un motor productivo de recomendaciones.
+Esta tabla complementa los estados anteriores. «Sí» describe integración de código, no una consulta en vivo. Origen/destino, candidatas, duración, distancia y modos permitidos sí participan en el motor vehicular de #33.
 
 | Variable existente | Definición | Captura actual | Uso actual | Proveedor / procesamiento pendiente |
 | --- | --- | --- | --- | --- |
 | VM-01 | Coordenadas | Geolocator bajo permiso | Origen Home y marcador | Precisión/dispositivo por validar; personalización pendiente |
-| VM-02 | Origen | GPS, texto, Photon/Nominatim; tap en Rutas | Petición OSRM en Home; punto en Rutas | Integración con motor pendiente |
-| VM-03 | Destino | Texto, Photon/Nominatim; tap en Rutas | Petición OSRM en Home; punto en Rutas | Integración con motor pendiente |
+| VM-02 | Origen | GPS, texto, Photon/Nominatim; tap en Rutas | Petición OSRM en Home; punto en Rutas | Contexto integrado en #33; sin comparación multimodal |
+| VM-03 | Destino | Texto, Photon/Nominatim; tap en Rutas | Petición OSRM en Home; punto en Rutas | Contexto integrado en #33; sin comparación multimodal |
 | VM-04 | Nombre/contexto | Photon/Nominatim | Selección y etiquetas | Calidad geográfica por validar; no es fuente Nearby |
 | VM-05 | Geometría | OSRM por candidata | Polyline y encuadre de selección | Sin navegación paso a paso ni análisis personalizado |
-| VM-06 | Distancia | OSRM por candidata | Comparación visual, tarjeta y detalles | Scoring propio pendiente |
-| VM-07 | Duración estimada | OSRM por candidata | Comparación visual, tarjeta y detalles | No tráfico observado; scoring propio pendiente |
-| VM-08 | Cuatro modos conceptuales | Selección B3 local | Estado de UI; OSRM sigue driving | Otros proveedores y comparación multimodal pendientes |
+| VM-06 | Distancia | OSRM por candidata | Comparación visual y desempate de duración en #33 | Sin pesos personales |
+| VM-07 | Duración estimada | OSRM por candidata | Comparación visual y primer criterio de #33 | Estimación, no tráfico observado |
+| VM-08 | Cuatro modos conceptuales | Selección persistida #31 | Elegibilidad driving #33; OSRM sigue driving | Otros proveedores y comparación multimodal pendientes |
 | VM-09 | Registro de catálogo | Integración Supabase | Listado/filtro y administración | Datos/políticas remotas por verificar; no oferta operativa |
-| VM-10 | Preferencias: modos | B3 local, sin persistencia | Confirmar/deshacer; callback sin consumidor desde Perfil | Persistencia e integración con viaje/motor pendientes |
+| VM-10 | Preferencias: modos | Persistencia local #31 | Confirmar/deshacer; relectura por cálculo en #33 | Por cuenta y sincronización remota no implementadas |
 | VM-11 | Horarios conceptuales | No | Ninguno | Fuente, modelo operativo y procesamiento pendientes |
-| VM-12 | Candidatas y puntuación | Candidatas OSRM; sin puntuación propia | Selección manual, sin otra consulta | Ranking, razones calculadas y evaluación pendientes |
+| VM-12 | Candidatas y puntuación | Candidatas OSRM; sin puntuación propia | Sugerencia explicable #33 y selección manual sin otra consulta | Evaluación con usuarios y criterios FDC pendientes |
 | VM-13 | Condiciones opcionales en dominio | No | Validación de valores en modelos/tests | Alcance por definir; proveedor y procesamiento pendientes |
 | VM-14 | Oferta conceptual | No | Ninguno | Alcance, operadores y datos pendientes |

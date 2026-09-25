@@ -2,7 +2,7 @@
 
 > **BASE PROVISIONAL — EN REVISIÓN — PENDIENTE CONTRASTE CON FDC-124**
 >
-> Responsable: Brayan. Actualización B5: `feature/implementation-traceability-update`. Baseline auditado: `f2009b2de71a5a36a97b1b1e422a865aeaf93e8c` (2026-09-21).
+> Responsable actual: Sebastián. Incremento: `feature/demo-flow-recovery-and-evidence`. Baseline: `189cd0a1a208b45f03a05f104ab61716db7ee38a` (PR #33 integrado, 206 pruebas; 2026-09-25).
 > FDC-124 NO LOCALIZADO. No hay citas institucionales verificadas ni cumplimiento académico certificado. Las asociaciones a objetivos son propuestas revisables.
 
 Los objetivos y las reglas de evidencia están definidos en [la matriz](traceability_matrix.md). IMPLEMENTADO significa capacidad observada en código y pruebas locales; no certifica operación remota ni cumplimiento del FDC. PARCIAL distingue capacidades incompletas o integraciones cuya verificación integral falta.
@@ -55,8 +55,8 @@ Los objetivos y las reglas de evidencia están definidos en [la matriz](traceabi
 - **Módulo:** Perfil.
 - **Estado técnico:** PARCIAL.
 - **Evidencia de código:** [lib/services/perfil_service.dart](../../lib/services/perfil_service.dart); [lib/screens/perfil/perfil_screen.dart](../../lib/screens/perfil/perfil_screen.dart).
-- **Prueba/evidencia:** [test/perfil/perfil_screen_test.dart](../../test/perfil/perfil_screen_test.dart)
-- **Brecha:** Visualización probada; persistencia y políticas remotas no verificadas.
+- **Prueba/evidencia:** [test/perfil/perfil_screen_test.dart](../../test/perfil/perfil_screen_test.dart); [recuperación Home](../../test/screens/home/home_screen_test.dart)
+- **Brecha:** Visualización y recuperación local de Home probadas: fallo/null informados, reintento sin duplicar solicitudes ni SnackBars, mapa disponible y navegación tras recuperar. Persistencia y políticas remotas no verificadas.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RF-PROFILE-02 — Administrar usuarios
@@ -148,7 +148,7 @@ Los objetivos y las reglas de evidencia están definidos en [la matriz](traceabi
 - **Evidencia de código:** [lib/services/osrm_routing_service.dart](../../lib/services/osrm_routing_service.dart); [lib/widgets/map_search_panel.dart](../../lib/widgets/map_search_panel.dart).
 - **Prueba/evidencia:** [test/services/osrm_routing_service_test.dart](../../test/services/osrm_routing_service_test.dart); [test/screens/home/route_flow_test.dart](../../test/screens/home/route_flow_test.dart)
 - **Evidencia integrada:** Home consulta `routeAlternatives` con `alternatives=true` y conserva todas las candidatas en orden del proveedor. [Selector](../../lib/widgets/route_alternatives_selector.dart), [prueba del selector](../../test/widgets/route_alternatives_selector_test.dart) y [B4](../route-alternatives.md) verifican selección manual sin otra consulta. `route()` conserva su contrato de una ruta.
-- **Brecha:** OSRM puede devolver una sola ruta; solo driving, sin ranking ni personalización automática.
+- **Brecha:** OSRM puede devolver una sola ruta; solo driving. #33 incorpora sugerencia inicial explicable mediante regla técnica provisional, sin personalización completa ni garantía de ruta óptima.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RF-ROUTE-02 — Geometría y métricas
@@ -202,7 +202,7 @@ Los objetivos y las reglas de evidencia están definidos en [la matriz](traceabi
 - **Estado técnico:** PARCIAL.
 - **Evidencia de código:** [lib/services/ruta_service.dart](../../lib/services/ruta_service.dart); [lib/screens/rutas/rutas_screen.dart](../../lib/screens/rutas/rutas_screen.dart).
 - **Prueba/evidencia:** [test/screens/rutas/rutas_screen_test.dart](../../test/screens/rutas/rutas_screen_test.dart)
-- **Brecha:** Tests inyectan catálogo; sin prueba de datos remotos ni cobertura específica completa del filtro.
+- **Brecha:** Filtro local probado por nombre, origen, destino y descripción, sin distinguir mayúsculas, con trim, vacío, sin coincidencias y recarga que conserva consulta. Catálogo inyectado: faltan datos, políticas y ensayo integral de Supabase real; por eso sigue PARCIAL.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RF-ROUTE-06 — Administrar catálogo
@@ -252,10 +252,11 @@ Los objetivos y las reglas de evidencia están definidos en [la matriz](traceabi
 - **Origen:** OE3 suministrado por coordinador.
 - **Objetivo provisional:** OE3.
 - **Módulo:** Recomendaciones.
-- **Estado técnico:** PENDIENTE.
-- **Evidencia de código:** [Contrato del motor](../../lib/mobility/mobility_recommendation_engine.dart); [modelo de recomendación](../../lib/mobility/mobility_recommendation.dart); [contexto](../../lib/mobility/mobility_context.dart); [preferencias](../../lib/screens/preferences/mobility_preferences_screen.dart); [alternativas OSRM](../../lib/services/osrm_routing_service.dart).
-- **Prueba/evidencia:** [Dominio](../../test/mobility/mobility_domain_test.dart), [preferencias](../../test/screens/preferences/mobility_preferences_screen_test.dart) y [flujo de alternativas](../../test/screens/home/route_flow_test.dart) prueban componentes habilitadores, no una estrategia productiva.
-- **Brecha:** La capacidad de producir recomendaciones permanece PENDIENTE: hay modelos, contrato, captura local de modos y candidatas, pero no implementación productiva del motor, scoring, ranking ni evaluación de recomendaciones. Perfil abre B3 sin consumidor; las elecciones se pierden al salir y no alimentan OSRM ni el motor. La primera candidata es selección inicial del proveedor, no recomendación inteligente propia.
+- **Estado técnico:** PARCIAL.
+- **Evidencia de código:** [Motor vehicular](../../lib/mobility/vehicle_recommendation_engine.dart), [panel integrado](../../lib/widgets/map_search_panel.dart), [resumen explicable](../../lib/widgets/mobility_recommendation_summary.dart), [persistencia local](../../lib/services/mobility_preferences_service.dart).
+- **Prueba/evidencia:** [Motor](../../test/mobility/vehicle_recommendation_engine_test.dart), [resumen](../../test/widgets/mobility_recommendation_summary_test.dart), [flujo Home](../../test/screens/home/route_flow_test.dart), [servicio de preferencias](../../test/services/mobility_preferences_service_test.dart).
+- **Evidencia integrada:** #31 persiste modos por instalación; #32 compara mínimos/diferencias; #33 produce una recomendación vehicular explicable sobre candidatas OSRM elegibles: menor duración estimada → menor distancia → orden del proveedor. Es una regla técnica provisional, no IA ni requisito institucional. Sin modos guardados se comunica el flujo driving por defecto, sin atribuirlo al usuario. Con driving se evalúan candidatas; con modos guardados sin driving no se selecciona una ruta vehicular ni se simulan otros modos. Un fallo de lectura no equivale a ausencia de preferencias. «Ruta sugerida» distingue la decisión inicial de «Selección manual», sin nuevas consultas y con mapa/tarjeta/detalles sincronizados.
+- **Brecha:** Existe motor productivo, pero solo vehicular. La preferencia de modo decide elegibilidad; no hay prioridades personales de tiempo/distancia, personalización completa, preferencias por cuenta, sincronización Supabase ni evaluación con usuarios. No se garantiza ruta óptima ni se usan tráfico, congestión o incidentes en tiempo real. Faltan fuentes/comparación entre medios y horarios (RF-MOB-02), y contraste de criterios con FDC. Por ello RF-MOB-01 es PARCIAL, no PENDIENTE ni cumplimiento académico definitivo.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.
 
 ## RF-MOB-02 — Horarios y modos
@@ -268,6 +269,6 @@ Los objetivos y las reglas de evidencia están definidos en [la matriz](traceabi
 - **Estado técnico:** PENDIENTE.
 - **Evidencia de código:** [lib/models/ruta_model.dart](../../lib/models/ruta_model.dart); [lib/services/osrm_routing_service.dart](../../lib/services/osrm_routing_service.dart).
 - **Prueba/evidencia:** Sin prueba dedicada identificada.
-- **Evidencia integrada:** [TransportMode](../../lib/mobility/transport_mode.dart) representa cuatro modos y [B3](../mobility-preferences.md) permite seleccionarlos localmente; no cambia el perfil de OSRM.
+- **Evidencia integrada:** [TransportMode](../../lib/mobility/transport_mode.dart) representa cuatro modos y [B3](../mobility-preferences.md) permite guardarlos por instalación; #33 usa driving para elegibilidad, sin cambiar el perfil fijo de OSRM ni calcular otros medios.
 - **Brecha:** Catálogo sin horarios; OSRM usa driving fijo. Consulta y comparación real entre horarios/modos permanecen PENDIENTES; faltan fuentes y procesamiento.
 - **Verificación FDC:** PENDIENTE DE VERIFICACIÓN FDC-124.

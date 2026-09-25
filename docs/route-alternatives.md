@@ -1,6 +1,6 @@
-# B4 / B7 — Selección y comparación objetiva de alternativas vehiculares
+# Alternativas vehiculares — comparación y recomendación tras #33
 
-Clasificación: Derivado funcional / UX apoyado en infraestructura existente.
+Responsable actual: Sebastián. Baseline actual: `189cd0a1a208b45f03a05f104ab61716db7ee38a` (#31–#33 integrados; 206 pruebas). Clasificación: Derivado funcional / UX apoyado en infraestructura existente.
 Baseline B4: `97c9a48b2cbff289ba047865d74af894a8de3773`.
 Relación provisional con OE3/OE4; pendiente de contraste con FDC-124.
 
@@ -12,8 +12,7 @@ Photon o fallback Nominatim) y llama una vez a
 `alternatives=true`; B4 no modifica servicios ni contratos del dominio.
 
 El panel conserva todas las candidatas como `List<RouteResult>` no modificable,
-en orden del proveedor, y un índice seleccionado. La primera es únicamente la
-selección inicial. `onRouteChanged` comunica el resultado seleccionado a Home.
+en orden del proveedor, y un índice seleccionado. Desde #33 la selección inicial corresponde al motor vehicular, no necesariamente a la primera candidata. `onRouteChanged` comunica el resultado seleccionado a Home.
 Home y RouteMap conservan su contrato y dibujan una geometría a la vez.
 
 Cambiar de alternativa solo actualiza estado local y el callback: no vuelve a
@@ -64,10 +63,9 @@ los getters de formato de la tarjeta están ligados al widget de PR #27. El sele
 centraliza su formato de duración para valores y diferencias, siguiendo la misma
 convención de minutos/horas sin tocar esa tarjeta.
 
-La selección sigue siendo manual, inicialmente en la primera ruta del proveedor.
+Desde #33 hay sugerencia inicial por menor duración estimada, luego menor distancia y orden del proveedor en empate completo; después el usuario puede seleccionar manualmente.
 La integración conserva Diseño A: control compacto sobre el mapa y hoja modal
-Material 3 con tipografía, colores y controles del tema existente; no añade
-acciones de recomendación ni modifica el panel o la tarjeta de resultado.
+Material 3 con tipografía, colores y controles del tema existente; el resumen incorporado en #33 distingue «Ruta sugerida» de «Selección manual», mientras la tarjeta conserva «Ruta seleccionada».
 Cambiarla no consulta nuevamente OSRM y mantiene tarjeta, detalles y mapa usando
 la misma candidata. La hoja usa el 90 % de la altura disponible al abrirse, con viewport
 estable y scroll para evitar saltos por el tamaño variable de las opciones.
@@ -97,17 +95,21 @@ selección asociada a otro cálculo tampoco puede modificar el actual.
 
 - Solo rutas vehiculares devueltas por el proveedor; no se garantiza una cantidad
   mínima de alternativas ni disponibilidad del servidor.
-- No hay ranking, scoring, optimización ni recomendaciones personalizadas.
-- No se integra B6 ni se crean `MobilityRecommendation` o un motor concreto.
+- Hay recomendación vehicular explicable de #33 mediante regla técnica provisional, sin puntuaciones, prioridades personales ni garantía de ruta óptima.
+- #33 integra preferencias persistidas de #31 y VehicleRecommendationEngine, que produce MobilityRecommendation. Driving decide elegibilidad; sin modos se informa el default, sin driving guardado no se elige vehículo y un fallo de lectura no se trata como vacío.
 - No se persisten rutas ni hay tráfico observado, ahorro, horarios o multimodalidad.
-- B7 compara métricas objetivas; la elección es manual. La duración es estimada y el orden
+- #32 compara métricas objetivas; #33 sugiere inicialmente y permite selección manual. La duración es estimada y el orden
   del proveedor no se presenta como una evaluación personalizada.
 - OE3 recibe un avance parcial de consulta de candidatas; OE4 recibe la interfaz
   para elegirlas. No se acredita cumplimiento institucional ni FDC EXPLÍCITO.
-- Las preferencias B6 permanecen independientes. No hay IA, ranking por preferencias,
+- Las preferencias son por instalación, no por cuenta ni Supabase. No hay IA, prioridades personales de tiempo/distancia,
   tráfico en tiempo real, reportes ciudadanos ni disponibilidad o ahorro inventados.
 - Los mínimos se refieren solo a las rutas recibidas, no a todas las rutas posibles.
-  FDC-124 continúa pendiente de contraste; B7 no reescribe la matriz B5.
+  FDC-124 continúa pendiente de contraste. RF-MOB-01 permanece PARCIAL y RF-MOB-02 PENDIENTE; véase [matriz actual](requirements/traceability_matrix.md).
+
+## Registros históricos de B4/B7
+
+Estos registros conservan evidencia de sus entregas; no describen los resultados globales actuales. El baseline #33 tiene 206 pruebas aprobadas y análisis sin incidencias. La aceptación manual actual está [pendiente](demo-acceptance.md).
 
 ## Verificación local de B4
 

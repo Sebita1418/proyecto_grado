@@ -41,6 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
   static const _initialCenter = LatLng(7.119349, -73.122742);
   final MapController _mapController = MapController();
   Perfil? _perfil;
+  bool _loadingProfile = false;
+  bool _showProfileNotice = false;
   LatLng? _position;
   LocationStatus _locationStatus = LocationStatus.permissionNotRequested;
   bool _locating = false;
@@ -55,13 +57,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadProfile() async {
+    if (_loadingProfile) return;
+    setState(() => _loadingProfile = true);
+    Perfil? perfil;
     try {
-      final perfil =
+      perfil =
           await (widget.loadProfile ?? PerfilService().obtenerPerfilActual)();
-      if (mounted) setState(() => _perfil = perfil);
     } catch (_) {
-      // The map remains available when profile loading fails.
+      // A missing profile and a failed request both allow a local retry.
     }
+    if (!mounted) return;
+    setState(() {
+      _perfil = perfil;
+      _loadingProfile = false;
+      _showProfileNotice = perfil == null;
+    });
   }
 
   Future<void> _locate() async {
@@ -197,7 +207,12 @@ class _HomeScreenState extends State<HomeScreen> {
         onRoutes: () => _open(const RutasScreen()),
         onNearby: () => _open(const NearbyPlacesScreen()),
         onProfile: () {
-          if (_perfil != null) _open(PerfilScreen(perfil: _perfil!));
+          if (_perfil != null) {
+            _open(PerfilScreen(perfil: _perfil!));
+          } else {
+            Navigator.pop(context);
+            setState(() => _showProfileNotice = true);
+          }
         },
         onAdmin: _perfil?.esAdministrador == true
             ? () => _open(const AdminScreen())
@@ -294,6 +309,35 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+              if (_showProfileNotice)
+                Positioned(
+                  left: 8,
+                  top: 8,
+                  width: wide ? 420 : constraints.maxWidth - 80,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: constraints.maxHeight * .30,
+                    ),
+                    child: SingleChildScrollView(
+                      child: MaterialBanner(
+                        forceActionsBelow: true,
+                        content: Text(
+                          _loadingProfile
+                              ? 'Cargando tu perfil. Puedes seguir usando el mapa.'
+                              : 'No fue posible cargar tu perfil. Puedes seguir usando el mapa.',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: _loadingProfile ? null : _loadProfile,
+                            child: Text(
+                              _loadingProfile ? 'Cargando…' : 'Reintentar',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               Positioned(
                 right: 16,
                 top: 16,

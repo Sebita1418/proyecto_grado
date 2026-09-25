@@ -3,6 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../mobility/mobility_context.dart';
+import '../mobility/mobility_recommendation.dart';
+import '../mobility/mobility_recommendation_engine.dart';
+import '../mobility/route_option.dart';
+import '../mobility/transport_mode.dart';
+import '../mobility/vehicle_recommendation_engine.dart';
+import '../services/mobility_preferences_service.dart';
+import 'mobility_recommendation_summary.dart';
 import '../models/place_suggestion.dart';
 import '../models/geocoding_result.dart';
 import '../models/route_result.dart';
@@ -23,6 +31,8 @@ class MapSearchPanel extends StatefulWidget {
     this.placeSuggestionService,
     this.routingService,
     this.onRouteChanged,
+    this.preferencesService = const MobilityPreferencesService(),
+    this.recommendationEngine,
   });
   final LatLng? currentPosition;
   final LocationStatus locationStatus;
@@ -30,6 +40,8 @@ class MapSearchPanel extends StatefulWidget {
   final PlaceSuggestionService? placeSuggestionService;
   final OsrmRoutingService? routingService;
   final ValueChanged<RouteResult?>? onRouteChanged;
+  final MobilityPreferencesService preferencesService;
+  final MobilityRecommendationEngine? recommendationEngine;
   @override
   State<MapSearchPanel> createState() => _MapSearchPanelState();
 }
@@ -43,6 +55,13 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   late final _suggestions =
       widget.placeSuggestionService ?? PlaceSuggestionService();
   late final _routing = widget.routingService ?? OsrmRoutingService();
+  late final _engine =
+      widget.recommendationEngine ?? VehicleRecommendationEngine();
+  MobilityRecommendation? _recommendation;
+  int? _suggestedAlternative;
+  bool _manuallySelected = false;
+  bool _usesDefaultModes = false;
+  String? _recommendationNotice;
   Timer? _debounce;
   Timer? _originDebounce;
   int _request = 0;
@@ -86,6 +105,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   }
 
   void _invalidate() {
+    _recommendationNotice = null;
     ++_calculation;
     _checking = false;
     _phase = null;
@@ -99,6 +119,11 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   void _clearAlternatives() {
     _alternatives = const [];
     _selectedAlternative = null;
+    _recommendation = null;
+    _suggestedAlternative = null;
+    _manuallySelected = false;
+    _usesDefaultModes = false;
+    _recommendationNotice = null;
   }
 
   void _selectAlternative(int index, int calculation) {
@@ -107,11 +132,13 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         calculation != _calculation ||
         _checking ||
         index < 0 ||
-        index >= _alternatives.length ||
-        index == _selectedAlternative) {
+        index >= _alternatives.length) {
       return;
     }
-    setState(() => _selectedAlternative = index);
+    setState(() {
+      _selectedAlternative = index;
+      _manuallySelected = true;
+    });
     widget.onRouteChanged?.call(_route);
   }
 
@@ -259,6 +286,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     });
     if (_originError != null || _destinationError != null) return;
     final calculation = ++_calculation;
+    final requestedAt = DateTime.now();
     setState(() {
       _checking = true;
       _phase = 'Buscando lugares...';
@@ -298,14 +326,61 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       if (results.isEmpty) {
         throw const OsrmRoutingException('El servicio no devolvió una ruta.');
       }
+      setState(() => _phase = 'Evaluando alternativas...');
+      // Reload for every calculation, including after returning from Profile.
+      // A storage failure must never be treated as an empty preference set.
+      final savedModes = await widget.preferencesService.load();
+      if (!mounted || calculation != _calculation) return;
+      final usesDefaultModes = savedModes.isEmpty;
+      final context = MobilityContext(
+        origin: origin,
+        destination: destination,
+        allowedModes: usesDefaultModes ? {TransportMode.driving} : savedModes,
+        requestedAt: requestedAt,
+      );
+      final options = [
+        for (var index = 0; index < results.length; index++)
+          RouteOption.fromRouteResult(
+            id: 'osrm-$index',
+            mode: TransportMode.driving,
+            route: results[index],
+            source: 'osrm',
+          ),
+      ];
+      final recommendation = await _engine.recommend(context, options);
+      if (!mounted || calculation != _calculation) return;
+      final suggestedIndex = options.indexWhere(
+        (option) => option.id == recommendation.recommended.id,
+      );
+      if (suggestedIndex < 0) throw StateError('Unknown recommended route');
       setState(() {
         _alternatives = List.unmodifiable(results);
-        _selectedAlternative = 0;
+        _selectedAlternative = suggestedIndex;
+        _suggestedAlternative = suggestedIndex;
+        _recommendation = recommendation;
+        _usesDefaultModes = usesDefaultModes;
         _showEditor = false;
         _routeOriginLabel = hasGps ? 'Tu ubicación actual' : originText;
         _routeDestinationLabel = _selected?.name ?? destinationText;
       });
       widget.onRouteChanged?.call(_route);
+    } on NoEligibleVehicleRouteException {
+      if (mounted && calculation == _calculation) {
+        setState(
+          () => _recommendationNotice =
+              'Todavía no hay una ruta compatible con los modos elegidos. '
+              'Solo se calculan rutas vehiculares. Puedes revisar tus preferencias '
+              'desde Perfil y volver a calcular; tus puntos se conservan.',
+        );
+      }
+    } on MobilityPreferencesStorageException {
+      if (mounted && calculation == _calculation) {
+        setState(
+          () => _recommendationNotice =
+              'No se pudieron leer las preferencias. No se seleccionó una ruta. '
+              'Vuelve a calcular para reintentar.',
+        );
+      }
     } on TimeoutException {
       if (mounted && calculation == _calculation) {
         _message('La consulta tardó demasiado. Intenta de nuevo.');
@@ -401,7 +476,23 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                   selectedIndex: _selectedAlternative!,
                   onSelected: (index) => _selectAlternative(index, calculation),
                 ),
+                if (_recommendation != null)
+                  MobilityRecommendationSummary(
+                    recommendation: _recommendation!,
+                    suggestedIndex: _suggestedAlternative!,
+                    selectedIndex: _selectedAlternative!,
+                    manuallySelected: _manuallySelected,
+                    usesDefaultModes: _usesDefaultModes,
+                  ),
               ] else ...[
+                if (_recommendationNotice != null)
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Semantics(
+                      liveRegion: true,
+                      child: Text(_recommendationNotice!),
+                    ),
+                  ),
                 if (hasGps)
                   ListTile(
                     leading: const Icon(Icons.my_location),

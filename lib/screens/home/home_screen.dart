@@ -12,8 +12,10 @@ import '../../services/place_suggestion_service.dart';
 import '../../services/perfil_service.dart';
 import '../../widgets/app_navigation_drawer.dart';
 import '../../widgets/map_search_panel.dart';
+import '../../widgets/map_floating_controls.dart';
 import '../../widgets/navigation_header.dart';
 import '../../widgets/report_incident_sheet.dart';
+import '../../widgets/report_location_picker.dart';
 import '../../widgets/route_map.dart';
 import '../admin/admin_screen.dart';
 import '../login/login_screen.dart';
@@ -61,6 +63,10 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _locating = false;
   bool _signingOut = false;
   RouteResult? _route;
+  IncidentReportDraft? _reportDraft;
+  bool _reportOpen = false;
+  bool _showPosition = true;
+  bool _showRoute = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -134,18 +140,33 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _openReportSheet() {
-    showModalBottomSheet<IncidentReportDraft>(
+  Future<void> _openReportSheet() async {
+    if (_reportOpen) return;
+    _reportOpen = true;
+    await showModalBottomSheet<IncidentReportDraft>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
+      constraints: const BoxConstraints(maxWidth: 560),
       builder: (context) => ReportIncidentSheet(
         currentPosition: _position,
+        initialDraft: _reportDraft,
+        onDraftChanged: (draft) => _reportDraft = draft,
+        onPickLocation: (current) => Navigator.of(context).push<LatLng>(
+          MaterialPageRoute(
+            builder: (_) => ReportLocationPicker(
+              initialCenter:
+                  current ?? _position ?? _mapController.camera.center,
+              route: _route,
+            ),
+          ),
+        ),
         onSubmit: (draft) {
+          _reportDraft = draft;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
-                'Reporte preparado. La persistencia de novedades se integrará en el próximo incremento.',
+                'Borrador preparado. Envío de reportes pendiente de habilitación.',
               ),
               duration: Duration(seconds: 4),
             ),
@@ -153,6 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+    _reportOpen = false;
   }
 
   Future<void> _signOut() async {
@@ -203,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
     wide ? _wideMargin + _panelWideWidth + 16 : 48,
     wide ? _wideMargin + _headerReservedHeight : 84,
     48,
-    wide ? 48 : size.height * .58 + _compactMargin,
+    wide ? 48 : size.height * .48 + _compactMargin,
   );
 
   void _fitRoute(Size size, bool wide) {
@@ -260,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? const EdgeInsets.all(48)
                       : _routePadding(constraints.biggest, wide),
                   markers: [
-                    if (position != null)
+                    if (position != null && _showPosition)
                       Marker(
                         point: position,
                         width: 52,
@@ -327,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                   ],
                   polylines: [
-                    if (_route != null)
+                    if (_route != null && _showRoute)
                       Polyline(
                         points: _route!.points,
                         strokeWidth: 5,
@@ -339,13 +361,28 @@ class _HomeScreenState extends State<HomeScreen> {
               Positioned(
                 left: edge,
                 top: edge,
-                width: wide ? _headerWideWidth : constraints.maxWidth - 2 * edge,
+                width: wide
+                    ? _headerWideWidth
+                    : constraints.maxWidth - 2 * edge,
                 child: SafeArea(
                   bottom: false,
                   child: NavigationHeader(
                     onMenuPressed: () =>
                         _scaffoldKey.currentState?.openDrawer(),
                     onProfilePressed: _openProfile,
+                    userAvatar:
+                        _perfil == null || _perfil!.nombre.trim().isEmpty
+                        ? null
+                        : CircleAvatar(
+                            radius: 15,
+                            child: Text(
+                              _perfil!.nombre
+                                  .trim()
+                                  .characters
+                                  .first
+                                  .toUpperCase(),
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -353,10 +390,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Positioned(
                   left: edge,
                   top: edge + _headerReservedHeight + 8,
-                  width:
-                      wide
-                          ? _headerWideWidth
-                          : constraints.maxWidth - 2 * edge - 64,
+                  width: wide
+                      ? _headerWideWidth
+                      : constraints.maxWidth - 2 * edge - 64,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
                       maxHeight: constraints.maxHeight * .30,
@@ -368,6 +404,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           _loadingProfile
                               ? 'Cargando tu perfil. Puedes seguir usando el mapa.'
                               : 'No fue posible cargar tu perfil. Puedes seguir usando el mapa.',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         actions: [
                           TextButton(
@@ -384,48 +422,44 @@ class _HomeScreenState extends State<HomeScreen> {
               Positioned(
                 right: edge,
                 top: wide ? edge : edge + _headerReservedHeight + 8,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    FloatingActionButton.small(
-                      heroTag: 'current-location',
-                      tooltip: 'Mi ubicación',
-                      onPressed: _locating
-                          ? null
-                          : () {
-                              if (_position != null) {
-                                _mapController.move(_position!, 15);
-                              } else {
-                                _locate();
-                              }
-                            },
-                      child: _locating
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.my_location),
-                    ),
-                    if (_route != null) ...[
-                      const SizedBox(height: 8),
-                      FloatingActionButton.small(
-                        heroTag: 'full-route',
-                        tooltip: 'Ver ruta completa',
-                        onPressed: () => _fitRoute(constraints.biggest, wide),
-                        child: const Icon(Icons.fit_screen),
-                      ),
-                    ],
-                    const SizedBox(height: 8),
-                    FloatingActionButton.extended(
-                      heroTag: 'report-incident',
-                      tooltip: 'Reportar novedad vial',
-                      icon: const Icon(Icons.campaign_outlined),
-                      label: const Text('Reportar'),
-                      onPressed: _openReportSheet,
-                    ),
-                  ],
+                child: SafeArea(
+                  bottom: false,
+                  child: MapFloatingControls(
+                    locating: _locating,
+                    showPosition: _showPosition,
+                    showRoute: _showRoute,
+                    onShowPosition: (value) =>
+                        setState(() => _showPosition = value),
+                    onShowRoute: (value) => setState(() => _showRoute = value),
+                    onLocate: () {
+                      if (_position != null) {
+                        setState(() => _showPosition = true);
+                        _mapController.move(_position!, 15);
+                      } else {
+                        _locate();
+                      }
+                    },
+                    onFitRoute: _route == null
+                        ? null
+                        : () {
+                            setState(() => _showRoute = true);
+                            _fitRoute(constraints.biggest, wide);
+                          },
+                  ),
+                ),
+              ),
+              Positioned(
+                right: edge,
+                bottom: wide ? edge : constraints.maxHeight * .48 + 2 * edge,
+                child: SafeArea(
+                  top: false,
+                  child: FloatingActionButton.extended(
+                    heroTag: 'report-incident',
+                    tooltip: 'Reportar novedad vial',
+                    icon: const Icon(Icons.add_location_alt_outlined),
+                    label: const Text('Reportar'),
+                    onPressed: _openReportSheet,
+                  ),
                 ),
               ),
               Positioned(

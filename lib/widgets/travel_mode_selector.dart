@@ -38,11 +38,13 @@ class TravelModeSelector extends StatelessWidget {
     this.selectedMode = TransportMode.driving,
     this.onModeSelected,
     this.onUnavailableModeTap,
+    this.compact = false,
   });
 
   final TransportMode selectedMode;
   final ValueChanged<TransportMode>? onModeSelected;
   final ValueChanged<TransportMode>? onUnavailableModeTap;
+  final bool compact;
 
   static const List<TransportMode> availableModes = TransportMode.values;
 
@@ -80,6 +82,36 @@ class TravelModeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (compact) {
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            for (final mode in availableModes)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Tooltip(
+                  message: mode.isAvailable
+                      ? mode.label
+                      : '${mode.label}: Próximamente',
+                  child: ChoiceChip(
+                    avatar: Icon(mode.icon, size: 18),
+                    label: Text(
+                      mode.isAvailable
+                          ? mode.label
+                          : '${mode.label} · Próximamente',
+                    ),
+                    selected: mode == selectedMode,
+                    onSelected: mode.isAvailable
+                        ? (_) => _handleTap(context, mode)
+                        : null,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    }
     return LayoutBuilder(
       builder: (context, constraints) {
         final availableWidth = constraints.maxWidth.isFinite
@@ -87,8 +119,7 @@ class TravelModeSelector extends StatelessWidget {
             : availableModes.length * tileMinWidth +
                   (availableModes.length - 1) * spacing;
         final columns = _columnsFor(availableWidth);
-        final tileWidth =
-            (availableWidth - (columns - 1) * spacing) / columns;
+        final tileWidth = (availableWidth - (columns - 1) * spacing) / columns;
 
         return Wrap(
           spacing: spacing,
@@ -249,4 +280,3 @@ class _TransportModeTile extends StatelessWidget {
     );
   }
 }
-

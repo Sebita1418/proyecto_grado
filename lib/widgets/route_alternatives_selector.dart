@@ -123,13 +123,40 @@ class _RouteAlternativesSelectorState extends State<RouteAlternativesSelector> {
                       child: Text(
                         'Alternativa ${widget.selectedIndex + 1} de '
                         '${widget.alternatives.length} seleccionada',
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    OutlinedButton.icon(
-                      onPressed: () => _open(context),
-                      icon: const Icon(Icons.alt_route),
-                      label: const Text('Cambiar alternativa'),
+                    Row(
+                      children: [
+                        IconButton(
+                          tooltip: 'Alternativa anterior',
+                          onPressed: widget.selectedIndex > 0
+                              ? () =>
+                                    widget.onSelected(widget.selectedIndex - 1)
+                              : null,
+                          icon: const Icon(Icons.chevron_left),
+                        ),
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => _open(context),
+                            child: const Text(
+                              'Cambiar alternativa',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'Alternativa siguiente',
+                          onPressed:
+                              widget.selectedIndex <
+                                  widget.alternatives.length - 1
+                              ? () =>
+                                    widget.onSelected(widget.selectedIndex + 1)
+                              : null,
+                          icon: const Icon(Icons.chevron_right),
+                        ),
+                      ],
                     ),
                   ],
                 ),

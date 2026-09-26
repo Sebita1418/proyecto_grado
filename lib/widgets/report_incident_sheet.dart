@@ -21,14 +21,16 @@ enum IncidentType {
 /// without fabricating coordinates or database records.
 class IncidentReportDraft {
   const IncidentReportDraft({
-    required this.type,
+    this.type,
     this.coordinates,
     this.description,
+    this.manualLocation = false,
   });
 
-  final IncidentType type;
+  final IncidentType? type;
   final LatLng? coordinates;
   final String? description;
+  final bool manualLocation;
 }
 
 /// Bottom sheet modal to capture road incidents and hazards.
@@ -41,11 +43,17 @@ class ReportIncidentSheet extends StatefulWidget {
     this.currentPosition,
     this.onSubmit,
     this.onChangeLocation,
+    this.onPickLocation,
+    this.initialDraft,
+    this.onDraftChanged,
   });
 
   final LatLng? currentPosition;
   final ValueChanged<IncidentReportDraft>? onSubmit;
   final VoidCallback? onChangeLocation;
+  final Future<LatLng?> Function(LatLng? current)? onPickLocation;
+  final IncidentReportDraft? initialDraft;
+  final ValueChanged<IncidentReportDraft>? onDraftChanged;
 
   @override
   State<ReportIncidentSheet> createState() => _ReportIncidentSheetState();
@@ -54,6 +62,40 @@ class ReportIncidentSheet extends StatefulWidget {
 class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
   IncidentType? _selectedType;
   final TextEditingController _descriptionController = TextEditingController();
+  LatLng? _coordinates;
+  bool _manualLocation = false;
+  bool _picking = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedType = widget.initialDraft?.type;
+    _coordinates = widget.initialDraft?.coordinates ?? widget.currentPosition;
+    _manualLocation = widget.initialDraft?.manualLocation ?? false;
+    _descriptionController.text = widget.initialDraft?.description ?? '';
+    _descriptionController.addListener(_saveDraft);
+  }
+
+  IncidentReportDraft get _draft => IncidentReportDraft(
+    type: _selectedType,
+    coordinates: _coordinates,
+    description: _descriptionController.text.trim().isEmpty
+        ? null
+        : _descriptionController.text.trim(),
+    manualLocation: _manualLocation,
+  );
+
+  void _saveDraft() => widget.onDraftChanged?.call(_draft);
+
+  @override
+  void didUpdateWidget(covariant ReportIncidentSheet oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_manualLocation &&
+        widget.initialDraft == null &&
+        oldWidget.currentPosition != widget.currentPosition) {
+      _coordinates = widget.currentPosition;
+    }
+  }
 
   @override
   void dispose() {
@@ -63,31 +105,31 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
 
   void _submit() {
     final type = _selectedType;
-    if (type == null) return;
-
-    final descriptionText = _descriptionController.text.trim();
-    final draft = IncidentReportDraft(
-      type: type,
-      coordinates: widget.currentPosition,
-      description: descriptionText.isEmpty ? null : descriptionText,
-    );
+    if (type == null || _coordinates == null || _picking) return;
+    final draft = _draft;
 
     widget.onSubmit?.call(draft);
     Navigator.of(context).pop(draft);
   }
 
-  void _handleChangeLocation() {
-    if (widget.onChangeLocation != null) {
-      widget.onChangeLocation!();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'La selección manual de coordenadas se habilitará en el próximo incremento.',
-          ),
-          duration: Duration(seconds: 3),
-        ),
-      );
+  Future<void> _handleChangeLocation() async {
+    if (_picking) return;
+    if (widget.onPickLocation == null) {
+      widget.onChangeLocation?.call();
+      return;
+    }
+    FocusScope.of(context).unfocus();
+    setState(() => _picking = true);
+    try {
+      final point = await widget.onPickLocation!(_coordinates);
+      if (!mounted || point == null) return;
+      setState(() {
+        _coordinates = point;
+        _manualLocation = true;
+      });
+      _saveDraft();
+    } finally {
+      if (mounted) setState(() => _picking = false);
     }
   }
 
@@ -95,7 +137,7 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final position = widget.currentPosition;
+    final position = _coordinates;
 
     return SafeArea(
       child: Padding(
@@ -117,7 +159,7 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                         Semantics(
                           header: true,
                           child: Text(
-                            'Reportar novedad vial',
+                            'Reportar novedad',
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -125,7 +167,7 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Informa novedades en la vía para la comunidad de movilidad.',
+                          'Prepara un borrador con lo que observaste en la vía.',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
@@ -175,11 +217,14 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                       ),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(14),
-                        onTap: () => setState(() => _selectedType = type),
+                        onTap: () {
+                          setState(() => _selectedType = type);
+                          _saveDraft();
+                        },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
-                            vertical: 8,
+                            vertical: 14,
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -265,7 +310,9 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                         children: [
                           Text(
                             position != null
-                                ? 'Ubicación actual detectada'
+                                ? _manualLocation
+                                      ? 'Ubicación elegida en el mapa'
+                                      : 'Tu ubicación actual'
                                 : 'Ubicación no disponible',
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.w700,
@@ -275,7 +322,7 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                           Text(
                             position != null
                                 ? '${position.latitude.toStringAsFixed(5)}, ${position.longitude.toStringAsFixed(5)}'
-                                : 'Activa el GPS para asociar coordenadas exactas.',
+                                : 'Selecciona un punto en el mapa o activa el GPS.',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -283,16 +330,25 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                         ],
                       ),
                     ),
-                    TextButton(
-                      onPressed: _handleChangeLocation,
-                      child: const Text('Cambiar'),
-                    ),
                   ],
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed:
+                      _picking ||
+                          (widget.onPickLocation == null &&
+                              widget.onChangeLocation == null)
+                      ? null
+                      : _handleChangeLocation,
+                  icon: const Icon(Icons.edit_location_alt_outlined),
+                  label: const Text('Cambiar ubicación'),
                 ),
               ),
               const SizedBox(height: 18),
               Text(
-                'Descripción adicional (opcional)',
+                'Descripción (opcional)',
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -303,6 +359,7 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                 maxLines: 2,
                 maxLength: 200,
                 decoration: InputDecoration(
+                  labelText: 'Descripción (opcional)',
                   hintText:
                       'Detalles sobre la novedad (carril, sentido, etc.)...',
                   border: OutlineInputBorder(
@@ -313,13 +370,15 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
               ),
               const SizedBox(height: 12),
               FilledButton.icon(
-                onPressed: _selectedType == null ? null : _submit,
-                icon: const Icon(Icons.send_outlined),
-                label: const Text('Enviar reporte'),
+                onPressed: _selectedType == null || position == null || _picking
+                    ? null
+                    : _submit,
+                icon: const Icon(Icons.drafts_outlined),
+                label: const Text('Preparar reporte'),
               ),
               const SizedBox(height: 8),
               Text(
-                'Nota: La persistencia de novedades se conectará en el próximo incremento.',
+                'Envío de reportes pendiente de habilitación. El borrador se conserva solo mientras permanezcas en este mapa.',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,

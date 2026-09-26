@@ -11,6 +11,7 @@ class RouteMap extends StatefulWidget {
     this.mapController,
     this.onTap,
     this.expand = false,
+    this.autoFit = true,
     this.fitPadding = const EdgeInsets.all(48),
   });
 
@@ -20,6 +21,7 @@ class RouteMap extends StatefulWidget {
   final MapController? mapController;
   final ValueChanged<LatLng>? onTap;
   final bool expand;
+  final bool autoFit;
   final EdgeInsets fitPadding;
 
   @override
@@ -64,10 +66,10 @@ class _RouteMapState extends State<RouteMap> {
   }
 
   void _scheduleMarkerFit() {
-    if (!_mapIsReady) return;
+    if (!_mapIsReady || !widget.autoFit) return;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_mapIsReady) return;
+      if (!mounted || !_mapIsReady || !widget.autoFit) return;
       final points = widget.polylines.isNotEmpty
           ? widget.polylines.expand((line) => line.points).toList()
           : widget.markers.map((marker) => marker.point).toList();

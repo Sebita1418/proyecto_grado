@@ -4,6 +4,42 @@ import 'package:latlong2/latlong.dart';
 import 'package:transporte_inteligente/widgets/report_incident_sheet.dart';
 
 void main() {
+  testWidgets(
+    'teclado y texto ampliado permiten preparar; descripción limitada a 200',
+    (tester) async {
+      tester.view.physicalSize = const Size(320, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      IncidentReportDraft? draft;
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              viewInsets: const EdgeInsets.only(bottom: 300),
+              textScaler: const TextScaler.linear(1.5),
+            ),
+            child: child!,
+          ),
+          home: Scaffold(
+            body: ReportIncidentSheet(
+              initialDraft: const IncidentReportDraft(
+                type: IncidentType.other,
+                coordinates: LatLng(7, -73),
+              ),
+              onSubmit: (value) => draft = value,
+            ),
+          ),
+        ),
+      );
+      await tester.enterText(find.byType(TextField), 'x' * 230);
+      await tester.ensureVisible(find.text('Preparar reporte'));
+      await tester.tap(find.text('Preparar reporte'));
+      await tester.pump();
+      expect(draft!.description!.length, 200);
+      expect(tester.takeException(), isNull);
+    },
+  );
   testWidgets('ReportIncidentSheet muestra encabezado y las seis categorías', (
     tester,
   ) async {
@@ -11,7 +47,7 @@ void main() {
       const MaterialApp(home: Scaffold(body: ReportIncidentSheet())),
     );
 
-    expect(find.text('Reportar novedad vial'), findsOneWidget);
+    expect(find.text('Reportar novedad'), findsOneWidget);
     expect(find.byTooltip('Cerrar'), findsOneWidget);
     expect(find.text('Accidente'), findsOneWidget);
     expect(find.text('Congestión'), findsOneWidget);
@@ -22,7 +58,7 @@ void main() {
   });
 
   testWidgets(
-    'botón Enviar reporte bloqueado sin tipo; seleccionar tipo lo habilita y envía draft',
+    'botón Preparar reporte bloqueado sin tipo; seleccionar tipo lo habilita y envía draft',
     (tester) async {
       IncidentReportDraft? submitted;
 
@@ -37,8 +73,11 @@ void main() {
         ),
       );
 
-      // Verify Enviar reporte is disabled initially
-      final submitFinder = find.widgetWithText(FilledButton, 'Enviar reporte');
+      // Verify Preparar reporte is disabled initially
+      final submitFinder = find.widgetWithText(
+        FilledButton,
+        'Preparar reporte',
+      );
       expect(tester.widget<FilledButton>(submitFinder).onPressed, isNull);
 
       // Select 'Accidente'
@@ -54,6 +93,7 @@ void main() {
       await tester.pump();
 
       // Submit
+      await tester.ensureVisible(submitFinder);
       await tester.tap(submitFinder);
       await tester.pump();
 
@@ -80,7 +120,7 @@ void main() {
         ),
       ),
     );
-    expect(find.text('Ubicación actual detectada'), findsOneWidget);
+    expect(find.text('Tu ubicación actual'), findsOneWidget);
     expect(find.text('7.12345, -73.12345'), findsOneWidget);
 
     // Case 2: without GPS position
@@ -91,7 +131,7 @@ void main() {
     );
     expect(find.text('Ubicación no disponible'), findsOneWidget);
     expect(
-      find.text('Activa el GPS para asociar coordenadas exactas.'),
+      find.text('Selecciona un punto en el mapa o activa el GPS.'),
       findsOneWidget,
     );
   });
@@ -111,7 +151,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Cambiar'));
+    await tester.tap(find.text('Cambiar ubicación'));
     await tester.pump();
     expect(locationChangeTapped, isTrue);
   });
@@ -141,7 +181,7 @@ void main() {
         );
 
         expect(tester.takeException(), isNull);
-        expect(find.text('Reportar novedad vial'), findsOneWidget);
+        expect(find.text('Reportar novedad'), findsOneWidget);
         expect(find.byTooltip('Cerrar'), findsOneWidget);
         expect(
           tester.getSemantics(find.text('Accidente')).label,

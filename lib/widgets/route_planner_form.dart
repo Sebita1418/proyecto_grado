@@ -15,6 +15,7 @@ class RoutePlannerForm extends StatelessWidget {
   final bool embedded;
   final String actionLabel;
   final String loadingLabel;
+  final bool compact;
 
   const RoutePlannerForm({
     super.key,
@@ -31,6 +32,7 @@ class RoutePlannerForm extends StatelessWidget {
     this.embedded = false,
     this.actionLabel = 'Calcular ruta',
     this.loadingLabel = 'Calculando...',
+    this.compact = false,
   });
 
   @override
@@ -40,11 +42,12 @@ class RoutePlannerForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
+          if (!compact)
+            Text(
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          if (!compact) const SizedBox(height: 16),
 
           if (showOrigin)
             TextField(
@@ -62,14 +65,14 @@ class RoutePlannerForm extends StatelessWidget {
 
           if (showOrigin) ?originSuggestions,
 
-          const SizedBox(height: 12),
+          if (showOrigin) const SizedBox(height: 12),
 
           TextField(
             controller: destinationController,
             enabled: !isLoading,
             textInputAction: TextInputAction.done,
             decoration: InputDecoration(
-              labelText: 'Destino',
+              labelText: compact ? '¿A dónde vas?' : 'Destino',
               hintText: 'Ingresa el punto de destino',
               prefixIcon: const Icon(Icons.location_on_outlined),
               border: const OutlineInputBorder(),

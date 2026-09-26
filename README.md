@@ -2,6 +2,8 @@
 
 Punto de continuación: [baseline estable y siguiente incremento](docs/stable-baseline.md).
 
+Incremento actual: [experiencia map-first y borrador geolocalizado](docs/map-first-experience.md).
+
 La ubicación actual utiliza geolocalización del dispositivo solo mientras se usa la aplicación. En web requiere un contexto seguro (HTTPS o `localhost` durante desarrollo) y permiso del navegador. Si no está disponible, el usuario puede escribir el origen manualmente.
 
 ## Routing del prototipo

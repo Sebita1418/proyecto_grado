@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../models/route_result.dart';
 
+/// Modern card presenting calculated route metrics and navigation endpoints.
+///
+/// Follows visual priority: duration -> distance -> destination -> actions.
+/// Preserves exact testable strings and details sheet.
 class RouteResultCard extends StatelessWidget {
   const RouteResultCard({
     super.key,
@@ -41,7 +45,8 @@ class RouteResultCard extends StatelessWidget {
               children: [
                 Text(
                   'Detalles de la ruta',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.titleLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
                 ListTile(
@@ -77,7 +82,7 @@ class RouteResultCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return Padding(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -85,37 +90,57 @@ class RouteResultCard extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
+                radius: 16,
                 backgroundColor: colors.primaryContainer,
                 foregroundColor: colors.onPrimaryContainer,
-                child: const Icon(Icons.directions_car_outlined),
+                child: const Icon(Icons.directions_car_outlined, size: 18),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   'Ruta seleccionada',
-                  style: theme.textTheme.titleMedium,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colors.onSurface,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 4,
-            crossAxisAlignment: WrapCrossAlignment.end,
-            children: [
-              Text(
-                duration,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colors.primary,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: colors.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: colors.outlineVariant.withValues(alpha: 0.4),
+              ),
+            ),
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.end,
+              children: [
+                Text(
+                  duration,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colors.primary,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(distance, style: theme.textTheme.titleMedium),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text(
+                    distance,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: colors.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 14),
           Row(
@@ -127,6 +152,9 @@ class RouteResultCard extends StatelessWidget {
                   originLabel,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
                 ),
               ),
             ],
@@ -135,8 +163,8 @@ class RouteResultCard extends StatelessWidget {
             padding: const EdgeInsets.only(left: 7),
             child: Icon(
               Icons.arrow_downward,
-              size: 18,
-              color: colors.onSurfaceVariant,
+              size: 16,
+              color: colors.onSurfaceVariant.withValues(alpha: 0.6),
             ),
           ),
           Row(
@@ -158,15 +186,17 @@ class RouteResultCard extends StatelessWidget {
           const SizedBox(height: 16),
           Wrap(
             spacing: 8,
-            runSpacing: 4,
+            runSpacing: 6,
             children: [
-              OutlinedButton(
+              OutlinedButton.icon(
                 onPressed: onModify,
-                child: const Text('Modificar ruta'),
+                icon: const Icon(Icons.edit_outlined, size: 16),
+                label: const Text('Modificar ruta'),
               ),
-              TextButton(
+              TextButton.icon(
                 onPressed: () => _showDetails(context),
-                child: const Text('Ver detalles'),
+                icon: const Icon(Icons.info_outline, size: 16),
+                label: const Text('Ver detalles'),
               ),
             ],
           ),

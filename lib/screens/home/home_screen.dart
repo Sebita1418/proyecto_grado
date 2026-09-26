@@ -12,6 +12,8 @@ import '../../services/place_suggestion_service.dart';
 import '../../services/perfil_service.dart';
 import '../../widgets/app_navigation_drawer.dart';
 import '../../widgets/map_search_panel.dart';
+import '../../widgets/navigation_header.dart';
+import '../../widgets/report_incident_sheet.dart';
 import '../../widgets/route_map.dart';
 import '../admin/admin_screen.dart';
 import '../login/login_screen.dart';
@@ -39,6 +41,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   static const _initialCenter = LatLng(7.119349, -73.122742);
+
+  /// Margins that keep every floating control detached from the viewport
+  /// edges so the map stays the protagonist.
+  static const double _wideMargin = 20;
+  static const double _compactMargin = 12;
+  static const double _panelWideWidth = 450;
+  static const double _headerWideWidth = 420;
+
+  /// Conservative reserved height for [NavigationHeader] so notices and
+  /// floating controls never overlap it at large text scales.
+  static const double _headerReservedHeight = 60;
   final MapController _mapController = MapController();
   Perfil? _perfil;
   bool _loadingProfile = false;
@@ -48,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _locating = false;
   bool _signingOut = false;
   RouteResult? _route;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -109,6 +123,38 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (_) => page));
   }
 
+  void _openProfile() {
+    if (_perfil != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => PerfilScreen(perfil: _perfil!)),
+      );
+    } else {
+      setState(() => _showProfileNotice = true);
+    }
+  }
+
+  void _openReportSheet() {
+    showModalBottomSheet<IncidentReportDraft>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => ReportIncidentSheet(
+        currentPosition: _position,
+        onSubmit: (draft) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Reporte preparado. La persistencia de novedades se integrará en el próximo incremento.',
+              ),
+              duration: Duration(seconds: 4),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Future<void> _signOut() async {
     Navigator.pop(context);
     final confirmed = await showDialog<bool>(
@@ -154,10 +200,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   EdgeInsets _routePadding(Size size, bool wide) => EdgeInsets.fromLTRB(
-    wide ? 440 : 48,
+    wide ? _wideMargin + _panelWideWidth + 16 : 48,
+    wide ? _wideMargin + _headerReservedHeight : 84,
     48,
-    48,
-    wide ? 48 : size.height * .58 + 16,
+    wide ? 48 : size.height * .58 + _compactMargin,
   );
 
   void _fitRoute(Size size, bool wide) {
@@ -176,35 +222,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final position = _position;
     return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0,
-        title: Row(
-          children: [
-            Icon(Icons.directions_bus_outlined, color: colorScheme.primary),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Transporte Inteligente',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Text(
-                    'Muévete mejor. Decide tu ruta.',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      key: _scaffoldKey,
       drawer: AppNavigationDrawer(
         perfil: _perfil,
         onHome: () => Navigator.pop(context),
         onRoutes: () => _open(const RutasScreen()),
+        onRoadIncidents: () {
+          Navigator.pop(context);
+          _openReportSheet();
+        },
         onNearby: () => _open(const NearbyPlacesScreen()),
         onProfile: () {
           if (_perfil != null) {
@@ -222,6 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final wide = constraints.maxWidth >= 700;
+          final edge = wide ? _wideMargin : _compactMargin;
           return Stack(
             children: [
               Positioned.fill(
@@ -309,11 +336,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+              Positioned(
+                left: edge,
+                top: edge,
+                width: wide ? _headerWideWidth : constraints.maxWidth - 2 * edge,
+                child: SafeArea(
+                  bottom: false,
+                  child: NavigationHeader(
+                    onMenuPressed: () =>
+                        _scaffoldKey.currentState?.openDrawer(),
+                    onProfilePressed: _openProfile,
+                  ),
+                ),
+              ),
               if (_showProfileNotice)
                 Positioned(
-                  left: 8,
-                  top: 8,
-                  width: wide ? 420 : constraints.maxWidth - 80,
+                  left: edge,
+                  top: edge + _headerReservedHeight + 8,
+                  width:
+                      wide
+                          ? _headerWideWidth
+                          : constraints.maxWidth - 2 * edge - 64,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
                       maxHeight: constraints.maxHeight * .30,
@@ -339,10 +382,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               Positioned(
-                right: 16,
-                top: 16,
+                right: edge,
+                top: wide ? edge : edge + _headerReservedHeight + 8,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     FloatingActionButton.small(
                       heroTag: 'current-location',
@@ -373,20 +417,31 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: const Icon(Icons.fit_screen),
                       ),
                     ],
+                    const SizedBox(height: 8),
+                    FloatingActionButton.extended(
+                      heroTag: 'report-incident',
+                      tooltip: 'Reportar novedad vial',
+                      icon: const Icon(Icons.campaign_outlined),
+                      label: const Text('Reportar'),
+                      onPressed: _openReportSheet,
+                    ),
                   ],
                 ),
               ),
               Positioned(
-                left: wide ? 20 : 8,
-                bottom: wide ? 20 : 8,
-                width: wide ? 420 : constraints.maxWidth - 16,
-                child: MapSearchPanel(
-                  currentPosition: position,
-                  locationStatus: _locationStatus,
-                  geocodingService: widget.geocodingService,
-                  placeSuggestionService: widget.placeSuggestionService,
-                  routingService: widget.routingService,
-                  onRouteChanged: (result) => setState(() => _route = result),
+                left: edge,
+                bottom: edge,
+                width: wide ? _panelWideWidth : constraints.maxWidth - 2 * edge,
+                child: SafeArea(
+                  top: false,
+                  child: MapSearchPanel(
+                    currentPosition: position,
+                    locationStatus: _locationStatus,
+                    geocodingService: widget.geocodingService,
+                    placeSuggestionService: widget.placeSuggestionService,
+                    routingService: widget.routingService,
+                    onRouteChanged: (result) => setState(() => _route = result),
+                  ),
                 ),
               ),
             ],

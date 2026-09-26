@@ -11,6 +11,7 @@ import '../mobility/transport_mode.dart';
 import '../mobility/vehicle_recommendation_engine.dart';
 import '../services/mobility_preferences_service.dart';
 import 'mobility_recommendation_summary.dart';
+import 'travel_mode_selector.dart';
 import '../models/place_suggestion.dart';
 import '../models/geocoding_result.dart';
 import '../models/route_result.dart';
@@ -88,6 +89,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   List<PlaceSuggestion> _originPlaces = [];
   PlaceSuggestion? _selected;
   PlaceSuggestion? _selectedOrigin;
+  TransportMode _selectedMode = TransportMode.driving;
 
   @override
   void didUpdateWidget(covariant MapSearchPanel oldWidget) {
@@ -454,16 +456,25 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     final hasGps = widget.currentPosition != null && !_manualOrigin;
     final height = MediaQuery.sizeOf(context).height;
     final calculation = _calculation;
+    final colorScheme = Theme.of(context).colorScheme;
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: height * .58),
       child: Material(
         elevation: 8,
-        borderRadius: BorderRadius.circular(20),
+        shadowColor: colorScheme.shadow.withValues(alpha: 0.22),
+        color: colorScheme.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+          ),
+        ),
         clipBehavior: Clip.antiAlias,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 10),
               if (_route != null && !_showEditor) ...[
                 RouteResultCard(
                   route: _route!,
@@ -485,6 +496,28 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                     usesDefaultModes: _usesDefaultModes,
                   ),
               ] else ...[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 2, 14, 8),
+                  child: TravelModeSelector(
+                    selectedMode: _selectedMode,
+                    onModeSelected: (mode) {
+                      if (mode == TransportMode.driving) {
+                        setState(() => _selectedMode = mode);
+                      }
+                    },
+                    onUnavailableModeTap: (mode) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'El modo ${mode.label} estará disponible próximamente. '
+                            'Actualmente solo se admiten rutas vehiculares.',
+                          ),
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 if (_recommendationNotice != null)
                   Padding(
                     padding: const EdgeInsets.all(16),
@@ -494,16 +527,42 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                     ),
                   ),
                 if (hasGps)
-                  ListTile(
-                    leading: const Icon(Icons.my_location),
-                    title: const Text('Tu ubicación actual'),
-                    subtitle: const Text('Origen'),
-                    trailing: TextButton(
-                      onPressed: () => setState(() {
-                        _invalidate();
-                        _manualOrigin = true;
-                      }),
-                      child: const Text('Cambiar'),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.fromLTRB(12, 4, 6, 4),
+                      tileColor: colorScheme.surfaceContainerLow,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        side: BorderSide(
+                          color: colorScheme.outlineVariant.withValues(
+                            alpha: 0.5,
+                          ),
+                        ),
+                      ),
+                      leading: Icon(
+                        Icons.my_location,
+                        color: colorScheme.primary,
+                      ),
+                      title: Text(
+                        'Tu ubicación actual',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Origen',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      trailing: TextButton(
+                        onPressed: () => setState(() {
+                          _invalidate();
+                          _manualOrigin = true;
+                        }),
+                        child: const Text('Cambiar'),
+                      ),
                     ),
                   )
                 else if (_manualOrigin && widget.currentPosition != null)
@@ -580,7 +639,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                 ),
                 if (_phase != null)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                     child: Text(_phase!),
                   ),
                 if (widget.locationStatus !=

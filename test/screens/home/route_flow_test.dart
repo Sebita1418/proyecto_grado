@@ -901,6 +901,8 @@ void main() {
       expect(find.text('Tu ubicación actual'), findsOneWidget);
       expect(find.text('Parque'), findsOneWidget);
       expect(find.byTooltip('Ver ruta completa'), findsOneWidget);
+      await tester.ensureVisible(find.text('Ver detalles'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Ver detalles'));
       await tester.pumpAndSettle();
       expect(find.text('Detalles de la ruta'), findsOneWidget);
@@ -916,6 +918,8 @@ void main() {
             .length,
         3,
       );
+      await tester.ensureVisible(find.text('Modificar ruta'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Modificar ruta'));
       await tester.pump();
       expect(find.text('Calcular ruta'), findsOneWidget);

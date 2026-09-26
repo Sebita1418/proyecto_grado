@@ -210,7 +210,8 @@ void main() {
     expect(find.byTooltip('Mi ubicación'), findsWidgets);
     expect(find.text('Hola,'), findsNothing);
     expect(find.text('¿Qué deseas consultar?'), findsNothing);
-    expect(find.byTooltip('Mi ubicación'), findsNWidgets(2));
+    expect(find.byTooltip('Mi ubicación'), findsOneWidget);
+    expect(find.byTooltip('Tu ubicación actual'), findsOneWidget);
     await tester.tap(find.byTooltip('Abrir menú de navegación'));
     await tester.pump();
     expect(find.text('Muévete mejor. Decide tu ruta.'), findsNWidgets(2));

@@ -4,6 +4,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../models/perfil_model.dart';
+import '../../navigation/navigation_session.dart';
+import '../../widgets/navigation_status_card.dart';
 import '../../models/route_result.dart';
 import '../../services/location_service.dart';
 import '../../services/geocoding_service.dart';
@@ -17,6 +19,9 @@ import '../../widgets/navigation_header.dart';
 import '../../widgets/report_incident_sheet.dart';
 import '../../widgets/report_location_picker.dart';
 import '../../widgets/route_map.dart';
+import '../../widgets/user_location_marker.dart';
+import '../../widgets/road_incident_marker.dart';
+import '../../widgets/road_incident_details_sheet.dart';
 import '../admin/admin_screen.dart';
 import '../login/login_screen.dart';
 import '../nearby/nearby_places_screen.dart';
@@ -55,6 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
   /// floating controls never overlap it at large text scales.
   static const double _headerReservedHeight = 60;
   final MapController _mapController = MapController();
+  late final _location = widget.locationService ?? LocationService();
+  late final _navigation = NavigationSession(_location);
   Perfil? _perfil;
   bool _loadingProfile = false;
   bool _showProfileNotice = false;
@@ -64,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _signingOut = false;
   RouteResult? _route;
   IncidentReportDraft? _reportDraft;
+  IncidentReportDraft? _preparedReport;
   bool _reportOpen = false;
   bool _showPosition = true;
   bool _showRoute = true;
@@ -72,8 +80,33 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _navigation.addListener(_navigationChanged);
     _loadProfile();
     _locate();
+  }
+
+  void _navigationChanged() {
+    if (!mounted) return;
+    setState(() {});
+    final point = _navigation.currentPosition;
+    if (_navigation.isActive && _navigation.following && point != null) {
+      _mapController.move(point, 16);
+    }
+  }
+
+  void _startNavigation(RouteResult route, String destination) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    if (!_navigation.start(route, destination)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No es posible iniciar esta ruta.')),
+      );
+      return;
+    }
+    setState(() {
+      _showRoute = true;
+      _showPosition = true;
+    });
+    if (_position != null) _mapController.move(_position!, 16);
   }
 
   Future<void> _loadProfile() async {
@@ -97,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _locate() async {
     if (_locating) return;
     setState(() => _locating = true);
-    final result = await (widget.locationService ?? LocationService()).locate();
+    final result = await _location.locate();
     if (!mounted) return;
     setState(() {
       _locating = false;
@@ -149,7 +182,9 @@ class _HomeScreenState extends State<HomeScreen> {
       showDragHandle: true,
       constraints: const BoxConstraints(maxWidth: 560),
       builder: (context) => ReportIncidentSheet(
-        currentPosition: _position,
+        currentPosition: _navigation.isActive
+            ? _navigation.currentPosition
+            : _position,
         initialDraft: _reportDraft,
         onDraftChanged: (draft) => _reportDraft = draft,
         onPickLocation: (current) => Navigator.of(context).push<LatLng>(
@@ -162,7 +197,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         onSubmit: (draft) {
-          _reportDraft = draft;
+          setState(() {
+            _reportDraft = draft;
+            _preparedReport = draft;
+          });
+          // The draft marker confirms the preview during navigation; a bottom
+          // snackbar would cover the persistent Finish action.
+          if (_navigation.isActive) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
@@ -217,6 +258,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _navigation.removeListener(_navigationChanged);
+    _navigation.dispose();
     _mapController.dispose();
     super.dispose();
   }
@@ -242,7 +285,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final position = _position;
+    final navigating = _navigation.isActive;
+    final position = navigating ? _navigation.currentPosition : _position;
     return Scaffold(
       key: _scaffoldKey,
       drawer: AppNavigationDrawer(
@@ -278,46 +322,38 @@ class _HomeScreenState extends State<HomeScreen> {
                   initialPosition: _initialCenter,
                   mapController: _mapController,
                   expand: true,
+                  autoFit: !navigating,
+                  onManualMove: navigating ? _navigation.pauseFollowing : null,
                   fitPadding: _route == null
                       ? const EdgeInsets.all(48)
                       : _routePadding(constraints.biggest, wide),
+                  overlayMarkers: [
+                    if (_preparedReport case final draft?)
+                      Marker(
+                        point: draft.coordinates!,
+                        width: 48,
+                        height: 48,
+                        alignment: Alignment.topLeft,
+                        child: RoadIncidentMarker(
+                          type: draft.type!,
+                          onTap: () => showModalBottomSheet<void>(
+                            context: context,
+                            isScrollControlled: true,
+                            showDragHandle: true,
+                            constraints: const BoxConstraints(maxWidth: 560),
+                            builder: (_) =>
+                                RoadIncidentDetailsSheet(draft: draft),
+                          ),
+                        ),
+                      ),
+                  ],
                   markers: [
-                    if (position != null && _showPosition)
+                    if (position != null && (_showPosition || navigating))
                       Marker(
                         point: position,
                         width: 52,
                         height: 52,
-                        child: Tooltip(
-                          message: 'Mi ubicación',
-                          child: Semantics(
-                            label: 'Marcador de mi ubicación',
-                            child: Container(
-                              width: 30,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: colorScheme.primary,
-                                border: Border.all(
-                                  color: colorScheme.surface,
-                                  width: 3,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: colorScheme.shadow.withValues(
-                                      alpha: .25,
-                                    ),
-                                    blurRadius: 6,
-                                  ),
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.circle,
-                                size: 10,
-                                color: colorScheme.onPrimary,
-                              ),
-                            ),
-                          ),
-                        ),
+                        child: const UserLocationMarker(),
                       ),
                     if (_route != null && _route!.origin != position)
                       Marker(
@@ -349,44 +385,58 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                   ],
                   polylines: [
+                    if (navigating && _navigation.projection != null)
+                      Polyline(
+                        points: _navigation.projection!.traveled,
+                        strokeWidth: 4,
+                        color: colorScheme.onSurfaceVariant.withValues(
+                          alpha: .5,
+                        ),
+                      ),
                     if (_route != null && _showRoute)
                       Polyline(
-                        points: _route!.points,
+                        points: navigating
+                            ? (_navigation.projection?.remaining ??
+                                  _route!.points)
+                            : _route!.points,
                         strokeWidth: 5,
+                        borderStrokeWidth: 2,
+                        borderColor: Colors.white,
                         color: colorScheme.primary,
                       ),
                   ],
                 ),
               ),
-              Positioned(
-                left: edge,
-                top: edge,
-                width: wide
-                    ? _headerWideWidth
-                    : constraints.maxWidth - 2 * edge,
-                child: SafeArea(
-                  bottom: false,
-                  child: NavigationHeader(
-                    onMenuPressed: () =>
-                        _scaffoldKey.currentState?.openDrawer(),
-                    onProfilePressed: _openProfile,
-                    userAvatar:
-                        _perfil == null || _perfil!.nombre.trim().isEmpty
-                        ? null
-                        : CircleAvatar(
-                            radius: 15,
-                            child: Text(
-                              _perfil!.nombre
-                                  .trim()
-                                  .characters
-                                  .first
-                                  .toUpperCase(),
+              if (!navigating)
+                Positioned(
+                  left: edge,
+                  top: edge,
+                  width: wide
+                      ? _headerWideWidth
+                      : constraints.maxWidth - 2 * edge,
+                  child: SafeArea(
+                    bottom: false,
+                    child: NavigationHeader(
+                      onMenuPressed: () =>
+                          _scaffoldKey.currentState?.openDrawer(),
+                      onProfilePressed: _openProfile,
+                      userAvatar:
+                          _perfil == null || _perfil!.nombre.trim().isEmpty
+                          ? null
+                          : CircleAvatar(
+                              radius: 15,
+                              child: Text(
+                                _perfil!.nombre
+                                    .trim()
+                                    .characters
+                                    .first
+                                    .toUpperCase(),
+                              ),
                             ),
-                          ),
+                    ),
                   ),
                 ),
-              ),
-              if (_showProfileNotice)
+              if (_showProfileNotice && !navigating)
                 Positioned(
                   left: edge,
                   top: edge + _headerReservedHeight + 8,
@@ -421,40 +471,63 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               Positioned(
                 right: edge,
-                top: wide ? edge : edge + _headerReservedHeight + 8,
+                top: wide || navigating
+                    ? edge
+                    : edge + _headerReservedHeight + 8,
                 child: SafeArea(
                   bottom: false,
-                  child: MapFloatingControls(
-                    locating: _locating,
-                    showPosition: _showPosition,
-                    showRoute: _showRoute,
-                    onShowPosition: (value) =>
-                        setState(() => _showPosition = value),
-                    onShowRoute: (value) => setState(() => _showRoute = value),
-                    onLocate: () {
-                      if (_position != null) {
-                        setState(() => _showPosition = true);
-                        _mapController.move(_position!, 15);
-                      } else {
-                        _locate();
-                      }
-                    },
-                    onFitRoute: _route == null
-                        ? null
-                        : () {
-                            setState(() => _showRoute = true);
-                            _fitRoute(constraints.biggest, wide);
+                  child: navigating
+                      ? FloatingActionButton.small(
+                          heroTag: 'navigation-recenter',
+                          tooltip: 'Recentrar',
+                          onPressed: _navigation.recenter,
+                          child: const Icon(Icons.my_location),
+                        )
+                      : MapFloatingControls(
+                          locating: _locating,
+                          showPosition: _showPosition,
+                          showRoute: _showRoute,
+                          onShowPosition: (value) =>
+                              setState(() => _showPosition = value),
+                          onShowRoute: (value) =>
+                              setState(() => _showRoute = value),
+                          onLocate: () {
+                            if (_position != null) {
+                              setState(() => _showPosition = true);
+                              _mapController.move(_position!, 15);
+                            } else {
+                              _locate();
+                            }
                           },
-                  ),
+                          onFitRoute: _route == null
+                              ? null
+                              : () {
+                                  setState(() => _showRoute = true);
+                                  _fitRoute(constraints.biggest, wide);
+                                },
+                        ),
                 ),
               ),
               Positioned(
                 right: edge,
-                bottom: wide ? edge : constraints.maxHeight * .48 + 2 * edge,
+                top: navigating
+                    ? edge + 64
+                    : wide
+                    ? edge + 184
+                    : null,
+                bottom: wide || navigating
+                    ? null
+                    : constraints.maxHeight * .48 + 2 * edge,
                 child: SafeArea(
                   top: false,
                   child: FloatingActionButton.extended(
                     heroTag: 'report-incident',
+                    elevation: 3,
+                    backgroundColor: colorScheme.surface,
+                    foregroundColor: colorScheme.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     tooltip: 'Reportar novedad vial',
                     icon: const Icon(Icons.add_location_alt_outlined),
                     label: const Text('Reportar'),
@@ -463,18 +536,39 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Positioned(
+                key: const ValueKey('route-panel'),
                 left: edge,
                 bottom: edge,
                 width: wide ? _panelWideWidth : constraints.maxWidth - 2 * edge,
                 child: SafeArea(
                   top: false,
-                  child: MapSearchPanel(
-                    currentPosition: position,
-                    locationStatus: _locationStatus,
-                    geocodingService: widget.geocodingService,
-                    placeSuggestionService: widget.placeSuggestionService,
-                    routingService: widget.routingService,
-                    onRouteChanged: (result) => setState(() => _route = result),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (navigating)
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: constraints.maxHeight * .42,
+                          ),
+                          child: SingleChildScrollView(
+                            child: NavigationStatusCard(session: _navigation),
+                          ),
+                        ),
+                      Offstage(
+                        key: const ValueKey('route-planner'),
+                        offstage: navigating,
+                        child: MapSearchPanel(
+                          currentPosition: _position,
+                          onStartNavigation: _startNavigation,
+                          locationStatus: _locationStatus,
+                          geocodingService: widget.geocodingService,
+                          placeSuggestionService: widget.placeSuggestionService,
+                          routingService: widget.routingService,
+                          onRouteChanged: (result) =>
+                              setState(() => _route = result),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

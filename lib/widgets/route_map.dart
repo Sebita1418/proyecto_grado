@@ -7,9 +7,11 @@ class RouteMap extends StatefulWidget {
     super.key,
     required this.initialPosition,
     this.markers = const <Marker>[],
+    this.overlayMarkers = const <Marker>[],
     this.polylines = const <Polyline>[],
     this.mapController,
     this.onTap,
+    this.onManualMove,
     this.expand = false,
     this.autoFit = true,
     this.fitPadding = const EdgeInsets.all(48),
@@ -17,9 +19,13 @@ class RouteMap extends StatefulWidget {
 
   final LatLng initialPosition;
   final List<Marker> markers;
+
+  /// Context overlays do not participate in automatic camera fitting.
+  final List<Marker> overlayMarkers;
   final List<Polyline> polylines;
   final MapController? mapController;
   final ValueChanged<LatLng>? onTap;
+  final VoidCallback? onManualMove;
   final bool expand;
   final bool autoFit;
   final EdgeInsets fitPadding;
@@ -105,6 +111,9 @@ class _RouteMapState extends State<RouteMap> {
               onTap: widget.onTap == null
                   ? null
                   : (_, point) => widget.onTap!(point),
+              onPositionChanged: (_, hasGesture) {
+                if (hasGesture) widget.onManualMove?.call();
+              },
               keepAlive: true,
             ),
             children: [
@@ -116,6 +125,8 @@ class _RouteMapState extends State<RouteMap> {
                 PolylineLayer(polylines: widget.polylines),
               if (widget.markers.isNotEmpty)
                 MarkerLayer(markers: widget.markers),
+              if (widget.overlayMarkers.isNotEmpty)
+                MarkerLayer(markers: widget.overlayMarkers),
               const RichAttributionWidget(
                 attributions: [
                   TextSourceAttribution('OpenStreetMap contributors'),

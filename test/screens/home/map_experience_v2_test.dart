@@ -77,7 +77,7 @@ void main() {
   ) async {
     await pumpHome(tester);
 
-    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.tap(find.byTooltip('Abrir menú de navegación'));
     await tester.pumpAndSettle();
 
     expect(find.text('Mapa / Inicio'), findsOneWidget);
@@ -95,7 +95,7 @@ void main() {
     expect(find.text('Reportar novedad vial'), findsOneWidget);
 
     // Close sheet
-    await tester.tap(find.byTooltip('Cerrar sheet'));
+    await tester.tap(find.byTooltip('Cerrar'));
     await tester.pumpAndSettle();
     expect(find.byType(ReportIncidentSheet), findsNothing);
   });

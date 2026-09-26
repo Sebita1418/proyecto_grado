@@ -40,7 +40,7 @@ void main() {
   }
 
   Future<void> tapProfile(WidgetTester tester) async {
-    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.tap(find.byTooltip('Abrir menú de navegación'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Perfil'));
     await tester.pumpAndSettle();
@@ -211,7 +211,7 @@ void main() {
     expect(find.text('Hola,'), findsNothing);
     expect(find.text('¿Qué deseas consultar?'), findsNothing);
     expect(find.byTooltip('Mi ubicación'), findsNWidgets(2));
-    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.tap(find.byTooltip('Abrir menú de navegación'));
     await tester.pump();
     expect(find.text('Muévete mejor. Decide tu ruta.'), findsNWidgets(2));
     expect(find.text('Mapa / Inicio'), findsOneWidget);
@@ -250,7 +250,7 @@ void main() {
       ),
     );
     for (final useBackButton in [false, true]) {
-      await tester.tap(find.byTooltip('Open navigation menu'));
+      await tester.tap(find.byTooltip('Abrir menú de navegación'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Puntos cercanos'));
       await tester.pumpAndSettle();

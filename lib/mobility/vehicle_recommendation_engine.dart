@@ -40,6 +40,10 @@ class VehicleRecommendationEngine implements MobilityRecommendationEngine {
       if (!ids.add(option.id.trim())) {
         throw ArgumentError('Duplicate route option id');
       }
+      if (option.route.origin != context.origin ||
+          option.route.destination != context.destination) {
+        throw ArgumentError('Route endpoints do not match the requested trip');
+      }
     }
     final eligible = options
         .where(

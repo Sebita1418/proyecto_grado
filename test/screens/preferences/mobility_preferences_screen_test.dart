@@ -202,7 +202,10 @@ void main() {
       tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
       isNull,
     );
-    expect(find.textContaining('todavía no cambia las rutas'), findsOneWidget);
+    expect(
+      find.textContaining('Los cambios se aplican al volver a calcular'),
+      findsOneWidget,
+    );
     expect(find.textContaining('no se guarda en tu cuenta'), findsOneWidget);
     for (final promise in [
       'Ruta optimizada',

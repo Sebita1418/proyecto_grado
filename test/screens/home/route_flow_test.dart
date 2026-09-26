@@ -192,6 +192,7 @@ void main() {
     );
     await tester.pump();
     await tester.enterText(find.byType(TextField).last, 'Parque');
+    await tester.ensureVisible(find.text('Calcular ruta'));
     await tester.tap(find.text('Calcular ruta'));
     await tester.pump();
   }
@@ -521,7 +522,12 @@ void main() {
         );
         await calculate(tester);
         expect(routing.calls, 2);
-        routing.completeSingle(secondRoute);
+        final currentRoute = withEndpoints(
+          secondRoute,
+          routing.lastOrigin!,
+          routing.lastDestination!,
+        );
+        routing.completeSingle(currentRoute);
         await tester.pumpAndSettle();
         final currentChanges = List<RouteResult?>.of(changes);
         if (oldFails) {
@@ -535,7 +541,7 @@ void main() {
         expect(changes, currentChanges);
         expect(
           tester.widget<RouteResultCard>(find.byType(RouteResultCard)).route,
-          same(secondRoute),
+          same(currentRoute),
         );
         expect(
           find.text('Se recibió una sola ruta vehicular.'),
@@ -566,9 +572,14 @@ void main() {
       tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
       isNull,
     );
-    routing.completeSingle(secondRoute);
+    final currentRoute = withEndpoints(
+      secondRoute,
+      routing.lastOrigin!,
+      routing.lastDestination!,
+    );
+    routing.completeSingle(currentRoute);
     await tester.pumpAndSettle();
-    expect(changes.last, same(secondRoute));
+    expect(changes.last, same(currentRoute));
     expect(find.text('Calculando...'), findsNothing);
   });
 
@@ -684,7 +695,12 @@ void main() {
           distanceMeters: 1000,
           durationSeconds: 120,
         );
-        routing.pending.complete([result, secondRoute]);
+        final alternative = withEndpoints(
+          secondRoute,
+          result.origin,
+          result.destination,
+        );
+        routing.pending.complete([result, alternative]);
         await tester.pump();
         expect(find.byType(RouteResultCard), findsOneWidget);
         expect(
@@ -693,7 +709,7 @@ void main() {
                 find.byType(RouteAlternativesSelector),
               )
               .alternatives,
-          [result, secondRoute],
+          [result, alternative],
         );
         expect(changes, [null, result]);
 
@@ -709,7 +725,7 @@ void main() {
                 find.byType(RouteAlternativesSelector),
               )
               .alternatives,
-          [result, secondRoute],
+          [result, alternative],
         );
         expect(changes, [null, result]);
 
@@ -737,7 +753,12 @@ void main() {
           routing.lastDestination,
           fieldIndex == 1 ? const LatLng(7.2, -73.2) : result.destination,
         );
-        routing.completeSingle(result);
+        final recalculated = withEndpoints(
+          result,
+          routing.lastOrigin!,
+          routing.lastDestination!,
+        );
+        routing.completeSingle(recalculated);
         await tester.pump();
         expect(
           tester
@@ -745,7 +766,7 @@ void main() {
                 find.byType(RouteAlternativesSelector),
               )
               .alternatives,
-          [result],
+          [recalculated],
         );
         await tester.pumpWidget(const SizedBox.shrink());
       },
@@ -920,3 +941,15 @@ void main() {
     expect(find.text('No se encontró una ruta.'), findsOneWidget);
   });
 }
+
+RouteResult withEndpoints(
+  RouteResult route,
+  LatLng origin,
+  LatLng destination,
+) => RouteResult(
+  origin: origin,
+  destination: destination,
+  points: [origin, ...route.points, destination],
+  distanceMeters: route.distanceMeters,
+  durationSeconds: route.durationSeconds,
+);

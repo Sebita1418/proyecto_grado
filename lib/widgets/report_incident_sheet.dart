@@ -8,7 +8,7 @@ enum IncidentType {
   roadWork('Obra en la vía', Icons.construction_outlined),
   roadClosed('Vía cerrada', Icons.block_outlined),
   hazard('Peligro / Obstáculo', Icons.warning_amber_outlined),
-  other('Otro', Icons.more_horiz_outlined);
+  other('Otro', Icons.info_outline);
 
   const IncidentType(this.label, this.icon);
   final String label;

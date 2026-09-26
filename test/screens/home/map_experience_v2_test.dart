@@ -9,6 +9,8 @@ import 'package:transporte_inteligente/services/mobility_preferences_service.dar
 import 'package:transporte_inteligente/widgets/navigation_header.dart';
 import 'package:transporte_inteligente/widgets/report_incident_sheet.dart';
 import 'package:transporte_inteligente/widgets/route_map.dart';
+import 'package:transporte_inteligente/widgets/road_incident_marker.dart';
+import 'package:transporte_inteligente/widgets/road_incident_details_sheet.dart';
 import 'package:transporte_inteligente/widgets/travel_mode_selector.dart';
 
 class TestLocationService extends LocationService {
@@ -111,6 +113,11 @@ void main() {
 
       expect(find.byType(ReportIncidentSheet), findsOneWidget);
 
+      expect(
+        tester.widget<RouteMap>(find.byType(RouteMap)).overlayMarkers,
+        isEmpty,
+      );
+
       // Select 'Congestión'
       await tester.tap(find.text('Congestión'));
       await tester.pump();
@@ -123,6 +130,16 @@ void main() {
       // Verify sheet is closed and honest feedback is displayed without fake persistence
       expect(find.byType(ReportIncidentSheet), findsNothing);
       expect(find.byType(SnackBar), findsOneWidget);
+      final map = tester.widget<RouteMap>(find.byType(RouteMap));
+      expect(map.overlayMarkers.single.point, const LatLng(7.1193, -73.1227));
+      expect(find.byType(RoadIncidentMarker), findsOneWidget);
+      await tester.tap(find.byType(RoadIncidentMarker));
+      await tester.pumpAndSettle();
+      expect(find.byType(RoadIncidentDetailsSheet), findsOneWidget);
+      expect(find.text('Borrador sin publicar'), findsOneWidget);
+      await tester.tap(find.byTooltip('Cerrar detalle'));
+      await tester.pumpAndSettle();
+      expect(find.byType(RoadIncidentDetailsSheet), findsNothing);
       expect(
         find.textContaining('Borrador preparado. Envío de reportes'),
         findsOneWidget,

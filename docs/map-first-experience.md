@@ -46,3 +46,12 @@ en dispositivo. Toolchains nativos siguen pendientes en este entorno.
 Siguiente incremento: persistencia real de novedades con contrato de datos,
 autorización y políticas RLS acordadas; después, listado de reportes reales.
 No presentar el borrador como publicado antes de esa integración.
+
+## Vista previa sobre el mapa
+
+Preparar el reporte muestra un único marcador de borrador con el icono de la
+categoría elegida. Tocarlo abre el detalle con la descripción disponible y el
+estado «Borrador sin publicar». No se inventan fecha, autor ni reportes remotos.
+La vista previa no interviene en el ajuste de cámara y se pierde al salir de
+Home. El GPS usa un halo azul sin orientación inventada. Reportes publicados,
+persistencia Supabase y realtime siguen pendientes del contrato de backend.

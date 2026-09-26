@@ -159,6 +159,29 @@ void main() {
     );
   });
 
+  test('rechaza candidatas de otro origen o destino', () async {
+    for (final endpoints in [
+      (const LatLng(6, -73), destination),
+      (origin, const LatLng(6, -73)),
+    ]) {
+      final otherTrip = RouteOption.fromRouteResult(
+        id: 'other-trip',
+        mode: TransportMode.driving,
+        route: RouteResult(
+          origin: endpoints.$1,
+          destination: endpoints.$2,
+          points: [endpoints.$1, endpoints.$2],
+          durationSeconds: 1,
+          distanceMeters: 1,
+        ),
+      );
+      await expectLater(
+        engine.recommend(context(), [option('valid', 120, 1000), otherTrip]),
+        throwsArgumentError,
+      );
+    }
+  });
+
   for (final invalid in [-1.0, double.nan, double.infinity]) {
     test('rechaza métricas inválidas $invalid en frontera del motor', () async {
       for (final metrics in [route(invalid, 1000), route(120, invalid)]) {

@@ -38,7 +38,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.tap(find.byTooltip('Abrir menú de navegación'));
     await tester.pump();
     expect(menuTapped, isTrue);
 
@@ -98,7 +98,7 @@ void main() {
 
         expect(tester.takeException(), isNull);
         expect(find.text('Transporte Inteligente'), findsOneWidget);
-        expect(find.byTooltip('Open navigation menu'), findsOneWidget);
+        expect(find.byTooltip('Abrir menú de navegación'), findsOneWidget);
         expect(find.byTooltip('Perfil'), findsOneWidget);
 
         semantics.dispose();

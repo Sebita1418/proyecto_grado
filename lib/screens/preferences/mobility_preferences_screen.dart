@@ -133,9 +133,10 @@ class _MobilityPreferencesScreenState extends State<MobilityPreferencesScreen> {
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          'Elige uno o varios modos para futuras recomendaciones. '
-                          'Esta selección todavía no cambia las rutas calculadas '
-                          'ni confirma que haya transporte disponible.',
+                          'Elige uno o varios modos permitidos para las recomendaciones. '
+                          'Actualmente solo se calculan rutas vehiculares. '
+                          'Los cambios se aplican al volver a calcular y no confirman '
+                          'que haya transporte disponible.',
                         ),
                         const SizedBox(height: 20),
                         Card.filled(

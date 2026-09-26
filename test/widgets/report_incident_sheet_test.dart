@@ -12,7 +12,7 @@ void main() {
     );
 
     expect(find.text('Reportar novedad vial'), findsOneWidget);
-    expect(find.byTooltip('Cerrar sheet'), findsOneWidget);
+    expect(find.byTooltip('Cerrar'), findsOneWidget);
     expect(find.text('Accidente'), findsOneWidget);
     expect(find.text('Congestión'), findsOneWidget);
     expect(find.text('Obra en la vía'), findsOneWidget);
@@ -142,7 +142,7 @@ void main() {
 
         expect(tester.takeException(), isNull);
         expect(find.text('Reportar novedad vial'), findsOneWidget);
-        expect(find.byTooltip('Cerrar sheet'), findsOneWidget);
+        expect(find.byTooltip('Cerrar'), findsOneWidget);
         expect(
           tester.getSemantics(find.text('Accidente')).label,
           contains('Accidente'),

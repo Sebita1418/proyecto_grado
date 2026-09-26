@@ -22,7 +22,7 @@ El adaptador existente conserva una copia inmutable y validada de la geometría.
 El motor valida contexto, identidades únicas y datos de las opciones en su frontera,
 incluso si un consumidor evita la fábrica del modelo. Rechaza geometrías inválidas,
 coordenadas inválidas y métricas negativas/no finitas. No reemplaza datos por cero.
-El llamador debe entregar candidatas del mismo viaje; MapSearchPanel las obtiene
+El motor rechaza candidatas cuyos extremos no coincidan con el contexto; MapSearchPanel las obtiene
 de una única respuesta OSRM para los extremos del contexto.
 
 Solo son elegibles las opciones `driving` incluidas en `context.allowedModes`.

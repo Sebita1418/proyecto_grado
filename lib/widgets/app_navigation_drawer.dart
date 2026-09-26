@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../models/perfil_model.dart';
 
+enum AppDestination { home, routes, incidents, nearby, profile }
+
 /// Navigation drawer for application-wide routing and shortcuts.
 ///
 /// Contains direct access to Map, Routes, Road Incident Reports,
@@ -17,12 +19,14 @@ class AppNavigationDrawer extends StatelessWidget {
     required this.onSignOut,
     this.onAdmin,
     this.onRoadIncidents,
+    this.destination = AppDestination.home,
   });
 
   final Perfil? perfil;
   final VoidCallback onHome, onRoutes, onNearby, onProfile, onSignOut;
   final VoidCallback? onAdmin;
   final VoidCallback? onRoadIncidents;
+  final AppDestination destination;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +101,7 @@ class AppNavigationDrawer extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.map_outlined),
                     title: const Text('Mapa / Inicio'),
-                    selected: true,
+                    selected: destination == AppDestination.home,
                     selectedTileColor: colors.primaryContainer,
                     selectedColor: colors.onPrimaryContainer,
                     shape: RoundedRectangleBorder(
@@ -108,6 +112,7 @@ class AppNavigationDrawer extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.directions_bus_outlined),
                     title: const Text('Rutas'),
+                    selected: destination == AppDestination.routes,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -116,6 +121,8 @@ class AppNavigationDrawer extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.warning_amber_rounded),
                     title: const Text('Reportes de la vía'),
+                    subtitle: const Text('Preparar una novedad'),
+                    selected: destination == AppDestination.incidents,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -124,6 +131,7 @@ class AppNavigationDrawer extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.place_outlined),
                     title: const Text('Puntos cercanos'),
+                    selected: destination == AppDestination.nearby,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -132,6 +140,7 @@ class AppNavigationDrawer extends StatelessWidget {
                   ListTile(
                     leading: const Icon(Icons.person_outline),
                     title: const Text('Perfil'),
+                    selected: destination == AppDestination.profile,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

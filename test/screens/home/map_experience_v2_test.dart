@@ -68,7 +68,7 @@ void main() {
       // Verify mode selector in search panel
       expect(find.byType(TravelModeSelector), findsOneWidget);
       expect(find.text('Vehículo'), findsOneWidget);
-      expect(find.text('Próximamente'), findsNWidgets(3));
+      expect(find.textContaining('Próximamente'), findsNWidgets(3));
     },
   );
 
@@ -92,7 +92,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(ReportIncidentSheet), findsOneWidget);
-    expect(find.text('Reportar novedad vial'), findsOneWidget);
+    expect(find.text('Reportar novedad'), findsOneWidget);
 
     // Close sheet
     await tester.tap(find.byTooltip('Cerrar'));
@@ -116,14 +116,15 @@ void main() {
       await tester.pump();
 
       // Submit report
-      await tester.tap(find.text('Enviar reporte'));
+      await tester.ensureVisible(find.text('Preparar reporte'));
+      await tester.tap(find.text('Preparar reporte'));
       await tester.pumpAndSettle();
 
       // Verify sheet is closed and honest feedback is displayed without fake persistence
       expect(find.byType(ReportIncidentSheet), findsNothing);
       expect(find.byType(SnackBar), findsOneWidget);
       expect(
-        find.textContaining('Reporte preparado. La persistencia de novedades'),
+        find.textContaining('Borrador preparado. Envío de reportes'),
         findsOneWidget,
       );
     },

@@ -13,12 +13,15 @@ class RouteResultCard extends StatelessWidget {
     required this.originLabel,
     required this.destinationLabel,
     required this.onModify,
+    this.fastest = false,
+    this.shortest = false,
   });
 
   final RouteResult route;
   final String originLabel;
   final String destinationLabel;
   final VoidCallback onModify;
+  final bool fastest, shortest;
 
   String get distance =>
       '${(route.distanceMeters / 1000).toStringAsFixed(1)} km';
@@ -35,6 +38,11 @@ class RouteResultCard extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: 560,
+        maxHeight: MediaQuery.sizeOf(context).height * .85,
+      ),
       builder: (context) => SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -82,7 +90,7 @@ class RouteResultCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+      padding: const EdgeInsets.fromLTRB(18, 6, 18, 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -108,6 +116,22 @@ class RouteResultCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
+          if (fastest || shortest)
+            Wrap(
+              spacing: 8,
+              children: [
+                if (fastest)
+                  const Chip(
+                    avatar: Icon(Icons.schedule, size: 16),
+                    label: Text('Más rápida'),
+                  ),
+                if (shortest)
+                  const Chip(
+                    avatar: Icon(Icons.straighten, size: 16),
+                    label: Text('Más corta'),
+                  ),
+              ],
+            ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
@@ -142,7 +166,7 @@ class RouteResultCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 8),
           Row(
             children: [
               Icon(Icons.trip_origin, size: 18, color: colors.primary),
@@ -183,7 +207,7 @@ class RouteResultCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Wrap(
             spacing: 8,
             runSpacing: 6,

@@ -255,6 +255,7 @@ void main() {
         find.textContaining('Todavía no hay una ruta compatible'),
         findsNothing,
       );
+      await tapLabel(tester, 'Ruta sugerida');
       expect(
         find.textContaining('Única alternativa vehicular'),
         findsOneWidget,

@@ -10,6 +10,7 @@ import '../mobility/route_option.dart';
 import '../mobility/transport_mode.dart';
 import '../mobility/vehicle_recommendation_engine.dart';
 import '../services/mobility_preferences_service.dart';
+import '../services/route_alternatives_analysis_service.dart';
 import 'mobility_recommendation_summary.dart';
 import 'travel_mode_selector.dart';
 import '../models/place_suggestion.dart';
@@ -457,8 +458,11 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     final height = MediaQuery.sizeOf(context).height;
     final calculation = _calculation;
     final colorScheme = Theme.of(context).colorScheme;
+    final analysis = _route == null
+        ? null
+        : const RouteAlternativesAnalysisService().analyze(_alternatives);
     return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: height * .58),
+      constraints: BoxConstraints(maxHeight: height * .48),
       child: Material(
         elevation: 8,
         shadowColor: colorScheme.shadow.withValues(alpha: 0.22),
@@ -474,13 +478,29 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 4),
+                child: Container(
+                  width: 32,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: colorScheme.outlineVariant,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
               if (_route != null && !_showEditor) ...[
                 RouteResultCard(
                   route: _route!,
                   originLabel: _routeOriginLabel,
                   destinationLabel: _routeDestinationLabel,
                   onModify: () => setState(() => _showEditor = true),
+                  fastest:
+                      _alternatives.length > 1 &&
+                      analysis?.fastestIndex == _selectedAlternative,
+                  shortest:
+                      _alternatives.length > 1 &&
+                      analysis?.shortestIndex == _selectedAlternative,
                 ),
                 RouteAlternativesSelector(
                   alternatives: _alternatives,
@@ -489,6 +509,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                 ),
                 if (_recommendation != null)
                   MobilityRecommendationSummary(
+                    compact: true,
                     recommendation: _recommendation!,
                     suggestedIndex: _suggestedAlternative!,
                     selectedIndex: _selectedAlternative!,
@@ -499,6 +520,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(14, 2, 14, 8),
                   child: TravelModeSelector(
+                    compact: true,
                     selectedMode: _selectedMode,
                     onModeSelected: (mode) {
                       if (mode == TransportMode.driving) {
@@ -529,40 +551,31 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                 if (hasGps)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.fromLTRB(12, 4, 6, 4),
-                      tileColor: colorScheme.surfaceContainerLow,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        side: BorderSide(
-                          color: colorScheme.outlineVariant.withValues(
-                            alpha: 0.5,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.my_location,
+                          size: 18,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        const Expanded(
+                          child: Text(
+                            'Tu ubicación actual',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                      ),
-                      leading: Icon(
-                        Icons.my_location,
-                        color: colorScheme.primary,
-                      ),
-                      title: Text(
-                        'Tu ubicación actual',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
+                        TextButton(
+                          onPressed: _checking
+                              ? null
+                              : () => setState(() {
+                                  _invalidate();
+                                  _manualOrigin = true;
+                                }),
+                          child: const Text('Cambiar'),
                         ),
-                      ),
-                      subtitle: Text(
-                        'Origen',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      trailing: TextButton(
-                        onPressed: () => setState(() {
-                          _invalidate();
-                          _manualOrigin = true;
-                        }),
-                        child: const Text('Cambiar'),
-                      ),
+                      ],
                     ),
                   )
                 else if (_manualOrigin && widget.currentPosition != null)
@@ -578,6 +591,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                   ),
                 RoutePlannerForm(
                   embedded: true,
+                  compact: true,
                   originController: _origin,
                   destinationController: _destination,
                   onCalculate: _calculate,

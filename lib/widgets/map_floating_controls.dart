@@ -11,15 +11,18 @@ class MapFloatingControls extends StatelessWidget {
     required this.showRoute,
     required this.onShowRoute,
     this.onFitRoute,
+    this.horizontal = false,
   });
 
   final bool locating, showPosition, showRoute;
+  final bool horizontal;
   final VoidCallback onLocate;
   final VoidCallback? onFitRoute;
   final ValueChanged<bool> onShowPosition, onShowRoute;
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) => Flex(
+    direction: horizontal ? Axis.horizontal : Axis.vertical,
     mainAxisSize: MainAxisSize.min,
     crossAxisAlignment: CrossAxisAlignment.end,
     children: [
@@ -35,7 +38,7 @@ class MapFloatingControls extends StatelessWidget {
               )
             : const Icon(Icons.my_location),
       ),
-      const SizedBox(height: 4),
+      const SizedBox(height: 4, width: 4),
       Material(
         elevation: 4,
         borderRadius: BorderRadius.circular(12),
@@ -66,7 +69,7 @@ class MapFloatingControls extends StatelessWidget {
         ),
       ),
       if (onFitRoute != null) ...[
-        const SizedBox(height: 4),
+        const SizedBox(height: 4, width: 4),
         FloatingActionButton.small(
           heroTag: 'full-route',
           tooltip: 'Ver ruta completa',

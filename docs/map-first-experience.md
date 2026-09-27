@@ -9,7 +9,7 @@ Incremento basado en `3b699ef` de develop, tras integrar la baseline B8 por #36.
   Solo vehículo está habilitado. Se conservan Photon, Nominatim, OSRM, B6 y
   protección de solicitudes obsoletas; no cambia la política del motor B8.
 - Resultado con métricas y extremos reales, etiquetas B7 de la alternativa
-  seleccionada y explicación B8 expandible. Anterior/siguiente o selector
+  seleccionada y explicación B8 en un sheet de ancho limitado. Anterior/siguiente o selector
   actualizan la misma ruta sin nueva consulta. Los detalles siguen en un sheet.
 - Capas permite mostrar/ocultar únicamente el marcador GPS y la ruta calculada.
   El mapa base sigue siendo OSM; no hay capas de tráfico ni proveedores nuevos.
@@ -46,3 +46,17 @@ en dispositivo. Toolchains nativos siguen pendientes en este entorno.
 Siguiente incremento: persistencia real de novedades con contrato de datos,
 autorización y políticas RLS acordadas; después, listado de reportes reales.
 No presentar el borrador como publicado antes de esa integración.
+
+## Completar la experiencia sobre `04c4c91`
+
+El panel se puede minimizar y expandir conservando entradas, ruta y selección;
+el FAB acompaña ese estado. Con poca altura disponible (incluido el teclado),
+los controles se distribuyen horizontalmente y el planner limita su altura al
+viewport disponible. El aviso de perfil se puede ocultar.
+
+Las categorías del reporte forman una cuadrícula de dos columnas. Tras elegir
+una ubicación manual se puede regresar al GPS conservando tipo y descripción.
+Un borrador preparado aparece en el mapa con un marcador «Borrador no publicado»;
+su detalle permite editarlo o descartarlo. No representa un incidente persistido
+ni forma parte de un feed en vivo. La infraestructura de persistencia sigue
+pendiente, pese al título del commit #37.

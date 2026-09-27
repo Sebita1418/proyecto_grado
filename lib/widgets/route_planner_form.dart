@@ -69,6 +69,7 @@ class RoutePlannerForm extends StatelessWidget {
 
           TextField(
             controller: destinationController,
+            autofillHints: const [AutofillHints.fullStreetAddress],
             enabled: !isLoading,
             textInputAction: TextInputAction.done,
             decoration: InputDecoration(

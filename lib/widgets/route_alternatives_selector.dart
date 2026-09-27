@@ -45,6 +45,7 @@ class _RouteAlternativesSelectorState extends State<RouteAlternativesSelector> {
       showDragHandle: true,
       isScrollControlled: true,
       constraints: BoxConstraints(
+        maxWidth: 560,
         maxHeight: MediaQuery.sizeOf(context).height * .9,
       ),
       builder: (context) {

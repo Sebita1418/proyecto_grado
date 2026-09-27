@@ -7,6 +7,8 @@ import 'package:transporte_inteligente/screens/home/home_screen.dart';
 import 'package:transporte_inteligente/services/location_service.dart';
 import 'package:transporte_inteligente/services/mobility_preferences_service.dart';
 import 'package:transporte_inteligente/widgets/navigation_header.dart';
+import 'package:transporte_inteligente/widgets/map_floating_controls.dart';
+import 'package:transporte_inteligente/widgets/map_search_panel.dart';
 import 'package:transporte_inteligente/widgets/report_incident_sheet.dart';
 import 'package:transporte_inteligente/widgets/route_map.dart';
 import 'package:transporte_inteligente/widgets/travel_mode_selector.dart';
@@ -49,6 +51,24 @@ void main() {
     );
     await tester.pumpAndSettle();
   }
+
+  testWidgets(
+    'teclado conserva controles separados y planner dentro del viewport',
+    (tester) async {
+      await pumpHome(tester, width: 320, textScale: 1.5);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 400);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.pumpAndSettle();
+      final controls = tester.getRect(find.byType(MapFloatingControls));
+      final report = tester.getRect(find.byTooltip('Reportar novedad vial'));
+      final panel = tester.getRect(find.byType(MapSearchPanel));
+      expect(controls.overlaps(report), isFalse);
+      expect(controls.overlaps(panel), isFalse);
+      expect(report.overlaps(panel), isFalse);
+      expect(panel.bottom, lessThanOrEqualTo(444));
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'Map Experience V2 muestra NavigationHeader flotante y mapa full-screen',

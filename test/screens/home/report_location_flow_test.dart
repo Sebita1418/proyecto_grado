@@ -192,6 +192,30 @@ void main() {
           firstRoute.points,
         );
         expect(routing.calls, 1);
+        await tester.pump(const Duration(seconds: 5));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.byTooltip('Minimizar panel de ruta'));
+        await tester.tap(find.byTooltip('Minimizar panel de ruta'));
+        await tester.pumpAndSettle();
+        expect(
+          tester.getSize(find.byType(MapSearchPanel)).height,
+          lessThan(80),
+        );
+        expect(
+          tester
+              .widget<RouteMap>(find.byType(RouteMap))
+              .polylines
+              .single
+              .points,
+          firstRoute.points,
+        );
+        await tester.tap(find.byTooltip('Expandir panel de ruta'));
+        await tester.pumpAndSettle();
+        expect(
+          tester.widget<RouteResultCard>(find.byType(RouteResultCard)).route,
+          same(firstRoute),
+        );
+        expect(routing.calls, 1);
         expect(
           (await SharedPreferences.getInstance()).getStringList(
             MobilityPreferencesService.storageKey,
@@ -210,6 +234,44 @@ void main() {
       },
     );
   }
+
+  testWidgets(
+    'borrador preparado tiene marcador explícito y se puede descartar',
+    (tester) async {
+      final routing = ControlledRouting();
+      addTearDown(routing.dispose);
+      await home(tester, routing);
+      await tester.tap(find.byTooltip('Reportar novedad vial'));
+      await tester.pumpAndSettle();
+      await tapLabel(tester, 'Accidente');
+      await tapLabel(tester, 'Preparar reporte');
+      final marker = tester
+          .widget<RouteMap>(find.byType(RouteMap))
+          .markers
+          .last;
+      final button = marker.child as IconButton;
+      expect(button.tooltip, 'Borrador no publicado: Accidente');
+      button.onPressed!();
+      await tester.pumpAndSettle();
+      expect(find.textContaining('No publicado.'), findsOneWidget);
+      await tapLabel(tester, 'Descartar borrador');
+      expect(
+        tester.widget<RouteMap>(find.byType(RouteMap)).markers,
+        hasLength(1),
+      );
+      expect(routing.calls, 0);
+      await tester.tap(find.byTooltip('Reportar novedad vial'));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Preparar reporte'),
+            )
+            .onPressed,
+        isNull,
+      );
+    },
+  );
 
   testWidgets(
     'sin GPS no prepara sin coordenadas; cancelar y volver no inventa ubicación',

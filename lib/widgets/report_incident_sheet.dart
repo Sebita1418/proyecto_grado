@@ -190,81 +190,87 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                 ),
               ),
               const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: IncidentType.values.map((type) {
-                  final isSelected = type == _selectedType;
-                  return Semantics(
-                    button: true,
-                    selected: isSelected,
-                    label:
-                        '${type.label}, ${isSelected ? 'seleccionado' : 'no seleccionado'}',
-                    child: Material(
-                      color: isSelected
-                          ? colorScheme.primaryContainer
-                          : colorScheme.surfaceContainerLow,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
+              LayoutBuilder(
+                builder: (context, constraints) => Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: IncidentType.values.map((type) {
+                    final isSelected = type == _selectedType;
+                    return SizedBox(
+                      width: (constraints.maxWidth - 8) / 2,
+                      child: Semantics(
+                        button: true,
+                        selected: isSelected,
+                        label:
+                            '${type.label}, ${isSelected ? 'seleccionado' : 'no seleccionado'}',
+                        child: Material(
                           color: isSelected
-                              ? colorScheme.primary
-                              : colorScheme.outlineVariant.withValues(
-                                  alpha: 0.5,
-                                ),
-                          width: isSelected ? 1.5 : 1.0,
-                        ),
-                      ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(14),
-                        onTap: () {
-                          setState(() => _selectedType = type);
-                          _saveDraft();
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 14,
+                              ? colorScheme.primaryContainer
+                              : colorScheme.surfaceContainerLow,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: isSelected
+                                  ? colorScheme.primary
+                                  : colorScheme.outlineVariant.withValues(
+                                      alpha: 0.5,
+                                    ),
+                              width: isSelected ? 1.5 : 1.0,
+                            ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                type.icon,
-                                size: 18,
-                                color: isSelected
-                                    ? colorScheme.onPrimaryContainer
-                                    : colorScheme.onSurface,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(14),
+                            onTap: () {
+                              setState(() => _selectedType = type);
+                              _saveDraft();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 14,
                               ),
-                              const SizedBox(width: 8),
-                              Flexible(
-                                child: Text(
-                                  type.label,
-                                  style: theme.textTheme.labelMedium?.copyWith(
-                                    fontWeight: isSelected
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    type.icon,
+                                    size: 18,
                                     color: isSelected
                                         ? colorScheme.onPrimaryContainer
                                         : colorScheme.onSurface,
                                   ),
-                                ),
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      type.label,
+                                      style: theme.textTheme.labelMedium
+                                          ?.copyWith(
+                                            fontWeight: isSelected
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                            color: isSelected
+                                                ? colorScheme.onPrimaryContainer
+                                                : colorScheme.onSurface,
+                                          ),
+                                    ),
+                                  ),
+                                  if (isSelected) ...[
+                                    const SizedBox(width: 6),
+                                    Icon(
+                                      Icons.check,
+                                      size: 16,
+                                      color: colorScheme.primary,
+                                    ),
+                                  ],
+                                ],
                               ),
-                              if (isSelected) ...[
-                                const SizedBox(width: 6),
-                                Icon(
-                                  Icons.check,
-                                  size: 16,
-                                  color: colorScheme.primary,
-                                ),
-                              ],
-                            ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
+                    );
+                  }).toList(),
+                ),
               ),
               const SizedBox(height: 18),
               Text(
@@ -346,6 +352,23 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                   label: const Text('Cambiar ubicación'),
                 ),
               ),
+              if (_manualLocation && widget.currentPosition != null)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: _picking
+                        ? null
+                        : () {
+                            setState(() {
+                              _coordinates = widget.currentPosition;
+                              _manualLocation = false;
+                            });
+                            _saveDraft();
+                          },
+                    icon: const Icon(Icons.my_location),
+                    label: const Text('Usar mi ubicación actual'),
+                  ),
+                ),
               const SizedBox(height: 18),
               Text(
                 'Descripción (opcional)',

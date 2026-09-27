@@ -65,8 +65,10 @@ class _HomeScreenState extends State<HomeScreen> {
   RouteResult? _route;
   IncidentReportDraft? _reportDraft;
   bool _reportOpen = false;
+  IncidentReportDraft? _preparedReport;
   bool _showPosition = true;
   bool _showRoute = true;
+  bool _panelCollapsed = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -143,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _openReportSheet() async {
     if (_reportOpen) return;
     _reportOpen = true;
-    await showModalBottomSheet<IncidentReportDraft>(
+    final prepared = await showModalBottomSheet<IncidentReportDraft>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
@@ -174,7 +176,77 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+    if (mounted && prepared != null) {
+      setState(() => _preparedReport = prepared);
+    }
     _reportOpen = false;
+  }
+
+  void _showDraft() {
+    final draft = _preparedReport;
+    if (draft == null) return;
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: 560,
+        maxHeight: MediaQuery.sizeOf(context).height * .85,
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Borrador · ${draft.type!.label}',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'No publicado. Solo está disponible en esta sesión del mapa.',
+              ),
+              if (draft.description != null) ...[
+                const SizedBox(height: 12),
+                Text(draft.description!),
+              ],
+              const SizedBox(height: 12),
+              Text(
+                '${draft.coordinates!.latitude.toStringAsFixed(5)}, '
+                '${draft.coordinates!.longitude.toStringAsFixed(5)}',
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 12,
+                children: [
+                  FilledButton.icon(
+                    onPressed: () {
+                      Navigator.pop(sheetContext);
+                      _openReportSheet();
+                    },
+                    icon: const Icon(Icons.edit_outlined),
+                    label: const Text('Editar borrador'),
+                  ),
+                  TextButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _preparedReport = null;
+                        _reportDraft = null;
+                      });
+                      Navigator.pop(sheetContext);
+                    },
+                    icon: const Icon(Icons.delete_outline),
+                    label: const Text('Descartar borrador'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _signOut() async {
@@ -225,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
     wide ? _wideMargin + _panelWideWidth + 16 : 48,
     wide ? _wideMargin + _headerReservedHeight : 84,
     48,
-    wide ? 48 : size.height * .48 + _compactMargin,
+    wide ? 48 : (_panelCollapsed ? 64 : size.height * .48) + _compactMargin,
   );
 
   void _fitRoute(Size size, bool wide) {
@@ -270,6 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final wide = constraints.maxWidth >= 700;
+          final short = !wide && constraints.maxHeight < 560;
           final edge = wide ? _wideMargin : _compactMargin;
           return Stack(
             children: [
@@ -347,6 +420,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
+                    if (_preparedReport?.coordinates != null)
+                      Marker(
+                        point: _preparedReport!.coordinates!,
+                        width: 48,
+                        height: 48,
+                        child: IconButton.filledTonal(
+                          tooltip:
+                              'Borrador no publicado: ${_preparedReport!.type!.label}',
+                          onPressed: _showDraft,
+                          icon: const Icon(Icons.edit_location_alt_outlined),
+                        ),
+                      ),
                   ],
                   polylines: [
                     if (_route != null && _showRoute)
@@ -386,7 +471,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              if (_showProfileNotice)
+              if (_showProfileNotice && !short)
                 Positioned(
                   left: edge,
                   top: edge + _headerReservedHeight + 8,
@@ -409,6 +494,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         actions: [
                           TextButton(
+                            onPressed: () =>
+                                setState(() => _showProfileNotice = false),
+                            child: const Text('Ocultar'),
+                          ),
+                          TextButton(
                             onPressed: _loadingProfile ? null : _loadProfile,
                             child: Text(
                               _loadingProfile ? 'Cargando…' : 'Reintentar',
@@ -425,6 +515,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: SafeArea(
                   bottom: false,
                   child: MapFloatingControls(
+                    horizontal: short,
                     locating: _locating,
                     showPosition: _showPosition,
                     showRoute: _showRoute,
@@ -449,17 +540,31 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Positioned(
-                right: edge,
-                bottom: wide ? edge : constraints.maxHeight * .48 + 2 * edge,
+                right: short ? null : edge,
+                left: short ? edge : null,
+                top: short ? edge + _headerReservedHeight + 8 : null,
+                bottom: short
+                    ? null
+                    : wide
+                    ? edge
+                    : (_panelCollapsed ? 64 : constraints.maxHeight * .48) +
+                          2 * edge,
                 child: SafeArea(
-                  top: false,
-                  child: FloatingActionButton.extended(
-                    heroTag: 'report-incident',
-                    tooltip: 'Reportar novedad vial',
-                    icon: const Icon(Icons.add_location_alt_outlined),
-                    label: const Text('Reportar'),
-                    onPressed: _openReportSheet,
-                  ),
+                  top: short,
+                  child: short
+                      ? FloatingActionButton.small(
+                          heroTag: 'report-incident',
+                          tooltip: 'Reportar novedad vial',
+                          onPressed: _openReportSheet,
+                          child: const Icon(Icons.add_location_alt_outlined),
+                        )
+                      : FloatingActionButton.extended(
+                          heroTag: 'report-incident',
+                          tooltip: 'Reportar novedad vial',
+                          icon: const Icon(Icons.add_location_alt_outlined),
+                          label: const Text('Reportar'),
+                          onPressed: _openReportSheet,
+                        ),
                 ),
               ),
               Positioned(
@@ -469,6 +574,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: SafeArea(
                   top: false,
                   child: MapSearchPanel(
+                    maxHeight: constraints.maxHeight * .48,
+                    onCollapsedChanged: (collapsed) =>
+                        setState(() => _panelCollapsed = collapsed),
                     currentPosition: position,
                     locationStatus: _locationStatus,
                     geocodingService: widget.geocodingService,

@@ -405,7 +405,11 @@ void main() {
       );
       expect(find.text('Alternativa 2 de 2 seleccionada'), findsOneWidget);
       expect(find.text('Ruta sugerida'), findsOneWidget);
+      await tapLabel(tester, 'Ruta sugerida');
       expect(find.textContaining('por defecto'), findsOneWidget);
+      expect(find.text('Ruta recomendada: alternativa 2.'), findsOneWidget);
+      Navigator.of(tester.element(find.text('Por qué esta ruta'))).pop();
+      await tester.pumpAndSettle();
       expect(find.text('Ruta recomendada'), findsNothing);
       await tapLabel(tester, 'Cambiar alternativa');
       expect(find.text('Alternativa 1'), findsOneWidget);
@@ -901,7 +905,7 @@ void main() {
       expect(find.text('Tu ubicación actual'), findsOneWidget);
       expect(find.text('Parque'), findsOneWidget);
       expect(find.byTooltip('Ver ruta completa'), findsOneWidget);
-      await tester.tap(find.text('Ver detalles'));
+      await tapLabel(tester, 'Ver detalles');
       await tester.pumpAndSettle();
       expect(find.text('Detalles de la ruta'), findsOneWidget);
       expect(find.text('Duración estimada'), findsOneWidget);
@@ -916,7 +920,7 @@ void main() {
             .length,
         3,
       );
-      await tester.tap(find.text('Modificar ruta'));
+      await tapLabel(tester, 'Modificar ruta');
       await tester.pump();
       expect(find.text('Calcular ruta'), findsOneWidget);
       expect(

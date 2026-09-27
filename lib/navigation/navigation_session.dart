@@ -113,7 +113,9 @@ class NavigationSession extends ChangeNotifier {
   }
 
   void pauseFollowing() {
+    if (!following) return;
     following = false;
+    notifyListeners();
   }
 
   void recenter() {

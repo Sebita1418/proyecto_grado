@@ -366,7 +366,8 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       if (suggestedIndex < 0) throw StateError('Unknown recommended route');
       setState(() {
         _alternatives = List.unmodifiable(results);
-        _selectedAlternative = suggestedIndex;
+        // Recommendation explains the options; it does not choose for the user.
+        _selectedAlternative = 0;
         _suggestedAlternative = suggestedIndex;
         _recommendation = recommendation;
         _usesDefaultModes = usesDefaultModes;
@@ -451,6 +452,22 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     ),
   );
 
+  Widget _searchingPlaces() => const Padding(
+    padding: EdgeInsets.all(12),
+    child: Row(children: [
+      SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+      SizedBox(width: 8),
+      Expanded(child: Semantics(liveRegion: true, child: Text('Buscando lugares...'))),
+    ]),
+  );
+
+  Widget? _emptySuggestions(String query, PlaceSuggestion? selected) => query.trim().length < 3 || selected != null
+      ? null
+      : const Padding(
+          padding: EdgeInsets.all(12),
+          child: Text('Sin sugerencias. Puedes calcular con la dirección escrita.'),
+        );
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -488,7 +505,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           ),
         ),
         clipBehavior: Clip.antiAlias,
-        child: SingleChildScrollView(
+        child: AnimatedSize(
+          duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : const Duration(milliseconds: 180),
+          alignment: Alignment.topCenter,
+          child: SingleChildScrollView(
           controller: _scrollController,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -647,14 +667,11 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                     showOrigin: !hasGps,
                     title: '¿A dónde quieres ir?',
                     originSuggestions: _loadingOriginSuggestions
-                        ? const Padding(
-                            padding: EdgeInsets.all(12),
-                            child: Text('Buscando lugares...'),
-                          )
+                        ? _searchingPlaces()
                         : _originSuggestionError != null
                         ? _assistiveError(_originSuggestionError!)
                         : _originPlaces.isEmpty
-                        ? null
+                        ? _emptySuggestions(_origin.text, _selectedOrigin)
                         : Column(
                             mainAxisSize: MainAxisSize.min,
                             children: _originPlaces
@@ -672,14 +689,11 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                 .toList(),
                           ),
                     destinationSuggestions: _loadingSuggestions
-                        ? const Padding(
-                            padding: EdgeInsets.all(12),
-                            child: Text('Buscando lugares...'),
-                          )
+                        ? _searchingPlaces()
                         : _suggestionError != null
                         ? _assistiveError(_suggestionError!)
                         : _places.isEmpty
-                        ? null
+                        ? _emptySuggestions(_destination.text, _selected)
                         : Column(
                             mainAxisSize: MainAxisSize.min,
                             children: _places
@@ -716,6 +730,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
               ],
             ],
           ),
+        ),
         ),
       ),
     );

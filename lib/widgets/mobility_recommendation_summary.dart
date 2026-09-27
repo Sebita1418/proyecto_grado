@@ -108,7 +108,7 @@ class MobilityRecommendationSummary extends StatelessWidget {
                   ? selectedIndex == suggestedIndex
                         ? 'Elegiste la alternativa ${selectedIndex + 1}; coincide con la sugerencia del cálculo.'
                         : 'Elegiste la alternativa ${selectedIndex + 1}. La sugerencia del cálculo fue la alternativa ${suggestedIndex + 1}.'
-                  : 'Alternativa ${suggestedIndex + 1}, seleccionada inicialmente por el cálculo.',
+                  : 'Recomendada: alternativa ${suggestedIndex + 1}. Seleccionada: ${selectedIndex + 1}.',
             ),
             Text(
               '${manuallySelected ? 'Motivo de la sugerencia: ' : ''}'

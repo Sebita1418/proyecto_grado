@@ -11,10 +11,12 @@ class ReportLocationPicker extends StatefulWidget {
     super.key,
     required this.initialCenter,
     this.route,
+    this.currentPosition,
   });
 
   final LatLng initialCenter;
   final RouteResult? route;
+  final LatLng? currentPosition;
 
   @override
   State<ReportLocationPicker> createState() => _ReportLocationPickerState();
@@ -83,10 +85,10 @@ class _ReportLocationPickerState extends State<ReportLocationPicker> {
             alignment: Alignment.bottomCenter,
             child: SafeArea(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 480),
+                constraints: BoxConstraints(maxWidth: 480, maxHeight: MediaQuery.sizeOf(context).height * .65),
                 child: Card(
                   margin: const EdgeInsets.all(12),
-                  child: Padding(
+                  child: SingleChildScrollView(child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -105,6 +107,12 @@ class _ReportLocationPickerState extends State<ReportLocationPicker> {
                           ),
                         ),
                         const SizedBox(height: 12),
+                        if (widget.currentPosition != null)
+                          OutlinedButton.icon(
+                            onPressed: () => setState(() => _selected = widget.currentPosition),
+                            icon: const Icon(Icons.my_location),
+                            label: const Text('Usar mi ubicación'),
+                          ),
                         FilledButton.icon(
                           onPressed: _selected == null
                               ? null
@@ -118,7 +126,7 @@ class _ReportLocationPickerState extends State<ReportLocationPicker> {
                         ),
                       ],
                     ),
-                  ),
+                  )),
                 ),
               ),
             ),

@@ -9,6 +9,7 @@ import '../../services/road_incident_service.dart';
 import '../../navigation/navigation_session.dart';
 import '../../widgets/navigation_status_card.dart';
 import '../../models/route_result.dart';
+import '../../models/road_incident_report.dart';
 import '../../services/location_service.dart';
 import '../../services/geocoding_service.dart';
 import '../../services/osrm_routing_service.dart';
@@ -24,6 +25,7 @@ import '../../widgets/route_map.dart';
 import '../../widgets/user_location_marker.dart';
 import '../../widgets/road_incident_marker.dart';
 import '../../widgets/road_incident_details_sheet.dart';
+import '../../widgets/road_incident_reports_sheet.dart';
 import '../admin/admin_screen.dart';
 import '../login/login_screen.dart';
 import '../nearby/nearby_places_screen.dart';
@@ -190,20 +192,31 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _openReportSheet() async {
     if (_reportOpen) return;
     _reportOpen = true;
+    var published = false;
     await showModalBottomSheet<IncidentReportDraft>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
       constraints: const BoxConstraints(maxWidth: 560),
-      builder: (context) => ReportIncidentSheet(
+      builder: (context) => AnimatedBuilder(
+        animation: Listenable.merge([_incidents, _navigation]),
+        builder: (context, _) => ReportIncidentSheet(
         currentPosition: _navigation.isActive
             ? _navigation.currentPosition
             : _position,
         initialDraft: _reportDraft,
         onDraftChanged: (draft) => _reportDraft = draft,
+        onDiscard: () {
+          setState(() {
+            _reportDraft = null;
+            _preparedReport = null;
+          });
+          Navigator.pop(context);
+        },
         onPickLocation: (current) => Navigator.of(context).push<LatLng>(
           MaterialPageRoute(
             builder: (_) => ReportLocationPicker(
+              currentPosition: _navigation.isActive ? _navigation.currentPosition : _position,
               initialCenter:
                   current ?? _position ?? _mapController.camera.center,
               route: _route,
@@ -214,6 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ? null
             : (draft) async {
                 await _incidents.publish(draft);
+                published = true;
                 if (!mounted) return;
                 setState(() {
                   _reportDraft = null;
@@ -229,17 +243,57 @@ class _HomeScreenState extends State<HomeScreen> {
           // snackbar would cover the persistent Finish action.
           if (_navigation.isActive) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
-                'Borrador preparado. Envío de reportes pendiente de habilitación.',
+                _incidents.ready ? 'Borrador preparado. Aún no se ha publicado.' : 'Borrador preparado. Envío de reportes pendiente de habilitación.',
               ),
-              duration: Duration(seconds: 4),
+              duration: const Duration(seconds: 4),
             ),
           );
         },
       ),
+      ),
     );
     _reportOpen = false;
+    if (mounted && published) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Reporte publicado correctamente.'),
+        duration: const Duration(seconds: 3),
+        showCloseIcon: true,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.fromLTRB(16, 0, 16, MediaQuery.sizeOf(context).height * .5),
+      ));
+    }
+  }
+
+  void _showReportDetails(RoadIncidentReport report) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      constraints: BoxConstraints(maxWidth: 560, maxHeight: MediaQuery.sizeOf(context).height * .85),
+      builder: (_) => RoadIncidentDetailsSheet(report: report),
+    );
+  }
+
+  Future<void> _openReports() async {
+    final report = await showModalBottomSheet<RoadIncidentReport>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      constraints: BoxConstraints(maxWidth: 560, maxHeight: MediaQuery.sizeOf(context).height * .8),
+      builder: (sheetContext) => RoadIncidentReportsSheet(
+        controller: _incidents,
+        onCreate: () {
+          Navigator.pop(sheetContext);
+          _openReportSheet();
+        },
+      ),
+    );
+    if (!mounted || report == null) return;
+    if (_navigation.isActive) _navigation.pauseFollowing();
+    _mapController.move(report.coordinates, 16);
+    _showReportDetails(report);
   }
 
   Future<void> _signOut() async {
@@ -321,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onRoutes: () => _open(const RutasScreen()),
         onRoadIncidents: () {
           Navigator.pop(context);
-          _openReportSheet();
+          _openReports();
         },
         onNearby: () => _open(const NearbyPlacesScreen()),
         onProfile: () {
@@ -364,14 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: RoadIncidentMarker(
                           type: report.type,
                           published: true,
-                          onTap: () => showModalBottomSheet<void>(
-                            context: context,
-                            isScrollControlled: true,
-                            showDragHandle: true,
-                            constraints: const BoxConstraints(maxWidth: 560),
-                            builder: (_) =>
-                                RoadIncidentDetailsSheet(report: report),
-                          ),
+                          onTap: () => _showReportDetails(report),
                         ),
                       ),
                     if (_preparedReport case final draft?)
@@ -548,6 +595,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: const Icon(Icons.my_location),
                         )
                       : MapFloatingControls(
+                          onReports: _openReports,
+                          reportsLoading: _incidents.loading,
+                          reportsError: _incidents.error != null,
                           horizontal: short,
                           locating: _locating,
                           showPosition: _showPosition,
@@ -573,27 +623,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                 ),
               ),
-              Positioned(
-                left: edge,
-                top: navigating ? edge : edge + _headerReservedHeight + 8,
-                child: SafeArea(
-                  bottom: false,
-                  child: Material(
-                    elevation: 3,
-                    borderRadius: BorderRadius.circular(16),
-                    child: IconButton(
-                      tooltip: _incidents.error ?? 'Actualizar reportes',
-                      onPressed: _incidents.loading ? null : _incidents.refresh,
-                      icon: Icon(
-                        _incidents.error == null
-                            ? Icons.sync
-                            : Icons.sync_problem,
-                        color: colorScheme.primary,
-                      ),
+              if (navigating)
+                Positioned(
+                  left: edge,
+                  top: edge,
+                  child: SafeArea(
+                    bottom: false,
+                    child: Material(
+                      elevation: 3,
+                      borderRadius: BorderRadius.circular(16),
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        IconButton(tooltip: 'Abrir menú de navegación', onPressed: () => _scaffoldKey.currentState?.openDrawer(), icon: const Icon(Icons.menu)),
+                        IconButton(tooltip: 'Reportes de la vía', onPressed: _openReports, icon: const Icon(Icons.report_outlined)),
+                      ]),
                     ),
                   ),
                 ),
-              ),
               Positioned(
                 right: short && !navigating ? null : edge,
                 left: short && !navigating ? edge : null,

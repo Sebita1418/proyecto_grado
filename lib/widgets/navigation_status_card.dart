@@ -17,6 +17,12 @@ class NavigationStatusCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Row(children: [
+            const Icon(Icons.navigation_outlined, size: 20),
+            const SizedBox(width: 8),
+            Expanded(child: Text('Navegación activa', style: Theme.of(context).textTheme.titleSmall)),
+          ]),
+          const SizedBox(height: 8),
           Text(
             session.arrived
                 ? 'Has llegado a tu destino'
@@ -30,6 +36,12 @@ class NavigationStatusCard extends StatelessWidget {
             session.destination,
             style: Theme.of(context).textTheme.titleMedium,
           ),
+          if (!session.following)
+            TextButton.icon(
+              onPressed: session.recenter,
+              icon: const Icon(Icons.my_location),
+              label: const Text('Volver a seguir mi ubicación'),
+            ),
           if (session.notice != null || session.offRoute)
             Semantics(
               liveRegion: true,
@@ -39,6 +51,7 @@ class NavigationStatusCard extends StatelessWidget {
           LinearProgressIndicator(
             value: session.progress,
             semanticsLabel: 'Progreso de la ruta',
+            semanticsValue: '${(session.progress * 100).round()} %',
           ),
           const SizedBox(height: 8),
           FilledButton.icon(

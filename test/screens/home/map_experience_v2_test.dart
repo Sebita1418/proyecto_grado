@@ -10,6 +10,7 @@ import 'package:transporte_inteligente/widgets/navigation_header.dart';
 import 'package:transporte_inteligente/widgets/map_floating_controls.dart';
 import 'package:transporte_inteligente/widgets/map_search_panel.dart';
 import 'package:transporte_inteligente/widgets/report_incident_sheet.dart';
+import 'package:transporte_inteligente/widgets/road_incident_reports_sheet.dart';
 import 'package:transporte_inteligente/widgets/route_map.dart';
 import 'package:transporte_inteligente/widgets/road_incident_marker.dart';
 import 'package:transporte_inteligente/widgets/road_incident_details_sheet.dart';
@@ -111,6 +112,10 @@ void main() {
 
     // Tapping Reportes de la vía closes drawer and opens ReportIncidentSheet
     await tester.tap(find.text('Reportes de la vía'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(RoadIncidentReportsSheet), findsOneWidget);
+    await tester.tap(find.text('Reportar novedad'));
     await tester.pumpAndSettle();
 
     expect(find.byType(ReportIncidentSheet), findsOneWidget);

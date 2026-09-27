@@ -19,6 +19,7 @@ class ReportIncidentSheet extends StatefulWidget {
     this.onPickLocation,
     this.initialDraft,
     this.onDraftChanged,
+    this.onDiscard,
   });
 
   final LatLng? currentPosition;
@@ -28,6 +29,7 @@ class ReportIncidentSheet extends StatefulWidget {
   final Future<LatLng?> Function(LatLng? current)? onPickLocation;
   final IncidentReportDraft? initialDraft;
   final ValueChanged<IncidentReportDraft>? onDraftChanged;
+  final VoidCallback? onDiscard;
 
   @override
   State<ReportIncidentSheet> createState() => _ReportIncidentSheetState();
@@ -110,6 +112,12 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
             'No fue posible publicar el reporte. Intenta nuevamente.';
       });
     }
+  }
+
+  void _preview() {
+    if (_selectedType == null || _coordinates == null || _publishing || _picking) return;
+    widget.onSubmit?.call(_draft);
+    Navigator.pop(context, _draft);
   }
 
   Future<void> _handleChangeLocation() async {
@@ -441,6 +449,16 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                     ),
                     textAlign: TextAlign.center,
                   ),
+                  Wrap(alignment: WrapAlignment.center, spacing: 8, children: [
+                    if (widget.onPublish != null && widget.onSubmit != null)
+                      TextButton.icon(
+                        onPressed: _selectedType == null || position == null || _picking ? null : _preview,
+                        icon: const Icon(Icons.visibility_outlined),
+                        label: const Text('Vista previa en mapa'),
+                      ),
+                    if (widget.onDiscard != null)
+                      TextButton.icon(onPressed: widget.onDiscard, icon: const Icon(Icons.delete_outline), label: const Text('Descartar borrador')),
+                  ]),
                 ],
               ),
             ),

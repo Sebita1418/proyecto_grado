@@ -29,6 +29,7 @@ class NavigationGeocoding extends GeocodingService {
 
 void main() {
   for (final size in [
+    const Size(320, 844),
     const Size(390, 844),
     const Size(768, 844),
     const Size(1440, 844),
@@ -83,6 +84,13 @@ void main() {
       await tester.drag(find.byType(RouteMap), const Offset(60, 40));
       await tester.pumpAndSettle();
       expect(session.following, isFalse);
+      expect(find.text('Volver a seguir mi ubicación'), findsOneWidget);
+      await tester.tap(find.byTooltip('Abrir menú de navegación'));
+      await tester.pumpAndSettle();
+      await tapLabel(tester, 'Mapa / Inicio');
+      expect(session.isActive, isTrue);
+      expect(find.byType(HomeScreen), findsOneWidget);
+      expect(routing.calls, 1);
       await tester.tap(find.byTooltip('Recentrar'));
       await tester.pumpAndSettle();
       expect(session.following, isTrue);
@@ -93,6 +101,10 @@ void main() {
       await tapLabel(tester, 'Publicar reporte');
       await tester.pumpAndSettle();
       expect(find.byType(NavigationStatusCard), findsOneWidget);
+      expect(find.text('Reporte publicado correctamente.'), findsOneWidget);
+      expect(tester.widget<RouteMap>(find.byType(RouteMap)).overlayMarkers, hasLength(1));
+      await tester.pump(const Duration(seconds: 4));
+      await tester.pumpAndSettle();
       await tester.tap(find.byType(RoadIncidentMarker));
       await tester.pumpAndSettle();
       expect(find.byType(RoadIncidentDetailsSheet), findsOneWidget);

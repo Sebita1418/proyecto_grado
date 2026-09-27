@@ -98,9 +98,13 @@ void main() {
         routing.pending.complete([firstRoute, secondRoute]);
         await tester.pumpAndSettle();
         expect(
-          tester.widget<RouteResultCard>(find.byType(RouteResultCard)).fastest,
+          tester.widget<RouteResultCard>(find.byType(RouteResultCard)).shortest,
           isTrue,
         );
+        await tester.ensureVisible(find.byTooltip('Alternativa siguiente'));
+        await tester.tap(find.byTooltip('Alternativa siguiente'));
+        await tester.pumpAndSettle();
+        expect(tester.widget<RouteResultCard>(find.byType(RouteResultCard)).fastest, isTrue);
         await tester.ensureVisible(find.byTooltip('Alternativa anterior'));
         await tester.tap(find.byTooltip('Alternativa anterior'));
         await tester.pumpAndSettle();

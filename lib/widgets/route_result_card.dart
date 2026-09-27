@@ -13,6 +13,7 @@ class RouteResultCard extends StatelessWidget {
     required this.originLabel,
     required this.destinationLabel,
     required this.onModify,
+    this.onStart,
     this.fastest = false,
     this.shortest = false,
   });
@@ -21,6 +22,7 @@ class RouteResultCard extends StatelessWidget {
   final String originLabel;
   final String destinationLabel;
   final VoidCallback onModify;
+  final VoidCallback? onStart;
   final bool fastest, shortest;
 
   String get distance =>
@@ -115,6 +117,14 @@ class RouteResultCard extends StatelessWidget {
               ),
             ],
           ),
+          if (onStart != null) ...[
+            const SizedBox(height: 8),
+            FilledButton.icon(
+              onPressed: onStart,
+              icon: const Icon(Icons.navigation_outlined),
+              label: const Text('Iniciar ruta'),
+            ),
+          ],
           const SizedBox(height: 12),
           if (fastest || shortest)
             Wrap(
@@ -174,8 +184,6 @@ class RouteResultCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   originLabel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: colors.onSurfaceVariant,
                   ),
@@ -198,8 +206,6 @@ class RouteResultCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   destinationLabel,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),

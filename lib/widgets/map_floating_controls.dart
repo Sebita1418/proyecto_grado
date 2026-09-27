@@ -26,7 +26,13 @@ class MapFloatingControls extends StatelessWidget {
     mainAxisSize: MainAxisSize.min,
     crossAxisAlignment: CrossAxisAlignment.end,
     children: [
-      FloatingActionButton.small(
+      FloatingActionButton(
+        mini: true,
+        materialTapTargetSize: MaterialTapTargetSize.padded,
+        elevation: 3,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         heroTag: 'current-location',
         tooltip: 'Mi ubicación',
         onPressed: locating ? null : onLocate,
@@ -40,8 +46,9 @@ class MapFloatingControls extends StatelessWidget {
       ),
       const SizedBox(height: 4, width: 4),
       Material(
-        elevation: 4,
-        borderRadius: BorderRadius.circular(12),
+        elevation: 3,
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
         child: PopupMenuButton<String>(
           tooltip: 'Capas del mapa',
           icon: const Icon(Icons.layers_outlined),
@@ -70,7 +77,15 @@ class MapFloatingControls extends StatelessWidget {
       ),
       if (onFitRoute != null) ...[
         const SizedBox(height: 4, width: 4),
-        FloatingActionButton.small(
+        FloatingActionButton(
+          mini: true,
+          materialTapTargetSize: MaterialTapTargetSize.padded,
+          elevation: 3,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          foregroundColor: Theme.of(context).colorScheme.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           heroTag: 'full-route',
           tooltip: 'Ver ruta completa',
           onPressed: onFitRoute,

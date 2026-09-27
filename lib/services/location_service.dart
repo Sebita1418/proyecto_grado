@@ -54,6 +54,36 @@ class LocationService {
 
   final LocationGateway _gateway;
 
+  /// Foreground tracking. Cancelling the consumer also cancels Geolocator.
+  Stream<LocationResult> watch() async* {
+    final initial = await locate();
+    yield initial;
+    if (initial.status != LocationStatus.coordinatesObtained) return;
+    try {
+      await for (final position in Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 5,
+        ),
+      )) {
+        final point = LatLng(position.latitude, position.longitude);
+        if (!point.latitude.isFinite ||
+            !point.longitude.isFinite ||
+            point.latitude.abs() > 90 ||
+            point.longitude.abs() > 180) {
+          yield const LocationResult(LocationStatus.unexpectedError);
+          return;
+        }
+        yield LocationResult(
+          LocationStatus.coordinatesObtained,
+          coordinates: point,
+        );
+      }
+    } catch (_) {
+      yield const LocationResult(LocationStatus.unexpectedError);
+    }
+  }
+
   Future<LocationResult> locate() async {
     try {
       if (!await _gateway.isServiceEnabled()) {

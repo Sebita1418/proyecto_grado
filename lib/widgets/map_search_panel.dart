@@ -33,6 +33,7 @@ class MapSearchPanel extends StatefulWidget {
     this.placeSuggestionService,
     this.routingService,
     this.onRouteChanged,
+    this.onStartNavigation,
     this.preferencesService = const MobilityPreferencesService(),
     this.recommendationEngine,
     this.maxHeight,
@@ -44,6 +45,7 @@ class MapSearchPanel extends StatefulWidget {
   final PlaceSuggestionService? placeSuggestionService;
   final OsrmRoutingService? routingService;
   final ValueChanged<RouteResult?>? onRouteChanged;
+  final void Function(RouteResult route, String destination)? onStartNavigation;
   final MobilityPreferencesService preferencesService;
   final MobilityRecommendationEngine? recommendationEngine;
   final double? maxHeight;
@@ -534,6 +536,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                 if (_route != null && !_showEditor) ...[
                   RouteResultCard(
                     route: _route!,
+                    onStart: widget.onStartNavigation == null ? null : () => widget.onStartNavigation!(_route!, _routeDestinationLabel),
                     originLabel: _routeOriginLabel,
                     destinationLabel: _routeDestinationLabel,
                     onModify: () => setState(() => _showEditor = true),

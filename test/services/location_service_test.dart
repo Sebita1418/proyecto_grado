@@ -22,6 +22,17 @@ class FakeLocationGateway implements LocationGateway {
 }
 
 void main() {
+  test('stream termina sin abrir GPS cuando no hay permiso', () async {
+    final gateway = FakeLocationGateway()
+      ..permission = LocationPermission.denied;
+    final results = await LocationService(gateway: gateway).watch().toList();
+    expect(results.single.status, LocationStatus.permissionDenied);
+  });
+  test('stream termina cuando GPS está deshabilitado', () async {
+    final gateway = FakeLocationGateway()..enabled = false;
+    final results = await LocationService(gateway: gateway).watch().toList();
+    expect(results.single.status, LocationStatus.serviceDisabled);
+  });
   test('obtiene coordenadas reales del gateway', () async {
     final result = await LocationService(gateway: FakeLocationGateway())
         .locate();

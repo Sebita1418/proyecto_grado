@@ -1,47 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 
-/// Categories of road incidents and conditions for community reporting.
-enum IncidentType {
-  accident('Accidente', Icons.car_crash_outlined),
-  congestion('Congestión', Icons.traffic_outlined),
-  roadWork('Obra en la vía', Icons.construction_outlined),
-  roadClosed('Vía cerrada', Icons.block_outlined),
-  hazard('Peligro / Obstáculo', Icons.warning_amber_outlined),
-  other('Otro', Icons.more_horiz_outlined);
-
-  const IncidentType(this.label, this.icon);
-  final String label;
-  final IconData icon;
-}
-
-/// Clean draft contract for incident reports.
-///
-/// Prepares data for future persistence in the road-incident-reports increment
-/// without fabricating coordinates or database records.
-class IncidentReportDraft {
-  const IncidentReportDraft({
-    this.type,
-    this.coordinates,
-    this.description,
-    this.manualLocation = false,
-  });
-
-  final IncidentType? type;
-  final LatLng? coordinates;
-  final String? description;
-  final bool manualLocation;
-}
+import '../models/incident_report_draft.dart';
+import '../models/road_incident_report.dart';
+export '../models/incident_report_draft.dart';
 
 /// Bottom sheet modal to capture road incidents and hazards.
 ///
-/// Designed to connect cleanly with the upcoming road-incident-reports backend.
+/// Publishes through the injected callback, or preserves a local draft offline.
 /// Strictly enforces required type selection and handles location transparency.
 class ReportIncidentSheet extends StatefulWidget {
   const ReportIncidentSheet({
     super.key,
     this.currentPosition,
     this.onSubmit,
+    this.onPublish,
     this.onChangeLocation,
     this.onPickLocation,
     this.initialDraft,
@@ -50,6 +23,7 @@ class ReportIncidentSheet extends StatefulWidget {
 
   final LatLng? currentPosition;
   final ValueChanged<IncidentReportDraft>? onSubmit;
+  final Future<void> Function(IncidentReportDraft draft)? onPublish;
   final VoidCallback? onChangeLocation;
   final Future<LatLng?> Function(LatLng? current)? onPickLocation;
   final IncidentReportDraft? initialDraft;
@@ -65,6 +39,8 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
   LatLng? _coordinates;
   bool _manualLocation = false;
   bool _picking = false;
+  bool _publishing = false;
+  String? _publishError;
 
   @override
   void initState() {
@@ -103,13 +79,37 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
     super.dispose();
   }
 
-  void _submit() {
-    final type = _selectedType;
-    if (type == null || _coordinates == null || _picking) return;
+  Future<void> _submit() async {
+    if (_selectedType == null ||
+        _coordinates == null ||
+        _picking ||
+        _publishing ||
+        !RoadIncidentReport.validCoordinates(_coordinates!)) {
+      return;
+    }
     final draft = _draft;
-
-    widget.onSubmit?.call(draft);
-    Navigator.of(context).pop(draft);
+    if (widget.onPublish == null) {
+      widget.onSubmit?.call(draft);
+      Navigator.of(context).pop(draft);
+      return;
+    }
+    setState(() {
+      _publishing = true;
+      _publishError = null;
+    });
+    try {
+      await widget.onPublish!(draft);
+      if (!mounted) return;
+      setState(() => _publishing = false);
+      Navigator.of(context).pop(draft);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _publishing = false;
+        _publishError =
+            'No fue posible publicar el reporte. Intenta nuevamente.';
+      });
+    }
   }
 
   Future<void> _handleChangeLocation() async {
@@ -139,66 +139,71 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
     final colorScheme = theme.colorScheme;
     final position = _coordinates;
 
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.viewInsetsOf(context).bottom,
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
+    return PopScope(
+      canPop: !_publishing,
+      child: AbsorbPointer(
+        absorbing: _publishing,
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.viewInsetsOf(context).bottom,
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Semantics(
-                          header: true,
-                          child: Text(
-                            'Reportar novedad',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Semantics(
+                              header: true,
+                              child: Text(
+                                'Reportar novedad',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 2),
+                            Text(
+                              widget.onPublish == null
+                                  ? 'Prepara un borrador con lo que observaste en la vía.'
+                                  : 'Comparte lo que observaste en la vía.',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Prepara un borrador con lo que observaste en la vía.',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        tooltip: 'Cerrar',
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Tipo de novedad *',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    tooltip: 'Cerrar',
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Tipo de novedad *',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              LayoutBuilder(
-                builder: (context, constraints) => Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: IncidentType.values.map((type) {
-                    final isSelected = type == _selectedType;
-                    return SizedBox(
-                      width: (constraints.maxWidth - 8) / 2,
-                      child: Semantics(
+                  const SizedBox(height: 8),
+                  LayoutBuilder(builder: (context, constraints) => Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: IncidentType.values.map((type) {
+                      final isSelected = type == _selectedType;
+                      return SizedBox(
+                        width: (constraints.maxWidth - 8) / 2,
+                        child: Semantics(
                         button: true,
                         selected: isSelected,
                         label:
@@ -267,149 +272,178 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                'Ubicación de la novedad',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                      ));
+                    }).toList(),
+                  )),
+                  const SizedBox(height: 18),
+                  Text(
+                    'Ubicación de la novedad',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 34,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        position != null
-                            ? Icons.my_location
-                            : Icons.location_off_outlined,
-                        color: position != null
-                            ? colorScheme.primary
-                            : colorScheme.onSurfaceVariant,
-                        size: 18,
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: colorScheme.outlineVariant.withValues(
+                          alpha: 0.5,
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            position != null
-                                ? _manualLocation
-                                      ? 'Ubicación elegida en el mapa'
-                                      : 'Tu ubicación actual'
-                                : 'Ubicación no disponible',
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          const SizedBox(height: 2),
-                          Text(
+                          child: Icon(
                             position != null
-                                ? '${position.latitude.toStringAsFixed(5)}, ${position.longitude.toStringAsFixed(5)}'
-                                : 'Selecciona un punto en el mapa o activa el GPS.',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
+                                ? Icons.my_location
+                                : Icons.location_off_outlined,
+                            color: position != null
+                                ? colorScheme.primary
+                                : colorScheme.onSurfaceVariant,
+                            size: 18,
                           ),
-                        ],
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                position != null
+                                    ? _manualLocation
+                                          ? 'Ubicación elegida en el mapa'
+                                          : 'Tu ubicación actual'
+                                    : 'Ubicación no disponible',
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                position != null
+                                    ? '${position.latitude.toStringAsFixed(5)}, ${position.longitude.toStringAsFixed(5)}'
+                                    : 'Selecciona un punto en el mapa o activa el GPS.',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed:
+                          _picking ||
+                              (widget.onPickLocation == null &&
+                                  widget.onChangeLocation == null)
+                          ? null
+                          : _handleChangeLocation,
+                      icon: const Icon(Icons.edit_location_alt_outlined),
+                      label: const Text('Cambiar ubicación'),
+                    ),
+                  ),
+                  if (_manualLocation && widget.currentPosition != null)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton.icon(
+                        onPressed: _picking ? null : () {
+                          setState(() {
+                            _coordinates = widget.currentPosition;
+                            _manualLocation = false;
+                          });
+                          _saveDraft();
+                        },
+                        icon: const Icon(Icons.my_location),
+                        label: const Text('Usar mi ubicación actual'),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton.icon(
-                  onPressed:
-                      _picking ||
-                          (widget.onPickLocation == null &&
-                              widget.onChangeLocation == null)
-                      ? null
-                      : _handleChangeLocation,
-                  icon: const Icon(Icons.edit_location_alt_outlined),
-                  label: const Text('Cambiar ubicación'),
-                ),
-              ),
-              if (_manualLocation && widget.currentPosition != null)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton.icon(
-                    onPressed: _picking
+                  const SizedBox(height: 18),
+                  Text(
+                    'Descripción (opcional)',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: _descriptionController,
+                    maxLines: 2,
+                    maxLength: 200,
+                    decoration: InputDecoration(
+                      labelText: 'Descripción (opcional)',
+                      hintText: 'Detalles sobre la novedad (carril, sentido, etc.)...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.all(12),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  if (_publishError != null)
+                    Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        _publishError!,
+                        style: TextStyle(color: colorScheme.error),
+                      ),
+                    ),
+                  FilledButton.icon(
+                    onPressed:
+                        _selectedType == null ||
+                            position == null ||
+                            _picking ||
+                            _publishing ||
+                            !RoadIncidentReport.validCoordinates(position)
                         ? null
-                        : () {
-                            setState(() {
-                              _coordinates = widget.currentPosition;
-                              _manualLocation = false;
-                            });
-                            _saveDraft();
-                          },
-                    icon: const Icon(Icons.my_location),
-                    label: const Text('Usar mi ubicación actual'),
+                        : _submit,
+                    icon: _publishing
+                        ? const SizedBox.square(
+                            dimension: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Icon(
+                            widget.onPublish == null
+                                ? Icons.drafts_outlined
+                                : Icons.send_outlined,
+                          ),
+                    label: Text(
+                      _publishing
+                          ? 'Publicando…'
+                          : widget.onPublish == null
+                          ? 'Preparar reporte'
+                          : 'Publicar reporte',
+                    ),
                   ),
-                ),
-              const SizedBox(height: 18),
-              Text(
-                'Descripción (opcional)',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _descriptionController,
-                maxLines: 2,
-                maxLength: 200,
-                decoration: InputDecoration(
-                  labelText: 'Descripción (opcional)',
-                  hintText:
-                      'Detalles sobre la novedad (carril, sentido, etc.)...',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.onPublish == null
+                        ? 'Envío de reportes pendiente de habilitación. El borrador se conserva solo mientras permanezcas en este mapa.'
+                        : 'El reporte será visible para otros usuarios durante seis horas.',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 11,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  contentPadding: const EdgeInsets.all(12),
-                ),
+                ],
               ),
-              const SizedBox(height: 12),
-              FilledButton.icon(
-                onPressed: _selectedType == null || position == null || _picking
-                    ? null
-                    : _submit,
-                icon: const Icon(Icons.drafts_outlined),
-                label: const Text('Preparar reporte'),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Envío de reportes pendiente de habilitación. El borrador se conserva solo mientras permanezcas en este mapa.',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                  fontStyle: FontStyle.italic,
-                  fontSize: 11,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+            ),
           ),
         ),
       ),

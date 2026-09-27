@@ -12,6 +12,7 @@ import 'package:transporte_inteligente/widgets/report_incident_sheet.dart';
 import 'package:transporte_inteligente/widgets/report_location_picker.dart';
 import 'package:transporte_inteligente/widgets/route_map.dart';
 import 'package:transporte_inteligente/widgets/route_result_card.dart';
+import 'package:transporte_inteligente/widgets/road_incident_marker.dart';
 
 import 'route_flow_test.dart'
     show
@@ -247,11 +248,12 @@ void main() {
       await tapLabel(tester, 'Preparar reporte');
       final marker = tester
           .widget<RouteMap>(find.byType(RouteMap))
-          .markers
+          .overlayMarkers
           .last;
-      final button = marker.child as IconButton;
-      expect(button.tooltip, 'Borrador no publicado: Accidente');
-      button.onPressed!();
+      final button = marker.child as RoadIncidentMarker;
+      expect(button.published, isFalse);
+      expect(button.type, IncidentType.accident);
+      button.onTap();
       await tester.pumpAndSettle();
       expect(find.textContaining('No publicado.'), findsOneWidget);
       await tapLabel(tester, 'Descartar borrador');

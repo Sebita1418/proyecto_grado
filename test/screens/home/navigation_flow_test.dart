@@ -14,6 +14,7 @@ import 'package:transporte_inteligente/widgets/road_incident_details_sheet.dart'
 
 import '../../navigation/navigation_session_test.dart'
     show TrackingLocation, route;
+import '../../reports/road_incident_test.dart' show FakeRoadIncidents;
 import 'route_flow_test.dart'
     show ControlledRouting, FixedSuggestions, tapLabel;
 
@@ -42,11 +43,13 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       final gps = TrackingLocation();
+      final incidents = FakeRoadIncidents();
       final routing = ControlledRouting();
       addTearDown(routing.dispose);
       await tester.pumpWidget(
         MaterialApp(
           home: HomeScreen(
+            roadIncidentService: incidents,
             locationService: gps,
             loadProfile: () async => null,
             routingService: routing,
@@ -87,13 +90,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(ReportIncidentSheet), findsOneWidget);
       await tester.tap(find.text('Accidente'));
-      await tapLabel(tester, 'Preparar reporte');
+      await tapLabel(tester, 'Publicar reporte');
       await tester.pumpAndSettle();
       expect(find.byType(NavigationStatusCard), findsOneWidget);
       await tester.tap(find.byType(RoadIncidentMarker));
       await tester.pumpAndSettle();
       expect(find.byType(RoadIncidentDetailsSheet), findsOneWidget);
-      expect(find.text('Borrador sin publicar'), findsOneWidget);
+      expect(find.text('Reporte publicado · Activo'), findsOneWidget);
       await tester.tap(find.byTooltip('Cerrar detalle'));
       await tester.pumpAndSettle();
       expect(session.isActive, isTrue);
@@ -105,9 +108,13 @@ void main() {
       expect(find.byType(NavigationStatusCard), findsNothing);
       expect(find.byType(RouteResultCard), findsOneWidget);
       expect(routing.calls, 1);
+      expect(incidents.creates, 1);
+      expect(incidents.fetches, 1);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.runAsync(gps.updates.close);
+      expect(incidents.events.hasListener, isFalse);
+      await tester.runAsync(incidents.events.close);
     });
   }
 }

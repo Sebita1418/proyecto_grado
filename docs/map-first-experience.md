@@ -1,5 +1,10 @@
 # Experiencia map-first
 
+Actualización: la publicación persistente y Realtime se implementan en
+[Reportes viales V1](supabase/road_incident_reports.md). Requieren ejecutar el
+SQL indicado allí; el borrador local sigue disponible si el backend no responde.
+Las secciones siguientes describen el incremento original #37.
+
 Incremento basado en `3b699ef` de develop, tras integrar la baseline B8 por #36.
 
 - Home conserva el mapa completo y servicios existentes. Header con inicial del

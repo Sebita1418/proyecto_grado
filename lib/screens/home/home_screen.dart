@@ -4,6 +4,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../models/perfil_model.dart';
+import '../../controllers/road_incident_controller.dart';
+import '../../services/road_incident_service.dart';
 import '../../navigation/navigation_session.dart';
 import '../../widgets/navigation_status_card.dart';
 import '../../models/route_result.dart';
@@ -36,8 +38,10 @@ class HomeScreen extends StatefulWidget {
     this.geocodingService,
     this.routingService,
     this.placeSuggestionService,
+    this.roadIncidentService,
   });
   final LocationService? locationService;
+  final RoadIncidentService? roadIncidentService;
   final Future<Perfil?> Function()? loadProfile;
   final GeocodingService? geocodingService;
   final OsrmRoutingService? routingService;
@@ -62,6 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final MapController _mapController = MapController();
   late final _location = widget.locationService ?? LocationService();
   late final _navigation = NavigationSession(_location);
+  late final _incidents = RoadIncidentController(
+    widget.roadIncidentService ?? RoadIncidentService(),
+  );
   Perfil? _perfil;
   bool _loadingProfile = false;
   bool _showProfileNotice = false;
@@ -81,8 +88,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _navigation.addListener(_navigationChanged);
+    _incidents.addListener(_incidentsChanged);
+    _incidents.refresh();
     _loadProfile();
     _locate();
+  }
+
+  void _incidentsChanged() {
+    if (mounted) setState(() {});
   }
 
   void _navigationChanged() {
@@ -196,6 +209,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+        onPublish: !_incidents.ready
+            ? null
+            : (draft) async {
+                await _incidents.publish(draft);
+                if (!mounted) return;
+                setState(() {
+                  _reportDraft = null;
+                  _preparedReport = null;
+                });
+              },
         onSubmit: (draft) {
           setState(() {
             _reportDraft = draft;
@@ -258,6 +281,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _incidents.removeListener(_incidentsChanged);
+    _incidents.dispose();
     _navigation.removeListener(_navigationChanged);
     _navigation.dispose();
     _mapController.dispose();
@@ -328,6 +353,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? const EdgeInsets.all(48)
                       : _routePadding(constraints.biggest, wide),
                   overlayMarkers: [
+                    for (final report in _incidents.reports)
+                      Marker(
+                        point: report.coordinates,
+                        width: 48,
+                        height: 48,
+                        alignment: Alignment.topLeft,
+                        child: RoadIncidentMarker(
+                          type: report.type,
+                          published: true,
+                          onTap: () => showModalBottomSheet<void>(
+                            context: context,
+                            isScrollControlled: true,
+                            showDragHandle: true,
+                            constraints: const BoxConstraints(maxWidth: 560),
+                            builder: (_) =>
+                                RoadIncidentDetailsSheet(report: report),
+                          ),
+                        ),
+                      ),
                     if (_preparedReport case final draft?)
                       Marker(
                         point: draft.coordinates!,
@@ -506,6 +550,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                   _fitRoute(constraints.biggest, wide);
                                 },
                         ),
+                ),
+              ),
+              Positioned(
+                left: edge,
+                top: navigating ? edge : edge + _headerReservedHeight + 8,
+                child: SafeArea(
+                  bottom: false,
+                  child: Material(
+                    elevation: 3,
+                    borderRadius: BorderRadius.circular(16),
+                    child: IconButton(
+                      tooltip: _incidents.error ?? 'Actualizar reportes',
+                      onPressed: _incidents.loading ? null : _incidents.refresh,
+                      icon: Icon(
+                        _incidents.error == null
+                            ? Icons.sync
+                            : Icons.sync_problem,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                  ),
                 ),
               ),
               Positioned(

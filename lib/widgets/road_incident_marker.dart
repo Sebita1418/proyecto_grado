@@ -2,21 +2,25 @@ import 'package:flutter/material.dart';
 
 import 'report_incident_sheet.dart';
 
-/// Preview of the existing session draft, never a published community report.
+/// Shared marker for published reports and explicitly labelled draft previews.
 class RoadIncidentMarker extends StatelessWidget {
   const RoadIncidentMarker({
     super.key,
     required this.type,
     required this.onTap,
+    this.published = false,
   });
 
   final IncidentType type;
+  final bool published;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final label = '${type.label}: borrador sin publicar';
+    final label = published
+        ? '${type.label}: reporte publicado'
+        : '${type.label}: borrador sin publicar';
     return Semantics(
       label: label,
       button: true,
@@ -42,7 +46,11 @@ class RoadIncidentMarker extends StatelessWidget {
                 Positioned(
                   right: 2,
                   bottom: 2,
-                  child: Icon(Icons.edit, size: 12, color: colors.primary),
+                  child: Icon(
+                    published ? Icons.check_circle : Icons.edit,
+                    size: 12,
+                    color: colors.primary,
+                  ),
                 ),
               ],
             ),

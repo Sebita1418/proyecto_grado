@@ -79,7 +79,7 @@ class NavigationStatusCard extends StatefulWidget {
 }
 
 class _NavigationStatusCardState extends State<NavigationStatusCard> {
-  bool _expanded = true;
+  bool get _expanded => session.panelExpanded;
   NavigationSession get session => widget.session;
 
   @override
@@ -107,7 +107,7 @@ class _NavigationStatusCardState extends State<NavigationStatusCard> {
                 tooltip: _expanded
                     ? 'Minimizar navegación'
                     : 'Expandir navegación',
-                onPressed: () => setState(() => _expanded = !_expanded),
+                onPressed: () => setState(session.togglePanel),
                 icon: Icon(_expanded ? Icons.expand_more : Icons.expand_less),
               ),
             ],
@@ -135,6 +135,12 @@ class _NavigationStatusCardState extends State<NavigationStatusCard> {
               onPressed: session.recenter,
               icon: const Icon(Icons.my_location),
               label: const Text('Volver a seguir mi ubicación'),
+            ),
+          if (session.canRetryGps)
+            TextButton.icon(
+              onPressed: session.retryGps,
+              icon: const Icon(Icons.gps_fixed),
+              label: const Text('Reintentar GPS'),
             ),
           const SizedBox(height: 8),
           if (_expanded)

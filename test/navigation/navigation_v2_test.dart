@@ -253,7 +253,7 @@ void main() {
     expect(session.route, same(updated));
     expect(session.isActive, isTrue);
     expect(session.route!.instructions.length, 1);
-    expect(session.remainingDistance, 1800);
+    expect(session.remainingDistance, session.geometryDistance);
     expect(session.progress, 0);
     expect(session.notice, 'Ruta actualizada');
     session.dispose();

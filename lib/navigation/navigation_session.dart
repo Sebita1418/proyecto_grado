@@ -7,6 +7,11 @@ import '../models/route_result.dart';
 import '../services/location_service.dart';
 import 'navigation_progress.dart';
 import 'navigation_instruction.dart';
+import 'trip_summary.dart';
+
+enum TripState { idle, active, completed }
+
+enum TripGpsState { waiting, available, unavailable }
 
 enum NavigationState {
   navigating,
@@ -27,6 +32,19 @@ class NavigationSession extends ChangeNotifier {
   final LocationService location;
   final NavigationReroute? reroute;
   final DateTime Function() _now;
+  TripState tripState = TripState.idle;
+  TripGpsState gpsState = TripGpsState.waiting;
+  DateTime? startedAt, lastPositionAt;
+  RouteResult? selectedRoute;
+  TripRouteContext tripContext = const TripRouteContext();
+  TripSummary? summary;
+  bool panelExpanded = true;
+  bool _disposed = false, _retrying = false;
+  Future<void>? _cancellation;
+  bool get canRetryGps =>
+      isActive && gpsState == TripGpsState.unavailable && !_retrying;
+  double get geometryDistance => _geometry?.total ?? 0;
+  double get projectedDistance => geometryDistance * progress;
   NavigationState state = NavigationState.navigating;
   LatLng? _originalDestination;
   DateTime? _lastRerouteAt, _lastFixAt;
@@ -64,14 +82,19 @@ class NavigationSession extends ChangeNotifier {
   bool offRoute = false;
   bool following = true;
   double get progress => projection?.progress ?? 0;
-  double get remainingDistance => (route?.distanceMeters ?? 0) * (1 - progress);
+  double get remainingDistance => geometryDistance * (1 - progress);
 
   /// Proportional OSRM estimate; not live traffic or a dynamic ETA.
   double get remainingDuration =>
       (route?.durationSeconds ?? 0) * (1 - progress);
 
-  bool start(RouteResult selected, String label) {
-    if (isActive ||
+  bool start(
+    RouteResult selected,
+    String label, {
+    TripRouteContext context = const TripRouteContext(),
+  }) {
+    if (_disposed ||
+        isActive ||
         selected.points.length < 2 ||
         !selected.distanceMeters.isFinite ||
         selected.distanceMeters <= 0 ||
@@ -89,6 +112,14 @@ class NavigationSession extends ChangeNotifier {
     final geometry = NavigationProgress(selected.points);
     if (geometry.total <= 0) return false;
     route = selected;
+    selectedRoute = selected;
+    tripContext = context;
+    startedAt = _now();
+    lastPositionAt = null;
+    summary = null;
+    tripState = TripState.active;
+    gpsState = TripGpsState.waiting;
+    panelExpanded = true;
     _geometry = geometry;
     _originalDestination = selected.destination;
     _lastRerouteAt = null;
@@ -106,43 +137,92 @@ class NavigationSession extends ChangeNotifier {
     following = true;
     notice = 'Buscando ubicación GPS…';
     isActive = true;
-    final generation = ++_generation;
-    _subscription = location.watch().listen(
-      (result) {
-        if (!isActive || generation != _generation) return;
-        if (result.status != LocationStatus.coordinatesObtained ||
-            result.coordinates == null) {
-          _fail(switch (result.status) {
-            LocationStatus.serviceDisabled =>
-              'GPS deshabilitado. Finaliza y activa la ubicación.',
-            LocationStatus.permissionDenied ||
-            LocationStatus.permissionDeniedForever =>
-              'Permiso de ubicación denegado. Finaliza y revisa los permisos.',
-            _ => 'Se perdió la ubicación GPS. Finaliza e intenta de nuevo.',
-          });
-          return;
-        }
-        if (result.recordedAt != null &&
-            _lastFixAt != null &&
-            !result.recordedAt!.isAfter(_lastFixAt!)) {
-          return;
-        }
-        _lastFixAt = result.recordedAt ?? _lastFixAt;
-        _acceptPosition(result.coordinates!);
-      },
-      onError: (Object error) {
-        if (isActive && generation == _generation) {
-          _fail('Se perdió la ubicación GPS. Finaliza e intenta de nuevo.');
-        }
-      },
-      onDone: () {
-        if (isActive && generation == _generation) {
-          _fail('Seguimiento GPS detenido. Finaliza e intenta de nuevo.');
-        }
-      },
-    );
+    _listen();
     notifyListeners();
     return true;
+  }
+
+  void _listen() {
+    final generation = ++_generation;
+    try {
+      _subscription = location.watch().listen(
+        (result) {
+          if (!isActive || generation != _generation) return;
+          if (result.status != LocationStatus.coordinatesObtained ||
+              result.coordinates == null) {
+            _fail(switch (result.status) {
+              LocationStatus.serviceDisabled =>
+                'GPS deshabilitado. Activa la ubicación y reintenta.',
+              LocationStatus.permissionDenied ||
+              LocationStatus.permissionDeniedForever => 'Permiso de ubicación denegado. Revisa los permisos y reintenta.',
+              _ =>
+                'Se perdió la ubicación GPS. Puedes reintentar sin finalizar.',
+            });
+            return;
+          }
+          if (result.recordedAt != null &&
+              _lastFixAt != null &&
+              !result.recordedAt!.isAfter(_lastFixAt!)) {
+            return;
+          }
+          final point = result.coordinates!;
+          if (!point.latitude.isFinite ||
+              !point.longitude.isFinite ||
+              point.latitude.abs() > 90 ||
+              point.longitude.abs() > 180)
+            return;
+          // A fix less precise than the off-route threshold cannot justify rerouting.
+          if (result.accuracyMeters != null &&
+              (!result.accuracyMeters!.isFinite ||
+                  result.accuracyMeters! < 0 ||
+                  result.accuracyMeters! > 60)) {
+            notice = 'La señal GPS tiene poca precisión. Esperando una ubicación más precisa.';
+            gpsState = TripGpsState.waiting;
+            notifyListeners();
+            return;
+          }
+          _lastFixAt = result.recordedAt ?? _lastFixAt;
+          lastPositionAt = result.recordedAt ?? _now();
+          gpsState = TripGpsState.available;
+          _acceptPosition(result.coordinates!);
+        },
+        onError: (Object error) {
+          if (isActive && generation == _generation) {
+            _fail(
+              'Se perdió la ubicación GPS. Puedes reintentar sin finalizar.',
+            );
+          }
+        },
+        onDone: () {
+          if (isActive && generation == _generation) {
+            _fail('Seguimiento GPS detenido. Puedes reintentar sin finalizar.');
+          }
+        },
+      );
+    } catch (_) {
+      _fail('No pudimos iniciar el GPS. Puedes reintentar sin finalizar.');
+    }
+  }
+
+  Future<void> retryGps() async {
+    if (!canRetryGps || _disposed) return;
+    _retrying = true;
+    final generation = _generation;
+    gpsState = TripGpsState.waiting;
+    notice = 'Buscando ubicación GPS…';
+    notifyListeners();
+    try {
+      await _cancellation;
+      if (!_disposed && isActive && generation == _generation) _listen();
+    } finally {
+      _retrying = false;
+      if (!_disposed) notifyListeners();
+    }
+  }
+
+  void togglePanel() {
+    panelExpanded = !panelExpanded;
+    notifyListeners();
   }
 
   void _prepareInstructions() {
@@ -301,8 +381,9 @@ class NavigationSession extends ChangeNotifier {
     ++_rerouteEpoch;
     _rerouting = false;
     notice = message;
+    gpsState = TripGpsState.unavailable;
     ++_generation;
-    unawaited(_subscription?.cancel());
+    _cancellation = _subscription?.cancel();
     _subscription = null;
     notifyListeners();
   }
@@ -319,6 +400,18 @@ class NavigationSession extends ChangeNotifier {
   }
 
   void finish() {
+    if (!isActive || _disposed) return;
+    final end = _now();
+    summary = TripSummary(
+      selectedRoute: selectedRoute!,
+      context: tripContext,
+      destination: destination,
+      startedAt: startedAt!,
+      finishedAt: end.isBefore(startedAt!) ? startedAt! : end,
+      reachedDestination: arrived,
+      hadPosition: currentPosition != null,
+    );
+    tripState = TripState.completed;
     ++_rerouteEpoch;
     _rerouting = false;
     ++_generation;
@@ -330,6 +423,7 @@ class NavigationSession extends ChangeNotifier {
 
   @override
   void dispose() {
+    _disposed = true;
     ++_rerouteEpoch;
     isActive = false;
     ++_generation;

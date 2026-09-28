@@ -62,7 +62,7 @@ void main() {
     gps.position(const LatLng(0, .01));
     await Future<void>.delayed(Duration.zero);
     expect(session.progress, closeTo(.5, .001));
-    expect(session.remainingDistance, closeTo(1100, 2));
+    expect(session.remainingDistance, closeTo(session.geometryDistance / 2, 2));
     expect(session.remainingDuration, closeTo(300, 1));
     gps.position(const LatLng(.01, .019));
     await Future<void>.delayed(Duration.zero);

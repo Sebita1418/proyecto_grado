@@ -18,10 +18,7 @@ void main() {
   }.entries) {
     test('normaliza ${entry.key}', () {
       expect(AddressQuery.normalize(entry.key), entry.value);
-      expect(
-        AddressQuery.forProvider(entry.key),
-        '${entry.value}, Bucaramanga, Colombia',
-      );
+      expect(AddressQuery.forProvider(entry.key), entry.value);
     });
   }
   for (final query in [
@@ -33,10 +30,7 @@ void main() {
   ]) {
     test(
       'contexto local para $query',
-      () => expect(
-        AddressQuery.forProvider(query),
-        '$query, Bucaramanga, Colombia',
-      ),
+      () => expect(AddressQuery.forProvider(query), query),
     );
   }
   for (final query in [
@@ -60,10 +54,7 @@ void main() {
       final service = PlaceSuggestionService(
         client: MockClient((request) async {
           expect(request.url.host, 'photon.komoot.io');
-          expect(
-            request.url.queryParameters['q'],
-            'Carrera 27 # 10-15, Bucaramanga, Colombia',
-          );
+          expect(request.url.queryParameters['q'], 'Carrera 27 # 10-15');
           return http.Response(
             jsonEncode({
               'features': [

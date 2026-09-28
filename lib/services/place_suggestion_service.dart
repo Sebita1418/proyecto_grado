@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
 
 import '../models/place_suggestion.dart';
 import 'address_query.dart';
@@ -38,14 +39,15 @@ class PlaceSuggestionService {
   final http.Client _client;
   final bool _ownsClient;
   final Duration timeout;
+  LatLng? searchBias;
 
-  static Uri buildPhotonUri(String query) {
+  static Uri buildPhotonUri(String query, {LatLng? bias}) {
     final encodedQuery = Uri.encodeQueryComponent(query.trim());
     final encodedLatitude = Uri.encodeQueryComponent(
-      _bucaramangaLatitude.toString(),
+      (bias?.latitude ?? _bucaramangaLatitude).toString(),
     );
     final encodedLongitude = Uri.encodeQueryComponent(
-      _bucaramangaLongitude.toString(),
+      (bias?.longitude ?? _bucaramangaLongitude).toString(),
     );
     return Uri.parse(
       'https://photon.komoot.io/api/'
@@ -59,7 +61,20 @@ class PlaceSuggestionService {
   Future<List<PlaceSuggestion>> search(String query) async {
     final trimmedQuery = query.trim();
     if (trimmedQuery.length < 3) return const [];
-    final uri = buildPhotonUri(AddressQuery.forProvider(trimmedQuery));
+    final parsed = AddressQuery(trimmedQuery);
+    final bias =
+        searchBias ??
+        (parsed.primaryRoad != null ? AddressQuery.metropolitanBias : null);
+    var uri = buildPhotonUri(
+      AddressQuery.forProvider(trimmedQuery),
+      bias: bias,
+    );
+    if (parsed.hasCity) {
+      final parameters = Map<String, String>.of(uri.queryParameters)
+        ..remove('lat')
+        ..remove('lon');
+      uri = uri.replace(queryParameters: parameters);
+    }
 
     http.Response response;
     try {
@@ -114,11 +129,11 @@ class PlaceSuggestionService {
 
       final suggestions = <PlaceSuggestion>[];
       for (var index = 0; index < features.length; index++) {
-        final place = _parseFeature(features[index]);
+        final place = _parseFeature(features[index], parsed);
         if (place != null) suggestions.add(place);
         if (suggestions.length == 5) break;
       }
-      return suggestions;
+      return parsed.rank(suggestions, bias: bias);
     } on FormatException catch (error) {
       throw PlaceSuggestionException(
         'Respuesta inválida de Photon: ${error.message}',
@@ -128,7 +143,7 @@ class PlaceSuggestionService {
     }
   }
 
-  PlaceSuggestion? _parseFeature(dynamic feature) {
+  PlaceSuggestion? _parseFeature(dynamic feature, AddressQuery query) {
     if (feature is! Map<String, dynamic>) return null;
 
     final geometry = feature['geometry'];
@@ -158,6 +173,7 @@ class PlaceSuggestionService {
     final descriptionParts = <String>[];
     final street = _text(properties['street']);
     final city = _text(properties['city']);
+    if (query.hasCity && city != null && !query.cityMatches(city)) return null;
     final state = _text(properties['state']);
     final country = _text(properties['country']);
 
@@ -178,6 +194,10 @@ class PlaceSuggestionService {
       description: descriptionParts.toSet().join(', '),
       latitude: latitude,
       longitude: longitude,
+      road: street,
+      houseNumber: house,
+      city: city,
+      precision: query.precisionFor(street, house, city),
     );
   }
 

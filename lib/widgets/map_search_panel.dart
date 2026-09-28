@@ -452,20 +452,34 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     ),
   );
 
-  Widget _searchingPlaces() => const Padding(
-    padding: EdgeInsets.all(12),
-    child: Row(children: [
-      SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
-      SizedBox(width: 8),
-      Expanded(child: Semantics(liveRegion: true, child: Text('Buscando lugares...'))),
-    ]),
+  Widget _searchingPlaces() => Padding(
+    padding: const EdgeInsets.all(12),
+    child: Row(
+      children: [
+        const SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Semantics(
+            liveRegion: true,
+            child: const Text('Buscando lugares...'),
+          ),
+        ),
+      ],
+    ),
   );
 
-  Widget? _emptySuggestions(String query, PlaceSuggestion? selected) => query.trim().length < 3 || selected != null
+  Widget? _emptySuggestions(String query, PlaceSuggestion? selected) =>
+      query.trim().length < 3 || selected != null
       ? null
       : const Padding(
           padding: EdgeInsets.all(12),
-          child: Text('Sin sugerencias. Puedes calcular con la dirección escrita.'),
+          child: Text(
+            'Sin sugerencias. Puedes calcular con la dirección escrita.',
+          ),
         );
 
   @override
@@ -506,231 +520,251 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         ),
         clipBehavior: Clip.antiAlias,
         child: AnimatedSize(
-          duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : const Duration(milliseconds: 180),
+          duration: MediaQuery.disableAnimationsOf(context)
+              ? Duration.zero
+              : const Duration(milliseconds: 180),
           alignment: Alignment.topCenter,
           child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  const SizedBox(width: 18),
-                  Expanded(
-                    child: _collapsed
-                        ? Text(
-                            _route == null
-                                ? '¿A dónde vas?'
-                                : _routeDestinationLabel,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.titleSmall,
-                          )
-                        : Center(
-                            child: Container(
-                              width: 32,
-                              height: 4,
-                              decoration: BoxDecoration(
-                                color: colorScheme.outlineVariant,
-                                borderRadius: BorderRadius.circular(4),
+            controller: _scrollController,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    const SizedBox(width: 18),
+                    Expanded(
+                      child: _collapsed
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  _route == null
+                                      ? '¿A dónde vas?'
+                                      : _routeDestinationLabel,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                if (_route != null)
+                                  Text(
+                                    '${(_route!.durationSeconds / 60).ceil()} min · ${(_route!.distanceMeters / 1000).toStringAsFixed(1)} km',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall,
+                                  ),
+                              ],
+                            )
+                          : Center(
+                              child: Container(
+                                width: 32,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.outlineVariant,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
                               ),
                             ),
-                          ),
-                  ),
-                  IconButton(
-                    tooltip: _collapsed
-                        ? 'Expandir panel de ruta'
-                        : 'Minimizar panel de ruta',
-                    icon: Icon(
-                      _collapsed ? Icons.expand_less : Icons.expand_more,
                     ),
-                    onPressed: () {
-                      FocusScope.of(context).unfocus();
-                      setState(() => _collapsed = !_collapsed);
-                      widget.onCollapsedChanged?.call(_collapsed);
-                    },
-                  ),
-                ],
-              ),
-              if (!_collapsed) ...[
-                if (_route != null && !_showEditor) ...[
-                  RouteResultCard(
-                    route: _route!,
-                    onStart: widget.onStartNavigation == null ? null : () => widget.onStartNavigation!(_route!, _routeDestinationLabel),
-                    originLabel: _routeOriginLabel,
-                    destinationLabel: _routeDestinationLabel,
-                    onModify: () => setState(() => _showEditor = true),
-                    fastest:
-                        _alternatives.length > 1 &&
-                        analysis?.fastestIndex == _selectedAlternative,
-                    shortest:
-                        _alternatives.length > 1 &&
-                        analysis?.shortestIndex == _selectedAlternative,
-                  ),
-                  RouteAlternativesSelector(
-                    alternatives: _alternatives,
-                    selectedIndex: _selectedAlternative!,
-                    onSelected: (index) =>
-                        _selectAlternative(index, calculation),
-                  ),
-                  if (_recommendation != null)
-                    MobilityRecommendationSummary(
-                      compact: true,
-                      recommendation: _recommendation!,
-                      suggestedIndex: _suggestedAlternative!,
+                    IconButton(
+                      tooltip: _collapsed
+                          ? 'Expandir panel de ruta'
+                          : 'Minimizar panel de ruta',
+                      icon: Icon(
+                        _collapsed ? Icons.expand_less : Icons.expand_more,
+                      ),
+                      onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        setState(() => _collapsed = !_collapsed);
+                        widget.onCollapsedChanged?.call(_collapsed);
+                      },
+                    ),
+                  ],
+                ),
+                if (!_collapsed) ...[
+                  if (_route != null && !_showEditor) ...[
+                    RouteResultCard(
+                      route: _route!,
+                      onStart: widget.onStartNavigation == null
+                          ? null
+                          : () => widget.onStartNavigation!(
+                              _route!,
+                              _routeDestinationLabel,
+                            ),
+                      originLabel: _routeOriginLabel,
+                      destinationLabel: _routeDestinationLabel,
+                      onModify: () => setState(() => _showEditor = true),
+                      fastest:
+                          _alternatives.length > 1 &&
+                          analysis?.fastestIndex == _selectedAlternative,
+                      shortest:
+                          _alternatives.length > 1 &&
+                          analysis?.shortestIndex == _selectedAlternative,
+                    ),
+                    RouteAlternativesSelector(
+                      alternatives: _alternatives,
                       selectedIndex: _selectedAlternative!,
-                      manuallySelected: _manuallySelected,
-                      usesDefaultModes: _usesDefaultModes,
+                      onSelected: (index) =>
+                          _selectAlternative(index, calculation),
                     ),
-                ] else ...[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 2, 14, 8),
-                    child: TravelModeSelector(
+                    if (_recommendation != null)
+                      MobilityRecommendationSummary(
+                        compact: true,
+                        recommendation: _recommendation!,
+                        suggestedIndex: _suggestedAlternative!,
+                        selectedIndex: _selectedAlternative!,
+                        manuallySelected: _manuallySelected,
+                        usesDefaultModes: _usesDefaultModes,
+                      ),
+                  ] else ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 2, 14, 8),
+                      child: TravelModeSelector(
+                        compact: true,
+                        selectedMode: _selectedMode,
+                        onModeSelected: (mode) {
+                          if (mode == TransportMode.driving) {
+                            setState(() => _selectedMode = mode);
+                          }
+                        },
+                        onUnavailableModeTap: (mode) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'El modo ${mode.label} estará disponible próximamente. '
+                                'Actualmente solo se admiten rutas vehiculares.',
+                              ),
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    if (_recommendationNotice != null)
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Semantics(
+                          liveRegion: true,
+                          child: Text(_recommendationNotice!),
+                        ),
+                      ),
+                    if (hasGps)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.my_location,
+                              size: 18,
+                              color: colorScheme.primary,
+                            ),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: Text(
+                                'Tu ubicación actual',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: _checking
+                                  ? null
+                                  : () => setState(() {
+                                      _invalidate();
+                                      _manualOrigin = true;
+                                    }),
+                              child: const Text('Cambiar'),
+                            ),
+                          ],
+                        ),
+                      )
+                    else if (_manualOrigin && widget.currentPosition != null)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () => setState(() {
+                            _invalidate();
+                            _manualOrigin = false;
+                          }),
+                          child: const Text('Usar mi ubicación'),
+                        ),
+                      ),
+                    RoutePlannerForm(
+                      embedded: true,
                       compact: true,
-                      selectedMode: _selectedMode,
-                      onModeSelected: (mode) {
-                        if (mode == TransportMode.driving) {
-                          setState(() => _selectedMode = mode);
-                        }
-                      },
-                      onUnavailableModeTap: (mode) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'El modo ${mode.label} estará disponible próximamente. '
-                              'Actualmente solo se admiten rutas vehiculares.',
+                      originController: _origin,
+                      destinationController: _destination,
+                      onCalculate: _calculate,
+                      isLoading: _checking,
+                      originError: _originError,
+                      destinationError: _destinationError,
+                      showOrigin: !hasGps,
+                      title: '¿A dónde quieres ir?',
+                      originSuggestions: _loadingOriginSuggestions
+                          ? _searchingPlaces()
+                          : _originSuggestionError != null
+                          ? _assistiveError(_originSuggestionError!)
+                          : _originPlaces.isEmpty
+                          ? _emptySuggestions(_origin.text, _selectedOrigin)
+                          : Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: _originPlaces
+                                  .map(
+                                    (place) => ListTile(
+                                      dense: true,
+                                      leading: const Icon(Icons.place_outlined),
+                                      title: Text(place.name),
+                                      subtitle: place.description.isEmpty
+                                          ? null
+                                          : Text(place.description),
+                                      onTap: () => _selectOrigin(place),
+                                    ),
+                                  )
+                                  .toList(),
                             ),
-                            duration: const Duration(seconds: 3),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  if (_recommendationNotice != null)
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Semantics(
-                        liveRegion: true,
-                        child: Text(_recommendationNotice!),
-                      ),
-                    ),
-                  if (hasGps)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.my_location,
-                            size: 18,
-                            color: colorScheme.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          const Expanded(
-                            child: Text(
-                              'Tu ubicación actual',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                      destinationSuggestions: _loadingSuggestions
+                          ? _searchingPlaces()
+                          : _suggestionError != null
+                          ? _assistiveError(_suggestionError!)
+                          : _places.isEmpty
+                          ? _emptySuggestions(_destination.text, _selected)
+                          : Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: _places
+                                  .map(
+                                    (place) => ListTile(
+                                      dense: true,
+                                      leading: const Icon(Icons.place_outlined),
+                                      title: Text(place.name),
+                                      subtitle: place.description.isEmpty
+                                          ? null
+                                          : Text(place.description),
+                                      onTap: () => _select(place),
+                                    ),
+                                  )
+                                  .toList(),
                             ),
-                          ),
-                          TextButton(
-                            onPressed: _checking
-                                ? null
-                                : () => setState(() {
-                                    _invalidate();
-                                    _manualOrigin = true;
-                                  }),
-                            child: const Text('Cambiar'),
-                          ),
-                        ],
-                      ),
-                    )
-                  else if (_manualOrigin && widget.currentPosition != null)
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => setState(() {
-                          _invalidate();
-                          _manualOrigin = false;
-                        }),
-                        child: const Text('Usar mi ubicación'),
-                      ),
                     ),
-                  RoutePlannerForm(
-                    embedded: true,
-                    compact: true,
-                    originController: _origin,
-                    destinationController: _destination,
-                    onCalculate: _calculate,
-                    isLoading: _checking,
-                    originError: _originError,
-                    destinationError: _destinationError,
-                    showOrigin: !hasGps,
-                    title: '¿A dónde quieres ir?',
-                    originSuggestions: _loadingOriginSuggestions
-                        ? _searchingPlaces()
-                        : _originSuggestionError != null
-                        ? _assistiveError(_originSuggestionError!)
-                        : _originPlaces.isEmpty
-                        ? _emptySuggestions(_origin.text, _selectedOrigin)
-                        : Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: _originPlaces
-                                .map(
-                                  (place) => ListTile(
-                                    dense: true,
-                                    leading: const Icon(Icons.place_outlined),
-                                    title: Text(place.name),
-                                    subtitle: place.description.isEmpty
-                                        ? null
-                                        : Text(place.description),
-                                    onTap: () => _selectOrigin(place),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                    destinationSuggestions: _loadingSuggestions
-                        ? _searchingPlaces()
-                        : _suggestionError != null
-                        ? _assistiveError(_suggestionError!)
-                        : _places.isEmpty
-                        ? _emptySuggestions(_destination.text, _selected)
-                        : Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: _places
-                                .map(
-                                  (place) => ListTile(
-                                    dense: true,
-                                    leading: const Icon(Icons.place_outlined),
-                                    title: Text(place.name),
-                                    subtitle: place.description.isEmpty
-                                        ? null
-                                        : Text(place.description),
-                                    onTap: () => _select(place),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                  ),
-                  if (_phase != null)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                      child: Text(_phase!),
-                    ),
-                  if (widget.locationStatus !=
-                          LocationStatus.coordinatesObtained &&
-                      !_manualOrigin)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                      child: Text(
-                        'Puedes indicar el origen manualmente.',
-                        style: Theme.of(context).textTheme.bodySmall,
+                    if (_phase != null)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                        child: Text(_phase!),
                       ),
-                    ),
+                    if (widget.locationStatus !=
+                            LocationStatus.coordinatesObtained &&
+                        !_manualOrigin)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                        child: Text(
+                          'Puedes indicar el origen manualmente.',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                  ],
                 ],
               ],
-            ],
+            ),
           ),
-        ),
         ),
       ),
     );

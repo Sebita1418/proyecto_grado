@@ -102,7 +102,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(NavigationStatusCard), findsOneWidget);
       expect(find.text('Reporte publicado correctamente.'), findsOneWidget);
-      expect(tester.widget<RouteMap>(find.byType(RouteMap)).overlayMarkers, hasLength(1));
+      expect(
+        tester.widget<RouteMap>(find.byType(RouteMap)).overlayMarkers,
+        hasLength(1),
+      );
       await tester.pump(const Duration(seconds: 4));
       await tester.pumpAndSettle();
       await tester.tap(find.byType(RoadIncidentMarker));
@@ -112,6 +115,20 @@ void main() {
       await tester.tap(find.byTooltip('Cerrar detalle'));
       await tester.pumpAndSettle();
       expect(session.isActive, isTrue);
+      await tester.tap(find.byTooltip('Reportes de la vía'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ListTile, 'Accidente'));
+      await tester.pumpAndSettle();
+      expect(find.byType(RoadIncidentDetailsSheet), findsOneWidget);
+      expect(session.isActive, isTrue);
+      expect(session.following, isFalse);
+      expect(session.route, same(route));
+      expect(routing.calls, 1);
+      await tester.tap(find.byTooltip('Cerrar detalle'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Recentrar'));
+      await tester.pumpAndSettle();
+      expect(session.following, isTrue);
       gps.position(route.destination);
       await tester.pumpAndSettle();
       expect(find.text('Has llegado a tu destino'), findsOneWidget);

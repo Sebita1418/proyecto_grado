@@ -7,6 +7,7 @@ import '../../models/perfil_model.dart';
 import '../../controllers/road_incident_controller.dart';
 import '../../services/road_incident_service.dart';
 import '../../navigation/navigation_session.dart';
+import '../../navigation/route_proximity.dart';
 import '../../widgets/navigation_status_card.dart';
 import '../../models/route_result.dart';
 import '../../models/road_incident_report.dart';
@@ -83,6 +84,27 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _locating = false;
   bool _signingOut = false;
   RouteResult? _route;
+  final _tripRoute = ValueNotifier<RouteResult?>(null);
+  RouteResult? _indexedIncidentRoute;
+  List<RoadIncidentReport>? _indexedIncidents;
+  final Map<String, RouteProximityResult> _incidentProximity = {};
+
+  void _updateIncidentProximity() {
+    final route = _navigation.isActive ? _navigation.route : null;
+    _tripRoute.value = route;
+    if (identical(route, _indexedIncidentRoute) &&
+        identical(_incidents.reports, _indexedIncidents))
+      return;
+    _indexedIncidentRoute = route;
+    _indexedIncidents = _incidents.reports;
+    _incidentProximity.clear();
+    if (route == null) return;
+    final proximity = RouteProximity(route.points);
+    for (final report in _incidents.reports) {
+      _incidentProximity[report.id] = proximity.classify(report.coordinates);
+    }
+  }
+
   IncidentReportDraft? _reportDraft;
   IncidentReportDraft? _preparedReport;
   bool _reportOpen = false;
@@ -102,11 +124,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _incidentsChanged() {
+    _updateIncidentProximity();
     if (mounted) setState(() {});
   }
 
   void _navigationChanged() {
     if (!mounted) return;
+    _updateIncidentProximity();
     setState(() {});
     final point = _navigation.currentPosition;
     if (_navigation.isActive && _navigation.following && point != null) {
@@ -318,6 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       builder: (sheetContext) => RoadIncidentReportsSheet(
         controller: _incidents,
+        activeRoute: _tripRoute,
         onCreate: () {
           Navigator.pop(sheetContext);
           _openReportSheet();
@@ -374,6 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _incidents.dispose();
     _navigation.removeListener(_navigationChanged);
     _navigation.dispose();
+    _tripRoute.dispose();
     _mapController.dispose();
     if (widget.routingService == null) _routing.dispose();
     super.dispose();
@@ -454,6 +480,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: RoadIncidentMarker(
                           type: report.type,
                           published: true,
+                          nearRoute:
+                              _incidentProximity[report.id]?.isNearRoute ==
+                              true,
                           onTap: () => _showReportDetails(report),
                         ),
                       ),

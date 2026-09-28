@@ -19,8 +19,22 @@ class NavigationProgress {
   final List<double> lengths = [];
   late final double total;
 
-  RouteProjection project(LatLng position, {double? preferredProgress}) {
-    var nearest = double.infinity;
+  RouteProjection project(
+    LatLng position, {
+    double? preferredProgress,
+    bool includeGeometry = true,
+  }) {
+    if (points.isEmpty) {
+      return const RouteProjection(
+        progress: 0,
+        distanceToRoute: double.infinity,
+        traveled: [],
+        remaining: [],
+      );
+    }
+    var nearest = points.length == 1
+        ? const Distance().as(LengthUnit.Meter, position, points.first)
+        : double.infinity;
     var along = 0.0;
     var prefix = 0.0;
     var index = 0;
@@ -61,8 +75,12 @@ class NavigationProgress {
     return RouteProjection(
       progress: total == 0 ? 0 : (along / total).clamp(0.0, 1.0),
       distanceToRoute: nearest,
-      traveled: [...points.take(index + 1), snapped],
-      remaining: [snapped, ...points.skip(index + 1)],
+      traveled: includeGeometry
+          ? [...points.take(index + 1), snapped]
+          : const [],
+      remaining: includeGeometry
+          ? [snapped, ...points.skip(index + 1)]
+          : const [],
     );
   }
 }

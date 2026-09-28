@@ -144,6 +144,7 @@ void main() {
       expect(session.isActive, isTrue);
       await tester.tap(find.byTooltip('Reportes de la vía'));
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.widgetWithText(ListTile, 'Accidente'));
       await tester.tap(find.widgetWithText(ListTile, 'Accidente'));
       await tester.pumpAndSettle();
       expect(find.byType(RoadIncidentDetailsSheet), findsOneWidget);

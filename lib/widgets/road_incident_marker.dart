@@ -9,17 +9,19 @@ class RoadIncidentMarker extends StatelessWidget {
     required this.type,
     required this.onTap,
     this.published = false,
+    this.nearRoute = false,
   });
 
   final IncidentType type;
   final bool published;
+  final bool nearRoute;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final label = published
-        ? '${type.label}: reporte publicado'
+        ? '${type.label}: reporte publicado${nearRoute ? ', cerca de tu ruta' : ''}'
         : '${type.label}: borrador sin publicar';
     return Semantics(
       label: label,
@@ -47,7 +49,11 @@ class RoadIncidentMarker extends StatelessWidget {
                   right: 2,
                   bottom: 2,
                   child: Icon(
-                    published ? Icons.check_circle : Icons.edit,
+                    nearRoute
+                        ? Icons.route
+                        : published
+                        ? Icons.check_circle
+                        : Icons.edit,
                     size: 12,
                     color: colors.primary,
                   ),

@@ -32,10 +32,20 @@ const address = GeocodingResult(
   latitude: 7.2,
   longitude: -73.2,
   displayName: 'Carrera 27 # 10-15, Bucaramanga, Santander',
+  road: 'Carrera 27',
+  houseNumber: '10-15',
+  city: 'Bucaramanga',
 );
 
 void main() {
-  for (final scenario in ['select', 'stale', 'empty', 'origin']) {
+  for (final scenario in [
+    'select',
+    'stale',
+    'empty',
+    'origin',
+    'approximate',
+    'calculate',
+  ]) {
     testWidgets(
       'dirección confirmada $scenario con fallback y coordenadas reales',
       (tester) async {
@@ -64,24 +74,33 @@ void main() {
         await tester.pump(const Duration(milliseconds: 500));
         await tester.pumpAndSettle();
         expect(geocoding.queries, isEmpty);
-        await tester.ensureVisible(
-          find.text(
-            scenario == 'origin'
-                ? 'Buscar dirección de origen'
-                : 'Buscar dirección',
-          ),
-        );
-        await tester.tap(
-          find.text(
-            scenario == 'origin'
-                ? 'Buscar dirección de origen'
-                : 'Buscar dirección',
-          ),
-        );
+        final action = scenario == 'calculate'
+            ? 'Calcular ruta'
+            : scenario == 'origin'
+            ? 'Buscar dirección de origen'
+            : 'Buscar dirección';
+        await tester.ensureVisible(find.text(action));
+        await tester.tap(find.text(action));
         await tester.pump();
-        expect(geocoding.queries, ['Cra 27 # 10-15, Bucaramanga']);
+        expect(geocoding.queries, ['Carrera 27 # 10-15, Bucaramanga']);
+        expect(
+          tester.widget<TextField>(field).controller!.text,
+          'Cra 27 # 10-15, Bucaramanga',
+        );
         if (scenario == 'stale') await tester.enterText(field, 'UIS');
-        geocoding.pending.complete(scenario == 'empty' ? null : address);
+        geocoding.pending.complete(
+          scenario == 'empty'
+              ? null
+              : scenario == 'approximate'
+              ? const GeocodingResult(
+                  latitude: 7.2,
+                  longitude: -73.2,
+                  displayName: 'Carrera 27, Bucaramanga',
+                  road: 'Carrera 27',
+                  city: 'Bucaramanga',
+                )
+              : address,
+        );
         await tester.pumpAndSettle();
         if (scenario == 'stale') {
           expect(find.text(address.displayName.split(',').first), findsNothing);
@@ -92,7 +111,19 @@ void main() {
           );
           expect(routing.calls, 0);
         } else {
-          await tapLabel(tester, 'Carrera 27 # 10-15');
+          expect(routing.calls, 0);
+          expect(
+            find.textContaining(
+              scenario == 'approximate'
+                  ? 'Coincidencia aproximada'
+                  : 'Coincidencia específica',
+            ),
+            findsOneWidget,
+          );
+          await tapLabel(
+            tester,
+            scenario == 'approximate' ? 'Carrera 27' : 'Carrera 27 # 10-15',
+          );
           if (scenario == 'origin') {
             await tester.enterText(find.byType(TextField).last, 'Cacique');
           }
@@ -107,7 +138,14 @@ void main() {
                 ? const LatLng(7.2, -73.2)
                 : const LatLng(7.1, -73.1),
           );
-          expect(geocoding.queries.length, scenario == 'origin' ? 2 : 1);
+          expect(
+            geocoding.queries.length,
+            scenario == 'origin'
+                ? 2
+                : scenario == 'approximate'
+                ? 4
+                : 1,
+          );
           routing.pending.complete([firstRoute]);
           await tester.pumpAndSettle();
         }

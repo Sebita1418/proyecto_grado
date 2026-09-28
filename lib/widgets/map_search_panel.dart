@@ -276,6 +276,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   }
 
   Future<void> _searchOrigin(String query, int request) async {
+    _suggestions.searchBias = widget.currentPosition;
     try {
       final results = await _suggestions
           .search(query)
@@ -333,6 +334,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   }
 
   Future<void> _search(String query, int request) async {
+    _suggestions.searchBias = widget.currentPosition;
     try {
       final results = await _suggestions
           .search(query)
@@ -390,6 +392,18 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           : null;
     });
     if (_originError != null || _destinationError != null) return;
+    // Resolve addresses visibly before routing, including approximate matches.
+    if (!hasGps &&
+        _selectedOrigin == null &&
+        AddressQuery.isAddress(originText)) {
+      await _findAddress(origin: true);
+      return;
+    }
+    if (_selected == null && AddressQuery.isAddress(destinationText)) {
+      await _findAddress(origin: false);
+      return;
+    }
+    _geocoding.searchBias = widget.currentPosition;
     final calculation = ++_calculation;
     final requestedAt = DateTime.now();
     setState(() {
@@ -543,23 +557,33 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       }
     });
     try {
-      final result = await _geocoding.search(query);
+      _geocoding.searchBias = widget.currentPosition;
+      final results = await _geocoding.resolve(
+        query,
+        isCurrent: () =>
+            mounted && request == (origin ? _originRequest : _request),
+      );
       if (!mounted || request != (origin ? _originRequest : _request)) return;
-      final parts = result?.displayName.split(',') ?? [];
-      final titleParts =
-          parts.length > 1 && RegExp(r'^\s*\d+[\w-]*\s*$').hasMatch(parts.first)
-          ? 2
-          : 1;
-      final places = result == null
-          ? <PlaceSuggestion>[]
-          : [
-              PlaceSuggestion(
-                name: parts.take(titleParts).join(',').trim(),
-                description: parts.skip(titleParts).join(',').trim(),
-                latitude: result.latitude,
-                longitude: result.longitude,
-              ),
-            ];
+      final places = results.map((result) {
+        final parts = result.displayName.split(',');
+        final titleParts =
+            parts.length > 1 &&
+                RegExp(r'^\s*\d+[\w-]*\s*$').hasMatch(parts.first)
+            ? 2
+            : 1;
+        return PlaceSuggestion(
+          name: result.road != null && result.houseNumber != null
+              ? '${result.road} # ${result.houseNumber}'
+              : parts.take(titleParts).join(',').trim(),
+          description: parts.skip(titleParts).join(',').trim(),
+          latitude: result.latitude,
+          longitude: result.longitude,
+          precision: result.precision,
+          road: result.road,
+          houseNumber: result.houseNumber,
+          city: result.city,
+        );
+      }).toList();
       setState(() {
         if (origin) {
           _originPlaces = places;
@@ -599,6 +623,12 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   Widget? _addressResults({required bool origin, Widget? child}) {
     final query = (origin ? _origin : _destination).text;
     final selected = origin ? _selectedOrigin : _selected;
+    if (selected?.precision != null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Text(selected!.precision!.label),
+      );
+    }
     if (!AddressQuery.isAddress(query) || selected != null) return child;
     final loading = origin ? _loadingOriginSuggestions : _loadingSuggestions;
     return Column(
@@ -940,9 +970,20 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                           Icons.place_outlined,
                                         ),
                                         title: Text(place.name),
-                                        subtitle: place.description.isEmpty
+                                        subtitle:
+                                            place.description.isEmpty &&
+                                                place.precision == null
                                             ? null
-                                            : Text(place.description),
+                                            : Text(
+                                                [
+                                                      place.description,
+                                                      if (place.precision !=
+                                                          null)
+                                                        place.precision!.label,
+                                                    ]
+                                                    .where((s) => s.isNotEmpty)
+                                                    .join('\n'),
+                                              ),
                                         onTap: () => _selectOrigin(place),
                                       ),
                                     )
@@ -967,9 +1008,20 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                           Icons.place_outlined,
                                         ),
                                         title: Text(place.name),
-                                        subtitle: place.description.isEmpty
+                                        subtitle:
+                                            place.description.isEmpty &&
+                                                place.precision == null
                                             ? null
-                                            : Text(place.description),
+                                            : Text(
+                                                [
+                                                      place.description,
+                                                      if (place.precision !=
+                                                          null)
+                                                        place.precision!.label,
+                                                    ]
+                                                    .where((s) => s.isNotEmpty)
+                                                    .join('\n'),
+                                              ),
                                         onTap: () => _select(place),
                                       ),
                                     )

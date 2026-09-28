@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../config/osrm_config.dart';
 import '../models/route_result.dart';
+import '../navigation/navigation_instruction.dart';
 
 class OsrmRoutingException implements Exception {
   const OsrmRoutingException(this.message);
@@ -65,7 +66,7 @@ class OsrmRoutingService {
     final uri = endpoint.replace(
       path: '${endpoint.path}/route/v1/driving/$coordinates',
       queryParameters: {
-        'steps': 'false',
+        'steps': 'true',
         'alternatives': alternatives.toString(),
         'overview': 'full',
         'geometries': 'geojson',
@@ -174,7 +175,85 @@ class OsrmRoutingService {
       points: List.unmodifiable(points),
       distanceMeters: distance.toDouble(),
       durationSeconds: duration.toDouble(),
+      instructions: _parseInstructions(route['legs']),
     );
+  }
+
+  List<NavigationInstruction> _parseInstructions(Object? legs) {
+    // Una respuesta sin steps conserva la ruta, sin fabricar instrucciones.
+    if (legs is! List) return const [];
+    final instructions = <NavigationInstruction>[];
+    var offset = 0.0;
+    for (final leg in legs) {
+      if (leg is! Map || leg['steps'] is! List) return const [];
+      for (final step in leg['steps'] as List) {
+        if (step is! Map || step['maneuver'] is! Map) return const [];
+        final maneuver = step['maneuver'] as Map;
+        final location = maneuver['location'];
+        final distance = step['distance'];
+        final duration = step['duration'];
+        if (location is! List ||
+            location.length < 2 ||
+            location[0] is! num ||
+            location[1] is! num ||
+            !(location[0] as num).isFinite ||
+            !(location[1] as num).isFinite ||
+            (location[0] as num).abs() > 180 ||
+            (location[1] as num).abs() > 90 ||
+            distance is! num ||
+            !distance.isFinite ||
+            distance < 0 ||
+            duration is! num ||
+            !duration.isFinite ||
+            duration < 0) {
+          return const [];
+        }
+        instructions.add(
+          NavigationInstruction(
+            type: switch (maneuver['type']) {
+              'depart' => ManeuverType.depart,
+              'arrive' => ManeuverType.arrive,
+              'turn' || 'roundabout turn' => ManeuverType.turn,
+              'continue' => ManeuverType.continueRoad,
+              'merge' => ManeuverType.merge,
+              'fork' => ManeuverType.fork,
+              'roundabout' => ManeuverType.roundabout,
+              'rotary' => ManeuverType.rotary,
+              'new name' => ManeuverType.newName,
+              'end of road' => ManeuverType.endOfRoad,
+              'on ramp' => ManeuverType.onRamp,
+              'off ramp' => ManeuverType.offRamp,
+              'exit roundabout' || 'exit rotary' => ManeuverType.exitRoundabout,
+              _ => ManeuverType.unknown,
+            },
+            direction: switch (maneuver['modifier']) {
+              'left' => ManeuverDirection.left,
+              'right' => ManeuverDirection.right,
+              'slight left' => ManeuverDirection.slightLeft,
+              'slight right' => ManeuverDirection.slightRight,
+              'sharp left' => ManeuverDirection.sharpLeft,
+              'sharp right' => ManeuverDirection.sharpRight,
+              'straight' => ManeuverDirection.straight,
+              'uturn' => ManeuverDirection.uturn,
+              _ => ManeuverDirection.unknown,
+            },
+            position: LatLng(
+              (location[1] as num).toDouble(),
+              (location[0] as num).toDouble(),
+            ),
+            streetName: step['name'] is String ? step['name'] as String : '',
+            distanceMeters: distance.toDouble(),
+            durationSeconds: duration.toDouble(),
+            distanceFromStart: offset,
+            exit: maneuver['exit'] is int && (maneuver['exit'] as int) > 0
+                ? maneuver['exit'] as int
+                : null,
+          ),
+        );
+        offset += distance;
+      }
+    }
+    return List.unmodifiable(instructions);
   }
 
   bool _validPoint(LatLng point) =>

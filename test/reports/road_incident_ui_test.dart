@@ -121,9 +121,13 @@ void main() {
       expect(find.text('Borrador sin publicar'), findsNothing);
       await tester.tap(find.byTooltip('Cerrar detalle'));
       await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Reportes de la vía'));
+      await tester.pumpAndSettle();
       await tester.tap(find.byTooltip('Actualizar reportes'));
       await tester.pumpAndSettle();
       expect(service.fetches, 2);
+      await tester.tap(find.byTooltip('Cerrar reportes'));
+      await tester.pumpAndSettle();
       expect(find.byType(RoadIncidentMarker), findsOneWidget);
       await tester.pumpWidget(const SizedBox.shrink());
       expect(service.events.hasListener, isFalse);

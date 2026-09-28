@@ -12,10 +12,11 @@ enum LocationStatus {
 }
 
 class LocationResult {
-  const LocationResult(this.status, {this.coordinates});
+  const LocationResult(this.status, {this.coordinates, this.recordedAt});
 
   final LocationStatus status;
   final LatLng? coordinates;
+  final DateTime? recordedAt;
 }
 
 abstract class LocationGateway {
@@ -77,6 +78,7 @@ class LocationService {
         yield LocationResult(
           LocationStatus.coordinatesObtained,
           coordinates: point,
+          recordedAt: position.timestamp,
         );
       }
     } catch (_) {

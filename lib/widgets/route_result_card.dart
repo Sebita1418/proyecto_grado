@@ -117,14 +117,6 @@ class RouteResultCard extends StatelessWidget {
               ),
             ],
           ),
-          if (onStart != null) ...[
-            const SizedBox(height: 8),
-            FilledButton.icon(
-              onPressed: onStart,
-              icon: const Icon(Icons.navigation_outlined),
-              label: const Text('Iniciar ruta'),
-            ),
-          ],
           const SizedBox(height: 12),
           if (fastest || shortest)
             Wrap(
@@ -213,6 +205,14 @@ class RouteResultCard extends StatelessWidget {
               ),
             ],
           ),
+          if (onStart != null) ...[
+            const SizedBox(height: 8),
+            FilledButton.icon(
+              onPressed: onStart,
+              icon: const Icon(Icons.navigation_outlined),
+              label: const Text('Iniciar ruta'),
+            ),
+          ],
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,

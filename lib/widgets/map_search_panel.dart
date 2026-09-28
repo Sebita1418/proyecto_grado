@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
+import '../services/address_query.dart';
+
 import 'package:latlong2/latlong.dart';
 
 import '../mobility/mobility_context.dart';
@@ -36,6 +39,8 @@ class MapSearchPanel extends StatefulWidget {
     this.onStartNavigation,
     this.preferencesService = const MobilityPreferencesService(),
     this.recommendationEngine,
+    this.maxHeight,
+    this.onCollapsedChanged,
   });
   final LatLng? currentPosition;
   final LocationStatus locationStatus;
@@ -46,11 +51,15 @@ class MapSearchPanel extends StatefulWidget {
   final void Function(RouteResult route, String destination)? onStartNavigation;
   final MobilityPreferencesService preferencesService;
   final MobilityRecommendationEngine? recommendationEngine;
+  final double? maxHeight;
+  final ValueChanged<bool>? onCollapsedChanged;
   @override
   State<MapSearchPanel> createState() => _MapSearchPanelState();
 }
 
 class _MapSearchPanelState extends State<MapSearchPanel> {
+  final _scrollController = ScrollController();
+  bool _collapsed = false;
   final _origin = TextEditingController();
   final _destination = TextEditingController();
   String _lastOriginText = '';
@@ -360,7 +369,8 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       if (suggestedIndex < 0) throw StateError('Unknown recommended route');
       setState(() {
         _alternatives = List.unmodifiable(results);
-        _selectedAlternative = suggestedIndex;
+        // Recommendation explains the options; it does not choose for the user.
+        _selectedAlternative = 0;
         _suggestedAlternative = suggestedIndex;
         _recommendation = recommendation;
         _usesDefaultModes = usesDefaultModes;
@@ -369,6 +379,11 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         _routeDestinationLabel = _selected?.name ?? destinationText;
       });
       widget.onRouteChanged?.call(_route);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _scrollController.hasClients) {
+          _scrollController.jumpTo(0);
+        }
+      });
     } on NoEligibleVehicleRouteException {
       if (mounted && calculation == _calculation) {
         setState(
@@ -408,6 +423,97 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     }
   }
 
+  // Explicit search only: public Nominatim is not an autocomplete provider.
+  Future<void> _findAddress({required bool origin}) async {
+    final query = (origin ? _origin : _destination).text.trim();
+    if (query.isEmpty || _checking) return;
+    (origin ? _originDebounce : _debounce)?.cancel();
+    final request = origin ? ++_originRequest : ++_request;
+    setState(() {
+      if (origin) {
+        _loadingOriginSuggestions = true;
+        _originSuggestionError = null;
+      } else {
+        _loadingSuggestions = true;
+        _suggestionError = null;
+      }
+    });
+    try {
+      final result = await _geocoding.search(query);
+      if (!mounted || request != (origin ? _originRequest : _request)) return;
+      final parts = result?.displayName.split(',') ?? [];
+      final titleParts =
+          parts.length > 1 && RegExp(r'^\s*\d+[\w-]*\s*$').hasMatch(parts.first)
+          ? 2
+          : 1;
+      final places = result == null
+          ? <PlaceSuggestion>[]
+          : [
+              PlaceSuggestion(
+                name: parts.take(titleParts).join(',').trim(),
+                description: parts.skip(titleParts).join(',').trim(),
+                latitude: result.latitude,
+                longitude: result.longitude,
+              ),
+            ];
+      setState(() {
+        if (origin) {
+          _originPlaces = places;
+          _originSuggestionError = places.isEmpty
+              ? 'No se encontró esa dirección. Añade la ciudad o revisa la numeración.'
+              : null;
+        } else {
+          _places = places;
+          _suggestionError = places.isEmpty
+              ? 'No se encontró esa dirección. Añade la ciudad o revisa la numeración.'
+              : null;
+        }
+      });
+    } catch (_) {
+      if (!mounted || request != (origin ? _originRequest : _request)) return;
+      setState(() {
+        if (origin) {
+          _originSuggestionError =
+              'No fue posible buscar la dirección. Reintenta.';
+        } else {
+          _suggestionError = 'No fue posible buscar la dirección. Reintenta.';
+        }
+      });
+    } finally {
+      if (mounted && request == (origin ? _originRequest : _request)) {
+        setState(() {
+          if (origin) {
+            _loadingOriginSuggestions = false;
+          } else {
+            _loadingSuggestions = false;
+          }
+        });
+      }
+    }
+  }
+
+  Widget? _addressResults({required bool origin, Widget? child}) {
+    final query = (origin ? _origin : _destination).text;
+    final selected = origin ? _selectedOrigin : _selected;
+    if (!AddressQuery.isAddress(query) || selected != null) return child;
+    final loading = origin ? _loadingOriginSuggestions : _loadingSuggestions;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ?child,
+        TextButton.icon(
+          onPressed: loading || _checking
+              ? null
+              : () => _findAddress(origin: origin),
+          icon: const Icon(Icons.search),
+          label: Text(
+            origin ? 'Buscar dirección de origen' : 'Buscar dirección',
+          ),
+        ),
+      ],
+    );
+  }
+
   LatLng? _point(GeocodingResult? result) =>
       result == null ? null : LatLng(result.latitude, result.longitude);
 
@@ -429,7 +535,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'No hay sugerencias disponibles. Puedes escribir y calcular.',
+              message.startsWith('No se encontró esa dirección') ? message : 'No hay sugerencias disponibles. Puedes escribir y calcular.',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -440,8 +546,39 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     ),
   );
 
+  Widget _searchingPlaces() => Padding(
+    padding: const EdgeInsets.all(12),
+    child: Row(
+      children: [
+        SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+        SizedBox(width: 8),
+        Expanded(
+          child: Semantics(
+            liveRegion: true,
+            child: Text('Buscando lugares...'),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  Widget? _emptySuggestions(String query, PlaceSuggestion? selected) =>
+      query.trim().length < 3 || selected != null
+      ? null
+      : const Padding(
+          padding: EdgeInsets.all(12),
+          child: Text(
+            'Sin sugerencias. Puedes calcular con la dirección escrita.',
+          ),
+        );
+
   @override
   void dispose() {
+    _scrollController.dispose();
     _debounce?.cancel();
     _originDebounce?.cancel();
     ++_request;
@@ -464,7 +601,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         ? null
         : const RouteAlternativesAnalysisService().analyze(_alternatives);
     return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: height * .48),
+      constraints: BoxConstraints(maxHeight: widget.maxHeight ?? height * .48),
       child: Material(
         elevation: 8,
         shadowColor: colorScheme.shadow.withValues(alpha: 0.22),
@@ -476,206 +613,248 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           ),
         ),
         clipBehavior: Clip.antiAlias,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 4),
-                child: Container(
-                  width: 32,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: colorScheme.outlineVariant,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ),
-              if (_route != null && !_showEditor) ...[
-                RouteResultCard(
-                  route: _route!,
-                  onStart: widget.onStartNavigation == null
-                      ? null
-                      : () => widget.onStartNavigation!(
-                          _route!,
-                          _routeDestinationLabel,
-                        ),
-                  originLabel: _routeOriginLabel,
-                  destinationLabel: _routeDestinationLabel,
-                  onModify: () => setState(() => _showEditor = true),
-                  fastest:
-                      _alternatives.length > 1 &&
-                      analysis?.fastestIndex == _selectedAlternative,
-                  shortest:
-                      _alternatives.length > 1 &&
-                      analysis?.shortestIndex == _selectedAlternative,
-                ),
-                RouteAlternativesSelector(
-                  alternatives: _alternatives,
-                  selectedIndex: _selectedAlternative!,
-                  onSelected: (index) => _selectAlternative(index, calculation),
-                ),
-                if (_recommendation != null)
-                  MobilityRecommendationSummary(
-                    compact: true,
-                    recommendation: _recommendation!,
-                    suggestedIndex: _suggestedAlternative!,
-                    selectedIndex: _selectedAlternative!,
-                    manuallySelected: _manuallySelected,
-                    usesDefaultModes: _usesDefaultModes,
-                  ),
-              ] else ...[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 2, 14, 8),
-                  child: TravelModeSelector(
-                    compact: true,
-                    selectedMode: _selectedMode,
-                    onModeSelected: (mode) {
-                      if (mode == TransportMode.driving) {
-                        setState(() => _selectedMode = mode);
-                      }
-                    },
-                    onUnavailableModeTap: (mode) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'El modo ${mode.label} estará disponible próximamente. '
-                            'Actualmente solo se admiten rutas vehiculares.',
-                          ),
-                          duration: const Duration(seconds: 3),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                if (_recommendationNotice != null)
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Semantics(
-                      liveRegion: true,
-                      child: Text(_recommendationNotice!),
-                    ),
-                  ),
-                if (hasGps)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.my_location,
-                          size: 18,
-                          color: colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        const Expanded(
-                          child: Text(
-                            'Tu ubicación actual',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: _checking
-                              ? null
-                              : () => setState(() {
-                                  _invalidate();
-                                  _manualOrigin = true;
-                                }),
-                          child: const Text('Cambiar'),
-                        ),
-                      ],
-                    ),
-                  )
-                else if (_manualOrigin && widget.currentPosition != null)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () => setState(() {
-                        _invalidate();
-                        _manualOrigin = false;
-                      }),
-                      child: const Text('Usar mi ubicación'),
-                    ),
-                  ),
-                RoutePlannerForm(
-                  embedded: true,
-                  compact: true,
-                  originController: _origin,
-                  destinationController: _destination,
-                  onCalculate: _calculate,
-                  isLoading: _checking,
-                  originError: _originError,
-                  destinationError: _destinationError,
-                  showOrigin: !hasGps,
-                  title: '¿A dónde quieres ir?',
-                  originSuggestions: _loadingOriginSuggestions
-                      ? const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Text('Buscando lugares...'),
-                        )
-                      : _originSuggestionError != null
-                      ? _assistiveError(_originSuggestionError!)
-                      : _originPlaces.isEmpty
-                      ? null
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: _originPlaces
-                              .map(
-                                (place) => ListTile(
-                                  dense: true,
-                                  leading: const Icon(Icons.place_outlined),
-                                  title: Text(place.name),
-                                  subtitle: place.description.isEmpty
-                                      ? null
-                                      : Text(place.description),
-                                  onTap: () => _selectOrigin(place),
+        child: AnimatedSize(
+          duration: MediaQuery.disableAnimationsOf(context)
+              ? Duration.zero
+              : const Duration(milliseconds: 180),
+          alignment: Alignment.topCenter,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    const SizedBox(width: 18),
+                    Expanded(
+                      child: _collapsed
+                          ? Text(
+                              _route == null
+                                  ? '¿A dónde vas?'
+                                  : _routeDestinationLabel,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.titleSmall,
+                            )
+                          : Center(
+                              child: Container(
+                                width: 32,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.outlineVariant,
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
-                              )
-                              .toList(),
-                        ),
-                  destinationSuggestions: _loadingSuggestions
-                      ? const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: Text('Buscando lugares...'),
-                        )
-                      : _suggestionError != null
-                      ? _assistiveError(_suggestionError!)
-                      : _places.isEmpty
-                      ? null
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: _places
-                              .map(
-                                (place) => ListTile(
-                                  dense: true,
-                                  leading: const Icon(Icons.place_outlined),
-                                  title: Text(place.name),
-                                  subtitle: place.description.isEmpty
-                                      ? null
-                                      : Text(place.description),
-                                  onTap: () => _select(place),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                ),
-                if (_phase != null)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                    child: Text(_phase!),
-                  ),
-                if (widget.locationStatus !=
-                        LocationStatus.coordinatesObtained &&
-                    !_manualOrigin)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                    child: Text(
-                      'Puedes indicar el origen manualmente.',
-                      style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
                     ),
-                  ),
+                    IconButton(
+                      tooltip: _collapsed
+                          ? 'Expandir panel de ruta'
+                          : 'Minimizar panel de ruta',
+                      icon: Icon(
+                        _collapsed ? Icons.expand_less : Icons.expand_more,
+                      ),
+                      onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        setState(() => _collapsed = !_collapsed);
+                        widget.onCollapsedChanged?.call(_collapsed);
+                      },
+                    ),
+                  ],
+                ),
+                if (!_collapsed) ...[
+                  if (_route != null && !_showEditor) ...[
+                    RouteResultCard(
+                      route: _route!,
+                      onStart: widget.onStartNavigation == null
+                          ? null
+                          : () => widget.onStartNavigation!(
+                              _route!,
+                              _routeDestinationLabel,
+                            ),
+                      originLabel: _routeOriginLabel,
+                      destinationLabel: _routeDestinationLabel,
+                      onModify: () => setState(() => _showEditor = true),
+                      fastest:
+                          _alternatives.length > 1 &&
+                          analysis?.fastestIndex == _selectedAlternative,
+                      shortest:
+                          _alternatives.length > 1 &&
+                          analysis?.shortestIndex == _selectedAlternative,
+                    ),
+                    RouteAlternativesSelector(
+                      alternatives: _alternatives,
+                      selectedIndex: _selectedAlternative!,
+                      onSelected: (index) =>
+                          _selectAlternative(index, calculation),
+                    ),
+                    if (_recommendation != null)
+                      MobilityRecommendationSummary(
+                        compact: true,
+                        recommendation: _recommendation!,
+                        suggestedIndex: _suggestedAlternative!,
+                        selectedIndex: _selectedAlternative!,
+                        manuallySelected: _manuallySelected,
+                        usesDefaultModes: _usesDefaultModes,
+                      ),
+                  ] else ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 2, 14, 8),
+                      child: TravelModeSelector(
+                        compact: true,
+                        selectedMode: _selectedMode,
+                        onModeSelected: (mode) {
+                          if (mode == TransportMode.driving) {
+                            setState(() => _selectedMode = mode);
+                          }
+                        },
+                        onUnavailableModeTap: (mode) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'El modo ${mode.label} estará disponible próximamente. '
+                                'Actualmente solo se admiten rutas vehiculares.',
+                              ),
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    if (_recommendationNotice != null)
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Semantics(
+                          liveRegion: true,
+                          child: Text(_recommendationNotice!),
+                        ),
+                      ),
+                    if (hasGps)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.my_location,
+                              size: 18,
+                              color: colorScheme.primary,
+                            ),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: Text(
+                                'Tu ubicación actual',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: _checking
+                                  ? null
+                                  : () => setState(() {
+                                      _invalidate();
+                                      _manualOrigin = true;
+                                    }),
+                              child: const Text('Cambiar'),
+                            ),
+                          ],
+                        ),
+                      )
+                    else if (_manualOrigin && widget.currentPosition != null)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () => setState(() {
+                            _invalidate();
+                            _manualOrigin = false;
+                          }),
+                          child: const Text('Usar mi ubicación'),
+                        ),
+                      ),
+                    RoutePlannerForm(
+                      embedded: true,
+                      compact: true,
+                      originController: _origin,
+                      destinationController: _destination,
+                      onCalculate: _calculate,
+                      isLoading: _checking,
+                      originError: _originError,
+                      destinationError: _destinationError,
+                      showOrigin: !hasGps,
+                      title: '¿A dónde quieres ir?',
+                      originSuggestions: _addressResults(
+                        origin: true,
+                        child: _loadingOriginSuggestions
+                            ? _searchingPlaces()
+                            : _originSuggestionError != null
+                            ? _assistiveError(_originSuggestionError!)
+                            : _originPlaces.isEmpty
+                            ? _emptySuggestions(_origin.text, _selectedOrigin)
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: _originPlaces
+                                    .map(
+                                      (place) => ListTile(
+                                        dense: true,
+                                        leading: const Icon(
+                                          Icons.place_outlined,
+                                        ),
+                                        title: Text(place.name),
+                                        subtitle: place.description.isEmpty
+                                            ? null
+                                            : Text(place.description),
+                                        onTap: () => _selectOrigin(place),
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                      ),
+                      destinationSuggestions: _addressResults(
+                        origin: false,
+                        child: _loadingSuggestions
+                            ? _searchingPlaces()
+                            : _suggestionError != null
+                            ? _assistiveError(_suggestionError!)
+                            : _places.isEmpty
+                            ? _emptySuggestions(_destination.text, _selected)
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: _places
+                                    .map(
+                                      (place) => ListTile(
+                                        dense: true,
+                                        leading: const Icon(
+                                          Icons.place_outlined,
+                                        ),
+                                        title: Text(place.name),
+                                        subtitle: place.description.isEmpty
+                                            ? null
+                                            : Text(place.description),
+                                        onTap: () => _select(place),
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                      ),
+                    ),
+                    if (_phase != null)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                        child: Text(_phase!),
+                      ),
+                    if (widget.locationStatus !=
+                            LocationStatus.coordinatesObtained &&
+                        !_manualOrigin)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                        child: Text(
+                          'Puedes indicar el origen manualmente.',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                  ],
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

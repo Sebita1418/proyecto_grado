@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/place_suggestion.dart';
+import 'address_query.dart';
 
 enum PlaceSuggestionFailure { timeout, connectivity, http, invalidResponse }
 
@@ -58,7 +59,7 @@ class PlaceSuggestionService {
   Future<List<PlaceSuggestion>> search(String query) async {
     final trimmedQuery = query.trim();
     if (trimmedQuery.length < 3) return const [];
-    final uri = buildPhotonUri(trimmedQuery);
+    final uri = buildPhotonUri(AddressQuery.forProvider(trimmedQuery));
 
     http.Response response;
     try {
@@ -144,11 +145,15 @@ class PlaceSuggestionService {
     final latitude = _toValidCoordinate(coordinates[1], -90, 90);
     if (latitude == null || longitude == null) return null;
 
-    final name =
+    final baseName =
         _text(properties['name']) ??
         _text(properties['street']) ??
         _text(properties['city']);
-    if (name == null) return null;
+    if (baseName == null) return null;
+    final house = _text(properties['housenumber']);
+    final name = baseName == _text(properties['street']) && house != null
+        ? '$baseName # $house'
+        : baseName;
 
     final descriptionParts = <String>[];
     final street = _text(properties['street']);
@@ -156,7 +161,7 @@ class PlaceSuggestionService {
     final state = _text(properties['state']);
     final country = _text(properties['country']);
 
-    if (street != null && street != name) {
+    if (street != null && street != baseName) {
       descriptionParts.add(
         [
           street,

@@ -3,6 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../services/address_query.dart';
+import '../models/road_incident_report.dart';
+import '../mobility/route_incident_analysis.dart';
+import '../mobility/route_incident_analyzer.dart';
+import 'route_incident_status.dart';
 
 import 'package:latlong2/latlong.dart';
 
@@ -41,6 +45,8 @@ class MapSearchPanel extends StatefulWidget {
     this.recommendationEngine,
     this.maxHeight,
     this.onCollapsedChanged,
+    this.incidentReports = const [],
+    this.reportsAvailable = true,
   });
   final LatLng? currentPosition;
   final LocationStatus locationStatus;
@@ -53,6 +59,8 @@ class MapSearchPanel extends StatefulWidget {
   final MobilityRecommendationEngine? recommendationEngine;
   final double? maxHeight;
   final ValueChanged<bool>? onCollapsedChanged;
+  final List<RoadIncidentReport> incidentReports;
+  final bool reportsAvailable;
   @override
   State<MapSearchPanel> createState() => _MapSearchPanelState();
 }
@@ -71,6 +79,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   late final _engine =
       widget.recommendationEngine ?? VehicleRecommendationEngine();
   MobilityRecommendation? _recommendation;
+  final _incidentAnalyses = ValueNotifier<List<RouteIncidentAnalysis>>([]);
+  MobilityContext? _tripContext;
+  List<RouteOption> _options = const [];
+  int _incidentEvaluation = 0;
   int? _suggestedAlternative;
   bool _manuallySelected = false;
   bool _usesDefaultModes = false;
@@ -115,6 +127,82 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) widget.onRouteChanged?.call(null);
       });
+    } else if (oldWidget.incidentReports != widget.incidentReports ||
+        oldWidget.reportsAvailable != widget.reportsAvailable) {
+      // A picker may be open in another route. Notify it after this build.
+      ++_incidentEvaluation;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) unawaited(_refreshIncidentRecommendation());
+      });
+    }
+  }
+
+  List<RouteIncidentAnalysis> _analyzeIncidents(List<RouteResult> routes) {
+    if (!widget.reportsAvailable) return const [];
+    final now = DateTime.now().toUtc();
+    return [
+      for (var i = 0; i < routes.length; i++)
+        const RouteIncidentAnalyzer().analyze(
+          routeId: 'osrm-$i',
+          geometry: routes[i].points,
+          reports: widget.incidentReports,
+          now: now,
+        ),
+    ];
+  }
+
+  MobilityContext _withIncidents(
+    MobilityContext trip,
+    List<RouteIncidentAnalysis> analyses,
+  ) => MobilityContext(
+    origin: trip.origin,
+    destination: trip.destination,
+    allowedModes: trip.allowedModes,
+    requestedAt: trip.requestedAt,
+    generalConditions: trip.generalConditions,
+    incidentAnalyses: {
+      for (final analysis in analyses) analysis.routeId: analysis,
+    },
+  );
+
+  Future<void> _refreshIncidentRecommendation() async {
+    final trip = _tripContext;
+    if (trip == null || _alternatives.isEmpty) return;
+    final evaluation = ++_incidentEvaluation;
+    final calculation = _calculation;
+    final analyses = _analyzeIncidents(_alternatives);
+    _incidentAnalyses.value = analyses;
+    setState(() => _recommendation = null);
+    try {
+      final recommendation = await _engine.recommend(
+        _withIncidents(trip, analyses),
+        _options,
+      );
+      if (!mounted ||
+          evaluation != _incidentEvaluation ||
+          calculation != _calculation) {
+        return;
+      }
+      final index = _options.indexWhere(
+        (o) => o.id == recommendation.recommended.id,
+      );
+      if (index < 0) throw StateError('Unknown recommended route');
+      setState(() {
+        _recommendation = recommendation;
+        _suggestedAlternative = index;
+        _recommendationNotice = null;
+      });
+      // Deliberately preserve selection and geometry, including during navigation.
+    } catch (_) {
+      if (!mounted ||
+          evaluation != _incidentEvaluation ||
+          calculation != _calculation) {
+        return;
+      }
+      setState(
+        () => _recommendationNotice =
+            'No se pudo actualizar la recomendación; se conserva tu selección.',
+      );
     }
   }
 
@@ -131,6 +219,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   }
 
   void _clearAlternatives() {
+    ++_incidentEvaluation;
+    _tripContext = null;
+    _options = const [];
     _alternatives = const [];
     _selectedAlternative = null;
     _recommendation = null;
@@ -361,13 +452,22 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
             source: 'osrm',
           ),
       ];
-      final recommendation = await _engine.recommend(context, options);
+      final reportSnapshot = widget.incidentReports;
+      final availableSnapshot = widget.reportsAvailable;
+      final incidentAnalyses = _analyzeIncidents(results);
+      final recommendation = await _engine.recommend(
+        _withIncidents(context, incidentAnalyses),
+        options,
+      );
       if (!mounted || calculation != _calculation) return;
       final suggestedIndex = options.indexWhere(
         (option) => option.id == recommendation.recommended.id,
       );
       if (suggestedIndex < 0) throw StateError('Unknown recommended route');
       setState(() {
+        _tripContext = context;
+        _options = options;
+        _incidentAnalyses.value = incidentAnalyses;
         _alternatives = List.unmodifiable(results);
         // Recommendation explains the options; it does not choose for the user.
         _selectedAlternative = 0;
@@ -379,6 +479,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         _routeDestinationLabel = _selected?.name ?? destinationText;
       });
       widget.onRouteChanged?.call(_route);
+      if (reportSnapshot != widget.incidentReports ||
+          availableSnapshot != widget.reportsAvailable) {
+        unawaited(_refreshIncidentRecommendation());
+      }
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _scrollController.hasClients) {
           _scrollController.jumpTo(0);
@@ -578,6 +682,8 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
 
   @override
   void dispose() {
+    ++_incidentEvaluation;
+    _incidentAnalyses.dispose();
     _scrollController.dispose();
     _debounce?.cancel();
     _originDebounce?.cancel();
@@ -683,11 +789,33 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                           analysis?.shortestIndex == _selectedAlternative,
                     ),
                     RouteAlternativesSelector(
+                      incidentAnalyses: _incidentAnalyses,
                       alternatives: _alternatives,
                       selectedIndex: _selectedAlternative!,
                       onSelected: (index) =>
                           _selectAlternative(index, calculation),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 6,
+                      ),
+                      child:
+                          ValueListenableBuilder<List<RouteIncidentAnalysis>>(
+                            valueListenable: _incidentAnalyses,
+                            builder: (context, analyses, _) =>
+                                RouteIncidentStatus(
+                                  analysis: analyses.isEmpty
+                                      ? null
+                                      : analyses[_selectedAlternative!],
+                                ),
+                          ),
+                    ),
+                    if (_recommendationNotice != null)
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Text(_recommendationNotice!),
+                      ),
                     if (_recommendation != null)
                       MobilityRecommendationSummary(
                         compact: true,

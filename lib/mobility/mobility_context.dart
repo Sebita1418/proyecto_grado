@@ -2,6 +2,7 @@ import 'package:latlong2/latlong.dart';
 
 import 'mobility_conditions.dart';
 import 'transport_mode.dart';
+import 'route_incident_analysis.dart';
 
 /// Information available when alternatives are requested.
 class MobilityContext {
@@ -11,7 +12,9 @@ class MobilityContext {
     required Set<TransportMode> allowedModes,
     required this.requestedAt,
     MobilityConditions? generalConditions,
+    Map<String, RouteIncidentAnalysis> incidentAnalyses = const {},
   }) : allowedModes = Set.unmodifiable(allowedModes),
+       incidentAnalyses = Map.unmodifiable(incidentAnalyses),
        generalConditions = generalConditions ?? MobilityConditions() {
     if (!_validPoint(origin) || !_validPoint(destination)) {
       throw ArgumentError('Invalid origin or destination');
@@ -26,6 +29,7 @@ class MobilityContext {
   final Set<TransportMode> allowedModes;
   final DateTime requestedAt;
   final MobilityConditions generalConditions;
+  final Map<String, RouteIncidentAnalysis> incidentAnalyses;
 
   static bool _validPoint(LatLng point) =>
       point.latitude.isFinite &&

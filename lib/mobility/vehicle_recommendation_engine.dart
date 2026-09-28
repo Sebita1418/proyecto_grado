@@ -9,13 +9,14 @@ class NoEligibleVehicleRouteException implements Exception {
   const NoEligibleVehicleRouteException();
 }
 
-/// Provisional technical rule: duration, then distance, then provider order.
-/// Conditions are deliberately not scored: no productive source supplies them.
+/// Provisional, bounded incident exposure rule; no conversion to travel time.
 class VehicleRecommendationEngine implements MobilityRecommendationEngine {
   VehicleRecommendationEngine({DateTime Function()? clock})
     : _clock = clock ?? DateTime.now;
 
   final DateTime Function() _clock;
+  static const comparableDurationRatio = 1.25;
+  static const comparableDistanceRatio = 1.5;
 
   @override
   Future<MobilityRecommendation> recommend(
@@ -65,6 +66,75 @@ class VehicleRecommendationEngine implements MobilityRecommendationEngine {
       }
     }
     final reasons = <RecommendationReason>[];
+    // Only compare exposure when every candidate has a matching snapshot.
+    if (eligible.every(
+      (o) => context.incidentAnalyses[o.id]?.routeId == o.id,
+    )) {
+      final baseline = selected;
+      var comparable = eligible
+          .where(
+            (o) =>
+                o.route.durationSeconds <=
+                    baseline.route.durationSeconds * comparableDurationRatio &&
+                o.route.distanceMeters <=
+                    baseline.route.distanceMeters * comparableDistanceRatio,
+          )
+          .toList();
+      final withoutClosures = comparable
+          .where((o) => !context.incidentAnalyses[o.id]!.hasRoadClosure)
+          .toList();
+      final avoidedClosure =
+          withoutClosures.isNotEmpty &&
+          withoutClosures.length != comparable.length;
+      if (withoutClosures.isNotEmpty) comparable = withoutClosures;
+      final minimum = comparable
+          .map((o) => context.incidentAnalyses[o.id]!.total)
+          .reduce((a, b) => a < b ? a : b);
+      final finalists = comparable
+          .where((o) => context.incidentAnalyses[o.id]!.total == minimum)
+          .toList();
+      final decision = await recommend(
+        MobilityContext(
+          origin: context.origin,
+          destination: context.destination,
+          allowedModes: context.allowedModes,
+          requestedAt: context.requestedAt,
+        ),
+        finalists,
+      );
+      final chosen = decision.recommended;
+      return MobilityRecommendation(
+        recommended: chosen,
+        alternatives: [
+          for (final o in eligible)
+            if (o.id != chosen.id) o,
+        ],
+        evaluatedAt: _clock(),
+        reasons: [
+          RecommendationReason(
+            factor: RecommendationFactor.conditions,
+            explanation: minimum == 0
+                ? 'Ruta sugerida: sin reportes viales activos próximos en los datos disponibles.'
+                : 'Ruta sugerida: menor exposición a reportes activos entre alternativas comparables con igual condición de cierres.',
+          ),
+          if (avoidedClosure)
+            RecommendationReason(
+              factor: RecommendationFactor.conditions,
+              explanation: 'Se prioriza una alternativa sin cierres viales reportados próximos dentro del grupo comparable.',
+            ),
+          RecommendationReason(
+            factor: RecommendationFactor.other,
+            explanation: 'Regla provisional: grupo comparable hasta 25 % más de duración y 50 % más de distancia que la ruta más rápida. La proximidad no confirma bloqueo ni sentido de circulación.',
+          ),
+          for (final reason in decision.reasons)
+            RecommendationReason(
+              factor: reason.factor,
+              explanation:
+                  '${reason.explanation.replaceAll('entre las alternativas vehiculares elegibles recibidas', 'entre las alternativas finalistas con igual exposición').replaceAll('Única alternativa vehicular elegible recibida para este cálculo.', 'Única alternativa finalista tras comparar proximidad y límites de duración/distancia.')} Tiempos y distancias del proveedor sin ajustes.',
+            ),
+        ],
+      );
+    }
     if (eligible.length == 1) {
       reasons.add(
         RecommendationReason(

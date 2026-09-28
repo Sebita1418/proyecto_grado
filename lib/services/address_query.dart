@@ -21,7 +21,7 @@ class AddressQuery {
   bool get hasCity => locality.isNotEmpty;
   String? get houseNumber =>
       secondaryNumber == null ? null : '$secondaryNumber-$propertyNumber';
-  static const maxVariants = 4;
+  static const maxVariants = 3;
   // Demonstration bias only: never coordinates for a resolved destination.
   static const metropolitanBias = LatLng(7.08, -73.10);
 
@@ -62,9 +62,9 @@ class AddressQuery {
     if (houseNumber == null) return [normalized];
     final suffix = locality.isEmpty ? '' : ', $locality';
     return [
+      if (hasCity) '$primaryRoad $houseNumber$suffix',
       '$primaryRoad # $houseNumber$suffix',
-      '$primaryRoad $houseNumber$suffix',
-      '$primaryRoad $secondaryNumber $propertyNumber$suffix',
+      if (!hasCity) '$primaryRoad $houseNumber$suffix',
       '$primaryRoad$suffix',
     ];
   }

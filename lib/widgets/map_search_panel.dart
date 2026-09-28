@@ -92,6 +92,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   int _request = 0;
   int _originRequest = 0;
   bool _manualOrigin = false;
+  int? _resolvingOrigin, _resolvingDestination;
   bool _loadingSuggestions = false;
   bool _loadingOriginSuggestions = false;
   bool _checking = false;
@@ -545,8 +546,17 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   Future<void> _findAddress({required bool origin}) async {
     final query = (origin ? _origin : _destination).text.trim();
     if (query.isEmpty || _checking) return;
+    if ((origin ? _resolvingOrigin : _resolvingDestination) ==
+        (origin ? _originRequest : _request)) {
+      return;
+    }
     (origin ? _originDebounce : _debounce)?.cancel();
     final request = origin ? ++_originRequest : ++_request;
+    if (origin) {
+      _resolvingOrigin = request;
+    } else {
+      _resolvingDestination = request;
+    }
     setState(() {
       if (origin) {
         _loadingOriginSuggestions = true;
@@ -611,8 +621,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       if (mounted && request == (origin ? _originRequest : _request)) {
         setState(() {
           if (origin) {
+            _resolvingOrigin = null;
             _loadingOriginSuggestions = false;
           } else {
+            _resolvingDestination = null;
             _loadingSuggestions = false;
           }
         });
@@ -669,7 +681,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              message.startsWith('No se encontró esa dirección') ? message : 'No hay sugerencias disponibles. Puedes escribir y calcular.',
+              message.contains('dirección') ? message : 'No hay sugerencias disponibles. Puedes escribir y calcular.',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -680,7 +692,39 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     ),
   );
 
-  Widget _searchingPlaces() => Padding(
+  Widget _placeTile(PlaceSuggestion place, VoidCallback onTap) {
+    final theme = Theme.of(context);
+    final specific = place.precision?.name == 'specific';
+    return Card(
+      elevation: 0,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      color: theme.colorScheme.surfaceContainerLow,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        dense: true,
+        leading: Icon(Icons.place_outlined, color: theme.colorScheme.primary),
+        title: Text(place.name, style: theme.textTheme.titleSmall),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (place.description.isNotEmpty) Text(place.description),
+            if (place.precision != null)
+              Text(
+                place.precision!.label,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: specific
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+          ],
+        ),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  Widget _searchingPlaces({required bool origin}) => Padding(
     padding: const EdgeInsets.all(12),
     child: Row(
       children: [
@@ -693,7 +737,13 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         Expanded(
           child: Semantics(
             liveRegion: true,
-            child: Text('Buscando lugares...'),
+            child: Text(
+              (origin
+                      ? _resolvingOrigin == _originRequest
+                      : _resolvingDestination == _request)
+                  ? 'Buscando dirección…'
+                  : 'Buscando lugares...',
+            ),
           ),
         ),
       ],
@@ -955,7 +1005,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                       originSuggestions: _addressResults(
                         origin: true,
                         child: _loadingOriginSuggestions
-                            ? _searchingPlaces()
+                            ? _searchingPlaces(origin: true)
                             : _originSuggestionError != null
                             ? _assistiveError(_originSuggestionError!)
                             : _originPlaces.isEmpty
@@ -964,27 +1014,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: _originPlaces
                                     .map(
-                                      (place) => ListTile(
-                                        dense: true,
-                                        leading: const Icon(
-                                          Icons.place_outlined,
-                                        ),
-                                        title: Text(place.name),
-                                        subtitle:
-                                            place.description.isEmpty &&
-                                                place.precision == null
-                                            ? null
-                                            : Text(
-                                                [
-                                                      place.description,
-                                                      if (place.precision !=
-                                                          null)
-                                                        place.precision!.label,
-                                                    ]
-                                                    .where((s) => s.isNotEmpty)
-                                                    .join('\n'),
-                                              ),
-                                        onTap: () => _selectOrigin(place),
+                                      (place) => _placeTile(
+                                        place,
+                                        () => _selectOrigin(place),
                                       ),
                                     )
                                     .toList(),
@@ -993,7 +1025,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                       destinationSuggestions: _addressResults(
                         origin: false,
                         child: _loadingSuggestions
-                            ? _searchingPlaces()
+                            ? _searchingPlaces(origin: false)
                             : _suggestionError != null
                             ? _assistiveError(_suggestionError!)
                             : _places.isEmpty
@@ -1002,27 +1034,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: _places
                                     .map(
-                                      (place) => ListTile(
-                                        dense: true,
-                                        leading: const Icon(
-                                          Icons.place_outlined,
-                                        ),
-                                        title: Text(place.name),
-                                        subtitle:
-                                            place.description.isEmpty &&
-                                                place.precision == null
-                                            ? null
-                                            : Text(
-                                                [
-                                                      place.description,
-                                                      if (place.precision !=
-                                                          null)
-                                                        place.precision!.label,
-                                                    ]
-                                                    .where((s) => s.isNotEmpty)
-                                                    .join('\n'),
-                                              ),
-                                        onTap: () => _select(place),
+                                      (place) => _placeTile(
+                                        place,
+                                        () => _select(place),
                                       ),
                                     )
                                     .toList(),

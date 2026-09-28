@@ -45,24 +45,35 @@ void main() {
     'origin',
     'approximate',
     'calculate',
+    '390',
+    '768',
+    '1440',
   ]) {
     testWidgets(
       'dirección confirmada $scenario con fallback y coordenadas reales',
       (tester) async {
+        final width = double.tryParse(scenario);
+        if (width != null) {
+          await tester.binding.setSurfaceSize(Size(width, 844));
+          addTearDown(() => tester.binding.setSurfaceSize(null));
+        }
         SharedPreferences.setMockInitialValues({});
         final geocoding = AddressGeocoding();
         final routing = ControlledRouting();
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: MapSearchPanel(
-                currentPosition: scenario == 'origin'
-                    ? null
-                    : const LatLng(7.1, -73.1),
-                locationStatus: LocationStatus.coordinatesObtained,
-                geocodingService: geocoding,
-                placeSuggestionService: EmptyAddressSuggestions(),
-                routingService: routing,
+              body: SizedBox(
+                width: width == null ? null : (width >= 700 ? 450 : width - 24),
+                child: MapSearchPanel(
+                  currentPosition: scenario == 'origin'
+                      ? null
+                      : const LatLng(7.1, -73.1),
+                  locationStatus: LocationStatus.coordinatesObtained,
+                  geocodingService: geocoding,
+                  placeSuggestionService: EmptyAddressSuggestions(),
+                  routingService: routing,
+                ),
               ),
             ),
           ),
@@ -82,7 +93,12 @@ void main() {
         await tester.ensureVisible(find.text(action));
         await tester.tap(find.text(action));
         await tester.pump();
-        expect(geocoding.queries, ['Carrera 27 # 10-15, Bucaramanga']);
+        expect(find.text('Buscando dirección…'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await tester.ensureVisible(find.text('Calcular ruta'));
+        await tester.tap(find.text('Calcular ruta'));
+        await tester.pump();
+        expect(geocoding.queries, ['Carrera 27 10-15, Bucaramanga']);
         expect(
           tester.widget<TextField>(field).controller!.text,
           'Cra 27 # 10-15, Bucaramanga',
@@ -115,7 +131,7 @@ void main() {
           expect(
             find.textContaining(
               scenario == 'approximate'
-                  ? 'Coincidencia aproximada'
+                  ? 'Numeración no confirmada'
                   : 'Coincidencia específica',
             ),
             findsOneWidget,
@@ -138,14 +154,7 @@ void main() {
                 ? const LatLng(7.2, -73.2)
                 : const LatLng(7.1, -73.1),
           );
-          expect(
-            geocoding.queries.length,
-            scenario == 'origin'
-                ? 2
-                : scenario == 'approximate'
-                ? 4
-                : 1,
-          );
+          expect(geocoding.queries.length, scenario == 'origin' ? 2 : 1);
           routing.pending.complete([firstRoute]);
           await tester.pumpAndSettle();
         }

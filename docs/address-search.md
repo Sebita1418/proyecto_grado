@@ -33,16 +33,20 @@ El flujo directo de POI se conserva. Los resultados vacíos no generan rutas.
 
 ## Consultas y ranking
 
-Máximo **cuatro solicitudes secuenciales** por resolución explícita de una
+Máximo **tres solicitudes secuenciales** por resolución explícita de una
 dirección completa, con ciudad preservada en cada variante:
 
-1. `Calle 69 # 6-51`.
-2. `Calle 69 6-51`; con ciudad explícita se expresa como consulta estructurada
+1. Con ciudad explícita, consulta estructurada directamente:
    `street=6-51 Calle 69`, `city=...`, `country=Colombia` (y estado si se escribió).
-3. `Calle 69 6 51`.
-4. `Calle 69` como último fallback aproximado.
+2. `Calle 69 # 6-51` como variante compatible.
+3. `Calle 69` como último fallback aproximado.
 
-Se detiene cuando existe evidencia específica; un error detiene la secuencia
+Sin ciudad se intenta primero la forma con `#`, luego sin `#` y finalmente
+la calle. Se elimina la variante redundante con números separados por espacios.
+
+Se detiene ante una coincidencia específica o una calle compatible con la ciudad
+solicitada. Una vía incompatible no es útil y activa la siguiente variante.
+Un error detiene la secuencia
 y conserva candidatos anteriores si existen. Cada consulta de dirección pide
 hasta cinco resultados con `addressdetails=1`, ordena y conserva el mejor;
 los mejores de las variantes se deduplican y vuelven a ordenar. Photon sigue
@@ -58,15 +62,21 @@ como tokens: `6-51` no equivale a `65-1`. No se modifica la duración OSRM.
 
 «Coincidencia específica» exige vía y numeración compatibles en los campos
 devueltos por el proveedor; también ciudad compatible cuando se escribió.
-No basta con repetir el texto solicitado en una etiqueta. «Coincidencia
-aproximada · numeración exacta no confirmada» identifica calles, intersecciones
+No basta con repetir el texto solicitado en una etiqueta. «Numeración no
+confirmada» identifica calles, intersecciones
 no verificadas o datos incompletos/incompatibles. Los POI se identifican como
 «Lugar». Se conservan las coordenadas reales y el aviso tras seleccionar.
 No hay interpolación de puertas ni editor nuevo de puntos en el mapa.
 
-Nominatim tiene timeout de 8 s, caché de hasta 100 consultas por instancia y
+Nominatim tiene timeout de 5 s por solicitud y presupuesto de resolución de
+18 s (incluida espera en cola), caché de hasta 100 consultas por instancia y
 una cola compartida en el proceso con al menos 1 s entre solicitudes. La clave
-de caché incluye el bias para no reutilizar otra ubicación por error. Esta
+de caché normaliza abreviaturas, espacios y mayúsculas e incluye el bias cuando
+no hay ciudad explícita. Guarda también respuestas vacías; no persiste datos.
+La UI muestra «Buscando dirección…» inmediatamente y evita doble envío.
+Editar permite otra búsqueda; respuestas obsoletas no actualizan la UI y las
+consultas obsoletas aún en cola se omiten. El HTTP ya enviado no se aborta.
+Esta
 cola **no coordina clientes diferentes**. El servidor público tiene un límite
 de 1 solicitud/s para toda la aplicación y prohíbe autocomplete. Una entrega
 con tráfico concurrente necesita un proxy con limitación global y caché o una

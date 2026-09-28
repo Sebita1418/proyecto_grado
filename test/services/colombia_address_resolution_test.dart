@@ -63,7 +63,6 @@ void main() {
     expect(AddressQuery('Cl 69 6-51').variants, [
       'Calle 69 # 6-51',
       'Calle 69 6-51',
-      'Calle 69 6 51',
       'Calle 69',
     ]);
   });
@@ -178,11 +177,10 @@ void main() {
         }),
       );
       final results = await service.resolve('Calle 69 # 6-51, Floridablanca');
-      expect(requests.length, 4);
-      expect(requests[1].queryParameters['street'], '6-51 Calle 69');
-      expect(requests[1].queryParameters['city'], 'Floridablanca');
-      expect(requests[1].queryParameters.containsKey('q'), isFalse);
-      expect(requests.last.queryParameters['q'], 'Calle 69, Floridablanca');
+      expect(requests.length, 1);
+      expect(requests[0].queryParameters['street'], '6-51 Calle 69');
+      expect(requests[0].queryParameters['city'], 'Floridablanca');
+      expect(requests[0].queryParameters.containsKey('q'), isFalse);
       expect(results.length, 1);
       expect(results.single.precision, AddressPrecision.approximate);
       expect(results.single.displayName, isNot(contains('6-51')));

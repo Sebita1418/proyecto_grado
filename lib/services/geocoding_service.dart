@@ -4,8 +4,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
-import '../models/address_precision.dart';
-
 import '../models/geocoding_result.dart';
 import 'address_query.dart';
 
@@ -22,11 +20,14 @@ class GeocodingService {
   GeocodingService({
     http.Client? client,
     this.requestInterval = const Duration(seconds: 1),
-    this.timeout = const Duration(seconds: 8),
+    this.timeout = requestTimeout,
     this.cacheEnabled = true,
   }) : _client = client ?? http.Client(),
        _ownsClient = client == null;
 
+  static const requestTimeout = Duration(seconds: 5);
+  static const resolutionTimeout = Duration(seconds: 18);
+  static final _currentRequestKey = Object();
   final http.Client _client;
   final bool _ownsClient;
   final Duration requestInterval, timeout;
@@ -37,20 +38,30 @@ class GeocodingService {
   static DateTime? _lastRequest;
 
   Future<GeocodingResult?> search(String query) async {
+    final isCurrent = Zone.current[_currentRequestKey] as bool Function()?;
     final normalized = AddressQuery.forProvider(query);
     final bias = AddressQuery(query).hasCity ? null : searchBias;
-    final cacheKey = '$normalized|${bias?.latitude}|${bias?.longitude}';
+    final cacheKey =
+        '${normalized.toLowerCase()}|${bias?.latitude}|${bias?.longitude}';
     if (normalized.isEmpty) return null;
     if (cacheEnabled && _cache.containsKey(cacheKey)) {
       return _cache[cacheKey];
     }
     // Tests with an injected HTTP client can bypass real-time scheduling.
-    if (requestInterval == Duration.zero) return _search(normalized, bias);
+    if (requestInterval == Duration.zero) {
+      final result = await _search(normalized, bias);
+      if (cacheEnabled) {
+        if (_cache.length >= 100) _cache.remove(_cache.keys.first);
+        _cache[cacheKey] = result;
+      }
+      return result;
+    }
     final previous = _queue;
     final done = Completer<void>();
     _queue = done.future;
     await previous;
     try {
+      if (isCurrent != null && !isCurrent()) return null;
       if (cacheEnabled && _cache.containsKey(cacheKey)) {
         return _cache[cacheKey];
       }
@@ -60,6 +71,7 @@ class GeocodingService {
         if (wait > Duration.zero) await Future<void>.delayed(wait);
       }
       _lastRequest = DateTime.now();
+      if (isCurrent != null && !isCurrent()) return null;
       final result = await _search(normalized, bias);
       if (_cache.length >= 100) _cache.remove(_cache.keys.first);
       if (cacheEnabled) _cache[cacheKey] = result;
@@ -69,26 +81,39 @@ class GeocodingService {
     }
   }
 
-  /// Explicit user resolution only. Stop after evidence of a full match.
+  /// Explicit user resolution only. Stop after a useful compatible match.
   Future<List<GeocodingResult>> resolve(
     String query, {
     bool Function()? isCurrent,
   }) async {
     final parsed = AddressQuery(query);
     final bias = searchBias;
+    final deadline = DateTime.now().add(resolutionTimeout);
+    bool current() =>
+        DateTime.now().isBefore(deadline) && (isCurrent?.call() ?? true);
     final results = <GeocodingResult>[];
-    for (final variant in parsed.variants.take(AddressQuery.maxVariants)) {
-      if (isCurrent != null && !isCurrent()) break;
+    for (final variant in parsed.variants.toSet().take(
+      AddressQuery.maxVariants,
+    )) {
+      if (!current()) break;
       GeocodingResult? result;
       try {
         searchBias = bias;
-        result = await search(variant);
+        result = await runZoned(
+          () => search(variant),
+          zoneValues: {_currentRequestKey: current},
+        ).timeout(deadline.difference(DateTime.now()));
       } catch (_) {
         if (results.isEmpty) rethrow;
         break;
       }
-      if (isCurrent != null && !isCurrent()) break;
+      if (!current()) break;
       if (result == null) continue;
+      if (parsed.primaryRoad != null &&
+          (parsed.compatibility(result.road, result.houseNumber) == 0 ||
+              !parsed.cityMatches(result.city))) {
+        continue;
+      }
       final quality = parsed.precisionFor(
         result.road,
         result.houseNumber,
@@ -111,7 +136,8 @@ class GeocodingService {
       )) {
         results.add(candidate);
       }
-      if (quality == AddressPrecision.specific) break;
+      // A compatible street is useful; the UI keeps its numbering unconfirmed.
+      break;
     }
     return parsed.rank(results, bias: bias ?? AddressQuery.metropolitanBias);
   }

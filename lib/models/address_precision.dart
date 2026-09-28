@@ -1,6 +1,6 @@
 enum AddressPrecision {
   specific('Coincidencia específica'),
-  approximate('Coincidencia aproximada · numeración exacta no confirmada'),
+  approximate('Numeración no confirmada'),
   poi('Lugar');
 
   const AddressPrecision(this.label);

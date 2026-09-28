@@ -19,6 +19,7 @@ import 'travel_mode_selector.dart';
 import '../models/place_suggestion.dart';
 import '../models/geocoding_result.dart';
 import '../models/route_result.dart';
+import '../navigation/trip_summary.dart';
 import '../services/geocoding_service.dart';
 import '../services/location_service.dart';
 import '../services/place_suggestion_service.dart';
@@ -48,7 +49,12 @@ class MapSearchPanel extends StatefulWidget {
   final PlaceSuggestionService? placeSuggestionService;
   final OsrmRoutingService? routingService;
   final ValueChanged<RouteResult?>? onRouteChanged;
-  final void Function(RouteResult route, String destination)? onStartNavigation;
+  final void Function(
+    RouteResult route,
+    String destination,
+    TripRouteContext context,
+  )?
+  onStartNavigation;
   final MobilityPreferencesService preferencesService;
   final MobilityRecommendationEngine? recommendationEngine;
   final double? maxHeight;
@@ -684,6 +690,21 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                           : () => widget.onStartNavigation!(
                               _route!,
                               _routeDestinationLabel,
+                              TripRouteContext(
+                                originLabel: _routeOriginLabel,
+                                alternativeIndex: _selectedAlternative,
+                                alternativeCount: _alternatives.length,
+                                recommendation: _recommendation,
+                                suggestedIndex: _suggestedAlternative,
+                                fastest:
+                                    _alternatives.length > 1 &&
+                                    analysis?.fastestIndex ==
+                                        _selectedAlternative,
+                                shortest:
+                                    _alternatives.length > 1 &&
+                                    analysis?.shortestIndex ==
+                                        _selectedAlternative,
+                              ),
                             ),
                       originLabel: _routeOriginLabel,
                       destinationLabel: _routeDestinationLabel,

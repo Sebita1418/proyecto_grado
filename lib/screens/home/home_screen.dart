@@ -8,6 +8,9 @@ import '../../controllers/road_incident_controller.dart';
 import '../../services/road_incident_service.dart';
 import '../../navigation/navigation_session.dart';
 import '../../navigation/route_proximity.dart';
+import '../../navigation/trip_summary.dart';
+import '../../widgets/trip_summary_sheet.dart';
+import '../../widgets/trip_route_details_sheet.dart';
 import '../../widgets/navigation_status_card.dart';
 import '../../models/route_result.dart';
 import '../../models/road_incident_report.dart';
@@ -84,6 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _locating = false;
   bool _signingOut = false;
   RouteResult? _route;
+  int _plannerVersion = 0;
+  TripSummary? _shownSummary;
   final _tripRoute = ValueNotifier<RouteResult?>(null);
   RouteResult? _indexedIncidentRoute;
   List<RoadIncidentReport>? _indexedIncidents;
@@ -131,16 +136,22 @@ class _HomeScreenState extends State<HomeScreen> {
   void _navigationChanged() {
     if (!mounted) return;
     _updateIncidentProximity();
-    setState(() {});
+    final summary = _navigation.summary;
+    if (summary != null && !identical(summary, _shownSummary)) {
+      _shownSummary = summary;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && identical(_navigation.summary, summary) && !_navigation.isActive) _showTripSummary(summary);
+      });
+    }
     final point = _navigation.currentPosition;
     if (_navigation.isActive && _navigation.following && point != null) {
       _followPosition(point);
     }
   }
 
-  void _startNavigation(RouteResult route, String destination) {
+  void _startNavigation(RouteResult route, String destination, TripRouteContext tripContext) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    if (!_navigation.start(route, destination)) {
+    if (!_navigation.start(route, destination, context: tripContext)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No es posible iniciar esta ruta.')),
       );
@@ -151,6 +162,33 @@ class _HomeScreenState extends State<HomeScreen> {
       _showPosition = true;
     });
     if (_position != null) _followPosition(_position!);
+  }
+
+  void _showTripSummary(TripSummary summary) {
+    showModalBottomSheet<void>(
+      context: context, isScrollControlled: true, showDragHandle: true,
+      constraints: BoxConstraints(maxWidth: 560, maxHeight: MediaQuery.sizeOf(context).height * .85),
+      builder: (sheetContext) => TripSummarySheet(summary: summary, onPlanAnother: () {
+        Navigator.pop(sheetContext);
+        setState(() {
+          _plannerVersion++;
+          _panelCollapsed = false;
+          _route = null;
+          if (_navigation.currentPosition != null) {
+            _position = _navigation.currentPosition;
+            _locationStatus = LocationStatus.coordinatesObtained;
+          }
+        });
+      }),
+    );
+  }
+
+  void _showTripRoute() {
+    showModalBottomSheet<void>(
+      context: context, isScrollControlled: true, showDragHandle: true,
+      constraints: BoxConstraints(maxWidth: 560, maxHeight: MediaQuery.sizeOf(context).height * .85),
+      builder: (_) => TripRouteDetailsSheet(session: _navigation),
+    );
   }
 
   void _followPosition(LatLng point) {
@@ -426,9 +464,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final navigating = _navigation.isActive;
-    final activeRoute = navigating ? _navigation.route : _route;
-    final position = navigating ? _navigation.currentPosition : _position;
     return Scaffold(
       key: _scaffoldKey,
       drawer: AppNavigationDrawer(
@@ -455,6 +490,27 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
+          return ListenableBuilder(
+            listenable: _navigation,
+          child: MapSearchPanel(
+                          key: ValueKey(_plannerVersion),
+                          maxHeight: constraints.maxHeight * .48,
+                          onCollapsedChanged: (collapsed) =>
+                              setState(() => _panelCollapsed = collapsed),
+                          currentPosition: _position,
+                          onStartNavigation: _startNavigation,
+                          locationStatus: _locationStatus,
+                          geocodingService: widget.geocodingService,
+                          placeSuggestionService: widget.placeSuggestionService,
+                          routingService: _routing,
+                          onRouteChanged: (result) =>
+                              setState(() => _route = result),
+  
+            builder: (context, planner) {
+    final navigating = _navigation.isActive;
+    final activeRoute = navigating ? _navigation.route : _route;
+    final position = navigating ? _navigation.currentPosition : _position;
+
           final wide = constraints.maxWidth >= 700;
           final short = !wide && constraints.maxHeight < 560;
           final edge = wide ? _wideMargin : _compactMargin;
@@ -791,31 +847,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             maxHeight: constraints.maxHeight * .42,
                           ),
                           child: SingleChildScrollView(
-                            child: NavigationStatusCard(session: _navigation),
+                            child: NavigationStatusCard(session: _navigation, onShowRoute: _showTripRoute, onShowReports: _openReports),
                           ),
                         ),
                       Offstage(
                         key: const ValueKey('route-planner'),
                         offstage: navigating,
-                        child: MapSearchPanel(
-                          maxHeight: constraints.maxHeight * .48,
-                          onCollapsedChanged: (collapsed) =>
-                              setState(() => _panelCollapsed = collapsed),
-                          currentPosition: _position,
-                          onStartNavigation: _startNavigation,
-                          locationStatus: _locationStatus,
-                          geocodingService: widget.geocodingService,
-                          placeSuggestionService: widget.placeSuggestionService,
-                          routingService: _routing,
-                          onRouteChanged: (result) =>
-                              setState(() => _route = result),
-                        ),
+                        child: planner!,
+                      ),
                       ),
                     ],
                   ),
                 ),
               ),
             ],
+          );
+            },
           );
         },
       ),

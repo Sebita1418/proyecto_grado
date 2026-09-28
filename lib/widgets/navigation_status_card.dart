@@ -70,93 +70,144 @@ class NavigationManeuverCard extends StatelessWidget {
   }
 }
 
-class NavigationStatusCard extends StatefulWidget {
-  const NavigationStatusCard({super.key, required this.session});
+class NavigationStatusCard extends StatelessWidget {
+  const NavigationStatusCard({
+    super.key,
+    required this.session,
+    this.onShowRoute,
+    this.onShowReports,
+  });
   final NavigationSession session;
+  final VoidCallback? onShowRoute, onShowReports;
 
   @override
-  State<NavigationStatusCard> createState() => _NavigationStatusCardState();
-}
-
-class _NavigationStatusCardState extends State<NavigationStatusCard> {
-  bool get _expanded => session.panelExpanded;
-  NavigationSession get session => widget.session;
-
-  @override
-  Widget build(BuildContext context) => Material(
-    elevation: 6,
-    borderRadius: BorderRadius.circular(24),
-    color: Theme.of(context).colorScheme.surface,
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.navigation_outlined, size: 20),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Navegación activa',
-                  style: Theme.of(context).textTheme.titleSmall,
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: session,
+    builder: (context, _) {
+      final colors = Theme.of(context).colorScheme;
+      final expanded = session.panelExpanded;
+      final measured = session.projection != null;
+      final percent = (session.progress * 100).round();
+      return Material(
+        elevation: 6,
+        borderRadius: BorderRadius.circular(24),
+        color: colors.surface,
+        child: AnimatedSize(
+          duration: MediaQuery.disableAnimationsOf(context)
+              ? Duration.zero
+              : const Duration(milliseconds: 180),
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.navigation_outlined,
+                      size: 20,
+                      color: colors.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Viaje activo',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: expanded
+                          ? 'Minimizar navegación'
+                          : 'Expandir navegación',
+                      onPressed: session.togglePanel,
+                      icon: Icon(
+                        expanded ? Icons.expand_more : Icons.expand_less,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              IconButton(
-                tooltip: _expanded
-                    ? 'Minimizar navegación'
-                    : 'Expandir navegación',
-                onPressed: () => setState(session.togglePanel),
-                icon: Icon(_expanded ? Icons.expand_more : Icons.expand_less),
-              ),
-            ],
+                Text(
+                  session.destination,
+                  maxLines: expanded ? null : 1,
+                  overflow: expanded ? null : TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 8),
+                if (session.arrived) const Text('Has llegado a tu destino'),
+                Text(
+                  measured
+                      ? '$percent % del trazado actual'
+                      : 'Esperando ubicación para medir progreso',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 6),
+                LinearProgressIndicator(
+                  value: session.progress,
+                  semanticsLabel: 'Progreso aproximado de la ruta',
+                  semanticsValue: measured
+                      ? '$percent %'
+                      : 'Sin posición sobre la ruta',
+                ),
+                if (expanded) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    measured
+                        ? '${(session.remainingDistance / 1000).toStringAsFixed(1)} km restantes · aproximación geométrica'
+                        : '${(session.geometryDistance / 1000).toStringAsFixed(1)} km de trazado · esperando GPS',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    session.gpsState == TripGpsState.available
+                        ? session.offRoute
+                              ? 'Fuera de la ruta · último progreso conocido'
+                              : 'Ubicación GPS disponible'
+                        : session.notice ?? 'Esperando ubicación GPS',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  if (session.canRetryGps)
+                    TextButton.icon(
+                      onPressed: session.retryGps,
+                      icon: const Icon(Icons.gps_fixed),
+                      label: const Text('Reintentar GPS'),
+                    ),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      if (onShowRoute != null)
+                        TextButton.icon(
+                          onPressed: onShowRoute,
+                          icon: const Icon(Icons.route),
+                          label: const Text('Ver ruta del viaje'),
+                        ),
+                      if (onShowReports != null)
+                        TextButton.icon(
+                          onPressed: onShowReports,
+                          icon: const Icon(Icons.report_outlined),
+                          label: const Text('Novedades del viaje'),
+                        ),
+                    ],
+                  ),
+                ],
+                if (!session.following)
+                  TextButton.icon(
+                    onPressed: session.recenter,
+                    icon: const Icon(Icons.my_location),
+                    label: const Text('Volver a seguir mi ubicación'),
+                  ),
+                const SizedBox(height: 8),
+                FilledButton.icon(
+                  onPressed: session.finish,
+                  icon: const Icon(Icons.stop_circle_outlined),
+                  label: const Text('Finalizar ruta'),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 8),
-          if (_expanded)
-            Text(
-              session.arrived
-                  ? 'Has llegado a tu destino'
-                  : '${(session.remainingDuration / 60).ceil()} min estimados',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          if (_expanded)
-            Text(
-              session.projection == null
-                  ? '${(session.remainingDistance / 1000).toStringAsFixed(1)} km de ruta · esperando GPS'
-                  : '${(session.remainingDistance / 1000).toStringAsFixed(1)} km restantes · estimación por GPS',
-            ),
-          Text(
-            session.destination,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          if (!session.following)
-            TextButton.icon(
-              onPressed: session.recenter,
-              icon: const Icon(Icons.my_location),
-              label: const Text('Volver a seguir mi ubicación'),
-            ),
-          if (session.canRetryGps)
-            TextButton.icon(
-              onPressed: session.retryGps,
-              icon: const Icon(Icons.gps_fixed),
-              label: const Text('Reintentar GPS'),
-            ),
-          const SizedBox(height: 8),
-          if (_expanded)
-            LinearProgressIndicator(
-              value: session.progress,
-              semanticsLabel: 'Progreso de la ruta',
-              semanticsValue: '${(session.progress * 100).round()} %',
-            ),
-          const SizedBox(height: 8),
-          FilledButton.icon(
-            onPressed: session.finish,
-            icon: const Icon(Icons.stop_circle_outlined),
-            label: const Text('Finalizar ruta'),
-          ),
-        ],
-      ),
-    ),
+        ),
+      );
+    },
   );
 }

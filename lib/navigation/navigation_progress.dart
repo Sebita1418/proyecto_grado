@@ -19,7 +19,7 @@ class NavigationProgress {
   final List<double> lengths = [];
   late final double total;
 
-  RouteProjection project(LatLng position) {
+  RouteProjection project(LatLng position, {double? preferredProgress}) {
     var nearest = double.infinity;
     var along = 0.0;
     var prefix = 0.0;
@@ -43,9 +43,16 @@ class NavigationProgress {
         a.longitude + (b.longitude - a.longitude) * t,
       );
       final distance = const Distance().as(LengthUnit.Meter, position, point);
-      if (distance < nearest) {
+      final candidateAlong = prefix + lengths[i] * t;
+      final preferred = preferredProgress == null
+          ? null
+          : preferredProgress * total;
+      if (distance < nearest - .5 ||
+          ((distance - nearest).abs() <= .5 &&
+              preferred != null &&
+              (candidateAlong - preferred).abs() < (along - preferred).abs())) {
         nearest = distance;
-        along = prefix + lengths[i] * t;
+        along = candidateAlong;
         index = i;
         snapped = point;
       }

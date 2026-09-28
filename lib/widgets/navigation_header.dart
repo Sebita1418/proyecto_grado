@@ -47,20 +47,21 @@ class NavigationHeader extends StatelessWidget {
                 tooltip: 'Abrir menú de navegación',
                 onPressed: onMenuPressed,
               ),
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(11),
+              if (MediaQuery.sizeOf(context).width >= 400)
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                  child: Icon(
+                    Icons.directions_bus_outlined,
+                    color: colorScheme.onPrimaryContainer,
+                    size: 20,
+                  ),
                 ),
-                child: Icon(
-                  Icons.directions_bus_outlined,
-                  color: colorScheme.onPrimaryContainer,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +71,7 @@ class NavigationHeader extends StatelessWidget {
                       message: title,
                       child: Text(
                         title,
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                           height: 1.2,
                         ),

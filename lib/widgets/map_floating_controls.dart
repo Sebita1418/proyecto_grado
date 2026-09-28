@@ -103,11 +103,22 @@ class MapFloatingControls extends StatelessWidget {
           elevation: 3,
           borderRadius: BorderRadius.circular(16),
           child: IconButton(
-            tooltip: reportsError ? 'Reportes de la vía: revisar conexión' : 'Reportes de la vía',
+            tooltip: reportsError
+                ? 'Reportes de la vía: revisar conexión'
+                : 'Reportes de la vía',
             onPressed: onReports,
             icon: reportsLoading
-                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, semanticsLabel: 'Cargando reportes'))
-                : Icon(reportsError ? Icons.sync_problem : Icons.report_outlined),
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      semanticsLabel: 'Cargando reportes',
+                    ),
+                  )
+                : Icon(
+                    reportsError ? Icons.sync_problem : Icons.report_outlined,
+                  ),
           ),
         ),
       ],

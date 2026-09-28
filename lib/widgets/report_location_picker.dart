@@ -85,48 +85,55 @@ class _ReportLocationPickerState extends State<ReportLocationPicker> {
             alignment: Alignment.bottomCenter,
             child: SafeArea(
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 480, maxHeight: MediaQuery.sizeOf(context).height * .65),
+                constraints: BoxConstraints(
+                  maxWidth: 480,
+                  maxHeight: MediaQuery.sizeOf(context).height * .65,
+                ),
                 child: Card(
                   margin: const EdgeInsets.all(12),
-                  child: SingleChildScrollView(child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text(
-                          'Seleccionando ubicación del reporte',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Semantics(
-                          liveRegion: true,
-                          child: Text(
-                            _selected == null
-                                ? 'Toca el mapa para colocar el marcador del borrador.'
-                                : '${_selected!.latitude.toStringAsFixed(5)}, ${_selected!.longitude.toStringAsFixed(5)}. Toca otro punto para moverlo.',
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const Text(
+                            'Seleccionando ubicación del reporte',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        if (widget.currentPosition != null)
-                          OutlinedButton.icon(
-                            onPressed: () => setState(() => _selected = widget.currentPosition),
-                            icon: const Icon(Icons.my_location),
-                            label: const Text('Usar mi ubicación'),
+                          Semantics(
+                            liveRegion: true,
+                            child: Text(
+                              _selected == null
+                                  ? 'Toca el mapa para colocar el marcador del borrador.'
+                                  : '${_selected!.latitude.toStringAsFixed(5)}, ${_selected!.longitude.toStringAsFixed(5)}. Toca otro punto para moverlo.',
+                            ),
                           ),
-                        FilledButton.icon(
-                          onPressed: _selected == null
-                              ? null
-                              : () => Navigator.pop(context, _selected),
-                          icon: const Icon(Icons.check),
-                          label: const Text('Confirmar ubicación'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text('Cancelar'),
-                        ),
-                      ],
+                          const SizedBox(height: 12),
+                          if (widget.currentPosition != null)
+                            OutlinedButton.icon(
+                              onPressed: () => setState(
+                                () => _selected = widget.currentPosition,
+                              ),
+                              icon: const Icon(Icons.my_location),
+                              label: const Text('Usar mi ubicación'),
+                            ),
+                          FilledButton.icon(
+                            onPressed: _selected == null
+                                ? null
+                                : () => Navigator.pop(context, _selected),
+                            icon: const Icon(Icons.check),
+                            label: const Text('Confirmar ubicación'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Cancelar'),
+                          ),
+                        ],
+                      ),
                     ),
-                  )),
+                  ),
                 ),
               ),
             ),

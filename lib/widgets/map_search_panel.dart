@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
+import '../services/address_query.dart';
+
 import 'package:latlong2/latlong.dart';
 
 import '../mobility/mobility_context.dart';
@@ -420,6 +423,97 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     }
   }
 
+  // Explicit search only: public Nominatim is not an autocomplete provider.
+  Future<void> _findAddress({required bool origin}) async {
+    final query = (origin ? _origin : _destination).text.trim();
+    if (query.isEmpty || _checking) return;
+    (origin ? _originDebounce : _debounce)?.cancel();
+    final request = origin ? ++_originRequest : ++_request;
+    setState(() {
+      if (origin) {
+        _loadingOriginSuggestions = true;
+        _originSuggestionError = null;
+      } else {
+        _loadingSuggestions = true;
+        _suggestionError = null;
+      }
+    });
+    try {
+      final result = await _geocoding.search(query);
+      if (!mounted || request != (origin ? _originRequest : _request)) return;
+      final parts = result?.displayName.split(',') ?? [];
+      final titleParts =
+          parts.length > 1 && RegExp(r'^\s*\d+[\w-]*\s*$').hasMatch(parts.first)
+          ? 2
+          : 1;
+      final places = result == null
+          ? <PlaceSuggestion>[]
+          : [
+              PlaceSuggestion(
+                name: parts.take(titleParts).join(',').trim(),
+                description: parts.skip(titleParts).join(',').trim(),
+                latitude: result.latitude,
+                longitude: result.longitude,
+              ),
+            ];
+      setState(() {
+        if (origin) {
+          _originPlaces = places;
+          _originSuggestionError = places.isEmpty
+              ? 'No se encontró esa dirección. Añade la ciudad o revisa la numeración.'
+              : null;
+        } else {
+          _places = places;
+          _suggestionError = places.isEmpty
+              ? 'No se encontró esa dirección. Añade la ciudad o revisa la numeración.'
+              : null;
+        }
+      });
+    } catch (_) {
+      if (!mounted || request != (origin ? _originRequest : _request)) return;
+      setState(() {
+        if (origin) {
+          _originSuggestionError =
+              'No fue posible buscar la dirección. Reintenta.';
+        } else {
+          _suggestionError = 'No fue posible buscar la dirección. Reintenta.';
+        }
+      });
+    } finally {
+      if (mounted && request == (origin ? _originRequest : _request)) {
+        setState(() {
+          if (origin) {
+            _loadingOriginSuggestions = false;
+          } else {
+            _loadingSuggestions = false;
+          }
+        });
+      }
+    }
+  }
+
+  Widget? _addressResults({required bool origin, Widget? child}) {
+    final query = (origin ? _origin : _destination).text;
+    final selected = origin ? _selectedOrigin : _selected;
+    if (!AddressQuery.isAddress(query) || selected != null) return child;
+    final loading = origin ? _loadingOriginSuggestions : _loadingSuggestions;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ?child,
+        TextButton.icon(
+          onPressed: loading || _checking
+              ? null
+              : () => _findAddress(origin: origin),
+          icon: const Icon(Icons.search),
+          label: Text(
+            origin ? 'Buscar dirección de origen' : 'Buscar dirección',
+          ),
+        ),
+      ],
+    );
+  }
+
   LatLng? _point(GeocodingResult? result) =>
       result == null ? null : LatLng(result.latitude, result.longitude);
 
@@ -441,7 +535,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'No hay sugerencias disponibles. Puedes escribir y calcular.',
+              message.startsWith('No se encontró esa dirección') ? message : 'No hay sugerencias disponibles. Puedes escribir y calcular.',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -456,16 +550,16 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     padding: const EdgeInsets.all(12),
     child: Row(
       children: [
-        const SizedBox(
+        SizedBox(
           width: 16,
           height: 16,
           child: CircularProgressIndicator(strokeWidth: 2),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8),
         Expanded(
           child: Semantics(
             liveRegion: true,
-            child: const Text('Buscando lugares...'),
+            child: Text('Buscando lugares...'),
           ),
         ),
       ],
@@ -700,50 +794,60 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                       destinationError: _destinationError,
                       showOrigin: !hasGps,
                       title: '¿A dónde quieres ir?',
-                      originSuggestions: _loadingOriginSuggestions
-                          ? _searchingPlaces()
-                          : _originSuggestionError != null
-                          ? _assistiveError(_originSuggestionError!)
-                          : _originPlaces.isEmpty
-                          ? _emptySuggestions(_origin.text, _selectedOrigin)
-                          : Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: _originPlaces
-                                  .map(
-                                    (place) => ListTile(
-                                      dense: true,
-                                      leading: const Icon(Icons.place_outlined),
-                                      title: Text(place.name),
-                                      subtitle: place.description.isEmpty
-                                          ? null
-                                          : Text(place.description),
-                                      onTap: () => _selectOrigin(place),
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                      destinationSuggestions: _loadingSuggestions
-                          ? _searchingPlaces()
-                          : _suggestionError != null
-                          ? _assistiveError(_suggestionError!)
-                          : _places.isEmpty
-                          ? _emptySuggestions(_destination.text, _selected)
-                          : Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: _places
-                                  .map(
-                                    (place) => ListTile(
-                                      dense: true,
-                                      leading: const Icon(Icons.place_outlined),
-                                      title: Text(place.name),
-                                      subtitle: place.description.isEmpty
-                                          ? null
-                                          : Text(place.description),
-                                      onTap: () => _select(place),
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
+                      originSuggestions: _addressResults(
+                        origin: true,
+                        child: _loadingOriginSuggestions
+                            ? _searchingPlaces()
+                            : _originSuggestionError != null
+                            ? _assistiveError(_originSuggestionError!)
+                            : _originPlaces.isEmpty
+                            ? _emptySuggestions(_origin.text, _selectedOrigin)
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: _originPlaces
+                                    .map(
+                                      (place) => ListTile(
+                                        dense: true,
+                                        leading: const Icon(
+                                          Icons.place_outlined,
+                                        ),
+                                        title: Text(place.name),
+                                        subtitle: place.description.isEmpty
+                                            ? null
+                                            : Text(place.description),
+                                        onTap: () => _selectOrigin(place),
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                      ),
+                      destinationSuggestions: _addressResults(
+                        origin: false,
+                        child: _loadingSuggestions
+                            ? _searchingPlaces()
+                            : _suggestionError != null
+                            ? _assistiveError(_suggestionError!)
+                            : _places.isEmpty
+                            ? _emptySuggestions(_destination.text, _selected)
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: _places
+                                    .map(
+                                      (place) => ListTile(
+                                        dense: true,
+                                        leading: const Icon(
+                                          Icons.place_outlined,
+                                        ),
+                                        title: Text(place.name),
+                                        subtitle: place.description.isEmpty
+                                            ? null
+                                            : Text(place.description),
+                                        onTap: () => _select(place),
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                      ),
                     ),
                     if (_phase != null)
                       Padding(

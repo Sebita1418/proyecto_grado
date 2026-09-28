@@ -17,7 +17,7 @@ void main() {
       client: MockClient((request) async {
         expect(request.url.path, '/route/v1/driving/-73.1,7.1;-73.2,7.2');
         expect(request.url.queryParameters, {
-          'steps': 'false',
+          'steps': 'true',
           'alternatives': 'true',
           'overview': 'full',
           'geometries': 'geojson',
@@ -176,7 +176,7 @@ void main() {
       );
       expect(uri.path, '/route/v1/driving/-73.1,7.1;-73.2,7.2');
       expect(uri.queryParameters, {
-        'steps': 'false',
+        'steps': 'true',
         'alternatives': 'false',
         'overview': 'full',
         'geometries': 'geojson',

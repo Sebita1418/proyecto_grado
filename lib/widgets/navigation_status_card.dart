@@ -1,6 +1,74 @@
 import 'package:flutter/material.dart';
 
 import '../navigation/navigation_session.dart';
+import '../navigation/navigation_instruction_presentation.dart';
+
+class NavigationManeuverCard extends StatelessWidget {
+  const NavigationManeuverCard({super.key, required this.session});
+  final NavigationSession session;
+
+  @override
+  Widget build(BuildContext context) {
+    final instruction = session.nextInstruction;
+    final distance = session.distanceToInstruction;
+    final text = session.arrived
+        ? 'Has llegado'
+        : session.offRoute || session.notice != null
+        ? session.notice ?? 'Fuera de la ruta'
+        : instruction?.instructionText ?? 'Sigue la ruta en el mapa';
+    final colors = Theme.of(context).colorScheme;
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      label: 'Próxima maniobra',
+      child: Material(
+        elevation: 6,
+        borderRadius: BorderRadius.circular(20),
+        color: colors.primaryContainer,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Icon(
+                session.arrived
+                    ? Icons.flag_outlined
+                    : instruction?.instructionIcon ?? Icons.route,
+                size: 36,
+                color: colors.onPrimaryContainer,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      text,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    if (!session.arrived &&
+                        !session.offRoute &&
+                        distance != null)
+                      Text(
+                        distance >= 1000
+                            ? '${(distance / 1000).toStringAsFixed(1)} km'
+                            : '${distance.round()} m',
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class NavigationStatusCard extends StatefulWidget {
   const NavigationStatusCard({super.key, required this.session});
@@ -67,11 +135,6 @@ class _NavigationStatusCardState extends State<NavigationStatusCard> {
               onPressed: session.recenter,
               icon: const Icon(Icons.my_location),
               label: const Text('Volver a seguir mi ubicación'),
-            ),
-          if (session.notice != null || session.offRoute)
-            Semantics(
-              liveRegion: true,
-              child: Text(session.notice ?? 'Fuera de la ruta'),
             ),
           const SizedBox(height: 8),
           if (_expanded)

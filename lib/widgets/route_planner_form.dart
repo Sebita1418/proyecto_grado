@@ -56,7 +56,7 @@ class RoutePlannerForm extends StatelessWidget {
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 labelText: 'Origen',
-                hintText: 'Ingresa el punto de origen',
+                hintText: 'Busca un lugar o dirección',
                 prefixIcon: const Icon(Icons.trip_origin),
                 border: const OutlineInputBorder(),
                 errorText: originError,
@@ -74,7 +74,7 @@ class RoutePlannerForm extends StatelessWidget {
             textInputAction: TextInputAction.done,
             decoration: InputDecoration(
               labelText: compact ? '¿A dónde vas?' : 'Destino',
-              hintText: 'Ingresa el punto de destino',
+              hintText: 'Busca un lugar o dirección',
               prefixIcon: const Icon(Icons.location_on_outlined),
               border: const OutlineInputBorder(),
               errorText: destinationError,

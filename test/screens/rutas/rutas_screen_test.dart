@@ -62,7 +62,12 @@ void main() {
       MaterialApp(
         home: RutasScreen(
           loadRoutes: loadRoutes ?? () async => [],
-          geocodingService: GeocodingService(client: geocodingClient),
+          geocodingService: GeocodingService(
+            client: geocodingClient,
+            requestInterval: Duration.zero,
+            timeout: const Duration(seconds: 10),
+            cacheEnabled: false,
+          ),
           placeSuggestionService: PlaceSuggestionService(client: photonClient),
         ),
       ),

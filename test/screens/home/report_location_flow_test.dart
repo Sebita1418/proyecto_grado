@@ -104,7 +104,10 @@ void main() {
         await tester.ensureVisible(find.byTooltip('Alternativa siguiente'));
         await tester.tap(find.byTooltip('Alternativa siguiente'));
         await tester.pumpAndSettle();
-        expect(tester.widget<RouteResultCard>(find.byType(RouteResultCard)).fastest, isTrue);
+        expect(
+          tester.widget<RouteResultCard>(find.byType(RouteResultCard)).fastest,
+          isTrue,
+        );
         await tester.ensureVisible(find.byTooltip('Alternativa anterior'));
         await tester.tap(find.byTooltip('Alternativa anterior'));
         await tester.pumpAndSettle();

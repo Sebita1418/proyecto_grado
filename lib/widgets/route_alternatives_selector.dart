@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+
+import '../mobility/route_incident_analysis.dart';
+import 'route_incident_status.dart';
 
 import '../models/route_result.dart';
 import '../services/route_alternatives_analysis_service.dart';
@@ -10,11 +14,13 @@ class RouteAlternativesSelector extends StatefulWidget {
     required this.alternatives,
     required this.selectedIndex,
     required this.onSelected,
+    this.incidentAnalyses,
   });
 
   final List<RouteResult> alternatives;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
+  final ValueListenable<List<RouteIncidentAnalysis>>? incidentAnalyses;
 
   @override
   State<RouteAlternativesSelector> createState() =>
@@ -50,56 +56,73 @@ class _RouteAlternativesSelectorState extends State<RouteAlternativesSelector> {
       ),
       builder: (context) {
         _pickerRoute = ModalRoute.of<int>(context);
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                child: Semantics(
-                  header: true,
-                  child: Text(
-                    'Alternativas de ruta vehicular',
-                    style: Theme.of(context).textTheme.titleLarge,
+        return ListenableBuilder(
+          listenable:
+              widget.incidentAnalyses ?? const AlwaysStoppedAnimation(0),
+          builder: (context, _) => SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                  child: Semantics(
+                    header: true,
+                    child: Text(
+                      'Alternativas de ruta vehicular',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                   ),
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 12),
-                child: Text(
-                  'Diferencias: tiempo frente a la más rápida; distancia frente a la más corta.',
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 12),
+                  child: Text(
+                    'Diferencias: tiempo frente a la más rápida; distancia frente a la más corta.',
+                  ),
                 ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: alternatives.length,
-                  itemBuilder: (context, index) {
-                    final route = alternatives[index];
-                    final selected = index == selectedIndex;
-                    return Semantics(
-                      button: true,
-                      child: ListTile(
-                        selected: selected,
-                        leading: Icon(
-                          selected
-                              ? Icons.radio_button_checked
-                              : Icons.radio_button_unchecked,
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: alternatives.length,
+                    itemBuilder: (context, index) {
+                      final route = alternatives[index];
+                      final selected = index == selectedIndex;
+                      return Semantics(
+                        button: true,
+                        child: ListTile(
+                          selected: selected,
+                          leading: Icon(
+                            selected
+                                ? Icons.radio_button_checked
+                                : Icons.radio_button_unchecked,
+                          ),
+                          title: Text('Alternativa ${index + 1}'),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${(route.distanceMeters / 1000).toStringAsFixed(1)} km'
+                                ' · Duración estimada: '
+                                '${_duration(route.durationSeconds)}'
+                                '\n${_comparison(analysis, index)}'
+                                '${selected ? '\nSeleccionada' : ''}',
+                              ),
+                              if (widget.incidentAnalyses != null)
+                                RouteIncidentStatus(
+                                  analysis:
+                                      widget.incidentAnalyses!.value.length >
+                                          index
+                                      ? widget.incidentAnalyses!.value[index]
+                                      : null,
+                                ),
+                            ],
+                          ),
+                          onTap: () => Navigator.pop(context, index),
                         ),
-                        title: Text('Alternativa ${index + 1}'),
-                        subtitle: Text(
-                          '${(route.distanceMeters / 1000).toStringAsFixed(1)} km'
-                          ' · Duración estimada: '
-                          '${_duration(route.durationSeconds)}'
-                          '\n${_comparison(analysis, index)}'
-                          '${selected ? '\nSeleccionada' : ''}',
-                        ),
-                        onTap: () => Navigator.pop(context, index),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

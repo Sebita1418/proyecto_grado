@@ -769,6 +769,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         key: const ValueKey('route-planner'),
                         offstage: navigating,
                         child: MapSearchPanel(
+                          incidentReports: _incidents.reports,
+                          reportsAvailable:
+                              _incidents.ready && _incidents.error == null,
                           maxHeight: constraints.maxHeight * .48,
                           onCollapsedChanged: (collapsed) =>
                               setState(() => _panelCollapsed = collapsed),

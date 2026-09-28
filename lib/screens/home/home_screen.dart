@@ -710,9 +710,11 @@ class _HomeScreenState extends State<HomeScreen> {
               Positioned(
                 right: edge,
                 top: navigating
-                    ? (wide
-                          ? edge + 64
-                          : edge + constraints.maxHeight * .30 + 8)
+                    ? short
+                          ? edge + 176
+                          : (wide
+                                ? edge + 64
+                                : edge + constraints.maxHeight * .30 + 8)
                     : wide
                     ? edge + 184
                     : null,
@@ -722,19 +724,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           2 * edge,
                 child: SafeArea(
                   top: false,
-                  child: FloatingActionButton.extended(
-                    heroTag: 'report-incident',
-                    elevation: 3,
-                    backgroundColor: colorScheme.surface,
-                    foregroundColor: colorScheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    tooltip: 'Reportar novedad vial',
-                    icon: const Icon(Icons.add_location_alt_outlined),
-                    label: const Text('Reportar'),
-                    onPressed: _openReportSheet,
-                  ),
+                  child: short
+                      ? FloatingActionButton.small(
+                          heroTag: 'report-incident',
+                          tooltip: 'Reportar novedad vial',
+                          onPressed: _openReportSheet,
+                          child: const Icon(Icons.add_location_alt_outlined),
+                        )
+                      : FloatingActionButton.extended(
+                          heroTag: 'report-incident',
+                          elevation: 3,
+                          backgroundColor: colorScheme.surface,
+                          foregroundColor: colorScheme.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          tooltip: 'Reportar novedad vial',
+                          icon: const Icon(Icons.add_location_alt_outlined),
+                          label: const Text('Reportar'),
+                          onPressed: _openReportSheet,
+                        ),
                 ),
               ),
               Positioned(

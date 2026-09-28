@@ -628,13 +628,26 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                     const SizedBox(width: 18),
                     Expanded(
                       child: _collapsed
-                          ? Text(
-                              _route == null
-                                  ? '¿A dónde vas?'
-                                  : _routeDestinationLabel,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.titleSmall,
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  _route == null
+                                      ? '¿A dónde vas?'
+                                      : _routeDestinationLabel,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                                if (_route != null)
+                                  Text(
+                                    '${(_route!.durationSeconds / 60).ceil()} min · ${(_route!.distanceMeters / 1000).toStringAsFixed(1)} km',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall,
+                                  ),
+                              ],
                             )
                           : Center(
                               child: Container(

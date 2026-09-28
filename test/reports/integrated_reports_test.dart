@@ -64,13 +64,38 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('Carril derecho'), findsOneWidget);
         expect(controller.reports, hasLength(1));
+        await tester.ensureVisible(
+          find.widgetWithText(ChoiceChip, 'Accidente'),
+        );
+        await tester.tap(find.widgetWithText(ChoiceChip, 'Accidente'));
+        await tester.pumpAndSettle();
+        final fetches = service.fetches;
+        service.rows = [
+          RoadIncidentReport.fromMap({
+            ...reportRow(id: 'road-work'),
+            'tipo': 'road_work',
+            'descripcion': 'Obras en el puente',
+          }),
+        ];
+        service.events.add(null);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 400));
+        await tester.pumpAndSettle();
+        expect(find.text('No hay reportes de esta categoría.'), findsOneWidget);
+        await tester.ensureVisible(
+          find.widgetWithText(ChoiceChip, 'Todos (1)'),
+        );
+        await tester.tap(find.widgetWithText(ChoiceChip, 'Todos (1)'));
+        await tester.pumpAndSettle();
+        expect(find.text('Obras en el puente'), findsOneWidget);
+        expect(service.fetches, fetches + 1);
         service.events.addError(StateError('disconnected'));
         await tester.pumpAndSettle();
         expect(
           find.textContaining('Actualización en vivo no disponible'),
           findsOneWidget,
         );
-        expect(find.text('Carril derecho'), findsOneWidget);
+        expect(find.text('Obras en el puente'), findsOneWidget);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox.shrink());
         controller.dispose();

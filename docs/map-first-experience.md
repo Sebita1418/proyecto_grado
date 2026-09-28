@@ -60,3 +60,5 @@ estado «Borrador sin publicar». No se inventan fecha, autor ni reportes remoto
 La vista previa no interviene en el ajuste de cámara y se pierde al salir de
 Home. El GPS usa un halo azul sin orientación inventada. Reportes publicados,
 persistencia Supabase y realtime siguen pendientes del contrato de backend.
+
+El panel de navegación se puede minimizar sin finalizar la sesión. La ruta minimizada conserva distancia y duración. La lista de reportes permite filtrar categorías localmente, muestra fecha real y mantiene una única suscripción al seleccionar una novedad y regresar al mapa.

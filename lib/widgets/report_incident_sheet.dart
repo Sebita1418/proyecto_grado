@@ -19,6 +19,7 @@ class ReportIncidentSheet extends StatefulWidget {
     this.onPickLocation,
     this.initialDraft,
     this.onDraftChanged,
+    this.onDiscard,
   });
 
   final LatLng? currentPosition;
@@ -28,6 +29,7 @@ class ReportIncidentSheet extends StatefulWidget {
   final Future<LatLng?> Function(LatLng? current)? onPickLocation;
   final IncidentReportDraft? initialDraft;
   final ValueChanged<IncidentReportDraft>? onDraftChanged;
+  final VoidCallback? onDiscard;
 
   @override
   State<ReportIncidentSheet> createState() => _ReportIncidentSheetState();
@@ -110,6 +112,17 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
             'No fue posible publicar el reporte. Intenta nuevamente.';
       });
     }
+  }
+
+  void _preview() {
+    if (_selectedType == null ||
+        _coordinates == null ||
+        _publishing ||
+        _picking) {
+      return;
+    }
+    widget.onSubmit?.call(_draft);
+    Navigator.pop(context, _draft);
   }
 
   Future<void> _handleChangeLocation() async {
@@ -196,82 +209,88 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: IncidentType.values.map((type) {
-                      final isSelected = type == _selectedType;
-                      return Semantics(
-                        button: true,
-                        selected: isSelected,
-                        label:
-                            '${type.label}, ${isSelected ? 'seleccionado' : 'no seleccionado'}',
-                        child: Material(
-                          color: isSelected
-                              ? colorScheme.primaryContainer
-                              : colorScheme.surfaceContainerLow,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(
+                  LayoutBuilder(
+                    builder: (context, constraints) => Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: IncidentType.values.map((type) {
+                        final isSelected = type == _selectedType;
+                        return SizedBox(
+                          width: (constraints.maxWidth - 8) / 2,
+                          child: Semantics(
+                            button: true,
+                            selected: isSelected,
+                            label:
+                                '${type.label}, ${isSelected ? 'seleccionado' : 'no seleccionado'}',
+                            child: Material(
                               color: isSelected
-                                  ? colorScheme.primary
-                                  : colorScheme.outlineVariant.withValues(
-                                      alpha: 0.5,
-                                    ),
-                              width: isSelected ? 1.5 : 1.0,
+                                  ? colorScheme.primaryContainer
+                                  : colorScheme.surfaceContainerLow,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(
+                                  color: isSelected
+                                      ? colorScheme.primary
+                                      : colorScheme.outlineVariant.withValues(
+                                          alpha: 0.5,
+                                        ),
+                                  width: isSelected ? 1.5 : 1.0,
+                                ),
+                              ),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(14),
+                                onTap: () {
+                                  setState(() => _selectedType = type);
+                                  _saveDraft();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 14,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        type.icon,
+                                        size: 18,
+                                        color: isSelected
+                                            ? colorScheme.onPrimaryContainer
+                                            : colorScheme.onSurface,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Flexible(
+                                        child: Text(
+                                          type.label,
+                                          style: theme.textTheme.labelMedium
+                                              ?.copyWith(
+                                                fontWeight: isSelected
+                                                    ? FontWeight.bold
+                                                    : FontWeight.normal,
+                                                color: isSelected
+                                                    ? colorScheme
+                                                          .onPrimaryContainer
+                                                    : colorScheme.onSurface,
+                                              ),
+                                        ),
+                                      ),
+                                      if (isSelected) ...[
+                                        const SizedBox(width: 6),
+                                        Icon(
+                                          Icons.check,
+                                          size: 16,
+                                          color: colorScheme.primary,
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(14),
-                            onTap: () {
-                              setState(() => _selectedType = type);
-                              _saveDraft();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 14,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    type.icon,
-                                    size: 18,
-                                    color: isSelected
-                                        ? colorScheme.onPrimaryContainer
-                                        : colorScheme.onSurface,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      type.label,
-                                      style: theme.textTheme.labelMedium
-                                          ?.copyWith(
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
-                                            color: isSelected
-                                                ? colorScheme.onPrimaryContainer
-                                                : colorScheme.onSurface,
-                                          ),
-                                    ),
-                                  ),
-                                  if (isSelected) ...[
-                                    const SizedBox(width: 6),
-                                    Icon(
-                                      Icons.check,
-                                      size: 16,
-                                      color: colorScheme.primary,
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      }).toList(),
+                    ),
                   ),
                   const SizedBox(height: 18),
                   Text(
@@ -355,6 +374,23 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                       label: const Text('Cambiar ubicación'),
                     ),
                   ),
+                  if (_manualLocation && widget.currentPosition != null)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton.icon(
+                        onPressed: _picking
+                            ? null
+                            : () {
+                                setState(() {
+                                  _coordinates = widget.currentPosition;
+                                  _manualLocation = false;
+                                });
+                                _saveDraft();
+                              },
+                        icon: const Icon(Icons.my_location),
+                        label: const Text('Usar mi ubicación actual'),
+                      ),
+                    ),
                   const SizedBox(height: 18),
                   Text(
                     'Descripción (opcional)',
@@ -423,6 +459,29 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                       fontSize: 11,
                     ),
                     textAlign: TextAlign.center,
+                  ),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    children: [
+                      if (widget.onPublish != null && widget.onSubmit != null)
+                        TextButton.icon(
+                          onPressed:
+                              _selectedType == null ||
+                                  position == null ||
+                                  _picking
+                              ? null
+                              : _preview,
+                          icon: const Icon(Icons.visibility_outlined),
+                          label: const Text('Vista previa en mapa'),
+                        ),
+                      if (widget.onDiscard != null)
+                        TextButton.icon(
+                          onPressed: widget.onDiscard,
+                          icon: const Icon(Icons.delete_outline),
+                          label: const Text('Descartar borrador'),
+                        ),
+                    ],
                   ),
                 ],
               ),

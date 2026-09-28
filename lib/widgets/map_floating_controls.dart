@@ -11,15 +11,23 @@ class MapFloatingControls extends StatelessWidget {
     required this.showRoute,
     required this.onShowRoute,
     this.onFitRoute,
+    this.horizontal = false,
+    this.onReports,
+    this.reportsLoading = false,
+    this.reportsError = false,
   });
 
   final bool locating, showPosition, showRoute;
+  final bool horizontal;
+  final VoidCallback? onReports;
+  final bool reportsLoading, reportsError;
   final VoidCallback onLocate;
   final VoidCallback? onFitRoute;
   final ValueChanged<bool> onShowPosition, onShowRoute;
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) => Flex(
+    direction: horizontal ? Axis.horizontal : Axis.vertical,
     mainAxisSize: MainAxisSize.min,
     crossAxisAlignment: CrossAxisAlignment.end,
     children: [
@@ -41,7 +49,7 @@ class MapFloatingControls extends StatelessWidget {
               )
             : const Icon(Icons.my_location),
       ),
-      const SizedBox(height: 4),
+      const SizedBox(height: 4, width: 4),
       Material(
         elevation: 3,
         color: Theme.of(context).colorScheme.surface,
@@ -73,7 +81,7 @@ class MapFloatingControls extends StatelessWidget {
         ),
       ),
       if (onFitRoute != null) ...[
-        const SizedBox(height: 4),
+        const SizedBox(height: 4, width: 4),
         FloatingActionButton(
           mini: true,
           materialTapTargetSize: MaterialTapTargetSize.padded,
@@ -87,6 +95,31 @@ class MapFloatingControls extends StatelessWidget {
           tooltip: 'Ver ruta completa',
           onPressed: onFitRoute,
           child: const Icon(Icons.fit_screen),
+        ),
+      ],
+      if (onReports != null) ...[
+        const SizedBox(height: 4, width: 4),
+        Material(
+          elevation: 3,
+          borderRadius: BorderRadius.circular(16),
+          child: IconButton(
+            tooltip: reportsError
+                ? 'Reportes de la vía: revisar conexión'
+                : 'Reportes de la vía',
+            onPressed: onReports,
+            icon: reportsLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      semanticsLabel: 'Cargando reportes',
+                    ),
+                  )
+                : Icon(
+                    reportsError ? Icons.sync_problem : Icons.report_outlined,
+                  ),
+          ),
         ),
       ],
     ],

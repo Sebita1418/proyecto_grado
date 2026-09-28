@@ -47,6 +47,7 @@ class RouteOption {
       points: List<LatLng>.unmodifiable(value.points),
       distanceMeters: value.distanceMeters,
       durationSeconds: value.durationSeconds,
+      instructions: List.unmodifiable(value.instructions),
     );
   }
 

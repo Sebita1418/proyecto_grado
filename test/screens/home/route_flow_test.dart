@@ -210,7 +210,7 @@ void main() {
       await calculate(tester);
       routing.pending.complete([firstRoute, secondRoute]);
       await tester.pumpAndSettle();
-      expect(changes.last, same(secondRoute));
+      expect(changes.last, same(firstRoute));
       expect(find.text('Ruta sugerida'), findsOneWidget);
       expect(find.textContaining('por defecto'), findsNothing);
     },
@@ -397,15 +397,19 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         tester.widget<RouteResultCard>(find.byType(RouteResultCard)).route,
-        same(secondRoute),
+        same(firstRoute),
       );
       expect(
         tester.widget<RouteMap>(find.byType(RouteMap)).polylines.single.points,
-        secondRoute.points,
+        firstRoute.points,
       );
-      expect(find.text('Alternativa 2 de 2 seleccionada'), findsOneWidget);
+      expect(find.text('Alternativa 1 de 2 seleccionada'), findsOneWidget);
       expect(find.text('Ruta sugerida'), findsOneWidget);
+      await tapLabel(tester, 'Ruta sugerida');
       expect(find.textContaining('por defecto'), findsOneWidget);
+      expect(find.text('Ruta recomendada: alternativa 2.'), findsOneWidget);
+      Navigator.of(tester.element(find.text('Por qué esta ruta'))).pop();
+      await tester.pumpAndSettle();
       expect(find.text('Ruta recomendada'), findsNothing);
       await tapLabel(tester, 'Cambiar alternativa');
       expect(find.text('Alternativa 1'), findsOneWidget);
@@ -473,7 +477,7 @@ void main() {
       await tester.pumpAndSettle();
       await tapLabel(tester, 'Cambiar alternativa');
       await tapLabel(tester, 'Alternativa 1');
-      expect(changes, [null, secondRoute, firstRoute]);
+      expect(changes, [null, firstRoute, firstRoute]);
       await tapLabel(tester, 'Modificar ruta');
       await calculate(tester);
       expect(changes.last, isNull);
@@ -901,9 +905,7 @@ void main() {
       expect(find.text('Tu ubicación actual'), findsOneWidget);
       expect(find.text('Parque'), findsOneWidget);
       expect(find.byTooltip('Ver ruta completa'), findsOneWidget);
-      await tester.ensureVisible(find.text('Ver detalles'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Ver detalles'));
+      await tapLabel(tester, 'Ver detalles');
       await tester.pumpAndSettle();
       expect(find.text('Detalles de la ruta'), findsOneWidget);
       expect(find.text('Duración estimada'), findsOneWidget);
@@ -918,9 +920,7 @@ void main() {
             .length,
         3,
       );
-      await tester.ensureVisible(find.text('Modificar ruta'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Modificar ruta'));
+      await tapLabel(tester, 'Modificar ruta');
       await tester.pump();
       expect(find.text('Calcular ruta'), findsOneWidget);
       expect(

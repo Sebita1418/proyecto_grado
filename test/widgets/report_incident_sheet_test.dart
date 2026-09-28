@@ -5,6 +5,36 @@ import 'package:transporte_inteligente/widgets/report_incident_sheet.dart';
 
 void main() {
   testWidgets(
+    'volver al GPS reemplaza la coordenada manual y guarda el borrador',
+    (tester) async {
+      IncidentReportDraft? changed;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ReportIncidentSheet(
+              currentPosition: const LatLng(7.1, -73.1),
+              initialDraft: const IncidentReportDraft(
+                type: IncidentType.accident,
+                coordinates: LatLng(8, -72),
+                manualLocation: true,
+                description: 'Descripción conservada',
+              ),
+              onDraftChanged: (draft) => changed = draft,
+            ),
+          ),
+        ),
+      );
+      await tester.ensureVisible(find.text('Usar mi ubicación actual'));
+      await tester.tap(find.text('Usar mi ubicación actual'));
+      await tester.pump();
+      expect(changed!.coordinates, const LatLng(7.1, -73.1));
+      expect(changed!.manualLocation, isFalse);
+      expect(changed!.type, IncidentType.accident);
+      expect(changed!.description, 'Descripción conservada');
+      expect(find.text('Usar mi ubicación actual'), findsNothing);
+    },
+  );
+  testWidgets(
     'teclado y texto ampliado permiten preparar; descripción limitada a 200',
     (tester) async {
       tester.view.physicalSize = const Size(320, 844);

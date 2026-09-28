@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
 import '../models/geocoding_result.dart';
+import 'address_query.dart';
 
 class GeocodingException implements Exception {
   const GeocodingException(this.message);
@@ -14,14 +16,54 @@ class GeocodingException implements Exception {
 }
 
 class GeocodingService {
-  GeocodingService({http.Client? client})
-    : _client = client ?? http.Client(),
-      _ownsClient = client == null;
+  GeocodingService({
+    http.Client? client,
+    this.requestInterval = const Duration(seconds: 1),
+    this.timeout = const Duration(seconds: 8),
+    this.cacheEnabled = true,
+  }) : _client = client ?? http.Client(),
+       _ownsClient = client == null;
 
   final http.Client _client;
   final bool _ownsClient;
+  final Duration requestInterval, timeout;
+  final bool cacheEnabled;
+  final _cache = <String, GeocodingResult?>{};
+  static Future<void> _queue = Future<void>.value();
+  static DateTime? _lastRequest;
 
   Future<GeocodingResult?> search(String query) async {
+    final normalized = AddressQuery.forProvider(query);
+    if (normalized.isEmpty) return null;
+    if (cacheEnabled && _cache.containsKey(normalized)) {
+      return _cache[normalized];
+    }
+    // Tests with an injected HTTP client can bypass real-time scheduling.
+    if (requestInterval == Duration.zero) return _search(normalized);
+    final previous = _queue;
+    final done = Completer<void>();
+    _queue = done.future;
+    await previous;
+    try {
+      if (cacheEnabled && _cache.containsKey(normalized)) {
+        return _cache[normalized];
+      }
+      final last = _lastRequest;
+      if (last != null) {
+        final wait = requestInterval - DateTime.now().difference(last);
+        if (wait > Duration.zero) await Future<void>.delayed(wait);
+      }
+      _lastRequest = DateTime.now();
+      final result = await _search(normalized);
+      if (_cache.length >= 100) _cache.remove(_cache.keys.first);
+      if (cacheEnabled) _cache[normalized] = result;
+      return result;
+    } finally {
+      done.complete();
+    }
+  }
+
+  Future<GeocodingResult?> _search(String query) async {
     final uri = Uri.https('nominatim.openstreetmap.org', '/search', {
       'q': query.trim(),
       'format': 'jsonv2',
@@ -31,13 +73,16 @@ class GeocodingService {
 
     http.Response response;
     try {
-      response = await _client.get(
-        uri,
-        headers: {
-          'User-Agent': 'TransporteInteligente/1.0 (Flutter; Bucaramanga, CO)',
-          'Accept': 'application/json',
-        },
-      );
+      response = await _client
+          .get(
+            uri,
+            headers: {
+              'User-Agent':
+                  'TransporteInteligente/1.0 (Flutter; Bucaramanga, CO)',
+              'Accept': 'application/json',
+            },
+          )
+          .timeout(timeout);
     } on http.ClientException catch (error) {
       throw GeocodingException(
         'No fue posible conectar con Nominatim: ${error.message}',

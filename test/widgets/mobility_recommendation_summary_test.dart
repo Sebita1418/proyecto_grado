@@ -14,6 +14,7 @@ void main() {
     bool manual = false,
     int selected = 1,
     bool defaults = false,
+    bool compact = false,
   }) async {
     const origin = LatLng(7.1, -73.1);
     const destination = LatLng(7.2, -73.2);
@@ -48,6 +49,7 @@ void main() {
         home: Scaffold(
           body: SingleChildScrollView(
             child: MobilityRecommendationSummary(
+              compact: compact,
               recommendation: result,
               suggestedIndex: 1,
               selectedIndex: selected,
@@ -59,6 +61,41 @@ void main() {
       ),
     );
   }
+
+  testWidgets('resumen compacto abre motivos reales sin cambiar selección', (
+    tester,
+  ) async {
+    await render(
+      tester,
+      compact: true,
+      manual: true,
+      selected: 0,
+      defaults: true,
+    );
+    expect(find.textContaining('Única alternativa'), findsNothing);
+    expect(find.text('Selección manual'), findsOneWidget);
+    await tester.tap(find.byType(ListTile));
+    await tester.pumpAndSettle();
+    expect(find.text('Por qué esta ruta'), findsOneWidget);
+    expect(find.text('Ruta recomendada: alternativa 2.'), findsOneWidget);
+    expect(find.text('Ruta seleccionada: alternativa 1.'), findsOneWidget);
+    expect(find.textContaining('Única alternativa'), findsOneWidget);
+    expect(find.textContaining('por defecto'), findsOneWidget);
+    expect(
+      tester
+          .getSize(
+            find
+                .descendant(
+                  of: find.byType(BottomSheet),
+                  matching: find.byType(SafeArea),
+                )
+                .first,
+          )
+          .width,
+      lessThanOrEqualTo(560),
+    );
+    expect(tester.takeException(), isNull);
+  });
 
   for (final width in [320.0, 390.0, 768.0, 1440.0]) {
     testWidgets('sugerencia legible y accesible a $width con texto ampliado', (

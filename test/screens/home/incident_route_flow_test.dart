@@ -70,7 +70,7 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  for (final width in [320.0, 768.0]) {
+  for (final width in [320.0, 390.0, 768.0, 1440.0]) {
     testWidgets(
       'Realtime actualiza selector abierto a $width, conserva selección y no llama OSRM',
       (tester) async {
@@ -104,6 +104,13 @@ void main() {
           1,
         );
         await tapLabel(tester, 'Cambiar alternativa');
+        expect(
+          find.descendant(
+            of: find.widgetWithText(ListTile, 'Alternativa 2'),
+            matching: find.text('Sugerida'),
+          ),
+          findsOneWidget,
+        );
         expect(
           find.descendant(
             of: find.byType(BottomSheet),
@@ -148,6 +155,13 @@ void main() {
           findsOneWidget,
         );
         expect(routing.calls, 1);
+        expect(
+          find.descendant(
+            of: find.widgetWithText(ListTile, 'Alternativa 1'),
+            matching: find.text('Sugerida'),
+          ),
+          findsOneWidget,
+        );
         // Close without selecting a different alternative.
         Navigator.of(
           tester.element(find.text('Alternativas de ruta vehicular')),
@@ -163,15 +177,11 @@ void main() {
           tester.widget<RouteMap>(find.byType(RouteMap)).polylines.last.points,
           points,
         );
-        await tester.ensureVisible(find.byType(MobilityRecommendationSummary));
-        await tester.tap(find.text('Selección manual'));
-        await tester.pumpAndSettle();
+        await tapLabel(tester, '¿Por qué esta ruta?');
         expect(
           find.textContaining('Se prioriza una alternativa sin cierres'),
           findsOneWidget,
         );
-        Navigator.of(tester.element(find.text('Por qué esta ruta'))).pop();
-        await tester.pumpAndSettle();
         reports.rows = [];
         reports.events.add(null);
         await tester.pump();
@@ -182,6 +192,12 @@ void main() {
         );
         expect(summary.suggestedIndex, 1);
         expect(summary.selectedIndex, 1);
+        expect(find.text('Análisis de movilidad'), findsOneWidget);
+        expect(
+          find.textContaining('Se prioriza una alternativa sin cierres'),
+          findsNothing,
+        );
+        expect(find.text('Cierres próximos: 0'), findsOneWidget);
         expect(find.text('Sin reportes activos próximos'), findsOneWidget);
         expect(routing.calls, 1);
         expect(tester.takeException(), isNull);

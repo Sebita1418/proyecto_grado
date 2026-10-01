@@ -74,26 +74,15 @@ void main() {
     );
     expect(find.textContaining('Única alternativa'), findsNothing);
     expect(find.text('Selección manual'), findsOneWidget);
-    await tester.tap(find.byType(ListTile));
+    expect(find.text('Seleccionada: alternativa 1'), findsOneWidget);
+    expect(find.text('Ruta sugerida'), findsOneWidget);
+    await tester.tap(find.text('¿Por qué esta ruta?'));
     await tester.pumpAndSettle();
-    expect(find.text('Por qué esta ruta'), findsOneWidget);
-    expect(find.text('Ruta recomendada: alternativa 2.'), findsOneWidget);
-    expect(find.text('Ruta seleccionada: alternativa 1.'), findsOneWidget);
+    expect(find.text('Análisis de movilidad'), findsOneWidget);
+    expect(find.text('Alternativa 2 · 2 min · 1,0 km'), findsOneWidget);
     expect(find.textContaining('Única alternativa'), findsOneWidget);
     expect(find.textContaining('por defecto'), findsOneWidget);
-    expect(
-      tester
-          .getSize(
-            find
-                .descendant(
-                  of: find.byType(BottomSheet),
-                  matching: find.byType(SafeArea),
-                )
-                .first,
-          )
-          .width,
-      lessThanOrEqualTo(560),
-    );
+    expect(tester.getSize(find.byType(Card)).width, lessThanOrEqualTo(450));
     expect(tester.takeException(), isNull);
   });
 

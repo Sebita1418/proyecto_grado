@@ -79,6 +79,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   late final _engine =
       widget.recommendationEngine ?? VehicleRecommendationEngine();
   MobilityRecommendation? _recommendation;
+  bool _updatingRecommendation = false;
   final _incidentAnalyses = ValueNotifier<List<RouteIncidentAnalysis>>([]);
   MobilityContext? _tripContext;
   List<RouteOption> _options = const [];
@@ -172,7 +173,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     final calculation = _calculation;
     final analyses = _analyzeIncidents(_alternatives);
     _incidentAnalyses.value = analyses;
-    setState(() => _recommendation = null);
+    setState(() => _updatingRecommendation = true);
     try {
       final recommendation = await _engine.recommend(
         _withIncidents(trip, analyses),
@@ -189,6 +190,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       if (index < 0) throw StateError('Unknown recommended route');
       setState(() {
         _recommendation = recommendation;
+        _updatingRecommendation = false;
         _suggestedAlternative = index;
         _recommendationNotice = null;
       });
@@ -199,10 +201,12 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           calculation != _calculation) {
         return;
       }
-      setState(
-        () => _recommendationNotice =
-            'No se pudo actualizar la recomendación; se conserva tu selección.',
-      );
+      setState(() {
+        _updatingRecommendation = false;
+        _recommendation = null;
+        _recommendationNotice =
+            'No se pudo actualizar la recomendación; se conserva tu selección.';
+      });
     }
   }
 
@@ -225,6 +229,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     _alternatives = const [];
     _selectedAlternative = null;
     _recommendation = null;
+    _updatingRecommendation = false;
     _suggestedAlternative = null;
     _manuallySelected = false;
     _usesDefaultModes = false;
@@ -813,6 +818,17 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                 ),
                 if (!_collapsed) ...[
                   if (_route != null && !_showEditor) ...[
+                    if (_recommendation != null)
+                      MobilityRecommendationSummary(
+                        incidentAnalyses: _incidentAnalyses.value,
+                        updating: _updatingRecommendation,
+                        compact: true,
+                        recommendation: _recommendation!,
+                        suggestedIndex: _suggestedAlternative!,
+                        selectedIndex: _selectedAlternative!,
+                        manuallySelected: _manuallySelected,
+                        usesDefaultModes: _usesDefaultModes,
+                      ),
                     RouteResultCard(
                       route: _route!,
                       onStart: widget.onStartNavigation == null
@@ -832,6 +848,11 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                           analysis?.shortestIndex == _selectedAlternative,
                     ),
                     RouteAlternativesSelector(
+                      suggestedIndex:
+                          _updatingRecommendation || _recommendation == null
+                          ? null
+                          : _suggestedAlternative,
+                      manuallySelected: _manuallySelected,
                       incidentAnalyses: _incidentAnalyses,
                       alternatives: _alternatives,
                       selectedIndex: _selectedAlternative!,
@@ -858,15 +879,6 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                       Padding(
                         padding: const EdgeInsets.all(12),
                         child: Text(_recommendationNotice!),
-                      ),
-                    if (_recommendation != null)
-                      MobilityRecommendationSummary(
-                        compact: true,
-                        recommendation: _recommendation!,
-                        suggestedIndex: _suggestedAlternative!,
-                        selectedIndex: _selectedAlternative!,
-                        manuallySelected: _manuallySelected,
-                        usesDefaultModes: _usesDefaultModes,
                       ),
                   ] else ...[
                     Padding(

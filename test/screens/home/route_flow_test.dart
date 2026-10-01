@@ -255,7 +255,8 @@ void main() {
         find.textContaining('Todavía no hay una ruta compatible'),
         findsNothing,
       );
-      await tapLabel(tester, 'Ruta sugerida');
+      await tapLabel(tester, '¿Por qué esta ruta?');
+      expect(find.text('Análisis de movilidad'), findsOneWidget);
       expect(
         find.textContaining('Única alternativa vehicular'),
         findsOneWidget,
@@ -405,11 +406,13 @@ void main() {
       );
       expect(find.text('Alternativa 1 de 2 seleccionada'), findsOneWidget);
       expect(find.text('Ruta sugerida'), findsOneWidget);
-      await tapLabel(tester, 'Ruta sugerida');
+      await tapLabel(tester, '¿Por qué esta ruta?');
       expect(find.textContaining('por defecto'), findsOneWidget);
-      expect(find.text('Ruta recomendada: alternativa 2.'), findsOneWidget);
-      Navigator.of(tester.element(find.text('Por qué esta ruta'))).pop();
-      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Alternativa 2 · 15 min · 9,1 km'),
+        findsOneWidget,
+      );
+      await tapLabel(tester, '¿Por qué esta ruta?');
       expect(find.text('Ruta recomendada'), findsNothing);
       await tapLabel(tester, 'Cambiar alternativa');
       expect(find.text('Alternativa 1'), findsOneWidget);
@@ -430,7 +433,7 @@ void main() {
       await tapLabel(tester, 'Alternativa 1');
       final card = tester.widget<RouteResultCard>(find.byType(RouteResultCard));
       expect(card.route, same(firstRoute));
-      expect(find.text('Ruta sugerida'), findsNothing);
+      expect(find.text('Ruta sugerida'), findsOneWidget);
       expect(find.text('Selección manual'), findsOneWidget);
       expect(card.originLabel, 'Tu ubicación actual');
       expect(card.destinationLabel, 'Destino');

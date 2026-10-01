@@ -15,12 +15,16 @@ class RouteAlternativesSelector extends StatefulWidget {
     required this.selectedIndex,
     required this.onSelected,
     this.incidentAnalyses,
+    this.suggestedIndex,
+    this.manuallySelected = false,
   });
 
   final List<RouteResult> alternatives;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
   final ValueListenable<List<RouteIncidentAnalysis>>? incidentAnalyses;
+  final int? suggestedIndex;
+  final bool manuallySelected;
 
   @override
   State<RouteAlternativesSelector> createState() =>
@@ -29,9 +33,19 @@ class RouteAlternativesSelector extends StatefulWidget {
 
 class _RouteAlternativesSelectorState extends State<RouteAlternativesSelector> {
   ModalRoute<int>? _pickerRoute;
+  final _revision = ValueNotifier<int>(0);
+
+  @override
+  void didUpdateWidget(covariant RouteAlternativesSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _revision.value++;
+    });
+  }
 
   @override
   void dispose() {
+    _revision.dispose();
     final route = _pickerRoute;
     // GPS changes can invalidate the result while its picker is open.
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -42,7 +56,6 @@ class _RouteAlternativesSelectorState extends State<RouteAlternativesSelector> {
 
   Future<void> _open(BuildContext context) async {
     final alternatives = widget.alternatives;
-    final selectedIndex = widget.selectedIndex;
     final analysis = const RouteAlternativesAnalysisService().analyze(
       alternatives,
     );
@@ -57,8 +70,7 @@ class _RouteAlternativesSelectorState extends State<RouteAlternativesSelector> {
       builder: (context) {
         _pickerRoute = ModalRoute.of<int>(context);
         return ListenableBuilder(
-          listenable:
-              widget.incidentAnalyses ?? const AlwaysStoppedAnimation(0),
+          listenable: Listenable.merge([_revision, widget.incidentAnalyses]),
           builder: (context, _) => SafeArea(
             child: Column(
               mainAxisSize: MainAxisSize.max,
@@ -84,7 +96,7 @@ class _RouteAlternativesSelectorState extends State<RouteAlternativesSelector> {
                     itemCount: alternatives.length,
                     itemBuilder: (context, index) {
                       final route = alternatives[index];
-                      final selected = index == selectedIndex;
+                      final selected = index == widget.selectedIndex;
                       return Semantics(
                         button: true,
                         child: ListTile(
@@ -103,8 +115,22 @@ class _RouteAlternativesSelectorState extends State<RouteAlternativesSelector> {
                                 ' · Duración estimada: '
                                 '${_duration(route.durationSeconds)}'
                                 '\n${_comparison(analysis, index)}'
-                                '${selected ? '\nSeleccionada' : ''}',
+                                '${selected
+                                    ? widget.manuallySelected
+                                          ? '\nSeleccionada · Selección manual'
+                                          : '\nSeleccionada'
+                                    : ''}',
                               ),
+                              if (index == widget.suggestedIndex)
+                                Text(
+                                  'Sugerida',
+                                  style: Theme.of(context).textTheme.labelLarge
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                ),
                               if (widget.incidentAnalyses != null)
                                 RouteIncidentStatus(
                                   analysis:

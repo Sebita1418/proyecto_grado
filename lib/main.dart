@@ -9,7 +9,7 @@ Future<void> main() async {
 
   await Supabase.initialize(
     url: SupabaseConfig.url,
-    anonKey: SupabaseConfig.publishableKey,
+    publishableKey: SupabaseConfig.publishableKey,
   );
 
   runApp(const TransporteInteligenteApp());

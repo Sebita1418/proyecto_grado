@@ -1,0 +1,203 @@
+import 'package:flutter/material.dart';
+
+import '../mobility/mobility_recommendation.dart';
+import '../mobility/route_incident_analysis.dart';
+import '../models/route_insight.dart';
+
+/// Explains the engine's decision separately from the currently selected route.
+class MobilityRecommendationSummary extends StatelessWidget {
+  const MobilityRecommendationSummary({
+    super.key,
+    required this.recommendation,
+    required this.suggestedIndex,
+    required this.selectedIndex,
+    required this.manuallySelected,
+    required this.usesDefaultModes,
+    this.compact = false,
+    this.incidentAnalyses = const [],
+    this.updating = false,
+  });
+
+  final MobilityRecommendation recommendation;
+  final int suggestedIndex;
+  final int selectedIndex;
+  final bool manuallySelected;
+  final bool usesDefaultModes;
+  final bool compact;
+  final List<RouteIncidentAnalysis> incidentAnalyses;
+  final bool updating;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    if (compact) {
+      final insight = RouteInsight(
+        recommendation: recommendation,
+        analyses: incidentAnalyses,
+      );
+      return Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 450),
+          child: Card(
+            margin: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+            elevation: 0,
+            color: theme.colorScheme.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(color: theme.colorScheme.outlineVariant),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.alt_route,
+                            color: theme.colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Ruta sugerida',
+                              style: theme.textTheme.titleMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      if (updating)
+                        const Text('Actualizando análisis de movilidad…')
+                      else ...[
+                        Text(
+                          'Alternativa ${suggestedIndex + 1} · ${insight.duration} · ${insight.distance}',
+                          style: theme.textTheme.titleSmall,
+                        ),
+                        const SizedBox(height: 8),
+                        for (final highlight in insight.highlights)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(Icons.info_outline, size: 16),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    highlight,
+                                    style: theme.textTheme.bodySmall,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                      const SizedBox(height: 4),
+                      if (manuallySelected)
+                        Text(
+                          'Selección manual',
+                          style: theme.textTheme.labelMedium,
+                        ),
+                      Text(
+                        'Seleccionada: alternativa ${selectedIndex + 1}',
+                        style: theme.textTheme.labelMedium,
+                      ),
+                    ],
+                  ),
+                ),
+                ExpansionTile(
+                  title: const Text('¿Por qué esta ruta?'),
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+                  childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
+                  shape: const Border(),
+                  collapsedShape: const Border(),
+                  children: [
+                    Text(
+                      'Análisis de movilidad',
+                      style: theme.textTheme.titleSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    if (updating)
+                      const Text('Actualizando condiciones reportadas…')
+                    else ...[
+                      Wrap(
+                        spacing: 16,
+                        runSpacing: 8,
+                        children: [
+                          Text('Duración: ${insight.duration}'),
+                          Text('Distancia: ${insight.distance}'),
+                          Text(
+                            'Reportes próximos: ${insight.reportCount ?? 'No disponibles'}',
+                          ),
+                          Text(
+                            'Cierres próximos: ${insight.closureCount ?? 'No disponibles'}',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(insight.comparison),
+                      for (final explanation in insight.explanations)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            explanation,
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                      if (usesDefaultModes)
+                        const Text(
+                          'Sin modos guardados: se usa el flujo vehicular por defecto.',
+                        ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Puedes elegir otra alternativa sin volver a calcular.',
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(18, 0, 18, 12),
+      child: Semantics(
+        liveRegion: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              manuallySelected ? 'Selección manual' : 'Ruta sugerida',
+              style: theme.textTheme.titleSmall,
+            ),
+            Text(
+              manuallySelected
+                  ? selectedIndex == suggestedIndex
+                        ? 'Elegiste la alternativa ${selectedIndex + 1}; coincide con la sugerencia del cálculo.'
+                        : 'Elegiste la alternativa ${selectedIndex + 1}. La sugerencia del cálculo fue la alternativa ${suggestedIndex + 1}.'
+                  : 'Recomendada: alternativa ${suggestedIndex + 1}. Seleccionada: ${selectedIndex + 1}.',
+            ),
+            Text(
+              '${manuallySelected ? 'Motivo de la sugerencia: ' : ''}'
+              '${recommendation.reasons.map((reason) => reason.explanation).join(' ')}',
+              style: theme.textTheme.bodySmall,
+            ),
+            if (usesDefaultModes)
+              Text(
+                'Sin modos guardados: se usa el flujo vehicular por defecto.',
+                style: theme.textTheme.bodySmall,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}

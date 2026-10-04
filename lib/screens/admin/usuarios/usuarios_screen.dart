@@ -689,7 +689,7 @@ class _UsuariosScreenState
                     itemCount:
                         usuarios.length,
                     separatorBuilder:
-                        (_, __) =>
+                        (_, _) =>
                             const SizedBox(
                       height: 10,
                     ),

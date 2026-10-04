@@ -16,6 +16,7 @@ class RouteResultCard extends StatelessWidget {
     this.onStart,
     this.fastest = false,
     this.shortest = false,
+    this.referenceOnly = false,
   });
 
   final RouteResult route;
@@ -24,6 +25,7 @@ class RouteResultCard extends StatelessWidget {
   final VoidCallback onModify;
   final VoidCallback? onStart;
   final bool fastest, shortest;
+  final bool referenceOnly;
 
   String get distance =>
       '${(route.distanceMeters / 1000).toStringAsFixed(1)} km';
@@ -118,6 +120,25 @@ class RouteResultCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
+          if (referenceOnly)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Semantics(
+                label: 'Ruta calculada para Ahora; duración solo de referencia',
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, size: 18, color: colors.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Ruta calculada para Ahora · duración solo de referencia',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           if (fastest || shortest)
             Wrap(
               spacing: 8,

@@ -1,5 +1,11 @@
 import 'dart:async';
 
+import '../mobility/decision/current_mobility_decision_adapter.dart';
+import '../mobility/decision/departure_time_context.dart';
+import '../mobility/decision/mobility_decision_coordinator.dart';
+import '../mobility/decision/mobility_decision_result.dart';
+import 'mobility_planner/mobility_planner_section.dart';
+
 import 'package:flutter/material.dart';
 
 import '../services/address_query.dart';
@@ -19,7 +25,6 @@ import '../mobility/vehicle_recommendation_engine.dart';
 import '../services/mobility_preferences_service.dart';
 import '../services/route_alternatives_analysis_service.dart';
 import 'mobility_recommendation_summary.dart';
-import 'travel_mode_selector.dart';
 import '../models/place_suggestion.dart';
 import '../models/geocoding_result.dart';
 import '../models/route_result.dart';
@@ -114,7 +119,32 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   List<PlaceSuggestion> _originPlaces = [];
   PlaceSuggestion? _selected;
   PlaceSuggestion? _selectedOrigin;
-  TransportMode _selectedMode = TransportMode.driving;
+  DepartureTimeContext _departure = DepartureTimeContext.now(DateTime.now());
+
+  MobilityDecisionResult? get _decision {
+    final trip = _tripContext;
+    if (trip == null) return null;
+    final context = const CurrentMobilityDecisionAdapter().build(
+      trip: _withIncidents(trip, _incidentAnalyses.value),
+      departure: _departure,
+      routes: _options,
+      recommendationUnavailable:
+          _updatingRecommendation ||
+          (_recommendation == null && _route != null),
+    );
+    return const MobilityDecisionCoordinator().decide(
+      context,
+      vehicleRecommendation: _recommendation,
+    );
+  }
+
+  Widget _planningOptions(MobilityDecisionResult? result) =>
+      MobilityPlannerSection(
+        departure: _departure,
+        onDepartureChanged: (value) => setState(() => _departure = value),
+        result: result,
+        busy: _checking || _updatingRecommendation,
+      );
 
   @override
   void didUpdateWidget(covariant MapSearchPanel oldWidget) {
@@ -215,7 +245,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     ++_calculation;
     _checking = false;
     _phase = null;
-    if (_route != null) {
+    if (_route != null || _tripContext != null) {
       _clearAlternatives();
       _showEditor = true;
       widget.onRouteChanged?.call(null);
@@ -385,6 +415,13 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
 
   Future<void> _calculate() async {
     if (_checking) return;
+    if (_departure.isScheduled) {
+      _message(
+        'Sin información temporal suficiente. Vuelve a Ahora para calcular.',
+      );
+      return;
+    }
+    _departure = DepartureTimeContext.now(DateTime.now());
     final hasGps = widget.currentPosition != null && !_manualOrigin;
     final originText = _origin.text.trim();
     final destinationText = _destination.text.trim();
@@ -474,6 +511,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       final reportSnapshot = widget.incidentReports;
       final availableSnapshot = widget.reportsAvailable;
       final incidentAnalyses = _analyzeIncidents(results);
+      // Keep the decision context even when preferences exclude driving.
+      _tripContext = context;
+      _options = options;
+      _incidentAnalyses.value = incidentAnalyses;
       final recommendation = await _engine.recommend(
         _withIncidents(context, incidentAnalyses),
         options,
@@ -734,6 +775,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final decision = _decision;
     final hasGps = widget.currentPosition != null && !_manualOrigin;
     final height = MediaQuery.sizeOf(context).height;
     final calculation = _calculation;
@@ -742,7 +784,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         ? null
         : const RouteAlternativesAnalysisService().analyze(_alternatives);
     return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: widget.maxHeight ?? height * .48),
+      constraints: BoxConstraints(
+        maxWidth: 560,
+        maxHeight: widget.maxHeight ?? height * .48,
+      ),
       child: Material(
         elevation: 8,
         shadowColor: colorScheme.shadow.withValues(alpha: 0.22),
@@ -783,7 +828,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                 ),
                                 if (_route != null)
                                   Text(
-                                    '${(_route!.durationSeconds / 60).ceil()} min · ${(_route!.distanceMeters / 1000).toStringAsFixed(1)} km',
+                                    _departure.isScheduled
+                                        ? 'Referencia de Ahora: ${(_route!.durationSeconds / 60).ceil()} min / ${(_route!.distanceMeters / 1000).toStringAsFixed(1)} km'
+                                        : '${(_route!.durationSeconds / 60).ceil()} min · ${(_route!.distanceMeters / 1000).toStringAsFixed(1)} km',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall,
@@ -818,7 +865,21 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                 ),
                 if (!_collapsed) ...[
                   if (_route != null && !_showEditor) ...[
-                    if (_recommendation != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'Destino · $_routeDestinationLabel',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 12),
+                          _planningOptions(decision),
+                        ],
+                      ),
+                    ),
+                    if (_recommendation != null && _departure.isNow)
                       MobilityRecommendationSummary(
                         incidentAnalyses: _incidentAnalyses.value,
                         updating: _updatingRecommendation,
@@ -831,7 +892,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                       ),
                     RouteResultCard(
                       route: _route!,
-                      onStart: widget.onStartNavigation == null
+                      referenceOnly: _departure.isScheduled,
+                      onStart:
+                          widget.onStartNavigation == null ||
+                              _departure.isScheduled
                           ? null
                           : () => widget.onStartNavigation!(
                               _route!,
@@ -849,7 +913,8 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                     ),
                     RouteAlternativesSelector(
                       suggestedIndex:
-                          _updatingRecommendation || _recommendation == null
+                          _updatingRecommendation ||
+                              !(decision?.hasRecommendation ?? false)
                           ? null
                           : _suggestedAlternative,
                       manuallySelected: _manuallySelected,
@@ -881,29 +946,6 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                         child: Text(_recommendationNotice!),
                       ),
                   ] else ...[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 2, 14, 8),
-                      child: TravelModeSelector(
-                        compact: true,
-                        selectedMode: _selectedMode,
-                        onModeSelected: (mode) {
-                          if (mode == TransportMode.driving) {
-                            setState(() => _selectedMode = mode);
-                          }
-                        },
-                        onUnavailableModeTap: (mode) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'El modo ${mode.label} estará disponible próximamente. '
-                                'Actualmente solo se admiten rutas vehiculares.',
-                              ),
-                              duration: const Duration(seconds: 3),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
                     if (_recommendationNotice != null)
                       Padding(
                         padding: const EdgeInsets.all(16),
@@ -954,6 +996,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                         ),
                       ),
                     RoutePlannerForm(
+                      planningOptions: _planningOptions(decision),
                       embedded: true,
                       compact: true,
                       originController: _origin,

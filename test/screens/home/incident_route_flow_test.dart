@@ -13,6 +13,7 @@ import 'package:transporte_inteligente/models/road_incident_report.dart';
 import 'package:transporte_inteligente/screens/home/home_screen.dart';
 import 'package:transporte_inteligente/services/location_service.dart';
 import 'package:transporte_inteligente/widgets/map_search_panel.dart';
+import 'package:transporte_inteligente/widgets/mobility_planner/mobility_planner_section.dart';
 import 'package:transporte_inteligente/widgets/mobility_recommendation_summary.dart';
 import 'package:transporte_inteligente/widgets/route_incident_status.dart';
 import 'package:transporte_inteligente/widgets/route_map.dart';
@@ -171,6 +172,17 @@ void main() {
           find.byType(MobilityRecommendationSummary),
         );
         expect(summary.suggestedIndex, 0);
+        expect(
+          tester
+              .widget<MobilityPlannerSection>(
+                find.byType(MobilityPlannerSection),
+              )
+              .result!
+              .recommendation!
+              .recommended
+              .id,
+          'osrm-0',
+        );
         expect(summary.selectedIndex, 1);
         expect(summary.manuallySelected, isTrue);
         expect(
@@ -191,6 +203,17 @@ void main() {
           find.byType(MobilityRecommendationSummary),
         );
         expect(summary.suggestedIndex, 1);
+        expect(
+          tester
+              .widget<MobilityPlannerSection>(
+                find.byType(MobilityPlannerSection),
+              )
+              .result!
+              .recommendation!
+              .recommended
+              .id,
+          'osrm-1',
+        );
         expect(summary.selectedIndex, 1);
         expect(find.text('Análisis de movilidad'), findsOneWidget);
         expect(

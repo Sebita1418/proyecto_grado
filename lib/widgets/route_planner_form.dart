@@ -16,6 +16,7 @@ class RoutePlannerForm extends StatelessWidget {
   final String actionLabel;
   final String loadingLabel;
   final bool compact;
+  final Widget? planningOptions;
 
   const RoutePlannerForm({
     super.key,
@@ -33,6 +34,7 @@ class RoutePlannerForm extends StatelessWidget {
     this.actionLabel = 'Calcular ruta',
     this.loadingLabel = 'Calculando...',
     this.compact = false,
+    this.planningOptions,
   });
 
   @override
@@ -87,6 +89,8 @@ class RoutePlannerForm extends StatelessWidget {
           ),
 
           ?destinationSuggestions,
+
+          ?planningOptions,
 
           const SizedBox(height: 16),
 

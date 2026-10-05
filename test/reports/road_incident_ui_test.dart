@@ -47,12 +47,12 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Accidente'));
       await tester.enterText(find.byType(TextField), 'Carril derecho');
-      await tester.ensureVisible(find.text('Publicar reporte'));
-      await tester.tap(find.text('Publicar reporte'));
-      await tester.tap(find.text('Publicar reporte'));
+      await tester.ensureVisible(find.text('Enviar reporte'));
+      await tester.tap(find.text('Enviar reporte'));
+      await tester.tap(find.text('Enviar reporte'));
       await tester.pump();
       expect(calls, 1);
-      expect(find.text('Publicando…'), findsOneWidget);
+      expect(find.text('Enviando reporte…'), findsOneWidget);
       expect(
         tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
         isNull,
@@ -69,8 +69,8 @@ void main() {
       );
       expect(find.byType(ReportIncidentSheet), findsOneWidget);
       pending = Completer<void>();
-      await tester.ensureVisible(find.text('Publicar reporte'));
-      await tester.tap(find.text('Publicar reporte'));
+      await tester.ensureVisible(find.text('Enviar reporte'));
+      await tester.tap(find.text('Enviar reporte'));
       await tester.pump();
       pending.complete();
       await tester.pumpAndSettle();
@@ -121,7 +121,7 @@ void main() {
       expect(find.text('Borrador sin publicar'), findsNothing);
       await tester.tap(find.byTooltip('Cerrar detalle'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('Reportes de la vía'));
+      await tester.tap(find.byKey(const ValueKey('road-reports-control')));
       await tester.pumpAndSettle();
       await tester.tap(find.byTooltip('Actualizar reportes'));
       await tester.pumpAndSettle();

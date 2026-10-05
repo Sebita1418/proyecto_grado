@@ -16,6 +16,7 @@ class RoutePlannerForm extends StatelessWidget {
   final String actionLabel;
   final String loadingLabel;
   final bool compact;
+  final Widget? planningOptions;
 
   const RoutePlannerForm({
     super.key,
@@ -33,6 +34,7 @@ class RoutePlannerForm extends StatelessWidget {
     this.actionLabel = 'Calcular ruta',
     this.loadingLabel = 'Calculando...',
     this.compact = false,
+    this.planningOptions,
   });
 
   @override
@@ -73,7 +75,7 @@ class RoutePlannerForm extends StatelessWidget {
             enabled: !isLoading,
             textInputAction: TextInputAction.done,
             decoration: InputDecoration(
-              labelText: compact ? '¿A dónde vas?' : 'Destino',
+              labelText: 'Destino',
               hintText: 'Busca un lugar o dirección',
               prefixIcon: const Icon(Icons.location_on_outlined),
               border: const OutlineInputBorder(),
@@ -88,18 +90,23 @@ class RoutePlannerForm extends StatelessWidget {
 
           ?destinationSuggestions,
 
+          ?planningOptions,
+
           const SizedBox(height: 16),
 
-          FilledButton.icon(
-            onPressed: isLoading ? null : onCalculate,
-            icon: isLoading
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.route),
-            label: Text(isLoading ? loadingLabel : actionLabel),
+          Semantics(
+            button: true,
+            child: FilledButton.icon(
+              onPressed: isLoading ? null : onCalculate,
+              icon: isLoading
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.route_outlined),
+              label: Text(isLoading ? loadingLabel : actionLabel),
+            ),
           ),
         ],
       ),

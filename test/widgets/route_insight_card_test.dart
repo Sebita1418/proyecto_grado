@@ -38,10 +38,10 @@ void main() {
         analyses: [snapshot('a'), snapshot('b')],
       );
       await tester.pumpWidget(card(insight));
-      expect(find.text('Ruta sugerida'), findsOneWidget);
+      expect(find.text('RUTA SUGERIDA'), findsOneWidget);
       expect(
-        tester.getSemantics(find.text('Ruta sugerida')).label,
-        contains('Ruta sugerida'),
+        tester.getSemantics(find.text('RUTA SUGERIDA')).label,
+        contains('RUTA SUGERIDA'),
       );
       expect(find.text('Sin reportes próximos'), findsOneWidget);
       expect(tester.getSize(find.byType(Card)).width, lessThanOrEqualTo(450));
@@ -57,7 +57,7 @@ void main() {
       await tester.tap(find.text('¿Por qué esta ruta?'));
       await tester.pumpAndSettle();
       expect(find.text('Análisis de movilidad'), findsNothing);
-      expect(find.text('Ruta sugerida'), findsOneWidget);
+      expect(find.text('RUTA SUGERIDA'), findsOneWidget);
       semantics.dispose();
     });
   }

@@ -82,6 +82,9 @@ void main() {
       expect(find.byType(RouteMap), findsOneWidget);
       expect(find.text('Transporte Inteligente'), findsOneWidget);
       expect(find.text('Muévete mejor. Decide tu ruta.'), findsOneWidget);
+      expect(find.text('¿A dónde vas?'), findsOneWidget);
+      expect(find.text('¿Cuándo quieres salir?'), findsOneWidget);
+      expect(find.text('Analizar rutas'), findsOneWidget);
 
       // Verify floating controls
       expect(find.byTooltip('Mi ubicación'), findsWidgets);
@@ -91,7 +94,9 @@ void main() {
       // Verify mode selector in search panel
       expect(find.byType(TravelModeSelector), findsOneWidget);
       expect(find.text('Vehículo'), findsOneWidget);
-      expect(find.textContaining('Próximamente'), findsNWidgets(3));
+      expect(find.text('Se evalúa al analizar'), findsOneWidget);
+      expect(find.text('Sin rutas disponibles'), findsNWidgets(2));
+      expect(find.text('Datos no integrados'), findsOneWidget);
     },
   );
 

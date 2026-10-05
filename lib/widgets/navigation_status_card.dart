@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../navigation/navigation_session.dart';
 import '../navigation/navigation_instruction_presentation.dart';
+import '../theme/mobility_theme.dart';
 
 class NavigationManeuverCard extends StatelessWidget {
   const NavigationManeuverCard({super.key, required this.session});
@@ -17,14 +18,30 @@ class NavigationManeuverCard extends StatelessWidget {
         ? session.notice ?? 'Fuera de la ruta'
         : instruction?.instructionText ?? 'Sigue la ruta en el mapa';
     final colors = Theme.of(context).colorScheme;
+    final failed = session.state == NavigationState.rerouteFailed;
+    final alert = failed || session.state == NavigationState.offRoutePending;
+    final background = session.arrived
+        ? const Color(0xFFE6F4EC)
+        : failed
+        ? colors.errorContainer
+        : alert
+        ? const Color(0xFFFFF2D9)
+        : colors.primaryContainer;
+    final foreground = session.arrived
+        ? MobilityDesign.positive
+        : failed
+        ? colors.onErrorContainer
+        : alert
+        ? MobilityDesign.warning
+        : colors.onPrimaryContainer;
     return Semantics(
       container: true,
       liveRegion: true,
       label: 'Próxima maniobra',
       child: Material(
         elevation: 6,
-        borderRadius: BorderRadius.circular(20),
-        color: colors.primaryContainer,
+        borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
+        color: background,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
@@ -34,7 +51,7 @@ class NavigationManeuverCard extends StatelessWidget {
                     ? Icons.flag_outlined
                     : instruction?.instructionIcon ?? Icons.route,
                 size: 36,
-                color: colors.onPrimaryContainer,
+                color: foreground,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -46,8 +63,10 @@ class NavigationManeuverCard extends StatelessWidget {
                       text,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: foreground,
+                      ),
                     ),
                     if (!session.arrived &&
                         !session.offRoute &&
@@ -85,8 +104,14 @@ class _NavigationStatusCardState extends State<NavigationStatusCard> {
   @override
   Widget build(BuildContext context) => Material(
     elevation: 6,
-    borderRadius: BorderRadius.circular(24),
     color: Theme.of(context).colorScheme.surface,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(MobilityDesign.sheetRadius),
+      side: BorderSide(
+        color: Theme.of(context).colorScheme.outlineVariant
+            .withValues(alpha: .7),
+      ),
+    ),
     child: Padding(
       padding: const EdgeInsets.all(16),
       child: Column(

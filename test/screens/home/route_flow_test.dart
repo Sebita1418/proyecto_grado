@@ -10,6 +10,7 @@ import 'package:transporte_inteligente/mobility/mobility_recommendation_engine.d
 import 'package:transporte_inteligente/mobility/route_option.dart';
 import 'package:transporte_inteligente/mobility/transport_mode.dart';
 import 'package:transporte_inteligente/mobility/vehicle_recommendation_engine.dart';
+import 'package:transporte_inteligente/mobility/decision/departure_time_context.dart';
 import 'package:transporte_inteligente/services/mobility_preferences_service.dart';
 import 'package:transporte_inteligente/widgets/mobility_recommendation_summary.dart';
 import 'package:transporte_inteligente/models/geocoding_result.dart';
@@ -24,6 +25,8 @@ import 'package:transporte_inteligente/widgets/map_search_panel.dart';
 import 'package:transporte_inteligente/widgets/route_map.dart';
 import 'package:transporte_inteligente/widgets/route_result_card.dart';
 import 'package:transporte_inteligente/widgets/route_alternatives_selector.dart';
+import 'package:transporte_inteligente/widgets/departure_time_selector.dart';
+import 'package:transporte_inteligente/widgets/travel_mode_selector.dart';
 
 const firstRoute = RouteResult(
   origin: LatLng(7.1, -73.1),
@@ -152,6 +155,7 @@ void main() {
     LatLng position = const LatLng(7.1, -73.1),
     MobilityPreferencesService preferences = const MobilityPreferencesService(),
     MobilityRecommendationEngine? engine,
+    void Function(RouteResult route, String destination)? onStartNavigation,
   }) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -164,6 +168,7 @@ void main() {
             recommendationEngine: engine,
             geocodingService: FixedGeocoding(),
             placeSuggestionService: FixedSuggestions(),
+            onStartNavigation: onStartNavigation,
             onRouteChanged: changes.add,
           ),
         ),
@@ -174,8 +179,8 @@ void main() {
 
   Future<void> calculate(WidgetTester tester) async {
     await tester.enterText(find.byType(TextField).last, 'Destino');
-    await tester.ensureVisible(find.text('Calcular ruta'));
-    await tester.tap(find.text('Calcular ruta'));
+    await tester.ensureVisible(find.text('Analizar rutas'));
+    await tester.tap(find.text('Analizar rutas'));
     await tester.pump();
   }
 
@@ -192,8 +197,8 @@ void main() {
     );
     await tester.pump();
     await tester.enterText(find.byType(TextField).last, 'Parque');
-    await tester.ensureVisible(find.text('Calcular ruta'));
-    await tester.tap(find.text('Calcular ruta'));
+    await tester.ensureVisible(find.text('Analizar rutas'));
+    await tester.tap(find.text('Analizar rutas'));
     await tester.pump();
   }
 
@@ -211,7 +216,7 @@ void main() {
       routing.pending.complete([firstRoute, secondRoute]);
       await tester.pumpAndSettle();
       expect(changes.last, same(firstRoute));
-      expect(find.text('Ruta sugerida'), findsOneWidget);
+      expect(find.text('RUTA SUGERIDA'), findsOneWidget);
       expect(find.textContaining('por defecto'), findsNothing);
     },
   );
@@ -246,8 +251,8 @@ void main() {
       await storage.setStringList(MobilityPreferencesService.storageKey, [
         'driving',
       ]);
-      await tester.ensureVisible(find.text('Calcular ruta'));
-      await tester.tap(find.text('Calcular ruta'));
+      await tester.ensureVisible(find.text('Analizar rutas'));
+      await tester.tap(find.text('Analizar rutas'));
       await tester.pump();
       routing.completeSingle(firstRoute);
       await tester.pumpAndSettle();
@@ -405,7 +410,7 @@ void main() {
         firstRoute.points,
       );
       expect(find.text('Alternativa 1 de 2 seleccionada'), findsOneWidget);
-      expect(find.text('Ruta sugerida'), findsOneWidget);
+      expect(find.text('RUTA SUGERIDA'), findsOneWidget);
       await tapLabel(tester, '¿Por qué esta ruta?');
       expect(find.textContaining('por defecto'), findsOneWidget);
       expect(
@@ -433,7 +438,7 @@ void main() {
       await tapLabel(tester, 'Alternativa 1');
       final card = tester.widget<RouteResultCard>(find.byType(RouteResultCard));
       expect(card.route, same(firstRoute));
-      expect(find.text('Ruta sugerida'), findsOneWidget);
+      expect(find.text('RUTA SUGERIDA'), findsOneWidget);
       expect(find.text('Selección manual'), findsOneWidget);
       expect(card.originLabel, 'Tu ubicación actual');
       expect(card.destinationLabel, 'Destino');
@@ -683,8 +688,8 @@ void main() {
         controller.selection = const TextSelection.collapsed(offset: 0);
         await tester.pump();
         expect(find.text('Buscando lugares...'), findsNothing);
-        await tester.ensureVisible(find.text('Calcular ruta'));
-        await tester.tap(find.text('Calcular ruta'));
+        await tester.ensureVisible(find.text('Analizar rutas'));
+        await tester.tap(find.text('Analizar rutas'));
         await tester.pump();
         expect(routing.calls, 1);
         expect(routing.lastOrigin, const LatLng(7.11, -73.11));
@@ -749,8 +754,8 @@ void main() {
         expect(find.byType(RouteResultCard), findsNothing);
         expect(find.byType(RouteAlternativesSelector), findsNothing);
         expect(find.byType(MobilityRecommendationSummary), findsNothing);
-        await tester.ensureVisible(find.text('Calcular ruta'));
-        await tester.tap(find.text('Calcular ruta'));
+        await tester.ensureVisible(find.text('Analizar rutas'));
+        await tester.tap(find.text('Analizar rutas'));
         await tester.pump();
         expect(routing.calls, 2);
         expect(
@@ -809,8 +814,8 @@ void main() {
       find.text('No hay sugerencias disponibles. Puedes escribir y calcular.'),
       findsOneWidget,
     );
-    await tester.ensureVisible(find.text('Calcular ruta'));
-    await tester.tap(find.text('Calcular ruta'));
+    await tester.ensureVisible(find.text('Analizar rutas'));
+    await tester.tap(find.text('Analizar rutas'));
     await tester.pump();
     expect(routing.calls, 1);
     expect(routing.lastDestination, const LatLng(7.2, -73.2));
@@ -860,8 +865,8 @@ void main() {
     await tester.ensureVisible(find.text('Plaza destino'));
     await tester.tap(find.text('Plaza destino'));
     await tester.pump();
-    await tester.ensureVisible(find.text('Calcular ruta'));
-    await tester.tap(find.text('Calcular ruta'));
+    await tester.ensureVisible(find.text('Analizar rutas'));
+    await tester.tap(find.text('Analizar rutas'));
     await tester.pump();
     expect(routing.lastOrigin, const LatLng(7.11, -73.11));
     expect(routing.lastDestination, const LatLng(7.22, -73.22));
@@ -904,9 +909,15 @@ void main() {
       expect(find.text('7.4 km'), findsOneWidget);
       expect(find.text('18 min'), findsOneWidget);
       expect(find.byType(RouteResultCard), findsOneWidget);
-      expect(find.text('Calcular ruta'), findsNothing);
+      expect(find.text('Analizar rutas'), findsNothing);
       expect(find.text('Tu ubicación actual'), findsOneWidget);
-      expect(find.text('Parque'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(RouteResultCard),
+          matching: find.text('Parque'),
+        ),
+        findsOneWidget,
+      );
       expect(find.byTooltip('Ver ruta completa'), findsOneWidget);
       await tapLabel(tester, 'Ver detalles');
       await tester.pumpAndSettle();
@@ -925,7 +936,7 @@ void main() {
       );
       await tapLabel(tester, 'Modificar ruta');
       await tester.pump();
-      expect(find.text('Calcular ruta'), findsOneWidget);
+      expect(find.text('Analizar rutas'), findsOneWidget);
       expect(
         tester.widget<RouteMap>(find.byType(RouteMap)).polylines,
         isNotEmpty,
@@ -947,6 +958,106 @@ void main() {
     expect(find.text('Calculando...'), findsNothing);
     expect(tester.widget<RouteMap>(find.byType(RouteMap)).polylines, isEmpty);
     expect(find.text('No se encontró una ruta.'), findsOneWidget);
+  });
+
+  testWidgets(
+    'programar salida comunica el límite y bloquea navegación futura',
+    (tester) async {
+      final routing = ControlledRouting();
+      final changes = <RouteResult?>[];
+      RouteResult? startedRoute;
+      String? startedDestination;
+      await panel(
+        tester,
+        routing,
+        changes,
+        onStartNavigation: (route, destination) {
+          startedRoute = route;
+          startedDestination = destination;
+        },
+      );
+      await calculate(tester);
+      routing.pending.complete([firstRoute, secondRoute]);
+      await tester.pumpAndSettle();
+      expect(find.text('RUTA SUGERIDA'), findsOneWidget);
+      expect(find.text('Iniciar navegación'), findsOneWidget);
+
+      final selector = tester.widget<DepartureTimeSelector>(
+        find.byType(DepartureTimeSelector),
+      );
+      final scheduledAt = DateTime.now().add(const Duration(days: 1));
+      selector.onChanged(DepartureTimeContext.scheduled(scheduledAt));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Planificación sin predicciones'), findsOneWidget);
+      expect(find.text('RUTA SUGERIDA'), findsNothing);
+      expect(
+        find.text('Calculada para Ahora · sin ajuste a la hora programada'),
+        findsOneWidget,
+      );
+      expect(
+        tester.widget<RouteResultCard>(find.byType(RouteResultCard)).onStart,
+        isNull,
+      );
+      expect(
+        tester
+            .widget<RouteResultCard>(find.byType(RouteResultCard))
+            .referenceOnly,
+        isTrue,
+      );
+      expect(find.text('Iniciar navegación'), findsNothing);
+      expect(
+        tester
+            .widget<TravelModeSelector>(find.byType(TravelModeSelector))
+            .scheduled,
+        isTrue,
+      );
+      expect(routing.calls, 1);
+      expect(changes, [null, firstRoute]);
+
+      await tester.ensureVisible(find.text('Ahora'));
+      await tester.tap(find.text('Ahora'));
+      await tester.pumpAndSettle();
+      expect(find.text('RUTA SUGERIDA'), findsOneWidget);
+      expect(find.text('Iniciar navegación'), findsOneWidget);
+      expect(
+        tester
+            .widget<TravelModeSelector>(find.byType(TravelModeSelector))
+            .scheduled,
+        isFalse,
+      );
+      expect(
+        tester.widget<RouteResultCard>(find.byType(RouteResultCard)).route,
+        same(firstRoute),
+      );
+      await tester.ensureVisible(find.text('Iniciar navegación'));
+      await tester.tap(find.text('Iniciar navegación'));
+      expect(startedRoute, same(firstRoute));
+      expect(startedDestination, 'Destino');
+      expect(routing.calls, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('programar antes de analizar no solicita una ruta futura', (
+    tester,
+  ) async {
+    final routing = ControlledRouting();
+    await panel(tester, routing, []);
+    tester
+        .widget<DepartureTimeSelector>(find.byType(DepartureTimeSelector))
+        .onChanged(
+          DepartureTimeContext.scheduled(
+            DateTime.now().add(const Duration(days: 1)),
+          ),
+        );
+    await tester.pumpAndSettle();
+    await tapLabel(tester, 'Analizar rutas');
+    expect(routing.calls, 0);
+    expect(find.byType(RouteResultCard), findsNothing);
+    expect(find.text('Planificación sin predicciones'), findsOneWidget);
+    expect(find.textContaining('Vuelve a Ahora'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }
 

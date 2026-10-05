@@ -623,11 +623,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: SafeArea(
                   bottom: false,
                   child: navigating
-                      ? FloatingActionButton.small(
-                          heroTag: 'navigation-recenter',
-                          tooltip: 'Recentrar',
+                      ? IconButton.filledTonal(
+                          tooltip: 'Recentrar mapa',
                           onPressed: _navigation.recenter,
-                          child: const Icon(Icons.my_location),
+                          icon: const Icon(Icons.my_location),
                         )
                       : MapFloatingControls(
                           onReports: _openReports,
@@ -725,11 +724,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: SafeArea(
                   top: false,
                   child: short
-                      ? FloatingActionButton.small(
-                          heroTag: 'report-incident',
+                      ? IconButton.filledTonal(
                           tooltip: 'Reportar novedad vial',
                           onPressed: _openReportSheet,
-                          child: const Icon(Icons.add_location_alt_outlined),
+                          icon: const Icon(Icons.add_location_alt_outlined),
                         )
                       : FloatingActionButton.extended(
                           heroTag: 'report-incident',
@@ -772,7 +770,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           incidentReports: _incidents.reports,
                           reportsAvailable:
                               _incidents.ready && _incidents.error == null,
-                          maxHeight: constraints.maxHeight * .48,
+                          maxHeight: constraints.maxHeight * .46,
                           onCollapsedChanged: (collapsed) =>
                               setState(() => _panelCollapsed = collapsed),
                           currentPosition: _position,

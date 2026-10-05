@@ -25,9 +25,7 @@ extension TransportModeDisplay on TransportMode {
 /// Selector for travel modes in the map experience.
 ///
 /// Only vehicular routing ([TransportMode.driving]) is productive in this
-/// baseline. The other modes are displayed with an unmistakable
-/// "Próximamente" badge so the roadmap stays honest without faking
-/// multimodal routing.
+/// baseline. Other modes state which provider evidence is missing.
 ///
 /// The layout is a responsive grid: four tiles across when the available
 /// width fits every label and badge without truncation, otherwise two
@@ -39,22 +37,32 @@ class TravelModeSelector extends StatelessWidget {
     this.onModeSelected,
     this.onUnavailableModeTap,
     this.compact = false,
+    this.vehicleEvaluated = false,
+    this.scheduled = false,
+    this.vehicleAllowed = true,
+    this.analyzing = false,
   });
 
-  final TransportMode selectedMode;
+  final TransportMode? selectedMode;
   final ValueChanged<TransportMode>? onModeSelected;
   final ValueChanged<TransportMode>? onUnavailableModeTap;
   final bool compact;
+  final bool vehicleEvaluated;
+  final bool scheduled;
+  final bool vehicleAllowed;
+  final bool analyzing;
 
   static const List<TransportMode> availableModes = TransportMode.values;
 
-  /// Gap between tiles and the smallest tile width that keeps every label
-  /// and the "Próximamente" badge legible at 1.5x text scale.
+  /// Gaps and a responsive lower width for mode tiles.
   static const double spacing = 8;
   static const double tileMinWidth = 132;
 
+  bool _isAvailable(TransportMode mode) =>
+      mode.isAvailable && (mode != TransportMode.driving || vehicleAllowed);
+
   void _handleTap(BuildContext context, TransportMode mode) {
-    if (mode.isAvailable) {
+    if (_isAvailable(mode)) {
       onModeSelected?.call(mode);
     } else {
       if (onUnavailableModeTap != null) {
@@ -63,8 +71,11 @@ class TravelModeSelector extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'El modo ${mode.label} estará disponible próximamente. '
-              'Actualmente solo se calculan rutas vehiculares.',
+              mode == TransportMode.driving
+                  ? 'El vehículo no está incluido en tus preferencias.'
+                  : mode == TransportMode.publicTransport
+                  ? 'Aún no hay datos integrados de transporte público.'
+                  : 'Aún no hay rutas disponibles para ${mode.label.toLowerCase()}.',
             ),
             duration: const Duration(seconds: 3),
           ),
@@ -91,18 +102,12 @@ class TravelModeSelector extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: Tooltip(
-                  message: mode.isAvailable
-                      ? mode.label
-                      : '${mode.label}: Próximamente',
+                  message: '${mode.label}: ${_status(mode)}',
                   child: ChoiceChip(
                     avatar: Icon(mode.icon, size: 18),
-                    label: Text(
-                      mode.isAvailable
-                          ? mode.label
-                          : '${mode.label} · Próximamente',
-                    ),
+                    label: Text(mode.label),
                     selected: mode == selectedMode,
-                    onSelected: mode.isAvailable
+                    onSelected: _isAvailable(mode)
                         ? (_) => _handleTap(context, mode)
                         : null,
                   ),
@@ -126,15 +131,14 @@ class TravelModeSelector extends StatelessWidget {
           runSpacing: spacing,
           children: availableModes.map((mode) {
             final isSelected = mode == selectedMode;
-            final isAvailable = mode.isAvailable;
+            final isAvailable =
+                mode.isAvailable &&
+                (mode != TransportMode.driving || vehicleAllowed);
 
-            final semanticsLabel = isAvailable
-                ? '${mode.label}${isSelected ? ', seleccionado' : ''}'
-                : '${mode.label}, Próximamente - no disponible';
-
-            final tooltipMessage = isAvailable
-                ? mode.label
-                : '${mode.label} (Próximamente)';
+            final status = _status(mode);
+            final semanticsLabel =
+                '${mode.label}, $status'
+                '${isSelected ? ', seleccionado' : ''}';
 
             return SizedBox(
               width: tileWidth,
@@ -143,11 +147,12 @@ class TravelModeSelector extends StatelessWidget {
                 selected: isSelected,
                 label: semanticsLabel,
                 child: Tooltip(
-                  message: tooltipMessage,
+                  message: semanticsLabel,
                   child: _TransportModeTile(
                     mode: mode,
                     isSelected: isSelected,
                     isAvailable: isAvailable,
+                    status: status,
                     onTap: () => _handleTap(context, mode),
                   ),
                 ),
@@ -158,24 +163,36 @@ class TravelModeSelector extends StatelessWidget {
       },
     );
   }
+
+  String _status(TransportMode mode) {
+    if (mode == TransportMode.driving) {
+      if (!vehicleAllowed) return 'No incluido en preferencias';
+      if (scheduled) return 'Sin datos horarios';
+      if (analyzing) return 'Analizando rutas';
+      return vehicleEvaluated ? 'Disponible' : 'Se evalúa al analizar';
+    }
+    if (mode == TransportMode.publicTransport) return 'Datos no integrados';
+    return 'Sin rutas disponibles';
+  }
 }
 
 /// Single presentation tile of [TravelModeSelector].
 ///
 /// Selection and availability never rely on color alone: the selected tile
-/// shows a thicker border plus the "Seleccionado" label, and unavailable
-/// modes show the textual "Próximamente" badge.
+/// shows a check and every mode carries a short evidence status.
 class _TransportModeTile extends StatelessWidget {
   const _TransportModeTile({
     required this.mode,
     required this.isSelected,
     required this.isAvailable,
+    required this.status,
     required this.onTap,
   });
 
   final TransportMode mode;
   final bool isSelected;
   final bool isAvailable;
+  final String status;
   final VoidCallback onTap;
 
   @override
@@ -225,54 +242,35 @@ class _TransportModeTile extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               if (isSelected)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.check_circle_outline,
-                      size: 13,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(width: 3),
-                    Flexible(
-                      child: Text(
-                        'Seleccionado',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              else if (!isAvailable)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 1.5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: colorScheme.outline.withValues(alpha: 0.3),
-                      width: 0.5,
-                    ),
-                  ),
-                  child: Text(
-                    'Próximamente',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      fontSize: 10,
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                    ),
+                Icon(
+                  Icons.check_circle_outline,
+                  size: 15,
+                  color: colorScheme.primary,
+                ),
+              if (isSelected) const SizedBox(height: 2),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  color: isAvailable && !status.startsWith('Sin ')
+                      ? colorScheme.primaryContainer
+                      : colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: colorScheme.outlineVariant),
+                ),
+                child: Text(
+                  status,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    fontSize: 10,
+                    color: isAvailable && !status.startsWith('Sin ')
+                        ? colorScheme.onPrimaryContainer
+                        : colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+              ),
             ],
           ),
         ),

@@ -63,8 +63,8 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
   Future<void> calculate(WidgetTester tester, ControlledRouting routing) async {
     await tester.enterText(find.byType(TextField).last, 'Destino');
-    await tester.ensureVisible(find.text('Calcular ruta'));
-    await tester.tap(find.text('Calcular ruta'));
+    await tester.ensureVisible(find.text('Analizar rutas'));
+    await tester.tap(find.text('Analizar rutas'));
     await tester.pump();
     routing.pending.complete([firstRoute, secondRoute]);
     await tester.pumpAndSettle();
@@ -267,8 +267,8 @@ void main() {
       );
       // Calculation awaits an injected engine, so do not pumpAndSettle its spinner.
       await tester.enterText(find.byType(TextField).last, 'Destino');
-      await tester.ensureVisible(find.text('Calcular ruta'));
-      await tester.tap(find.text('Calcular ruta'));
+      await tester.ensureVisible(find.text('Analizar rutas'));
+      await tester.tap(find.text('Analizar rutas'));
       await tester.pump();
       routing.pending.complete([firstRoute, secondRoute]);
       await tester.pump();

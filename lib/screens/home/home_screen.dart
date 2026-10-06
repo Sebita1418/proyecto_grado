@@ -31,6 +31,7 @@ import '../login/login_screen.dart';
 import '../nearby/nearby_places_screen.dart';
 import '../perfil/perfil_screen.dart';
 import '../rutas/rutas_screen.dart';
+import '../analytics/mobility_analytics_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -409,6 +410,7 @@ class _HomeScreenState extends State<HomeScreen> {
         perfil: _perfil,
         onHome: () => Navigator.pop(context),
         onRoutes: () => _open(const RutasScreen()),
+        onAnalytics: () => _open(const MobilityAnalyticsScreen()),
         onRoadIncidents: () {
           Navigator.pop(context);
           _openReports();

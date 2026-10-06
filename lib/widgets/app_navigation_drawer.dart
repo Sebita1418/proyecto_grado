@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/perfil_model.dart';
 
-enum AppDestination { home, routes, incidents, nearby, profile }
+enum AppDestination { home, routes, incidents, analytics, nearby, profile }
 
 class AppNavigationDrawer extends StatelessWidget {
   const AppNavigationDrawer({
@@ -15,12 +15,13 @@ class AppNavigationDrawer extends StatelessWidget {
     required this.onSignOut,
     this.onAdmin,
     this.onRoadIncidents,
+    this.onAnalytics,
     this.destination = AppDestination.home,
   });
 
   final Perfil? perfil;
   final VoidCallback onHome, onRoutes, onNearby, onProfile, onSignOut;
-  final VoidCallback? onAdmin, onRoadIncidents;
+  final VoidCallback? onAdmin, onRoadIncidents, onAnalytics;
   final AppDestination destination;
 
   Widget _entry(
@@ -105,6 +106,13 @@ class AppNavigationDrawer extends StatelessWidget {
                   Icons.report_outlined,
                   'Reportes de la vía',
                   onRoadIncidents,
+                ),
+              if (onAnalytics != null)
+                _entry(
+                  AppDestination.analytics,
+                  Icons.bar_chart_outlined,
+                  'Analítica de movilidad',
+                  onAnalytics,
                 ),
               _entry(
                 AppDestination.nearby,

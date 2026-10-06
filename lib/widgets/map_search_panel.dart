@@ -1,5 +1,10 @@
 import 'dart:async';
 
+import '../mobility/decision/current_mobility_decision_adapter.dart';
+import '../mobility/decision/departure_time_context.dart';
+import '../mobility/decision/mobility_decision_coordinator.dart';
+import '../mobility/decision/mobility_decision_result.dart';
+
 import 'package:flutter/material.dart';
 
 import '../services/address_query.dart';
@@ -12,7 +17,6 @@ import 'package:latlong2/latlong.dart';
 
 import '../mobility/mobility_context.dart';
 import '../mobility/mobility_recommendation.dart';
-import '../mobility/decision/departure_time_context.dart';
 import '../mobility/mobility_recommendation_engine.dart';
 import '../mobility/route_option.dart';
 import '../mobility/transport_mode.dart';
@@ -20,7 +24,6 @@ import '../mobility/vehicle_recommendation_engine.dart';
 import '../services/mobility_preferences_service.dart';
 import '../services/route_alternatives_analysis_service.dart';
 import 'mobility_recommendation_summary.dart';
-import 'travel_mode_selector.dart';
 import '../models/place_suggestion.dart';
 import '../models/geocoding_result.dart';
 import '../models/route_result.dart';
@@ -32,6 +35,7 @@ import 'route_planner_form.dart';
 import 'route_result_card.dart';
 import 'route_alternatives_selector.dart';
 import 'departure_time_selector.dart';
+import 'travel_mode_selector.dart';
 import '../theme/mobility_theme.dart';
 
 class MapSearchPanel extends StatefulWidget {
@@ -120,7 +124,24 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   TransportMode _selectedMode = TransportMode.driving;
   DepartureTimeContext _departure = DepartureTimeContext.now(DateTime.now());
 
-  Widget _planningOptions() => Column(
+  MobilityDecisionResult? get _decision {
+    final trip = _tripContext;
+    if (trip == null) return null;
+    final context = const CurrentMobilityDecisionAdapter().build(
+      trip: _withIncidents(trip, _incidentAnalyses.value),
+      departure: _departure,
+      routes: _options,
+      recommendationUnavailable:
+          _updatingRecommendation ||
+          (_recommendation == null && _route != null),
+    );
+    return const MobilityDecisionCoordinator().decide(
+      context,
+      vehicleRecommendation: _recommendation,
+    );
+  }
+
+  Widget _planningOptions(MobilityDecisionResult? decision) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       DepartureTimeSelector(
@@ -141,26 +162,28 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
             ? null
             : _selectedMode,
         scheduled: _departure.isScheduled,
-        vehicleEvaluated: _options.isNotEmpty && _recommendation != null,
+        vehicleEvaluated: decision?.hasRecommendation ?? false,
         analyzing: _checking || _updatingRecommendation,
         vehicleAllowed:
-            _tripContext?.allowedModes.contains(TransportMode.driving) ?? true,
+            decision?.context.mobilityContext.allowedModes.contains(
+              TransportMode.driving,
+            ) ??
+            true,
         onModeSelected: (mode) => setState(() => _selectedMode = mode),
         onUnavailableModeTap: (mode) => ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               mode == TransportMode.driving
-                  ? 'Vehículo no está incluido en tus preferencias de movilidad.'
+                  ? 'Veh\u00edculo no est\u00e1 incluido en tus preferencias de movilidad.'
                   : mode == TransportMode.publicTransport
-                  ? 'Aún no hay datos integrados de transporte público.'
-                  : 'Aún no hay rutas disponibles para ${mode.label.toLowerCase()}.',
+                  ? 'A\u00fan no hay datos integrados de transporte p\u00fablico.'
+                  : 'A\u00fan no hay rutas disponibles para ${mode.label.toLowerCase()}.',
             ),
           ),
         ),
       ),
     ],
   );
-
   @override
   void didUpdateWidget(covariant MapSearchPanel oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -260,7 +283,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     ++_calculation;
     _checking = false;
     _phase = null;
-    if (_route != null) {
+    if (_route != null || _tripContext != null) {
       _clearAlternatives();
       _showEditor = true;
       widget.onRouteChanged?.call(null);
@@ -525,6 +548,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       final reportSnapshot = widget.incidentReports;
       final availableSnapshot = widget.reportsAvailable;
       final incidentAnalyses = _analyzeIncidents(results);
+      // Keep the decision context even when preferences exclude driving.
       _tripContext = context;
       _options = options;
       _incidentAnalyses.value = incidentAnalyses;
@@ -788,6 +812,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final decision = _decision;
     final hasGps = widget.currentPosition != null && !_manualOrigin;
     final height = MediaQuery.sizeOf(context).height;
     final calculation = _calculation;
@@ -899,9 +924,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-                      child: _planningOptions(),
+                      child: _planningOptions(decision),
                     ),
-                    if (_recommendation != null && _departure.isNow)
+                    if (_recommendation != null && _departure.isNow && decision?.hasRecommendation == true)
                       MobilityRecommendationSummary(
                         incidentAnalyses: _incidentAnalyses.value,
                         updating: _updatingRecommendation,
@@ -937,7 +962,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                       suggestedIndex:
                           _departure.isScheduled ||
                               _updatingRecommendation ||
-                              _recommendation == null
+                              !(decision?.hasRecommendation ?? false)
                           ? null
                           : _suggestedAlternative,
                       manuallySelected: _manuallySelected,
@@ -1057,7 +1082,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                       title: '¿A dónde vas?',
                       planningOptions: Padding(
                         padding: const EdgeInsets.only(top: 16),
-                        child: _planningOptions(),
+                        child: _planningOptions(decision),
                       ),
                       embedded: true,
                       compact: true,

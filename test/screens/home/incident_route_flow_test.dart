@@ -171,6 +171,7 @@ void main() {
           find.byType(MobilityRecommendationSummary),
         );
         expect(summary.suggestedIndex, 0);
+        expect(summary.recommendation.recommended.id, 'osrm-0');
         expect(summary.selectedIndex, 1);
         expect(summary.manuallySelected, isTrue);
         expect(
@@ -191,6 +192,7 @@ void main() {
           find.byType(MobilityRecommendationSummary),
         );
         expect(summary.suggestedIndex, 1);
+        expect(summary.recommendation.recommended.id, 'osrm-1');
         expect(summary.selectedIndex, 1);
         expect(find.text('Análisis de movilidad'), findsOneWidget);
         expect(

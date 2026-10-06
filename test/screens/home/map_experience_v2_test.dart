@@ -14,6 +14,7 @@ import 'package:transporte_inteligente/widgets/road_incident_reports_sheet.dart'
 import 'package:transporte_inteligente/widgets/route_map.dart';
 import 'package:transporte_inteligente/widgets/road_incident_marker.dart';
 import 'package:transporte_inteligente/widgets/road_incident_details_sheet.dart';
+import 'package:transporte_inteligente/widgets/departure_time_selector.dart';
 import 'package:transporte_inteligente/widgets/travel_mode_selector.dart';
 
 class TestLocationService extends LocationService {
@@ -195,6 +196,7 @@ void main() {
       expect(find.byType(TravelModeSelector), findsOneWidget);
 
       // Tap Vehículo in selector
+      await tester.ensureVisible(find.text('Vehículo'));
       await tester.tap(find.text('Vehículo'));
       await tester.pumpAndSettle();
 

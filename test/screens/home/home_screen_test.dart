@@ -42,7 +42,13 @@ void main() {
   Future<void> tapProfile(WidgetTester tester) async {
     await tester.tap(find.byTooltip('Abrir menú de navegación'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Perfil'));
+    final profile = find.descendant(
+      of: find.byType(Drawer),
+      matching: find.text('Perfil'),
+    );
+    await tester.ensureVisible(profile);
+    await tester.pumpAndSettle();
+    await tester.tap(profile);
     await tester.pumpAndSettle();
   }
 

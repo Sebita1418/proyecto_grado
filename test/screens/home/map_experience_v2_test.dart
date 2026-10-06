@@ -14,7 +14,8 @@ import 'package:transporte_inteligente/widgets/road_incident_reports_sheet.dart'
 import 'package:transporte_inteligente/widgets/route_map.dart';
 import 'package:transporte_inteligente/widgets/road_incident_marker.dart';
 import 'package:transporte_inteligente/widgets/road_incident_details_sheet.dart';
-import 'package:transporte_inteligente/widgets/mobility_planner/mobility_planner_section.dart';
+import 'package:transporte_inteligente/widgets/departure_time_selector.dart';
+import 'package:transporte_inteligente/widgets/travel_mode_selector.dart';
 
 class TestLocationService extends LocationService {
   @override
@@ -82,6 +83,9 @@ void main() {
       expect(find.byType(RouteMap), findsOneWidget);
       expect(find.text('Transporte Inteligente'), findsOneWidget);
       expect(find.text('Muévete mejor. Decide tu ruta.'), findsOneWidget);
+      expect(find.text('¿A dónde vas?'), findsOneWidget);
+      expect(find.text('¿Cuándo quieres salir?'), findsOneWidget);
+      expect(find.text('Analizar rutas'), findsOneWidget);
 
       // Verify floating controls
       expect(find.byTooltip('Mi ubicación'), findsWidgets);
@@ -89,9 +93,11 @@ void main() {
       expect(find.text('Reportar'), findsOneWidget);
 
       // Verify mode selector in search panel
-      expect(find.byType(MobilityPlannerSection), findsOneWidget);
+      expect(find.byType(TravelModeSelector), findsOneWidget);
       expect(find.text('Vehículo'), findsOneWidget);
-      expect(find.text('3 medios todavía no soportados'), findsOneWidget);
+      expect(find.text('Se evalúa al analizar'), findsOneWidget);
+      expect(find.text('Sin rutas disponibles'), findsNWidgets(2));
+      expect(find.text('Datos no integrados'), findsOneWidget);
     },
   );
 
@@ -187,11 +193,11 @@ void main() {
       await pumpHome(tester);
 
       // In Home, the temporary mode selector shows Vehículo
-      expect(find.byType(MobilityPlannerSection), findsOneWidget);
+      expect(find.byType(TravelModeSelector), findsOneWidget);
 
       // Tap Vehículo in selector
-      await tester.ensureVisible(find.text('Ahora'));
-      await tester.tap(find.text('Ahora'));
+      await tester.ensureVisible(find.text('Vehículo'));
+      await tester.tap(find.text('Vehículo'));
       await tester.pumpAndSettle();
 
       // Verify SharedPreferences were NOT modified or overwritten with driving
@@ -210,7 +216,7 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(find.byType(NavigationHeader), findsOneWidget);
         expect(find.byType(RouteMap), findsOneWidget);
-        expect(find.byType(MobilityPlannerSection), findsOneWidget);
+        expect(find.byType(TravelModeSelector), findsOneWidget);
         expect(find.byTooltip('Reportar novedad vial'), findsOneWidget);
       },
     );

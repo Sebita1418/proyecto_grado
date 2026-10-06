@@ -19,7 +19,29 @@ void main() {
     expect(find.text('A pie'), findsOneWidget);
     expect(find.text('Bicicleta'), findsOneWidget);
     expect(find.text('Transporte público'), findsOneWidget);
-    expect(find.text('Próximamente'), findsNWidgets(3));
+    expect(find.text('Sin rutas disponibles'), findsNWidgets(2));
+    expect(find.text('Datos no integrados'), findsOneWidget);
+    expect(find.text('Se evalúa al analizar'), findsOneWidget);
+  });
+
+  testWidgets('salida programada muestra estados sin datos horarios', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: TravelModeSelector(
+            selectedMode: TransportMode.driving,
+            scheduled: true,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Sin datos horarios'), findsOneWidget);
+    expect(find.text('Disponible'), findsNothing);
+    expect(find.text('Sin rutas disponibles'), findsNWidgets(2));
+    expect(find.text('Datos no integrados'), findsOneWidget);
   });
 
   testWidgets(
@@ -80,7 +102,7 @@ void main() {
       await tester.pump();
       expect(find.byType(SnackBar), findsOneWidget);
       expect(
-        find.textContaining('El modo A pie estará disponible próximamente'),
+        find.textContaining('Aún no hay rutas disponibles para a pie.'),
         findsOneWidget,
       );
     },
@@ -118,7 +140,7 @@ void main() {
         );
         expect(
           tester.getSemantics(find.text('A pie')).label,
-          contains('Próximamente'),
+          contains('Sin rutas disponibles'),
         );
 
         semantics.dispose();

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Only toggles overlays that already exist; the OSM base map stays unchanged.
+import '../theme/mobility_theme.dart';
+
+/// Map actions remain attached to the map and reuse the existing callbacks.
 class MapFloatingControls extends StatelessWidget {
   const MapFloatingControls({
     super.key,
@@ -25,103 +27,142 @@ class MapFloatingControls extends StatelessWidget {
   final VoidCallback? onFitRoute;
   final ValueChanged<bool> onShowPosition, onShowRoute;
 
-  @override
-  Widget build(BuildContext context) => Flex(
-    direction: horizontal ? Axis.horizontal : Axis.vertical,
-    mainAxisSize: MainAxisSize.min,
-    crossAxisAlignment: CrossAxisAlignment.end,
-    children: [
-      FloatingActionButton(
-        mini: true,
-        materialTapTargetSize: MaterialTapTargetSize.padded,
-        elevation: 3,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        foregroundColor: Theme.of(context).colorScheme.primary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        heroTag: 'current-location',
-        tooltip: 'Mi ubicación',
-        onPressed: locating ? null : onLocate,
-        child: locating
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : const Icon(Icons.my_location),
+  Widget _surface(BuildContext context, Widget child) => Material(
+    elevation: 5,
+    color: Theme.of(context).colorScheme.surface,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
+      side: BorderSide(
+        color: Theme.of(context).colorScheme.outlineVariant
+            .withValues(alpha: .55),
       ),
-      const SizedBox(height: 4, width: 4),
-      Material(
-        elevation: 3,
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        child: PopupMenuButton<String>(
-          tooltip: 'Capas del mapa',
-          icon: const Icon(Icons.layers_outlined),
-          onSelected: (value) {
-            if (value == 'position') onShowPosition(!showPosition);
-            if (value == 'route') onShowRoute(!showRoute);
-          },
-          itemBuilder: (_) => [
-            const PopupMenuItem<String>(
-              enabled: false,
-              child: Text('Mapa base: OpenStreetMap'),
-            ),
-            CheckedPopupMenuItem(
-              value: 'position',
-              checked: showPosition,
-              child: const Text('Marcador de mi ubicación'),
-            ),
-            if (onFitRoute != null)
-              CheckedPopupMenuItem(
-                value: 'route',
-                checked: showRoute,
-                child: const Text('Ruta calculada'),
-              ),
-          ],
-        ),
-      ),
-      if (onFitRoute != null) ...[
-        const SizedBox(height: 4, width: 4),
-        FloatingActionButton(
-          mini: true,
-          materialTapTargetSize: MaterialTapTargetSize.padded,
-          elevation: 3,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          foregroundColor: Theme.of(context).colorScheme.primary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          heroTag: 'full-route',
-          tooltip: 'Ver ruta completa',
-          onPressed: onFitRoute,
-          child: const Icon(Icons.fit_screen),
-        ),
-      ],
-      if (onReports != null) ...[
-        const SizedBox(height: 4, width: 4),
-        Material(
-          elevation: 3,
-          borderRadius: BorderRadius.circular(16),
-          child: IconButton(
-            tooltip: reportsError
-                ? 'Reportes de la vía: revisar conexión'
-                : 'Reportes de la vía',
-            onPressed: onReports,
-            icon: reportsLoading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      semanticsLabel: 'Cargando reportes',
-                    ),
-                  )
-                : Icon(
-                    reportsError ? Icons.sync_problem : Icons.report_outlined,
-                  ),
-          ),
-        ),
-      ],
-    ],
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: child,
   );
+
+  Widget _iconButton({
+    Key? key,
+    required String tooltip,
+    required Widget icon,
+    required VoidCallback? onPressed,
+  }) => IconButton(
+    key: key,
+    constraints: const BoxConstraints.tightFor(
+      width: MobilityDesign.controlSize,
+      height: MobilityDesign.controlSize,
+    ),
+    tooltip: tooltip,
+    onPressed: onPressed,
+    icon: icon,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final children = <Widget>[
+      _surface(
+        context,
+        _iconButton(
+          tooltip: 'Mi ubicaci\u00f3n',
+          onPressed: locating ? null : onLocate,
+          icon: locating
+              ? const SizedBox.square(
+                  dimension: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Icon(Icons.my_location_outlined, color: colors.primary),
+        ),
+      ),
+      _surface(
+        context,
+        SizedBox(
+          width: MobilityDesign.controlSize,
+          height: MobilityDesign.controlSize,
+          child: PopupMenuButton<String>(
+            tooltip: 'Capas del mapa',
+            icon: Icon(Icons.layers_outlined, color: colors.primary),
+            onSelected: (value) {
+              if (value == 'position') onShowPosition(!showPosition);
+              if (value == 'route') onShowRoute(!showRoute);
+            },
+            itemBuilder: (_) => [
+              const PopupMenuItem<String>(
+                enabled: false,
+                child: Text('Mapa base: OpenStreetMap'),
+              ),
+              CheckedPopupMenuItem(
+                value: 'position',
+                checked: showPosition,
+                child: const Text('Marcador de mi ubicaci\u00f3n'),
+              ),
+              if (onFitRoute != null)
+                CheckedPopupMenuItem(
+                  value: 'route',
+                  checked: showRoute,
+                  child: const Text('Ruta calculada'),
+                ),
+            ],
+          ),
+        ),
+      ),
+      if (onFitRoute != null)
+        _surface(
+          context,
+          _iconButton(
+            tooltip: 'Ver ruta completa',
+            onPressed: onFitRoute,
+            icon: Icon(Icons.fit_screen, color: colors.primary),
+          ),
+        ),
+    ];
+    final gap = horizontal
+        ? const SizedBox(width: 8)
+        : const SizedBox(height: 8);
+    final grouped = Material(
+      color: Colors.transparent,
+      child: Flex(
+        direction: horizontal ? Axis.horizontal : Axis.vertical,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < children.length; i++) ...[
+            if (i > 0) gap,
+            children[i],
+          ],
+        ],
+      ),
+    );
+    final report = onReports == null
+        ? null
+        : _surface(
+            context,
+            _iconButton(
+              key: const ValueKey('road-reports-control'),
+              tooltip: reportsError
+                  ? 'Reportes de la v\u00eda: revisar conexi\u00f3n'
+                  : 'Consultar reportes de la v\u00eda',
+              onPressed: onReports,
+              icon: reportsLoading
+                  ? const SizedBox.square(
+                      dimension: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        semanticsLabel: 'Cargando reportes',
+                      ),
+                    )
+                  : Icon(
+                      reportsError
+                          ? Icons.sync_problem
+                          : Icons.campaign_outlined,
+                      color: reportsError ? colors.error : colors.primary,
+                    ),
+            ),
+          );
+    if (report == null) return grouped;
+    return Flex(
+      direction: horizontal ? Axis.horizontal : Axis.vertical,
+      mainAxisSize: MainAxisSize.min,
+      children: [grouped, gap, report],
+    );
+  }
 }

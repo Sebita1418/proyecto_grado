@@ -75,7 +75,7 @@ void main() {
     expect(find.textContaining('Única alternativa'), findsNothing);
     expect(find.text('Selección manual'), findsOneWidget);
     expect(find.text('Seleccionada: alternativa 1'), findsOneWidget);
-    expect(find.text('Ruta sugerida'), findsOneWidget);
+    expect(find.text('RUTA SUGERIDA'), findsOneWidget);
     await tester.tap(find.text('¿Por qué esta ruta?'));
     await tester.pumpAndSettle();
     expect(find.text('Análisis de movilidad'), findsOneWidget);

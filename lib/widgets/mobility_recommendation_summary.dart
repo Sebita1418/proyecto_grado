@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../mobility/mobility_recommendation.dart';
 import '../mobility/route_incident_analysis.dart';
 import '../models/route_insight.dart';
+import '../theme/mobility_theme.dart';
 
 /// Explains the engine's decision separately from the currently selected route.
 class MobilityRecommendationSummary extends StatelessWidget {
@@ -39,12 +40,14 @@ class MobilityRecommendationSummary extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 450),
           child: Card(
-            margin: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+            margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
             elevation: 0,
             color: theme.colorScheme.surface,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: BorderSide(color: theme.colorScheme.outlineVariant),
+              borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
+              side: BorderSide(
+                color: theme.colorScheme.primary.withValues(alpha: .36),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -57,19 +60,35 @@ class MobilityRecommendationSummary extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(
-                            Icons.alt_route,
-                            color: theme.colorScheme.primary,
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.alt_route,
+                              color: theme.colorScheme.onPrimaryContainer,
+                            ),
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Ruta sugerida',
+                              'RUTA SUGERIDA',
                               style: theme.textTheme.titleMedium,
                             ),
                           ),
                         ],
                       ),
+                      if (manuallySelected) ...[
+                        const SizedBox(height: 6),
+                        const Chip(
+                          avatar: Icon(Icons.touch_app_outlined, size: 16),
+                          label: Text('Elegida por ti'),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                      ],
                       const SizedBox(height: 6),
                       if (updating)
                         const Text('Actualizando análisis de movilidad…')
@@ -79,7 +98,7 @@ class MobilityRecommendationSummary extends StatelessWidget {
                           style: theme.textTheme.titleSmall,
                         ),
                         const SizedBox(height: 8),
-                        for (final highlight in insight.highlights)
+                        for (final highlight in insight.highlights.take(3))
                           Padding(
                             padding: const EdgeInsets.only(bottom: 4),
                             child: Row(

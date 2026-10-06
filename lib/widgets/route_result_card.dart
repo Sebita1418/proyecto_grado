@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/route_result.dart';
+import '../theme/mobility_theme.dart';
 
 /// Modern card presenting calculated route metrics and navigation endpoints.
 ///
@@ -78,7 +79,11 @@ class RouteResultCard extends StatelessWidget {
                 ),
                 ListTile(
                   leading: const Icon(Icons.schedule),
-                  title: const Text('Duración estimada'),
+                  title: Text(
+                    referenceOnly
+                        ? 'Duración de referencia (Ahora)'
+                        : 'Duración estimada',
+                  ),
                   subtitle: Text(duration),
                 ),
               ],
@@ -94,7 +99,7 @@ class RouteResultCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(18, 6, 18, 8),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -110,7 +115,7 @@ class RouteResultCard extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Ruta seleccionada',
+                  referenceOnly ? 'Ruta de referencia' : 'Ruta seleccionada',
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colors.onSurface,
@@ -124,6 +129,7 @@ class RouteResultCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Semantics(
+                liveRegion: true,
                 label: 'Ruta calculada para Ahora; duración solo de referencia',
                 child: Row(
                   children: [
@@ -131,7 +137,7 @@ class RouteResultCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Ruta calculada para Ahora · duración solo de referencia',
+                        'Calculada para Ahora · sin ajuste a la hora programada',
                         style: theme.textTheme.bodySmall,
                       ),
                     ),
@@ -159,7 +165,7 @@ class RouteResultCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               color: colors.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
               border: Border.all(
                 color: colors.outlineVariant.withValues(alpha: 0.4),
               ),
@@ -231,7 +237,7 @@ class RouteResultCard extends StatelessWidget {
             FilledButton.icon(
               onPressed: onStart,
               icon: const Icon(Icons.navigation_outlined),
-              label: const Text('Iniciar ruta'),
+              label: const Text('Iniciar navegación'),
             ),
           ],
           const SizedBox(height: 8),

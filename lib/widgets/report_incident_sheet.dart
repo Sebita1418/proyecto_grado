@@ -3,6 +3,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../models/incident_report_draft.dart';
 import '../models/road_incident_report.dart';
+import '../theme/mobility_theme.dart';
 export '../models/incident_report_draft.dart';
 
 /// Bottom sheet modal to capture road incidents and hazards.
@@ -162,13 +163,31 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
               bottom: MediaQuery.viewInsetsOf(context).bottom,
             ),
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+              padding: const EdgeInsets.fromLTRB(
+                MobilityDesign.pageInset,
+                8,
+                MobilityDesign.pageInset,
+                24,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
                     children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(
+                          Icons.add_alert_outlined,
+                          color: colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,7 +246,7 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                                   ? colorScheme.primaryContainer
                                   : colorScheme.surfaceContainerLow,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(16),
                                 side: BorderSide(
                                   color: isSelected
                                       ? colorScheme.primary
@@ -238,7 +257,7 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                                 ),
                               ),
                               child: InkWell(
-                                borderRadius: BorderRadius.circular(14),
+                                borderRadius: BorderRadius.circular(16),
                                 onTap: () {
                                   setState(() => _selectedType = type);
                                   _saveDraft();
@@ -442,10 +461,10 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                           ),
                     label: Text(
                       _publishing
-                          ? 'Publicando…'
+                          ? 'Enviando reporte…'
                           : widget.onPublish == null
                           ? 'Preparar reporte'
-                          : 'Publicar reporte',
+                          : 'Enviar reporte',
                     ),
                   ),
                   const SizedBox(height: 8),

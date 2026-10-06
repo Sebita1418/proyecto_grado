@@ -4,7 +4,6 @@ import '../mobility/decision/current_mobility_decision_adapter.dart';
 import '../mobility/decision/departure_time_context.dart';
 import '../mobility/decision/mobility_decision_coordinator.dart';
 import '../mobility/decision/mobility_decision_result.dart';
-import 'mobility_planner/mobility_planner_section.dart';
 
 import 'package:flutter/material.dart';
 
@@ -35,6 +34,9 @@ import '../services/osrm_routing_service.dart';
 import 'route_planner_form.dart';
 import 'route_result_card.dart';
 import 'route_alternatives_selector.dart';
+import 'departure_time_selector.dart';
+import 'travel_mode_selector.dart';
+import '../theme/mobility_theme.dart';
 
 class MapSearchPanel extends StatefulWidget {
   const MapSearchPanel({
@@ -119,6 +121,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   List<PlaceSuggestion> _originPlaces = [];
   PlaceSuggestion? _selected;
   PlaceSuggestion? _selectedOrigin;
+  TransportMode _selectedMode = TransportMode.driving;
   DepartureTimeContext _departure = DepartureTimeContext.now(DateTime.now());
 
   MobilityDecisionResult? get _decision {
@@ -138,14 +141,49 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     );
   }
 
-  Widget _planningOptions(MobilityDecisionResult? result) =>
-      MobilityPlannerSection(
-        departure: _departure,
-        onDepartureChanged: (value) => setState(() => _departure = value),
-        result: result,
-        busy: _checking || _updatingRecommendation,
-      );
-
+  Widget _planningOptions(MobilityDecisionResult? decision) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      DepartureTimeSelector(
+        value: _departure,
+        enabled: !_checking && !_updatingRecommendation,
+        onChanged: (value) => setState(() => _departure = value),
+      ),
+      const SizedBox(height: 16),
+      Text(
+        'Opciones de movilidad',
+        style: Theme.of(context).textTheme.titleSmall,
+      ),
+      const SizedBox(height: 8),
+      TravelModeSelector(
+        compact: false,
+        selectedMode:
+            _tripContext?.allowedModes.contains(_selectedMode) == false
+            ? null
+            : _selectedMode,
+        scheduled: _departure.isScheduled,
+        vehicleEvaluated: decision?.hasRecommendation ?? false,
+        analyzing: _checking || _updatingRecommendation,
+        vehicleAllowed:
+            decision?.context.mobilityContext.allowedModes.contains(
+              TransportMode.driving,
+            ) ??
+            true,
+        onModeSelected: (mode) => setState(() => _selectedMode = mode),
+        onUnavailableModeTap: (mode) => ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              mode == TransportMode.driving
+                  ? 'Veh\u00edculo no est\u00e1 incluido en tus preferencias de movilidad.'
+                  : mode == TransportMode.publicTransport
+                  ? 'A\u00fan no hay datos integrados de transporte p\u00fablico.'
+                  : 'A\u00fan no hay rutas disponibles para ${mode.label.toLowerCase()}.',
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
   @override
   void didUpdateWidget(covariant MapSearchPanel oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -417,11 +455,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     if (_checking) return;
     if (_departure.isScheduled) {
       _message(
-        'Sin información temporal suficiente. Vuelve a Ahora para calcular.',
+        'La planificación no tiene predicciones. Vuelve a Ahora para analizar las rutas.',
       );
       return;
     }
-    _departure = DepartureTimeContext.now(DateTime.now());
     final hasGps = widget.currentPosition != null && !_manualOrigin;
     final originText = _origin.text.trim();
     final destinationText = _destination.text.trim();
@@ -786,14 +823,14 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxWidth: 560,
-        maxHeight: widget.maxHeight ?? height * .48,
+        maxHeight: widget.maxHeight ?? height * .46,
       ),
       child: Material(
         elevation: 8,
         shadowColor: colorScheme.shadow.withValues(alpha: 0.22),
         color: colorScheme.surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(MobilityDesign.sheetRadius),
           side: BorderSide(
             color: colorScheme.outlineVariant.withValues(alpha: 0.35),
           ),
@@ -828,9 +865,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                 ),
                                 if (_route != null)
                                   Text(
-                                    _departure.isScheduled
-                                        ? 'Referencia de Ahora: ${(_route!.durationSeconds / 60).ceil()} min / ${(_route!.distanceMeters / 1000).toStringAsFixed(1)} km'
-                                        : '${(_route!.durationSeconds / 60).ceil()} min · ${(_route!.distanceMeters / 1000).toStringAsFixed(1)} km',
+                                    '${_departure.isScheduled ? 'Referencia de Ahora · ' : ''}'
+                                    '${(_route!.durationSeconds / 60).ceil()} min · '
+                                    '${(_route!.distanceMeters / 1000).toStringAsFixed(1)} km',
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall,
@@ -866,20 +903,30 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                 if (!_collapsed) ...[
                   if (_route != null && !_showEditor) ...[
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                      child: Row(
                         children: [
-                          Text(
-                            'Destino · $_routeDestinationLabel',
-                            style: Theme.of(context).textTheme.titleMedium,
+                          Icon(
+                            Icons.place_outlined,
+                            color: colorScheme.primary,
                           ),
-                          const SizedBox(height: 12),
-                          _planningOptions(decision),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _routeDestinationLabel,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    if (_recommendation != null && _departure.isNow)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                      child: _planningOptions(decision),
+                    ),
+                    if (_recommendation != null && _departure.isNow && decision?.hasRecommendation == true)
                       MobilityRecommendationSummary(
                         incidentAnalyses: _incidentAnalyses.value,
                         updating: _updatingRecommendation,
@@ -913,7 +960,8 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                     ),
                     RouteAlternativesSelector(
                       suggestedIndex:
-                          _updatingRecommendation ||
+                          _departure.isScheduled ||
+                              _updatingRecommendation ||
                               !(decision?.hasRecommendation ?? false)
                           ? null
                           : _suggestedAlternative,
@@ -995,18 +1043,57 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                           child: const Text('Usar mi ubicación'),
                         ),
                       ),
+                    if (!hasGps && widget.currentPosition == null)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                        child: Semantics(
+                          liveRegion: true,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.location_off_outlined,
+                                size: 18,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Ubicación no disponible. Puedes escribir un origen.',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '¿A dónde vas?',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                    ),
                     RoutePlannerForm(
-                      planningOptions: _planningOptions(decision),
+                      // Destination comes first; origin is requested only when
+                      // GPS is unavailable or the user explicitly changes it.
+                      title: '¿A dónde vas?',
+                      planningOptions: Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: _planningOptions(decision),
+                      ),
                       embedded: true,
                       compact: true,
                       originController: _origin,
                       destinationController: _destination,
                       onCalculate: _calculate,
+                      actionLabel: 'Analizar rutas',
                       isLoading: _checking,
                       originError: _originError,
                       destinationError: _destinationError,
                       showOrigin: !hasGps,
-                      title: '¿A dónde quieres ir?',
                       originSuggestions: _addressResults(
                         origin: true,
                         child: _loadingOriginSuggestions

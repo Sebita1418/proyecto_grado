@@ -221,6 +221,8 @@ void main() {
             ),
           );
           expect(find.text('Alternativa 1 de 12 seleccionada'), findsOneWidget);
+          // At 320 px the compact inset keeps the controls on a short row;
+          // IconButtons retain their accessible 48 px touch targets.
           expect(
             tester.getSize(find.byType(RouteAlternativesSelector)).height,
             lessThan(tester.view.physicalSize.height / 4),

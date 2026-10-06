@@ -75,7 +75,7 @@ class RoutePlannerForm extends StatelessWidget {
             enabled: !isLoading,
             textInputAction: TextInputAction.done,
             decoration: InputDecoration(
-              labelText: compact ? '¿A dónde vas?' : 'Destino',
+              labelText: 'Destino',
               hintText: 'Busca un lugar o dirección',
               prefixIcon: const Icon(Icons.location_on_outlined),
               border: const OutlineInputBorder(),
@@ -94,16 +94,19 @@ class RoutePlannerForm extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          FilledButton.icon(
-            onPressed: isLoading ? null : onCalculate,
-            icon: isLoading
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.route),
-            label: Text(isLoading ? loadingLabel : actionLabel),
+          Semantics(
+            button: true,
+            child: FilledButton.icon(
+              onPressed: isLoading ? null : onCalculate,
+              icon: isLoading
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.route_outlined),
+              label: Text(isLoading ? loadingLabel : actionLabel),
+            ),
           ),
         ],
       ),

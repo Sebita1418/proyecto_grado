@@ -6,10 +6,10 @@ import 'package:transporte_inteligente/mobility/decision/departure_time_context.
 import 'package:transporte_inteligente/models/route_result.dart';
 import 'package:transporte_inteligente/services/location_service.dart';
 import 'package:transporte_inteligente/widgets/map_search_panel.dart';
-import 'package:transporte_inteligente/widgets/mobility_planner/departure_time_selector.dart';
-import 'package:transporte_inteligente/widgets/mobility_planner/mobility_planner_section.dart';
+import 'package:transporte_inteligente/widgets/departure_time_selector.dart';
 import 'package:transporte_inteligente/widgets/mobility_recommendation_summary.dart';
 import 'package:transporte_inteligente/widgets/route_result_card.dart';
+import 'package:transporte_inteligente/widgets/travel_mode_selector.dart';
 
 import 'route_flow_test.dart'
     show
@@ -53,17 +53,20 @@ void main() {
           ),
         );
         await tester.enterText(find.byType(TextField).last, 'Destino');
-        await tester.ensureVisible(find.text('Calcular ruta'));
-        await tester.tap(find.text('Calcular ruta'));
+        await tester.ensureVisible(find.text('Analizar rutas'));
+        await tester.tap(find.text('Analizar rutas'));
         await tester.pump();
         routing.pending.complete([firstRoute, secondRoute]);
         await tester.pumpAndSettle();
-        var planner = tester.widget<MobilityPlannerSection>(
-          find.byType(MobilityPlannerSection),
+        var summary = tester.widget<MobilityRecommendationSummary>(
+          find.byType(MobilityRecommendationSummary),
         );
-        expect(planner.result!.hasRecommendation, isTrue);
-        expect(planner.result!.recommendation!.recommended.id, 'osrm-1');
-        expect(find.text('Disponible para analizar'), findsOneWidget);
+        expect(summary.recommendation.recommended.id, 'osrm-1');
+        expect(
+          tester.widget<TravelModeSelector>(find.byType(TravelModeSelector))
+              .vehicleEvaluated,
+          isTrue,
+        );
         expect(
           tester.getSize(find.byType(MapSearchPanel)).width,
           lessThanOrEqualTo(560),
@@ -80,39 +83,35 @@ void main() {
             .widget<DepartureTimeSelector>(find.byType(DepartureTimeSelector))
             .onChanged(DepartureTimeContext.scheduled(future));
         await tester.pumpAndSettle();
-        planner = tester.widget<MobilityPlannerSection>(
-          find.byType(MobilityPlannerSection),
+        final modeSelector = tester.widget<TravelModeSelector>(
+          find.byType(TravelModeSelector),
         );
-        expect(planner.result!.hasRecommendation, isFalse);
-        expect(planner.result!.context.departureTime.at, future);
+        expect(modeSelector.scheduled, isTrue);
+        expect(modeSelector.vehicleEvaluated, isFalse);
         expect(find.byType(MobilityRecommendationSummary), findsNothing);
         expect(
-          find.textContaining('Sin información temporal suficiente.'),
-          findsOneWidget,
+          tester.widget<DepartureTimeSelector>(find.byType(DepartureTimeSelector)).value.at,
+          future,
         );
-        expect(
-          find.textContaining('duración solo de referencia'),
-          findsOneWidget,
+        final referenceCard = tester.widget<RouteResultCard>(
+          find.byType(RouteResultCard),
         );
-        expect(find.text('Iniciar ruta'), findsNothing);
-        expect(
-          tester.widget<RouteResultCard>(find.byType(RouteResultCard)).route,
-          same(firstRoute),
-        );
+        expect(referenceCard.route, same(firstRoute));
+        expect(referenceCard.referenceOnly, isTrue);
+        expect(referenceCard.onStart, isNull);
         expect(changes.length, changeCount);
         expect(routing.calls, 1);
         await tapLabel(tester, 'Ahora');
         expect(find.text('Selección manual'), findsOneWidget);
-        expect(
-          tester
-              .widget<MobilityPlannerSection>(
-                find.byType(MobilityPlannerSection),
-              )
-              .result!
-              .hasRecommendation,
-          isTrue,
+        summary = tester.widget<MobilityRecommendationSummary>(
+          find.byType(MobilityRecommendationSummary),
         );
-        await tapLabel(tester, 'Iniciar ruta');
+        expect(summary.recommendation.recommended.id, 'osrm-1');
+        expect(
+          tester.widget<TravelModeSelector>(find.byType(TravelModeSelector)).scheduled,
+          isFalse,
+        );
+        await tapLabel(tester, 'Iniciar navegación');
         expect(started, same(firstRoute));
         expect(routing.calls, 1);
         expect(tester.takeException(), isNull);
@@ -147,11 +146,14 @@ void main() {
             ),
           );
       await tester.pumpAndSettle();
-      await tapLabel(tester, 'Calcular ruta');
+      await tapLabel(tester, 'Analizar rutas');
       expect(routing.calls, 0);
       expect(find.byType(RouteResultCard), findsNothing);
       expect(find.byType(MobilityRecommendationSummary), findsNothing);
-      expect(find.textContaining('Salida:'), findsOneWidget);
+      expect(
+        tester.widget<DepartureTimeSelector>(find.byType(DepartureTimeSelector)).value.isScheduled,
+        isTrue,
+      );
       await tester.pumpWidget(const SizedBox.shrink());
       routing.dispose();
     },

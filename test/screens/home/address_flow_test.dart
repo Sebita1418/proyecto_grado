@@ -75,7 +75,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(geocoding.queries, isEmpty);
         final action = scenario == 'calculate'
-            ? 'Calcular ruta'
+            ? 'Analizar rutas'
             : scenario == 'origin'
             ? 'Buscar dirección de origen'
             : 'Buscar dirección';
@@ -127,8 +127,8 @@ void main() {
           if (scenario == 'origin') {
             await tester.enterText(find.byType(TextField).last, 'Cacique');
           }
-          await tester.ensureVisible(find.text('Calcular ruta'));
-          await tester.tap(find.text('Calcular ruta'));
+          await tester.ensureVisible(find.text('Analizar rutas'));
+          await tester.tap(find.text('Analizar rutas'));
           await tester.pump();
           expect(routing.calls, 1);
           expect(routing.lastDestination, const LatLng(7.2, -73.2));

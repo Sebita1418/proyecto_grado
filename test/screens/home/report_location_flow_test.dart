@@ -92,8 +92,8 @@ void main() {
           lessThan(844 * .5),
         );
         await tester.enterText(find.byType(TextField).last, 'Destino');
-        await tester.ensureVisible(find.text('Calcular ruta'));
-        await tester.tap(find.text('Calcular ruta'));
+        await tester.ensureVisible(find.text('Analizar rutas'));
+        await tester.tap(find.text('Analizar rutas'));
         await tester.pump();
         routing.pending.complete([firstRoute, secondRoute]);
         await tester.pumpAndSettle();

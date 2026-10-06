@@ -159,7 +159,7 @@ void main() {
             .text,
         'Carril derecho',
       );
-      await tapLabel(tester, 'Publicar reporte');
+      await tapLabel(tester, 'Enviar reporte');
       expect(service.creates, 1);
       expect(find.text('Reporte publicado correctamente.'), findsOneWidget);
       expect(
@@ -199,7 +199,7 @@ void main() {
       expect(
         tester
             .widget<FilledButton>(
-              find.widgetWithText(FilledButton, 'Publicar reporte'),
+              find.widgetWithText(FilledButton, 'Enviar reporte'),
             )
             .onPressed,
         isNull,

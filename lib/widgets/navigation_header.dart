@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/mobility_theme.dart';
+
 /// Floating navigation header for the modern map experience.
 ///
 /// Features a compact surface card with menu action, brand icon,
@@ -26,11 +28,11 @@ class NavigationHeader extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Material(
-      elevation: 6,
+      elevation: 5,
       shadowColor: colorScheme.shadow.withValues(alpha: 0.18),
       color: colorScheme.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
         side: BorderSide(
           color: colorScheme.outlineVariant.withValues(alpha: 0.4),
         ),
@@ -39,7 +41,7 @@ class NavigationHeader extends StatelessWidget {
       child: Semantics(
         header: true,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(4, 2, 8, 2),
+          padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
           child: Row(
             children: [
               IconButton(

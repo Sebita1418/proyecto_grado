@@ -107,9 +107,7 @@ class TravelModeSelector extends StatelessWidget {
                     avatar: Icon(mode.icon, size: 18),
                     label: Text(mode.label),
                     selected: mode == selectedMode,
-                    onSelected: _isAvailable(mode)
-                        ? (_) => _handleTap(context, mode)
-                        : null,
+                    onSelected: (_) => _handleTap(context, mode),
                   ),
                 ),
               ),
@@ -166,13 +164,15 @@ class TravelModeSelector extends StatelessWidget {
 
   String _status(TransportMode mode) {
     if (mode == TransportMode.driving) {
-      if (!vehicleAllowed) return 'No incluido en preferencias';
-      if (scheduled) return 'Sin datos horarios';
+      if (!vehicleAllowed) return 'No disponible: no incluido en preferencias';
+      if (scheduled) return 'No disponible: sin datos horarios';
       if (analyzing) return 'Analizando rutas';
-      return vehicleEvaluated ? 'Disponible' : 'Se evalúa al analizar';
+      return vehicleEvaluated ? 'Disponible ahora' : 'Disponible para analizar';
     }
-    if (mode == TransportMode.publicTransport) return 'Datos no integrados';
-    return 'Sin rutas disponibles';
+    if (mode == TransportMode.publicTransport) {
+      return 'No disponible todav\u00eda: datos no integrados';
+    }
+    return 'No disponible todav\u00eda: sin rutas integradas';
   }
 }
 
@@ -199,6 +199,7 @@ class _TransportModeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final statusAvailable = isAvailable && !status.startsWith('No disponible');
     final foreground = isSelected
         ? colorScheme.onPrimaryContainer
         : isAvailable
@@ -251,7 +252,7 @@ class _TransportModeTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                 decoration: BoxDecoration(
-                  color: isAvailable && !status.startsWith('Sin ')
+                  color: statusAvailable
                       ? colorScheme.primaryContainer
                       : colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
@@ -264,7 +265,7 @@ class _TransportModeTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.labelSmall?.copyWith(
                     fontSize: 10,
-                    color: isAvailable && !status.startsWith('Sin ')
+                    color: statusAvailable
                         ? colorScheme.onPrimaryContainer
                         : colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w600,

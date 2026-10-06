@@ -19,9 +19,15 @@ void main() {
     expect(find.text('A pie'), findsOneWidget);
     expect(find.text('Bicicleta'), findsOneWidget);
     expect(find.text('Transporte público'), findsOneWidget);
-    expect(find.text('Sin rutas disponibles'), findsNWidgets(2));
-    expect(find.text('Datos no integrados'), findsOneWidget);
-    expect(find.text('Se evalúa al analizar'), findsOneWidget);
+    expect(
+      find.text('No disponible todavía: sin rutas integradas'),
+      findsNWidgets(2),
+    );
+    expect(
+      find.text('No disponible todavía: datos no integrados'),
+      findsOneWidget,
+    );
+    expect(find.text('Disponible para analizar'), findsOneWidget);
   });
 
   testWidgets('salida programada muestra estados sin datos horarios', (
@@ -38,10 +44,16 @@ void main() {
       ),
     );
 
-    expect(find.text('Sin datos horarios'), findsOneWidget);
+    expect(find.text('No disponible: sin datos horarios'), findsOneWidget);
     expect(find.text('Disponible'), findsNothing);
-    expect(find.text('Sin rutas disponibles'), findsNWidgets(2));
-    expect(find.text('Datos no integrados'), findsOneWidget);
+    expect(
+      find.text('No disponible todavía: sin rutas integradas'),
+      findsNWidgets(2),
+    );
+    expect(
+      find.text('No disponible todavía: datos no integrados'),
+      findsOneWidget,
+    );
   });
 
   testWidgets(
@@ -140,7 +152,7 @@ void main() {
         );
         expect(
           tester.getSemantics(find.text('A pie')).label,
-          contains('Sin rutas disponibles'),
+          contains('No disponible todavía: sin rutas integradas'),
         );
 
         semantics.dispose();

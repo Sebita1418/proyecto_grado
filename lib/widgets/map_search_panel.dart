@@ -121,7 +121,6 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   List<PlaceSuggestion> _originPlaces = [];
   PlaceSuggestion? _selected;
   PlaceSuggestion? _selectedOrigin;
-  TransportMode _selectedMode = TransportMode.driving;
   DepartureTimeContext _departure = DepartureTimeContext.now(DateTime.now());
 
   MobilityDecisionResult? get _decision {
@@ -157,10 +156,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       const SizedBox(height: 8),
       TravelModeSelector(
         compact: false,
-        selectedMode:
-            _tripContext?.allowedModes.contains(_selectedMode) == false
-            ? null
-            : _selectedMode,
+        selectedMode: TransportMode.driving,
         scheduled: _departure.isScheduled,
         vehicleEvaluated: decision?.hasRecommendation ?? false,
         analyzing: _checking || _updatingRecommendation,
@@ -169,7 +165,6 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
               TransportMode.driving,
             ) ??
             true,
-        onModeSelected: (mode) => setState(() => _selectedMode = mode),
         onUnavailableModeTap: (mode) => ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -318,6 +313,22 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       _manuallySelected = true;
     });
     widget.onRouteChanged?.call(_route);
+  }
+
+  bool _canStartNavigation(MobilityDecisionResult? decision) {
+    final route = _route;
+    return widget.onStartNavigation != null &&
+        _departure.isNow &&
+        decision?.hasRecommendation == true &&
+        route != null &&
+        route.points.length >= 2 &&
+        route.points.every(
+          (point) =>
+              point.latitude.isFinite &&
+              point.longitude.isFinite &&
+              point.latitude.abs() <= 90 &&
+              point.longitude.abs() <= 180,
+        );
   }
 
   @override
@@ -926,12 +937,15 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
                       child: _planningOptions(decision),
                     ),
-                    if (_recommendation != null && _departure.isNow && decision?.hasRecommendation == true)
+                    if (_recommendation != null &&
+                        _departure.isNow &&
+                        decision?.hasRecommendation == true)
                       MobilityRecommendationSummary(
                         incidentAnalyses: _incidentAnalyses.value,
                         updating: _updatingRecommendation,
                         compact: true,
                         recommendation: _recommendation!,
+                        decision: decision,
                         suggestedIndex: _suggestedAlternative!,
                         selectedIndex: _selectedAlternative!,
                         manuallySelected: _manuallySelected,
@@ -940,14 +954,12 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                     RouteResultCard(
                       route: _route!,
                       referenceOnly: _departure.isScheduled,
-                      onStart:
-                          widget.onStartNavigation == null ||
-                              _departure.isScheduled
-                          ? null
-                          : () => widget.onStartNavigation!(
+                      onStart: _canStartNavigation(decision)
+                          ? () => widget.onStartNavigation!(
                               _route!,
                               _routeDestinationLabel,
-                            ),
+                            )
+                          : null,
                       originLabel: _routeOriginLabel,
                       destinationLabel: _routeDestinationLabel,
                       onModify: () => setState(() => _showEditor = true),

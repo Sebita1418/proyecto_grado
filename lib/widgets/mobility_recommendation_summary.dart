@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../mobility/mobility_recommendation.dart';
 import '../mobility/route_incident_analysis.dart';
+import '../mobility/decision/mobility_data_availability.dart';
+import '../mobility/decision/mobility_decision_result.dart';
+import '../mobility/transport_mode.dart';
 import '../models/route_insight.dart';
 import '../theme/mobility_theme.dart';
 
@@ -17,6 +20,7 @@ class MobilityRecommendationSummary extends StatelessWidget {
     this.compact = false,
     this.incidentAnalyses = const [],
     this.updating = false,
+    this.decision,
   });
 
   final MobilityRecommendation recommendation;
@@ -27,6 +31,64 @@ class MobilityRecommendationSummary extends StatelessWidget {
   final bool compact;
   final List<RouteIncidentAnalysis> incidentAnalyses;
   final bool updating;
+  final MobilityDecisionResult? decision;
+
+  String _reportEvidence(
+    RouteInsight insight,
+    MobilityDataStatus status,
+  ) => switch (status) {
+    MobilityDataStatus.available =>
+      insight.reportCount == 0
+          ? 'Sin reportes activos pr\u00f3ximos'
+          : '${insight.reportCount} reportes activos pr\u00f3ximos en la ruta sugerida',
+    MobilityDataStatus.unavailable => 'No disponible en esta consulta',
+    MobilityDataStatus.partial => 'Parcial; no permite confirmar ausencia',
+    MobilityDataStatus.unknown => 'Desconocido',
+  };
+
+  Widget _evidence(BuildContext context, RouteInsight insight) {
+    final decision = this.decision;
+    if (decision == null) return const SizedBox.shrink();
+    final driving = decision.context.options
+        .where((option) => option.mode == TransportMode.driving)
+        .firstOrNull;
+    if (driving == null) return const SizedBox.shrink();
+    final data = driving.data;
+    final route = decision.recommendation?.recommended;
+    final routeSource = route?.source == 'osrm'
+        ? 'OSRM'
+        : route?.source ?? 'No disponible';
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Informaci\u00f3n considerada',
+            style: theme.textTheme.titleSmall,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Rutas y m\u00e9tricas: $routeSource; estimaciones del proveedor.',
+          ),
+          Text(
+            'Reportes viales pr\u00f3ximos: '
+            '${_reportEvidence(insight, data.statusOf(MobilityDataKind.roadConditions))}.',
+          ),
+          const Text('Tr\u00e1fico en tiempo real: no disponible.'),
+          const Text('Horario futuro: sin predicci\u00f3n.'),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +223,7 @@ class MobilityRecommendationSummary extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(insight.comparison),
+                      _evidence(context, insight),
                       for (final explanation in insight.explanations)
                         Padding(
                           padding: const EdgeInsets.only(top: 8),

@@ -14,7 +14,6 @@ import 'package:transporte_inteligente/widgets/road_incident_reports_sheet.dart'
 import 'package:transporte_inteligente/widgets/route_map.dart';
 import 'package:transporte_inteligente/widgets/road_incident_marker.dart';
 import 'package:transporte_inteligente/widgets/road_incident_details_sheet.dart';
-import 'package:transporte_inteligente/widgets/departure_time_selector.dart';
 import 'package:transporte_inteligente/widgets/travel_mode_selector.dart';
 
 class TestLocationService extends LocationService {
@@ -95,9 +94,15 @@ void main() {
       // Verify mode selector in search panel
       expect(find.byType(TravelModeSelector), findsOneWidget);
       expect(find.text('Vehículo'), findsOneWidget);
-      expect(find.text('Se evalúa al analizar'), findsOneWidget);
-      expect(find.text('Sin rutas disponibles'), findsNWidgets(2));
-      expect(find.text('Datos no integrados'), findsOneWidget);
+      expect(find.text('Disponible para analizar'), findsOneWidget);
+      expect(
+        find.text('No disponible todavía: sin rutas integradas'),
+        findsNWidgets(2),
+      );
+      expect(
+        find.text('No disponible todavía: datos no integrados'),
+        findsOneWidget,
+      );
     },
   );
 

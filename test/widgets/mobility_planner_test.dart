@@ -24,7 +24,7 @@ void main() {
         ),
       ),
     );
-    await tester.tap(find.text('Programar salida'));
+    await tester.tap(find.text('Programar'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('${DateTime.now().day}').last);
     await tester.tap(find.text('OK'));
@@ -119,7 +119,7 @@ void main() {
         ),
       ),
     );
-    await tester.tap(find.text('Programar salida'));
+    await tester.tap(find.text('Programar'));
     await tester.pumpAndSettle();
     final picker = tester.widget<DatePickerDialog>(
       find.byType(DatePickerDialog),
@@ -132,15 +132,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(departure.isScheduled, isTrue);
     expect(departure.at.isAfter(DateTime.now()), isTrue);
-    expect(find.textContaining('Salida:'), findsOneWidget);
-    expect(
-      find.textContaining('Sin información temporal suficiente.'),
-      findsOneWidget,
-    );
+    expect(find.text('Planificación sin predicciones'), findsOneWidget);
     await tester.tap(find.text('Ahora'));
     await tester.pumpAndSettle();
     expect(departure.isNow, isTrue);
-    expect(find.textContaining('Salida:'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -159,11 +154,11 @@ void main() {
         ),
       ),
     );
-    await tester.tap(find.text('Programar salida'));
+    await tester.tap(find.text('Cambiar horario'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
     expect(changed, isNull);
-    expect(find.textContaining('Salida:'), findsOneWidget);
+    expect(find.text('Cambiar horario'), findsOneWidget);
   });
 }

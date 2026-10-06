@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transporte_inteligente/mobility/decision/departure_time_context.dart';
 import 'package:transporte_inteligente/models/route_result.dart';
+import 'package:transporte_inteligente/mobility/transport_mode.dart';
 import 'package:transporte_inteligente/services/location_service.dart';
 import 'package:transporte_inteligente/widgets/map_search_panel.dart';
 import 'package:transporte_inteligente/widgets/departure_time_selector.dart';
@@ -63,7 +64,8 @@ void main() {
         );
         expect(summary.recommendation.recommended.id, 'osrm-1');
         expect(
-          tester.widget<TravelModeSelector>(find.byType(TravelModeSelector))
+          tester
+              .widget<TravelModeSelector>(find.byType(TravelModeSelector))
               .vehicleEvaluated,
           isTrue,
         );
@@ -90,7 +92,10 @@ void main() {
         expect(modeSelector.vehicleEvaluated, isFalse);
         expect(find.byType(MobilityRecommendationSummary), findsNothing);
         expect(
-          tester.widget<DepartureTimeSelector>(find.byType(DepartureTimeSelector)).value.at,
+          tester
+              .widget<DepartureTimeSelector>(find.byType(DepartureTimeSelector))
+              .value
+              .at,
           future,
         );
         final referenceCard = tester.widget<RouteResultCard>(
@@ -108,7 +113,9 @@ void main() {
         );
         expect(summary.recommendation.recommended.id, 'osrm-1');
         expect(
-          tester.widget<TravelModeSelector>(find.byType(TravelModeSelector)).scheduled,
+          tester
+              .widget<TravelModeSelector>(find.byType(TravelModeSelector))
+              .scheduled,
           isFalse,
         );
         await tapLabel(tester, 'Iniciar navegación');
@@ -120,6 +127,56 @@ void main() {
       },
     );
   }
+
+  testWidgets(
+    'medios no soportados informan el l\u00edmite sin solicitar OSRM',
+    (tester) async {
+      final routing = ControlledRouting();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MapSearchPanel(
+              currentPosition: const LatLng(7.1, -73.1),
+              locationStatus: LocationStatus.coordinatesObtained,
+              routingService: routing,
+              geocodingService: FixedGeocoding(),
+              placeSuggestionService: FixedSuggestions(),
+            ),
+          ),
+        ),
+      );
+
+      for (final mode in [
+        TransportMode.walking,
+        TransportMode.cycling,
+        TransportMode.publicTransport,
+      ]) {
+        final label = switch (mode) {
+          TransportMode.walking => 'A pie',
+          TransportMode.cycling => 'Bicicleta',
+          TransportMode.publicTransport => 'Transporte p\u00fablico',
+          TransportMode.driving => throw StateError('Unexpected mode'),
+        };
+        await tester.ensureVisible(find.text(label));
+        await tester.tap(find.text(label));
+        await tester.pump();
+        expect(
+          tester
+              .widget<TravelModeSelector>(find.byType(TravelModeSelector))
+              .selectedMode,
+          TransportMode.driving,
+        );
+        expect(routing.calls, 0);
+      }
+
+      expect(
+        find.textContaining('A\u00fan no hay rutas disponibles'),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+      routing.dispose();
+    },
+  );
 
   testWidgets(
     'scheduling before calculation does not request routing or invent a result',
@@ -151,7 +208,10 @@ void main() {
       expect(find.byType(RouteResultCard), findsNothing);
       expect(find.byType(MobilityRecommendationSummary), findsNothing);
       expect(
-        tester.widget<DepartureTimeSelector>(find.byType(DepartureTimeSelector)).value.isScheduled,
+        tester
+            .widget<DepartureTimeSelector>(find.byType(DepartureTimeSelector))
+            .value
+            .isScheduled,
         isTrue,
       );
       await tester.pumpWidget(const SizedBox.shrink());

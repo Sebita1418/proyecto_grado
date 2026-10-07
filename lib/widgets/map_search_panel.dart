@@ -24,6 +24,9 @@ import '../mobility/vehicle_recommendation_engine.dart';
 import '../services/mobility_preferences_service.dart';
 import '../services/route_alternatives_analysis_service.dart';
 import 'mobility_recommendation_summary.dart';
+import '../mobility/validation/current_mobility_validation_adapter.dart';
+import '../mobility/validation/mobility_validation.dart';
+import '../screens/validation/mobility_validation_screen.dart';
 import '../models/place_suggestion.dart';
 import '../models/geocoding_result.dart';
 import '../models/route_result.dart';
@@ -950,6 +953,45 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                         selectedIndex: _selectedAlternative!,
                         manuallySelected: _manuallySelected,
                         usesDefaultModes: _usesDefaultModes,
+                      ),
+                    if (_tripContext != null &&
+                        _options.isNotEmpty &&
+                        _departure.isNow &&
+                        !_updatingRecommendation)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.fact_check_outlined),
+                          label: const Text('Validación de recomendación'),
+                          onPressed: () {
+                            final input =
+                                const CurrentMobilityValidationAdapter().build(
+                                  context: _withIncidents(
+                                    _tripContext!,
+                                    _incidentAnalyses.value,
+                                  ),
+                                  options: _options,
+                                  recommendation: _recommendation,
+                                  markedSuggestedId:
+                                      _suggestedAlternative == null
+                                      ? null
+                                      : _options[_suggestedAlternative!].id,
+                                  selectedId: _selectedAlternative == null
+                                      ? null
+                                      : _options[_selectedAlternative!].id,
+                                  manuallySelected: _manuallySelected,
+                                );
+                            final snapshot = const MobilityValidationEvaluator()
+                                .evaluate(input);
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => MobilityValidationScreen(
+                                  snapshot: snapshot,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     RouteResultCard(
                       route: _route!,

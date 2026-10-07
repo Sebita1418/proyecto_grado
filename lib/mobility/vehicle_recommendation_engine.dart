@@ -3,6 +3,7 @@ import 'mobility_recommendation.dart';
 import 'mobility_recommendation_engine.dart';
 import 'route_option.dart';
 import 'transport_mode.dart';
+import 'vehicle_recommendation_policy.dart';
 
 /// No decision exists when the supplied modes/options have no driving candidate.
 class NoEligibleVehicleRouteException implements Exception {
@@ -15,8 +16,10 @@ class VehicleRecommendationEngine implements MobilityRecommendationEngine {
     : _clock = clock ?? DateTime.now;
 
   final DateTime Function() _clock;
-  static const comparableDurationRatio = 1.25;
-  static const comparableDistanceRatio = 1.5;
+  static const comparableDurationRatio =
+      VehicleRecommendationPolicy.comparableDurationRatio;
+  static const comparableDistanceRatio =
+      VehicleRecommendationPolicy.comparableDistanceRatio;
 
   @override
   Future<MobilityRecommendation> recommend(

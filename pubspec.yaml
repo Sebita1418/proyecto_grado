@@ -40,6 +40,8 @@ dependencies:
   flutter_map: ^8.3.2
   latlong2: ^0.10.1
   http: ^1.6.0
+  # Already present via flutter_map; direct dependency for attribution links.
+  url_launcher: 6.3.2
   geolocator: ^14.0.3
   shared_preferences: 2.5.5
 

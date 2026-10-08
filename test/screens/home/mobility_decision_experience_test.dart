@@ -6,6 +6,7 @@ import 'package:transporte_inteligente/mobility/decision/departure_time_context.
 import 'package:transporte_inteligente/models/route_result.dart';
 import 'package:transporte_inteligente/mobility/transport_mode.dart';
 import 'package:transporte_inteligente/services/location_service.dart';
+import 'package:transporte_inteligente/services/mode_routing_service.dart';
 import 'package:transporte_inteligente/widgets/map_search_panel.dart';
 import 'package:transporte_inteligente/widgets/departure_time_selector.dart';
 import 'package:transporte_inteligente/widgets/mobility_recommendation_summary.dart';
@@ -129,9 +130,24 @@ void main() {
   }
 
   testWidgets(
-    'medios no soportados informan el l\u00edmite sin solicitar OSRM',
+    'modos configurados permiten selección y transporte público no solicita routing',
     (tester) async {
       final routing = ControlledRouting();
+      final walking = ControlledRouting();
+      final cycling = ControlledRouting();
+      final provider = ModeRoutingService(
+        driving: routing,
+        walking: walking,
+        cycling: cycling,
+      );
+      final geocoding = FixedGeocoding();
+      final suggestions = FixedSuggestions();
+      addTearDown(routing.dispose);
+      addTearDown(walking.dispose);
+      addTearDown(cycling.dispose);
+      addTearDown(provider.dispose);
+      addTearDown(geocoding.dispose);
+      addTearDown(suggestions.dispose);
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -139,8 +155,9 @@ void main() {
               currentPosition: const LatLng(7.1, -73.1),
               locationStatus: LocationStatus.coordinatesObtained,
               routingService: routing,
-              geocodingService: FixedGeocoding(),
-              placeSuggestionService: FixedSuggestions(),
+              modeRoutingService: provider,
+              geocodingService: geocoding,
+              placeSuggestionService: suggestions,
             ),
           ),
         ),
@@ -149,7 +166,6 @@ void main() {
       for (final mode in [
         TransportMode.walking,
         TransportMode.cycling,
-        TransportMode.publicTransport,
       ]) {
         final label = switch (mode) {
           TransportMode.walking => 'A pie',
@@ -164,17 +180,39 @@ void main() {
           tester
               .widget<TravelModeSelector>(find.byType(TravelModeSelector))
               .selectedMode,
-          TransportMode.driving,
+          mode,
         );
         expect(routing.calls, 0);
+        expect(walking.calls, 0);
+        expect(cycling.calls, 0);
+        expect(find.byType(RouteResultCard), findsNothing);
+        expect(find.byType(MobilityRecommendationSummary), findsNothing);
       }
 
+      await tapLabel(tester, 'Transporte público');
       expect(
-        find.textContaining('A\u00fan no hay rutas disponibles'),
+        tester.widget<TravelModeSelector>(find.byType(TravelModeSelector)).selectedMode,
+        TransportMode.cycling,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(SnackBar),
+          matching: find.text('Sin fuente de datos de transporte público integrada.'),
+        ),
         findsOneWidget,
       );
+      expect(routing.calls, 0);
+      expect(walking.calls, 0);
+      expect(cycling.calls, 0);
+      expect(find.byType(RouteResultCard), findsNothing);
+      expect(find.byType(MobilityRecommendationSummary), findsNothing);
+      await tapLabel(tester, 'Vehículo');
+      expect(
+        tester.widget<TravelModeSelector>(find.byType(TravelModeSelector)).selectedMode,
+        TransportMode.driving,
+      );
+      expect(routing.calls, 0);
       await tester.pumpWidget(const SizedBox.shrink());
-      routing.dispose();
     },
   );
 

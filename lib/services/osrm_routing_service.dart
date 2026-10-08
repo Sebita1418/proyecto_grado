@@ -7,10 +7,15 @@ import 'package:latlong2/latlong.dart';
 import '../config/osrm_config.dart';
 import '../models/route_result.dart';
 import '../navigation/navigation_instruction.dart';
+import '../mobility/routing/routing_capabilities.dart';
 
 class OsrmRoutingException implements Exception {
-  const OsrmRoutingException(this.message);
+  const OsrmRoutingException(
+    this.message, {
+    this.failure = RoutingFailure.invalidResponse,
+  });
   final String message;
+  final RoutingFailure failure;
   @override
   String toString() => message;
 }
@@ -28,6 +33,25 @@ class OsrmRoutingService {
   final bool _ownsClient;
   final Uri endpoint;
   final Duration timeout;
+  static final _publicClock = Stopwatch()..start();
+  static Future<void> _publicQueue = Future.value();
+  static int _nextPublicRequest = 0;
+
+  Future<void> _respectPublicLimit() async {
+    if (!{
+      'router.project-osrm.org',
+      'routing.openstreetmap.de',
+    }.contains(endpoint.host)) {
+      return;
+    }
+    final turn = _publicQueue.then((_) async {
+      final delay = _nextPublicRequest - _publicClock.elapsedMilliseconds;
+      if (delay > 0) await Future<void>.delayed(Duration(milliseconds: delay));
+      _nextPublicRequest = _publicClock.elapsedMilliseconds + 1100;
+    });
+    _publicQueue = turn;
+    await turn;
+  }
 
   Future<RouteResult> route({
     required LatLng origin,
@@ -74,25 +98,36 @@ class OsrmRoutingService {
     );
     http.Response response;
     try {
+      await _respectPublicLimit();
       response = await _client
-          .get(uri, headers: {'Accept': 'application/json'})
+          .get(
+            uri,
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'TransporteInteligente-academic-demo/1.0',
+            },
+          )
           .timeout(timeout);
     } on TimeoutException {
       throw const OsrmRoutingException(
         'El cálculo de ruta tardó demasiado. Intenta de nuevo.',
+        failure: RoutingFailure.timeout,
       );
     } on http.ClientException {
       throw const OsrmRoutingException(
         'No fue posible conectar con el servicio de rutas.',
+        failure: RoutingFailure.networkError,
       );
     } catch (_) {
       throw const OsrmRoutingException(
         'No fue posible consultar el servicio de rutas.',
+        failure: RoutingFailure.networkError,
       );
     }
     if (response.statusCode != 200) {
       throw OsrmRoutingException(
         'El servicio de rutas respondió con HTTP ${response.statusCode}.',
+        failure: RoutingFailure.unavailable,
       );
     }
     try {
@@ -101,8 +136,11 @@ class OsrmRoutingService {
       if (body['code'] != 'Ok') {
         throw OsrmRoutingException(
           body['code'] == 'NoRoute'
-              ? 'No se encontró una ruta vehicular entre los lugares.'
+              ? 'No se encontró una ruta entre los lugares.'
               : 'El servicio de rutas no pudo calcular el recorrido.',
+          failure: body['code'] == 'NoRoute'
+              ? RoutingFailure.noRoute
+              : RoutingFailure.invalidResponse,
         );
       }
       final routes = body['routes'];

@@ -34,6 +34,11 @@ import '../services/geocoding_service.dart';
 import '../services/location_service.dart';
 import '../services/place_suggestion_service.dart';
 import '../services/osrm_routing_service.dart';
+import '../services/mode_routing_service.dart';
+import '../mobility/routing/routing_capabilities.dart';
+
+import 'package:url_launcher/link.dart';
+
 import 'route_planner_form.dart';
 import 'route_result_card.dart';
 import 'route_alternatives_selector.dart';
@@ -57,12 +62,14 @@ class MapSearchPanel extends StatefulWidget {
     this.onCollapsedChanged,
     this.incidentReports = const [],
     this.reportsAvailable = true,
+    this.modeRoutingService,
   });
   final LatLng? currentPosition;
   final LocationStatus locationStatus;
   final GeocodingService? geocodingService;
   final PlaceSuggestionService? placeSuggestionService;
   final OsrmRoutingService? routingService;
+  final ModeRoutingService? modeRoutingService;
   final ValueChanged<RouteResult?>? onRouteChanged;
   final void Function(RouteResult route, String destination)? onStartNavigation;
   final MobilityPreferencesService preferencesService;
@@ -86,6 +93,24 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   late final _suggestions =
       widget.placeSuggestionService ?? PlaceSuggestionService();
   late final _routing = widget.routingService ?? OsrmRoutingService();
+  late final _modeRouting =
+      widget.modeRoutingService ?? ModeRoutingService(driving: _routing);
+  TransportMode _mode = TransportMode.driving;
+  TransportMode _routeMode = TransportMode.driving;
+  final _modeSummaries = <TransportMode, ModeRouteSummary>{};
+  MultimodalMobilitySnapshot get _multimodal => MultimodalMobilitySnapshot([
+    for (final mode in TransportMode.values)
+      _modeSummaries[mode] ??
+          ModeRouteSummary(
+            mode: mode,
+            availability: _modeRouting.capabilities.supports(mode)
+                ? ModeAvailability.unknown
+                : ModeAvailability.unavailable,
+            reason: mode == TransportMode.publicTransport
+                ? 'Sin fuente de datos de transporte público integrada.'
+                : 'Sin ruta consultada.',
+          ),
+  ]);
   late final _engine =
       widget.recommendationEngine ?? VehicleRecommendationEngine();
   MobilityRecommendation? _recommendation;
@@ -127,6 +152,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   DepartureTimeContext _departure = DepartureTimeContext.now(DateTime.now());
 
   MobilityDecisionResult? get _decision {
+    if (_routeMode != TransportMode.driving) return null;
     final trip = _tripContext;
     if (trip == null) return null;
     final context = const CurrentMobilityDecisionAdapter().build(
@@ -141,6 +167,190 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       context,
       vehicleRecommendation: _recommendation,
     );
+  }
+
+  void _recordMode(TransportMode mode, List<RouteResult> routes) {
+    final route = routes[_selectedAlternative ?? 0];
+    _modeSummaries[mode] = ModeRouteSummary(
+      mode: mode,
+      availability: ModeAvailability.available,
+      reason: 'Ruta real recibida.',
+      durationSeconds: route.durationSeconds,
+      distanceMeters: route.distanceMeters,
+      provider: 'OSRM / FOSSGIS',
+      alternativeCount: routes.length,
+    );
+  }
+
+  void _recordFailure(TransportMode mode, OsrmRoutingException error) {
+    _modeSummaries[mode] = ModeRouteSummary(
+      mode: mode,
+      availability:
+          {
+            RoutingFailure.unsupported,
+            RoutingFailure.noRoute,
+            RoutingFailure.unavailable,
+          }.contains(error.failure)
+          ? ModeAvailability.unavailable
+          : ModeAvailability.error,
+      reason: error.message,
+      failure: error.failure,
+    );
+  }
+
+  void _applyNonVehicle(
+    List<RouteResult> routes, {
+    required LatLng origin,
+    required LatLng destination,
+    required String originLabel,
+    required String destinationLabel,
+  }) {
+    setState(() {
+      ++_incidentEvaluation;
+      _routeMode = _mode;
+      _tripContext = null;
+      _options = const [];
+      _recommendation = null;
+      _recommendationNotice = null;
+      _suggestedAlternative = null;
+      _manuallySelected = false;
+      _updatingRecommendation = false;
+      _incidentAnalyses.value = const [];
+      _alternatives = List.unmodifiable(routes);
+      _selectedAlternative = 0;
+      _showEditor = false;
+      _routeOriginLabel = originLabel;
+      _routeDestinationLabel = destinationLabel;
+      _recordMode(_mode, routes);
+    });
+    widget.onRouteChanged?.call(_route);
+  }
+
+  Future<void> _chooseMode(TransportMode mode) async {
+    if (_checking || _updatingRecommendation || mode == _mode) return;
+    if (!_modeRouting.capabilities.supports(mode)) {
+      _message('Sin proveedor integrado para este modo.');
+      return;
+    }
+    final previousRoute = _route;
+    if (previousRoute == null) {
+      setState(() => _mode = mode);
+      return;
+    }
+    if (_departure.isScheduled) {
+      _message('Vuelve a Ahora para consultar una ruta actual para otro modo.');
+      return;
+    }
+    final calculation = ++_calculation;
+    setState(() {
+      _mode = mode;
+      _checking = true;
+      _phase = 'Consultando ruta para ${mode.label.toLowerCase()}';
+    });
+    try {
+      final savedModes = await widget.preferencesService.load();
+      if (!mounted || calculation != _calculation) return;
+      if (savedModes.isNotEmpty && !savedModes.contains(mode)) {
+        throw const OsrmRoutingException(
+          'Este modo no está incluido en tus preferencias.',
+          failure: RoutingFailure.unavailable,
+        );
+      }
+      final results = await _modeRouting
+          .route(
+            RoutingRequest(
+              origin: previousRoute.origin,
+              destination: previousRoute.destination,
+              mode: mode,
+            ),
+          )
+          .timeout(const Duration(seconds: 20));
+      if (!mounted || calculation != _calculation) return;
+      if (results.isEmpty) {
+        throw const OsrmRoutingException(
+          'El servicio no devolvió una ruta.',
+          failure: RoutingFailure.noRoute,
+        );
+      }
+      if (mode != TransportMode.driving) {
+        _applyNonVehicle(
+          results,
+          origin: previousRoute.origin,
+          destination: previousRoute.destination,
+          originLabel: _routeOriginLabel,
+          destinationLabel: _routeDestinationLabel,
+        );
+      } else {
+        final trip = MobilityContext(
+          origin: previousRoute.origin,
+          destination: previousRoute.destination,
+          allowedModes: savedModes.isEmpty
+              ? {TransportMode.driving}
+              : savedModes,
+          requestedAt: DateTime.now(),
+        );
+        final options = [
+          for (var i = 0; i < results.length; i++)
+            RouteOption.fromRouteResult(
+              id: 'osrm-$i',
+              mode: TransportMode.driving,
+              route: results[i],
+              source: 'osrm',
+            ),
+        ];
+        final analyses = _analyzeIncidents(results);
+        final recommendation = await _engine.recommend(
+          _withIncidents(trip, analyses),
+          options,
+        );
+        if (!mounted || calculation != _calculation) return;
+        final suggested = options.indexWhere(
+          (o) => o.id == recommendation.recommended.id,
+        );
+        if (suggested < 0) throw StateError('Unknown recommended route');
+        setState(() {
+          ++_incidentEvaluation;
+          _routeMode = mode;
+          _tripContext = trip;
+          _options = options;
+          _alternatives = List.unmodifiable(results);
+          _selectedAlternative = 0;
+          _recommendation = recommendation;
+          _suggestedAlternative = suggested;
+          _incidentAnalyses.value = analyses;
+          _manuallySelected = false;
+          _usesDefaultModes = savedModes.isEmpty;
+          _recommendationNotice = null;
+          _recordMode(mode, results);
+        });
+        widget.onRouteChanged?.call(_route);
+      }
+    } catch (error) {
+      if (!mounted || calculation != _calculation) return;
+      final failure = error is OsrmRoutingException
+          ? error
+          : error is TimeoutException
+          ? const OsrmRoutingException(
+              'La consulta tardó demasiado.',
+              failure: RoutingFailure.timeout,
+            )
+          : const OsrmRoutingException(
+              'No fue posible cambiar el modo. Se conserva la ruta anterior.',
+              failure: RoutingFailure.unavailable,
+            );
+      setState(() {
+        _recordFailure(mode, failure);
+        _mode = _routeMode;
+      });
+      _message(failure.message);
+    } finally {
+      if (mounted && calculation == _calculation) {
+        setState(() {
+          _checking = false;
+          _phase = null;
+        });
+      }
+    }
   }
 
   Widget _planningOptions(MobilityDecisionResult? decision) => Column(
@@ -159,7 +369,11 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       const SizedBox(height: 8),
       TravelModeSelector(
         compact: false,
-        selectedMode: TransportMode.driving,
+        selectedMode: _mode,
+        capabilities: _modeRouting.capabilities,
+        snapshot: _multimodal,
+        enabled: !_checking && !_updatingRecommendation,
+        onModeSelected: _chooseMode,
         scheduled: _departure.isScheduled,
         vehicleEvaluated: decision?.hasRecommendation ?? false,
         analyzing: _checking || _updatingRecommendation,
@@ -174,7 +388,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
               mode == TransportMode.driving
                   ? 'Veh\u00edculo no est\u00e1 incluido en tus preferencias de movilidad.'
                   : mode == TransportMode.publicTransport
-                  ? 'A\u00fan no hay datos integrados de transporte p\u00fablico.'
+                  ? 'Sin fuente de datos de transporte público integrada.'
                   : 'A\u00fan no hay rutas disponibles para ${mode.label.toLowerCase()}.',
             ),
           ),
@@ -233,6 +447,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   );
 
   Future<void> _refreshIncidentRecommendation() async {
+    if (_routeMode != TransportMode.driving) return;
     final trip = _tripContext;
     if (trip == null || _alternatives.isEmpty) return;
     final evaluation = ++_incidentEvaluation;
@@ -289,6 +504,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   }
 
   void _clearAlternatives() {
+    _modeSummaries.clear();
     ++_incidentEvaluation;
     _tripContext = null;
     _options = const [];
@@ -314,13 +530,15 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     setState(() {
       _selectedAlternative = index;
       _manuallySelected = true;
+      _recordMode(_routeMode, _alternatives);
     });
     widget.onRouteChanged?.call(_route);
   }
 
   bool _canStartNavigation(MobilityDecisionResult? decision) {
     final route = _route;
-    return widget.onStartNavigation != null &&
+    return _routeMode == TransportMode.driving &&
+        widget.onStartNavigation != null &&
         _departure.isNow &&
         decision?.hasRecommendation == true &&
         route != null &&
@@ -530,9 +748,25 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       if (destination == null) {
         throw const GeocodingException('No se encontró el destino.');
       }
+      final nonVehicleModes = _mode == TransportMode.driving
+          ? null
+          : await widget.preferencesService.load();
+      if (!mounted || calculation != _calculation) return;
+      if (nonVehicleModes != null &&
+          nonVehicleModes.isNotEmpty &&
+          !nonVehicleModes.contains(_mode)) {
+        _message('Este modo no está incluido en tus preferencias.');
+        return;
+      }
       setState(() => _phase = 'Calculando ruta...');
-      final results = await _routing
-          .routeAlternatives(origin: origin, destination: destination)
+      final results = await _modeRouting
+          .route(
+            RoutingRequest(
+              origin: origin,
+              destination: destination,
+              mode: _mode,
+            ),
+          )
           .timeout(const Duration(seconds: 20));
       if (!mounted || calculation != _calculation) return;
       if (results.isEmpty) {
@@ -541,9 +775,24 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       setState(() => _phase = 'Evaluando alternativas...');
       // Reload for every calculation, including after returning from Profile.
       // A storage failure must never be treated as an empty preference set.
-      final savedModes = await widget.preferencesService.load();
+      final savedModes =
+          nonVehicleModes ?? await widget.preferencesService.load();
       if (!mounted || calculation != _calculation) return;
       final usesDefaultModes = savedModes.isEmpty;
+      if (_mode != TransportMode.driving) {
+        if (savedModes.isNotEmpty && !savedModes.contains(_mode)) {
+          _message('Este modo no está incluido en tus preferencias.');
+          return;
+        }
+        _applyNonVehicle(
+          results,
+          origin: origin,
+          destination: destination,
+          originLabel: hasGps ? 'Tu ubicación actual' : originText,
+          destinationLabel: _selected?.name ?? destinationText,
+        );
+        return;
+      }
       final context = MobilityContext(
         origin: origin,
         destination: destination,
@@ -585,6 +834,8 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         _suggestedAlternative = suggestedIndex;
         _recommendation = recommendation;
         _usesDefaultModes = usesDefaultModes;
+        _routeMode = TransportMode.driving;
+        _recordMode(TransportMode.driving, results);
         _showEditor = false;
         _routeOriginLabel = hasGps ? 'Tu ubicación actual' : originText;
         _routeDestinationLabel = _selected?.name ?? destinationText;
@@ -621,7 +872,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         _message('La consulta tardó demasiado. Intenta de nuevo.');
       }
     } on OsrmRoutingException catch (error) {
-      if (mounted && calculation == _calculation) _message(error.message);
+      if (mounted && calculation == _calculation) {
+        setState(() => _recordFailure(_mode, error));
+        _message(error.message);
+      }
     } on GeocodingException catch (error) {
       if (mounted && calculation == _calculation) _message(error.message);
     } catch (_) {
@@ -820,6 +1074,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     _destination.dispose();
     if (widget.geocodingService == null) _geocoding.dispose();
     if (widget.placeSuggestionService == null) _suggestions.dispose();
+    if (widget.modeRoutingService == null) _modeRouting.dispose();
     if (widget.routingService == null) _routing.dispose();
     super.dispose();
   }
@@ -954,7 +1209,8 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                         manuallySelected: _manuallySelected,
                         usesDefaultModes: _usesDefaultModes,
                       ),
-                    if (_tripContext != null &&
+                    if (_routeMode == TransportMode.driving &&
+                        _tripContext != null &&
                         _options.isNotEmpty &&
                         _departure.isNow &&
                         !_updatingRecommendation)
@@ -993,6 +1249,15 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                           },
                         ),
                       ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                      child: Text('Ruta mostrada: ${_routeMode.label}'),
+                    ),
+                    if (_checking)
+                      const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: LinearProgressIndicator(),
+                      ),
                     RouteResultCard(
                       route: _route!,
                       referenceOnly: _departure.isScheduled,
@@ -1012,7 +1277,57 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                           _alternatives.length > 1 &&
                           analysis?.shortestIndex == _selectedAlternative,
                     ),
+                    if (_routeMode != TransportMode.driving)
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(
+                          '${_routeMode.label} · OSRM / FOSSGIS. Ruta actual del proveedor. '
+                          'Sin recomendación vehicular por incidentes ni navegación guiada para este modo.',
+                        ),
+                      ),
+                    if (_routeMode != TransportMode.driving)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.map_outlined),
+                          label: const Text('Ver ruta en el mapa'),
+                          onPressed: () {
+                            setState(() => _collapsed = true);
+                            widget.onCollapsedChanged?.call(true);
+                          },
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Wrap(
+                        spacing: 8,
+                        children: [
+                          const Text(
+                            'Rutas: OSRM / FOSSGIS · © OpenStreetMap contributors',
+                          ),
+                          Link(
+                            uri: Uri.parse(
+                              'https://www.openstreetmap.org/copyright',
+                            ),
+                            builder: (context, followLink) => TextButton(
+                              onPressed: followLink,
+                              child: const Text('Atribución'),
+                            ),
+                          ),
+                          Link(
+                            uri: Uri.parse(
+                              'https://www.openstreetmap.org/fixthemap',
+                            ),
+                            builder: (context, followLink) => TextButton(
+                              onPressed: followLink,
+                              child: const Text('Corregir el mapa'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     RouteAlternativesSelector(
+                      vehicle: _routeMode == TransportMode.driving,
                       suggestedIndex:
                           _departure.isScheduled ||
                               _updatingRecommendation ||
@@ -1020,28 +1335,31 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                           ? null
                           : _suggestedAlternative,
                       manuallySelected: _manuallySelected,
-                      incidentAnalyses: _incidentAnalyses,
+                      incidentAnalyses: _routeMode == TransportMode.driving
+                          ? _incidentAnalyses
+                          : null,
                       alternatives: _alternatives,
                       selectedIndex: _selectedAlternative!,
                       onSelected: (index) =>
                           _selectAlternative(index, calculation),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 6,
+                    if (_routeMode == TransportMode.driving)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 6,
+                        ),
+                        child:
+                            ValueListenableBuilder<List<RouteIncidentAnalysis>>(
+                              valueListenable: _incidentAnalyses,
+                              builder: (context, analyses, _) =>
+                                  RouteIncidentStatus(
+                                    analysis: analyses.isEmpty
+                                        ? null
+                                        : analyses[_selectedAlternative!],
+                                  ),
+                            ),
                       ),
-                      child:
-                          ValueListenableBuilder<List<RouteIncidentAnalysis>>(
-                            valueListenable: _incidentAnalyses,
-                            builder: (context, analyses, _) =>
-                                RouteIncidentStatus(
-                                  analysis: analyses.isEmpty
-                                      ? null
-                                      : analyses[_selectedAlternative!],
-                                ),
-                          ),
-                    ),
                     if (_recommendationNotice != null)
                       Padding(
                         padding: const EdgeInsets.all(12),

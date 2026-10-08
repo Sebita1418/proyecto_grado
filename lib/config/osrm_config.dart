@@ -6,4 +6,11 @@ class OsrmConfig {
     scheme: 'https',
     host: 'router.project-osrm.org',
   );
+  // FOSSGIS's documented separate graphs; verified with the public Berlin sample.
+  static final Uri walkingEndpoint = Uri.parse(
+    'https://routing.openstreetmap.de/routed-foot',
+  );
+  static final Uri cyclingEndpoint = Uri.parse(
+    'https://routing.openstreetmap.de/routed-bike',
+  );
 }

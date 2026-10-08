@@ -94,13 +94,12 @@ void main() {
       // Verify mode selector in search panel
       expect(find.byType(TravelModeSelector), findsOneWidget);
       expect(find.text('Vehículo'), findsOneWidget);
-      expect(find.text('Disponible para analizar'), findsOneWidget);
       expect(
-        find.text('No disponible todavía: sin rutas integradas'),
-        findsNWidgets(2),
+        find.text('Sin consultar: proveedor configurado'),
+        findsNWidgets(3),
       );
       expect(
-        find.text('No disponible todavía: datos no integrados'),
+        find.text('Sin fuente de datos de transporte público integrada.'),
         findsOneWidget,
       );
     },

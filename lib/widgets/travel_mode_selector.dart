@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../mobility/transport_mode.dart';
+import '../mobility/routing/routing_capabilities.dart';
 
-/// Extension providing display labels, icons and availability
+/// Extension providing display labels and icons
 /// for [TransportMode] within presentation widgets.
 extension TransportModeDisplay on TransportMode {
   String get label => switch (this) {
@@ -18,14 +19,12 @@ extension TransportModeDisplay on TransportMode {
     TransportMode.cycling => Icons.directions_bike,
     TransportMode.publicTransport => Icons.directions_bus_outlined,
   };
-
-  bool get isAvailable => this == TransportMode.driving;
 }
 
 /// Selector for travel modes in the map experience.
 ///
-/// Only vehicular routing ([TransportMode.driving]) is productive in this
-/// baseline. Other modes state which provider evidence is missing.
+/// Configured capabilities permit requests; received route snapshots determine
+/// availability. Legacy callers without capabilities retain driving-only UI.
 ///
 /// The layout is a responsive grid: four tiles across when the available
 /// width fits every label and badge without truncation, otherwise two
@@ -41,6 +40,9 @@ class TravelModeSelector extends StatelessWidget {
     this.scheduled = false,
     this.vehicleAllowed = true,
     this.analyzing = false,
+    this.capabilities,
+    this.snapshot,
+    this.enabled = true,
   });
 
   final TransportMode? selectedMode;
@@ -51,6 +53,9 @@ class TravelModeSelector extends StatelessWidget {
   final bool scheduled;
   final bool vehicleAllowed;
   final bool analyzing;
+  final RoutingCapabilities? capabilities;
+  final MultimodalMobilitySnapshot? snapshot;
+  final bool enabled;
 
   static const List<TransportMode> availableModes = TransportMode.values;
 
@@ -59,9 +64,13 @@ class TravelModeSelector extends StatelessWidget {
   static const double tileMinWidth = 132;
 
   bool _isAvailable(TransportMode mode) =>
-      mode.isAvailable && (mode != TransportMode.driving || vehicleAllowed);
+      (capabilities ?? RoutingCapabilities([TransportMode.driving])).supports(
+        mode,
+      ) &&
+      (mode != TransportMode.driving || vehicleAllowed);
 
   void _handleTap(BuildContext context, TransportMode mode) {
+    if (!enabled) return;
     if (_isAvailable(mode)) {
       onModeSelected?.call(mode);
     } else {
@@ -129,9 +138,7 @@ class TravelModeSelector extends StatelessWidget {
           runSpacing: spacing,
           children: availableModes.map((mode) {
             final isSelected = mode == selectedMode;
-            final isAvailable =
-                mode.isAvailable &&
-                (mode != TransportMode.driving || vehicleAllowed);
+            final isAvailable = _isAvailable(mode);
 
             final status = _status(mode);
             final semanticsLabel =
@@ -163,6 +170,28 @@ class TravelModeSelector extends StatelessWidget {
   }
 
   String _status(TransportMode mode) {
+    if (capabilities != null) {
+      if (!_isAvailable(mode)) {
+        return mode == TransportMode.publicTransport
+            ? 'Sin fuente de datos de transporte público integrada.'
+            : mode == TransportMode.driving && !vehicleAllowed
+            ? 'No disponible: no incluido en preferencias'
+            : 'No disponible: sin proveedor integrado';
+      }
+      if (scheduled) return 'Referencia actual; sin predicción';
+      if (analyzing && mode == selectedMode) return 'Consultando ruta';
+      final summary = snapshot?.summaries[mode];
+      if (summary?.availability == ModeAvailability.available) {
+        return 'Disponible · ${(summary!.durationSeconds! / 60).ceil()} min · ${(summary.distanceMeters! / 1000).toStringAsFixed(1)} km';
+      }
+      if (summary?.availability == ModeAvailability.error) {
+        return 'Error: ${summary!.reason}';
+      }
+      if (summary?.availability == ModeAvailability.unavailable) {
+        return summary!.reason;
+      }
+      return 'Sin consultar: proveedor configurado';
+    }
     if (mode == TransportMode.driving) {
       if (!vehicleAllowed) return 'No disponible: no incluido en preferencias';
       if (scheduled) return 'No disponible: sin datos horarios';
@@ -261,8 +290,6 @@ class _TransportModeTile extends StatelessWidget {
                 child: Text(
                   status,
                   textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.labelSmall?.copyWith(
                     fontSize: 10,
                     color: statusAvailable

@@ -18,6 +18,7 @@ class RouteAlternativesSelector extends StatefulWidget {
     this.incidentAnalyses,
     this.suggestedIndex,
     this.manuallySelected = false,
+    this.vehicle = true,
   });
 
   final List<RouteResult> alternatives;
@@ -26,6 +27,7 @@ class RouteAlternativesSelector extends StatefulWidget {
   final ValueListenable<List<RouteIncidentAnalysis>>? incidentAnalyses;
   final int? suggestedIndex;
   final bool manuallySelected;
+  final bool vehicle;
 
   @override
   State<RouteAlternativesSelector> createState() =>
@@ -81,7 +83,9 @@ class _RouteAlternativesSelectorState extends State<RouteAlternativesSelector> {
                   child: Semantics(
                     header: true,
                     child: Text(
-                      'Alternativas de ruta vehicular',
+                      widget.vehicle
+                          ? 'Alternativas de ruta vehicular'
+                          : 'Alternativas del modo seleccionado',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
@@ -171,78 +175,78 @@ class _RouteAlternativesSelectorState extends State<RouteAlternativesSelector> {
         : const EdgeInsets.symmetric(horizontal: 10, vertical: 8);
 
     return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-          child: Material(
-            color: Theme.of(context).colorScheme.surfaceContainerLow,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.outlineVariant,
-              ),
-            ),
-            child: Padding(
-              padding: contentPadding,
-              child: widget.alternatives.length == 1
-                  ? const Text('Se recibió una sola ruta vehicular.')
-                  : Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      child: Material(
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
+          side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+        ),
+        child: Padding(
+          padding: contentPadding,
+          child: widget.alternatives.length == 1
+              ? Text(
+                  widget.vehicle
+                      ? 'Se recibió una sola ruta vehicular.'
+                      : 'Se recibió una sola ruta para este modo.',
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        'Alternativa ${widget.selectedIndex + 1} de '
+                        '${widget.alternatives.length} seleccionada',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                    ),
+                    if (!widget.manuallySelected &&
+                        widget.selectedIndex == widget.suggestedIndex)
+                      Text(
+                        'Ruta sugerida',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                    const SizedBox(height: 4),
+                    Row(
                       children: [
-                        Semantics(
-                          liveRegion: true,
-                          child: Text(
-                            'Alternativa ${widget.selectedIndex + 1} de '
-                            '${widget.alternatives.length} seleccionada',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.labelLarge,
+                        IconButton(
+                          tooltip: 'Alternativa anterior',
+                          onPressed: widget.selectedIndex > 0
+                              ? () =>
+                                    widget.onSelected(widget.selectedIndex - 1)
+                              : null,
+                          icon: const Icon(Icons.chevron_left),
+                        ),
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => _open(context),
+                            child: const Text(
+                              'Cambiar alternativa',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
-                        if (!widget.manuallySelected &&
-                            widget.selectedIndex == widget.suggestedIndex)
-                          Text(
-                            'Ruta sugerida',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.labelSmall,
-                          ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            IconButton(
-                              tooltip: 'Alternativa anterior',
-                              onPressed: widget.selectedIndex > 0
-                                  ? () => widget.onSelected(
-                                      widget.selectedIndex - 1,
-                                    )
-                                  : null,
-                              icon: const Icon(Icons.chevron_left),
-                            ),
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: () => _open(context),
-                                child: const Text(
-                                  'Cambiar alternativa',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              tooltip: 'Alternativa siguiente',
-                              onPressed:
-                                  widget.selectedIndex <
-                                      widget.alternatives.length - 1
-                                  ? () => widget.onSelected(
-                                      widget.selectedIndex + 1,
-                                    )
-                                  : null,
-                              icon: const Icon(Icons.chevron_right),
-                            ),
-                          ],
+                        IconButton(
+                          tooltip: 'Alternativa siguiente',
+                          onPressed:
+                              widget.selectedIndex <
+                                  widget.alternatives.length - 1
+                              ? () =>
+                                    widget.onSelected(widget.selectedIndex + 1)
+                              : null,
+                          icon: const Icon(Icons.chevron_right),
                         ),
                       ],
                     ),
-            ),
-          ),
-        );
+                  ],
+                ),
+        ),
+      ),
+    );
   }
 
   String _comparison(RouteAlternativesAnalysis analysis, int index) {

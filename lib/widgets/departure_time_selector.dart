@@ -95,7 +95,7 @@ class DepartureTimeSelector extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    '${localizations.formatMediumDate(value.at)} · '
+                    'Fecha y hora seleccionadas: ${localizations.formatMediumDate(value.at)} · '
                     '${localizations.formatTimeOfDay(TimeOfDay.fromDateTime(value.at), alwaysUse24HourFormat: true)}',
                     style: theme.textTheme.labelLarge,
                   ),

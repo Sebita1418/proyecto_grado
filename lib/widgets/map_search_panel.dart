@@ -45,6 +45,8 @@ import 'route_alternatives_selector.dart';
 import 'departure_time_selector.dart';
 import 'travel_mode_selector.dart';
 import '../theme/mobility_theme.dart';
+import '../mobility/analytics/mobility_analytics_repository.dart';
+import 'historical_departure_guidance_card.dart';
 
 class MapSearchPanel extends StatefulWidget {
   const MapSearchPanel({
@@ -63,6 +65,7 @@ class MapSearchPanel extends StatefulWidget {
     this.incidentReports = const [],
     this.reportsAvailable = true,
     this.modeRoutingService,
+    this.analyticsRepository,
   });
   final LatLng? currentPosition;
   final LocationStatus locationStatus;
@@ -70,6 +73,7 @@ class MapSearchPanel extends StatefulWidget {
   final PlaceSuggestionService? placeSuggestionService;
   final OsrmRoutingService? routingService;
   final ModeRoutingService? modeRoutingService;
+  final MobilityAnalyticsRepository? analyticsRepository;
   final ValueChanged<RouteResult?>? onRouteChanged;
   final void Function(RouteResult route, String destination)? onStartNavigation;
   final MobilityPreferencesService preferencesService;
@@ -361,6 +365,11 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         enabled: !_checking && !_updatingRecommendation,
         onChanged: (value) => setState(() => _departure = value),
       ),
+      if (_departure.isScheduled)
+        HistoricalDepartureGuidanceCard(
+          departure: _departure.at,
+          repository: widget.analyticsRepository,
+        ),
       const SizedBox(height: 16),
       Text(
         'Opciones de movilidad',

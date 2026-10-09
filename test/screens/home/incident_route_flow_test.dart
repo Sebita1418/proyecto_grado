@@ -83,6 +83,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: HomeScreen(
+              initiallyCollapsed: false,
               locationService: FixedLocation(),
               loadProfile: () async => null,
               geocodingService: FixedGeocoding(),

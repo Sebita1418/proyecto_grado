@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../mobility/transport_mode.dart';
 import '../mobility/routing/routing_capabilities.dart';
+import '../theme/mobility_theme.dart';
 
 /// Extension providing display labels and icons
 /// for [TransportMode] within presentation widgets.
@@ -94,10 +95,7 @@ class TravelModeSelector extends StatelessWidget {
   }
 
   int _columnsFor(double availableWidth) {
-    final rowWidth =
-        availableModes.length * tileMinWidth +
-        (availableModes.length - 1) * spacing;
-    return availableWidth >= rowWidth ? 4 : 2;
+    return 2;
   }
 
   @override
@@ -228,7 +226,7 @@ class _TransportModeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final statusAvailable = isAvailable && !status.startsWith('No disponible');
+    final statusAvailable = status.startsWith('Disponible');
     final foreground = isSelected
         ? colorScheme.onPrimaryContainer
         : isAvailable
@@ -236,48 +234,58 @@ class _TransportModeTile extends StatelessWidget {
         : colorScheme.onSurfaceVariant;
 
     return Material(
-      color: isSelected
-          ? colorScheme.primaryContainer
-          : colorScheme.surfaceContainerLow,
+      color: colorScheme.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(MobilityDesign.controlRadius),
         side: BorderSide(
           color: isSelected
               ? colorScheme.primary
               : colorScheme.outlineVariant.withValues(alpha: 0.5),
-          width: isSelected ? 2 : 1,
+          width: isSelected ? 1.5 : 1,
         ),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(MobilityDesign.controlRadius),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 9),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(mode.icon, size: 20, color: foreground),
-              const SizedBox(height: 4),
-              Text(
-                mode.label,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: foreground,
-                ),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withValues(alpha: .07),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      mode.icon,
+                      size: 20,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      mode.label,
+                      textAlign: TextAlign.start,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        color: foreground,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 4),
-              if (isSelected)
-                Icon(
-                  Icons.check_circle_outline,
-                  size: 15,
-                  color: colorScheme.primary,
-                ),
-              if (isSelected) const SizedBox(height: 2),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                 decoration: BoxDecoration(
@@ -291,7 +299,8 @@ class _TransportModeTile extends StatelessWidget {
                   status,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.labelSmall?.copyWith(
-                    fontSize: 10,
+                    fontSize: 12,
+                    height: 1.3,
                     color: statusAvailable
                         ? colorScheme.onPrimaryContainer
                         : colorScheme.onSurfaceVariant,

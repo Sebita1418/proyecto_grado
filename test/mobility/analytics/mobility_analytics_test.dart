@@ -186,12 +186,16 @@ void main() {
             'period_end': query.end.toIso8601String(),
           });
           return http.Response(
-            jsonEncode(status == 200 ? payload : {
-              'code': '42501',
-              'message': 'permission denied for function mobility_analytics_observations',
-              'details': null,
-              'hint': null,
-            }),
+            jsonEncode(
+              status == 200
+                  ? payload
+                  : {
+                      'code': '42501',
+                      'message': 'permission denied for function mobility_analytics_observations',
+                      'details': null,
+                      'hint': null,
+                    },
+            ),
             status,
             headers: {'content-type': 'application/json'},
             request: request,
@@ -212,9 +216,18 @@ void main() {
       payload = {...payload, 'version': 2};
       await expectLater(repo.fetch(query), throwsFormatException);
       status = 403;
-      await expectLater(repo.fetch(query), throwsA(isA<PostgrestException>()
-        .having((e) => e.code, 'code', '42501')
-        .having((e) => e.message, 'message', contains('permission denied'))));
+      await expectLater(
+        repo.fetch(query),
+        throwsA(
+          isA<PostgrestException>()
+              .having((e) => e.code, 'code', '42501')
+              .having(
+                (e) => e.message,
+                'message',
+                contains('permission denied'),
+              ),
+        ),
+      );
     },
   );
   test('controller transitions, periods and retry', () async {
@@ -330,31 +343,44 @@ void main() {
     testWidgets('accessible progress with $count observations', (tester) async {
       final semantics = tester.ensureSemantics();
       try {
-      final repo = FakeRepository()..value = count == 0
-        ? AnalyticsBatch([], evaluatedAt: now, invalidRows: 1)
-        : batch(List.generate(count, (_) => observation()));
-      await tester.pumpWidget(MaterialApp(theme: MobilityTheme.light,
-        home: MobilityAnalyticsScreen(repository: repo, now: () => now)));
-      await tester.pumpAndSettle();
-      final bars = tester.widgetList<LinearProgressIndicator>(find.byType(LinearProgressIndicator));
-      expect(bars, isNotEmpty);
-      for (final bar in bars) {
-        expect(bar.value, isNotNull);
-        expect(bar.value!.isFinite, isTrue);
-        expect(bar.value, inInclusiveRange(0.0, 1.0));
-        final percent = double.parse(bar.semanticsValue!.replaceAll('%', ''));
-        expect(percent, closeTo(100 * bar.value!, 0.05));
-        expect(percent, inInclusiveRange(0.0, 100.0));
-      }
-      final first = bars.first;
-      expect(first.value, count == 0 ? 0.0 : 1.0);
-      expect(first.semanticsLabel, 'Accidente · $count ${count == 1 ? 'reporte' : 'reportes'}');
-      expect(first.semanticsValue, count == 0 ? '0.0%' : '100.0%');
-      expect(tester.takeException(), isNull);
-      if (count == 0) {
-        expect(find.text('Datos parciales'), findsOneWidget);
-        expect(find.text('No hay reportes registrados para este periodo.'), findsNothing);
-      }
+        final repo = FakeRepository()
+          ..value = count == 0
+              ? AnalyticsBatch([], evaluatedAt: now, invalidRows: 1)
+              : batch(List.generate(count, (_) => observation()));
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: MobilityTheme.light,
+            home: MobilityAnalyticsScreen(repository: repo, now: () => now),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final bars = tester.widgetList<LinearProgressIndicator>(
+          find.byType(LinearProgressIndicator),
+        );
+        expect(bars, isNotEmpty);
+        for (final bar in bars) {
+          expect(bar.value, isNotNull);
+          expect(bar.value!.isFinite, isTrue);
+          expect(bar.value, inInclusiveRange(0.0, 1.0));
+          final percent = double.parse(bar.semanticsValue!.replaceAll('%', ''));
+          expect(percent, closeTo(100 * bar.value!, 0.05));
+          expect(percent, inInclusiveRange(0.0, 100.0));
+        }
+        final first = bars.first;
+        expect(first.value, count == 0 ? 0.0 : 1.0);
+        expect(
+          first.semanticsLabel,
+          'Accidente · $count ${count == 1 ? 'reporte' : 'reportes'}',
+        );
+        expect(first.semanticsValue, count == 0 ? '0.0%' : '100.0%');
+        expect(tester.takeException(), isNull);
+        if (count == 0) {
+          expect(find.text('Datos parciales'), findsOneWidget);
+          expect(
+            find.text('No hay reportes registrados para este periodo.'),
+            findsNothing,
+          );
+        }
       } finally {
         semantics.dispose();
       }
@@ -382,6 +408,11 @@ void main() {
     expect(find.text('Reportes de la vía'), findsOneWidget);
     await tester.tap(find.text('Analítica de movilidad'));
     expect(opened, isTrue);
+    await tester.scrollUntilVisible(
+      find.text('Perfil'),
+      120,
+      scrollable: find.byType(Scrollable),
+    );
     expect(find.text('Perfil'), findsOneWidget);
   });
   testWidgets(

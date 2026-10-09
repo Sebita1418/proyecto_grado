@@ -61,8 +61,6 @@ class NavigationManeuverCard extends StatelessWidget {
                   children: [
                     Text(
                       text,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: foreground,

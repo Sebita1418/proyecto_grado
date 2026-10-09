@@ -56,6 +56,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: HomeScreen(
+          initiallyCollapsed: false,
           locationService: _Location(),
           loadProfile: () async => null,
           placeSuggestionService: suggestions,

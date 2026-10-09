@@ -235,7 +235,7 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                       children: IncidentType.values.map((type) {
                         final isSelected = type == _selectedType;
                         return SizedBox(
-                          width: (constraints.maxWidth - 8) / 2,
+                          width: (constraints.maxWidth - 16) / 3,
                           child: Semantics(
                             button: true,
                             selected: isSelected,
@@ -243,13 +243,13 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                                 '${type.label}, ${isSelected ? 'seleccionado' : 'no seleccionado'}',
                             child: Material(
                               color: isSelected
-                                  ? colorScheme.primaryContainer
-                                  : colorScheme.surfaceContainerLow,
+                                  ? colorScheme.error.withValues(alpha: .06)
+                                  : colorScheme.surface,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                                 side: BorderSide(
                                   color: isSelected
-                                      ? colorScheme.primary
+                                      ? colorScheme.error
                                       : colorScheme.outlineVariant.withValues(
                                           alpha: 0.5,
                                         ),
@@ -264,41 +264,39 @@ class _ReportIncidentSheetState extends State<ReportIncidentSheet> {
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 14,
+                                    horizontal: 6,
+                                    vertical: 12,
                                   ),
-                                  child: Row(
+                                  child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
                                         type.icon,
                                         size: 18,
                                         color: isSelected
-                                            ? colorScheme.onPrimaryContainer
+                                            ? colorScheme.error
                                             : colorScheme.onSurface,
                                       ),
-                                      const SizedBox(width: 8),
-                                      Flexible(
-                                        child: Text(
-                                          type.label,
-                                          style: theme.textTheme.labelMedium
-                                              ?.copyWith(
-                                                fontWeight: isSelected
-                                                    ? FontWeight.bold
-                                                    : FontWeight.normal,
-                                                color: isSelected
-                                                    ? colorScheme
-                                                          .onPrimaryContainer
-                                                    : colorScheme.onSurface,
-                                              ),
-                                        ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        type.label,
+                                        textAlign: TextAlign.center,
+                                        style: theme.textTheme.labelMedium
+                                            ?.copyWith(
+                                              fontWeight: isSelected
+                                                  ? FontWeight.bold
+                                                  : FontWeight.normal,
+                                              color: isSelected
+                                                  ? colorScheme.error
+                                                  : colorScheme.onSurface,
+                                            ),
                                       ),
                                       if (isSelected) ...[
-                                        const SizedBox(width: 6),
+                                        const SizedBox(height: 4),
                                         Icon(
                                           Icons.check,
                                           size: 16,
-                                          color: colorScheme.primary,
+                                          color: colorScheme.error,
                                         ),
                                       ],
                                     ],

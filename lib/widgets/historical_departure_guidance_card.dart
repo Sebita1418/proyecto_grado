@@ -4,7 +4,7 @@ import '../controllers/historical_departure_guidance_controller.dart';
 import '../mobility/analytics/historical_departure_guidance.dart';
 import '../mobility/analytics/mobility_analytics_repository.dart';
 import '../services/supabase_mobility_analytics_repository.dart';
-import '../theme/mobility_theme.dart';
+import 'mobility_section_card.dart';
 
 class HistoricalDepartureGuidanceCard extends StatefulWidget {
   const HistoricalDepartureGuidanceCard({
@@ -111,52 +111,43 @@ class _HistoricalDepartureGuidanceCardState
     ],
   );
   @override
-  Widget build(BuildContext context) => Card(
+  Widget build(BuildContext context) => MobilitySectionCard(
+    title: 'Orientación histórica de horarios',
+    icon: Icons.history_outlined,
     margin: const EdgeInsets.only(top: 12),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(12),
-      child: AnimatedBuilder(
-        animation: controller,
-        builder: (context, _) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Orientación histórica de horarios',
-              style: Theme.of(context).textTheme.titleSmall,
+    child: AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          switch (controller.state) {
+            HistoricalGuidanceLoadState.idle ||
+            HistoricalGuidanceLoadState.loading => const Column(
+              children: [
+                LinearProgressIndicator(),
+                SizedBox(height: 8),
+                Text('Cargando historial de reportes…'),
+              ],
             ),
-            const SizedBox(height: 8),
-            switch (controller.state) {
-              HistoricalGuidanceLoadState.idle ||
-              HistoricalGuidanceLoadState.loading => const Column(
-                children: [
-                  LinearProgressIndicator(),
-                  SizedBox(height: 8),
-                  Text('Cargando historial de reportes…'),
-                ],
-              ),
-              HistoricalGuidanceLoadState.error => Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Datos históricos no disponibles. No fue posible consultar el historial.',
-                  ),
-                  OutlinedButton(
-                    onPressed: controller.retry,
-                    child: const Text('Reintentar'),
-                  ),
-                ],
-              ),
-              HistoricalGuidanceLoadState.data => data(controller.result!),
-            },
-            const SizedBox(height: 8),
-            const Text(
-              'Cero reportes no significa cero tráfico. Esta observación no predice condiciones futuras ni recomienda una hora óptima.',
+            HistoricalGuidanceLoadState.error => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  'Datos históricos no disponibles. No fue posible consultar el historial.',
+                ),
+                OutlinedButton(
+                  onPressed: controller.retry,
+                  child: const Text('Reintentar'),
+                ),
+              ],
             ),
-          ],
-        ),
+            HistoricalGuidanceLoadState.data => data(controller.result!),
+          },
+          const SizedBox(height: 8),
+          const Text(
+            'Cero reportes no significa cero tráfico. Esta observación no predice condiciones futuras ni recomienda una hora óptima.',
+          ),
+        ],
       ),
     ),
   );

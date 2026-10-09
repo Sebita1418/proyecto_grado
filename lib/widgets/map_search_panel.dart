@@ -66,6 +66,10 @@ class MapSearchPanel extends StatefulWidget {
     this.reportsAvailable = true,
     this.modeRoutingService,
     this.analyticsRepository,
+    this.initiallyCollapsed = false,
+    this.onAnalytics,
+    this.onReport,
+    this.onValidationAccessChanged,
   });
   final LatLng? currentPosition;
   final LocationStatus locationStatus;
@@ -74,6 +78,9 @@ class MapSearchPanel extends StatefulWidget {
   final OsrmRoutingService? routingService;
   final ModeRoutingService? modeRoutingService;
   final MobilityAnalyticsRepository? analyticsRepository;
+  final bool initiallyCollapsed;
+  final VoidCallback? onAnalytics, onReport;
+  final ValueChanged<VoidCallback?>? onValidationAccessChanged;
   final ValueChanged<RouteResult?>? onRouteChanged;
   final void Function(RouteResult route, String destination)? onStartNavigation;
   final MobilityPreferencesService preferencesService;
@@ -170,6 +177,167 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     return const MobilityDecisionCoordinator().decide(
       context,
       vehicleRecommendation: _recommendation,
+    );
+  }
+
+  void _openValidation() {
+    if (!mounted ||
+        _tripContext == null ||
+        _options.isEmpty ||
+        _routeMode != TransportMode.driving) {
+      return;
+    }
+    final input = const CurrentMobilityValidationAdapter().build(
+      context: _withIncidents(_tripContext!, _incidentAnalyses.value),
+      options: _options,
+      recommendation: _recommendation,
+      markedSuggestedId: _suggestedAlternative == null
+          ? null
+          : _options[_suggestedAlternative!].id,
+      selectedId: _selectedAlternative == null
+          ? null
+          : _options[_selectedAlternative!].id,
+      manuallySelected: _manuallySelected,
+    );
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => MobilityValidationScreen(
+          snapshot: const MobilityValidationEvaluator().evaluate(input),
+        ),
+      ),
+    );
+  }
+
+  Widget _compactHub() {
+    final colors = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Container(
+              width: 32,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 10),
+              decoration: BoxDecoration(
+                color: colors.outlineVariant,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              Widget quick(String label, IconData icon, VoidCallback? action) =>
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 8,
+                      ),
+                      minimumSize: const Size(48, 48),
+                      textStyle: const TextStyle(
+                        fontFamily: MobilityDesign.fontFamily,
+                        fontSize: 10,
+                      ),
+                    ),
+                    onPressed: action,
+                    icon: Icon(icon, size: 14),
+                    label: Text(label),
+                  );
+              final actions = <Widget>[
+                if (widget.onAnalytics != null)
+                  quick(
+                    'Analítica',
+                    Icons.bar_chart_outlined,
+                    widget.onAnalytics,
+                  ),
+                quick(
+                  'Validación',
+                  Icons.verified_user_outlined,
+                  _tripContext == null ? null : _openValidation,
+                ),
+                if (widget.onReport != null)
+                  Tooltip(
+                    message: 'Reportar novedad vial',
+                    child: quick(
+                      'Reportar',
+                      Icons.report_outlined,
+                      widget.onReport,
+                    ),
+                  ),
+              ];
+              final columns = MediaQuery.textScalerOf(context).scale(10) > 14
+                  ? 2
+                  : actions.length;
+              final width =
+                  (constraints.maxWidth - (columns - 1) * 6) / columns;
+              return Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  for (final action in actions)
+                    SizedBox(width: width, child: action),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+          Material(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: colors.outlineVariant),
+            ),
+            child: InkWell(
+              onTap: () {
+                setState(() => _collapsed = false);
+                widget.onCollapsedChanged?.call(false);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: colors.primary,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.search, color: Colors.white),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Buscar destino'),
+                          Text(
+                            _route == null
+                                ? '¿A dónde vas?'
+                                : _routeDestinationLabel,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Expandir panel de ruta',
+                      onPressed: () {
+                        setState(() => _collapsed = false);
+                        widget.onCollapsedChanged?.call(false);
+                      },
+                      icon: const Icon(Icons.arrow_forward),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -564,6 +732,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   @override
   void initState() {
     super.initState();
+    _collapsed = widget.initiallyCollapsed;
     _destination.addListener(_onDestinationChanged);
     _origin.addListener(_onOriginChanged);
   }
@@ -1091,6 +1260,19 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   @override
   Widget build(BuildContext context) {
     final decision = _decision;
+    if (widget.onValidationAccessChanged != null) {
+      final available =
+          _routeMode == TransportMode.driving &&
+          _tripContext != null &&
+          _options.isNotEmpty &&
+          _departure.isNow &&
+          !_updatingRecommendation;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          widget.onValidationAccessChanged!(available ? _openValidation : null);
+        }
+      });
+    }
     final hasGps = widget.currentPosition != null && !_manualOrigin;
     final height = MediaQuery.sizeOf(context).height;
     final calculation = _calculation;
@@ -1104,7 +1286,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         maxHeight: widget.maxHeight ?? height * .46,
       ),
       child: Material(
-        elevation: 8,
+        elevation: MobilityDesign.panelElevation,
         shadowColor: colorScheme.shadow.withValues(alpha: 0.22),
         color: colorScheme.surface,
         shape: RoundedRectangleBorder(
@@ -1124,60 +1306,70 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  children: [
-                    const SizedBox(width: 18),
-                    Expanded(
-                      child: _collapsed
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  _route == null
-                                      ? '¿A dónde vas?'
-                                      : _routeDestinationLabel,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                ),
-                                if (_route != null)
+                if (_collapsed) _compactHub(),
+                if (!_collapsed)
+                  Row(
+                    children: [
+                      const SizedBox(width: 18),
+                      Expanded(
+                        child: _collapsed
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
                                   Text(
-                                    '${_departure.isScheduled ? 'Referencia de Ahora · ' : ''}'
-                                    '${(_route!.durationSeconds / 60).ceil()} min · '
-                                    '${(_route!.distanceMeters / 1000).toStringAsFixed(1)} km',
+                                    _route == null
+                                        ? '¿A dónde vas?'
+                                        : _routeDestinationLabel,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: Theme.of(context)
                                         .textTheme
-                                        .bodySmall,
+                                        .titleSmall,
                                   ),
-                              ],
-                            )
-                          : Center(
-                              child: Container(
-                                width: 32,
-                                height: 4,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.outlineVariant,
-                                  borderRadius: BorderRadius.circular(4),
+                                  if (_route != null)
+                                    Text(
+                                      '${_departure.isScheduled ? 'Referencia de Ahora · ' : ''}'
+                                      '${(_route!.durationSeconds / 60).ceil()} min · '
+                                      '${(_route!.distanceMeters / 1000).toStringAsFixed(1)} km',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall,
+                                    ),
+                                ],
+                              )
+                            : Center(
+                                child: Container(
+                                  width: 32,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.outlineVariant,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
                                 ),
                               ),
-                            ),
-                    ),
-                    IconButton(
-                      tooltip: _collapsed
-                          ? 'Expandir panel de ruta'
-                          : 'Minimizar panel de ruta',
-                      icon: Icon(
-                        _collapsed ? Icons.expand_less : Icons.expand_more,
                       ),
-                      onPressed: () {
-                        FocusScope.of(context).unfocus();
-                        setState(() => _collapsed = !_collapsed);
-                        widget.onCollapsedChanged?.call(_collapsed);
-                      },
-                    ),
-                  ],
-                ),
+                      if (widget.onReport != null)
+                        IconButton(
+                          tooltip: 'Reportar novedad vial',
+                          onPressed: widget.onReport,
+                          icon: const Icon(Icons.report_outlined),
+                        ),
+                      IconButton(
+                        tooltip: _collapsed
+                            ? 'Expandir panel de ruta'
+                            : 'Minimizar panel de ruta',
+                        icon: Icon(
+                          _collapsed ? Icons.expand_less : Icons.expand_more,
+                        ),
+                        onPressed: () {
+                          FocusScope.of(context).unfocus();
+                          setState(() => _collapsed = !_collapsed);
+                          widget.onCollapsedChanged?.call(_collapsed);
+                        },
+                      ),
+                    ],
+                  ),
                 if (!_collapsed) ...[
                   if (_route != null && !_showEditor) ...[
                     Padding(
@@ -1199,10 +1391,6 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                           ),
                         ],
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-                      child: _planningOptions(decision),
                     ),
                     if (_recommendation != null &&
                         _departure.isNow &&
@@ -1369,6 +1557,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                   ),
                             ),
                       ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                      child: _planningOptions(decision),
+                    ),
                     if (_recommendationNotice != null)
                       Padding(
                         padding: const EdgeInsets.all(12),

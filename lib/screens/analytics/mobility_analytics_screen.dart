@@ -5,6 +5,8 @@ import '../../mobility/analytics/mobility_analytics.dart';
 import '../../mobility/analytics/mobility_analytics_repository.dart';
 import '../../services/supabase_mobility_analytics_repository.dart';
 import '../../theme/mobility_theme.dart';
+import '../../widgets/mobility_section_card.dart';
+import '../../widgets/mobility_evidence_summary.dart';
 
 class MobilityAnalyticsScreen extends StatefulWidget {
   const MobilityAnalyticsScreen({super.key, this.repository, this.now});
@@ -34,50 +36,32 @@ class _MobilityAnalyticsScreenState extends State<MobilityAnalyticsScreen> {
 
   String stamp(DateTime time) =>
       '${time.toIso8601String().substring(0, 16).replaceAll('T', ' ')} UTC';
-  Widget card(String title, Widget child) => Card(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 12),
-          child,
-        ],
-      ),
-    ),
-  );
-  Widget metric(String title, String value) => SizedBox(
-    width: 260,
-    child: card(
-      title,
-      Text(value, style: Theme.of(context).textTheme.titleLarge),
-    ),
-  );
+  Widget card(String title, Widget child) =>
+      MobilitySectionCard(title: title, child: child);
+  Widget metric(String title, String value) =>
+      card(title, Text(value, style: Theme.of(context).textTheme.titleLarge));
   Widget distribution(String label, int count, int total) {
     final proportion = total <= 0 ? 0.0 : (count / total).clamp(0.0, 1.0);
     final reports = '$count ${count == 1 ? 'reporte' : 'reportes'}';
     return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '$label · $reports (${(100 * proportion).toStringAsFixed(1)} %)',
-        ),
-        const SizedBox(height: 6),
-        LinearProgressIndicator(
-          value: proportion,
-          semanticsLabel: '$label · $reports',
-          semanticsValue: '${(100 * proportion).toStringAsFixed(1)}%',
-        ),
-      ],
-    ),
-  );
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '$label · $reports (${(100 * proportion).toStringAsFixed(1)} %)',
+          ),
+          const SizedBox(height: 6),
+          LinearProgressIndicator(
+            value: proportion,
+            semanticsLabel: '$label · $reports',
+            semanticsValue: '${(100 * proportion).toStringAsFixed(1)}%',
+          ),
+        ],
+      ),
+    );
   }
+
   Widget coverage(MobilityAnalyticsSnapshot s) => card(
     'Cobertura de datos',
     Column(
@@ -105,32 +89,104 @@ class _MobilityAnalyticsScreenState extends State<MobilityAnalyticsScreen> {
   Widget results(MobilityAnalyticsSnapshot s) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
+      MobilityEvidenceSummary(
+        label: 'REPORTES OBSERVADOS',
+        value: '${s.total}',
+        detail:
+            '${s.query.end.difference(s.query.start).inDays} días consultados',
+        badge: s.availability == AnalyticsAvailability.partial
+            ? 'Cobertura parcial'
+            : 'Consulta completa',
+      ),
       if (s.availability == AnalyticsAvailability.partial)
         card(
           'Datos parciales',
           const Text('Los resultados no representan la totalidad del periodo.'),
         ),
-      Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: [
-          metric('Reportes del periodo', '${s.total}'),
-          metric('Reportes activos', '${s.active}'),
-          metric(
-            'Categoría más reportada',
-            s.predominantCategory == null
-                ? (s.total < 2 ? 'Datos insuficientes' : 'Empate')
-                : analyticsCategories[s.predominantCategory]!,
-          ),
-          metric(
-            'Mayor actividad de reportes',
-            s.peakActivity.isEmpty
-                ? 'Sin observaciones'
-                : s.peakActivity.length > 1
-                ? 'Empate entre ${s.peakActivity.length} franjas'
-                : '${stamp(s.peakActivity.single.start)} — ${stamp(s.peakActivity.single.end)}',
-          ),
-        ],
+      card(
+        'Actividad temporal',
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Franjas consecutivas desde el inicio del periodo, en UTC.',
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height:
+                  120 + 2 * MediaQuery.textScalerOf(context).scale(12) * 1.5,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  for (final bucket in s.temporal)
+                    Expanded(
+                      child: Tooltip(
+                        message:
+                            '${stamp(bucket.start)} — ${stamp(bucket.end)}: ${bucket.count} reportes',
+                        child: Semantics(
+                          label:
+                              '${stamp(bucket.start)}: ${bucket.count} reportes',
+                          child: SizedBox(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                const SizedBox(height: 4),
+                                Container(
+                                  width: double.infinity,
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 2,
+                                  ),
+                                  height:
+                                      (s.peakActivity.firstOrNull?.count ??
+                                              0) ==
+                                          0
+                                      ? 1
+                                      : 1 +
+                                            100 *
+                                                bucket.count /
+                                                s.peakActivity.first.count,
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Color(0xFF7AAAF5),
+                                        MobilityDesign.brand,
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  '${s.query.end.difference(s.query.start).inHours <= 24 ? bucket.start.hour : bucket.start.day}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.visible,
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(fontSize: 9),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            ExpansionTile(
+              title: const Text('Detalle temporal y cobertura'),
+              children: [
+                for (final bucket in s.temporal)
+                  distribution(
+                    '${stamp(bucket.start)} — ${stamp(bucket.end)}',
+                    bucket.count,
+                    s.total,
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
       card(
         'Distribución por categoría',
@@ -145,29 +201,53 @@ class _MobilityAnalyticsScreenState extends State<MobilityAnalyticsScreen> {
           ],
         ),
       ),
-      card(
-        'Actividad temporal',
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Franjas consecutivas desde el inicio del periodo, en UTC.',
+      LayoutBuilder(
+        builder: (context, constraints) {
+          final largeText = MediaQuery.textScalerOf(context).scale(14) > 18.2;
+          final columns = constraints.maxWidth >= 900 && !largeText
+              ? 4
+              : constraints.maxWidth >= 600
+              ? 2
+              : 1;
+          final width = (constraints.maxWidth - (columns - 1) * 12) / columns;
+          final metrics = <Widget>[
+            metric('Reportes del periodo', '${s.total}'),
+            metric('Reportes activos', '${s.active}'),
+            metric(
+              'Categoría más reportada',
+              s.predominantCategory == null
+                  ? (s.total < 2 ? 'Datos insuficientes' : 'Empate')
+                  : analyticsCategories[s.predominantCategory]!,
             ),
-            for (final bucket in s.temporal)
-              distribution(
-                '${stamp(bucket.start)} — ${stamp(bucket.end)}',
-                bucket.count,
-                s.total,
-              ),
-          ],
-        ),
+            metric(
+              'Mayor actividad de reportes',
+              s.peakActivity.isEmpty
+                  ? 'Sin observaciones'
+                  : s.peakActivity.length > 1
+                  ? 'Empate entre ${s.peakActivity.length} franjas'
+                  : '${stamp(s.peakActivity.single.start)} — ${stamp(s.peakActivity.single.end)}',
+            ),
+          ];
+          return Wrap(
+            spacing: 12,
+            runSpacing: 4,
+            children: [
+              for (final item in metrics) SizedBox(width: width, child: item),
+            ],
+          );
+        },
       ),
       coverage(s),
     ],
   );
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Analítica de movilidad')),
+    appBar: AppBar(
+      toolbarHeight: MobilityDesign.appBarHeight(
+        MediaQuery.textScalerOf(context),
+      ),
+      title: const Text('Analítica de movilidad', maxLines: 3),
+    ),
     body: AnimatedBuilder(
       animation: controller,
       builder: (context, _) => SingleChildScrollView(

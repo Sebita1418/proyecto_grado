@@ -60,7 +60,6 @@ class RoutePlannerForm extends StatelessWidget {
                 labelText: 'Origen',
                 hintText: 'Busca un lugar o dirección',
                 prefixIcon: const Icon(Icons.trip_origin),
-                border: const OutlineInputBorder(),
                 errorText: originError,
               ),
             ),
@@ -78,7 +77,6 @@ class RoutePlannerForm extends StatelessWidget {
               labelText: 'Destino',
               hintText: 'Busca un lugar o dirección',
               prefixIcon: const Icon(Icons.location_on_outlined),
-              border: const OutlineInputBorder(),
               errorText: destinationError,
             ),
             onSubmitted: (_) {

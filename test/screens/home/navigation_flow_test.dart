@@ -72,6 +72,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: HomeScreen(
+            initiallyCollapsed: false,
             roadIncidentService: incidents,
             locationService: gps,
             loadProfile: () async => null,

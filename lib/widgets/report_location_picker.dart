@@ -15,12 +15,16 @@ class ReportLocationPicker extends StatefulWidget {
     this.title = 'Ubicación del reporte',
     this.pointLabel = 'Ubicación del borrador de novedad',
     this.instruction = 'Toca el mapa para colocar el marcador del borrador.',
+    this.validationMessage,
+    this.boundaryPolygons = const [],
   });
 
   final String title, pointLabel, instruction;
   final LatLng initialCenter;
   final RouteResult? route;
   final LatLng? currentPosition;
+  final String? Function(LatLng point)? validationMessage;
+  final List<List<List<LatLng>>> boundaryPolygons;
 
   @override
   State<ReportLocationPicker> createState() => _ReportLocationPickerState();
@@ -32,6 +36,9 @@ class _ReportLocationPickerState extends State<ReportLocationPicker> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final coverageMessage = _selected == null
+        ? null
+        : widget.validationMessage?.call(_selected!);
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: Stack(
@@ -41,6 +48,7 @@ class _ReportLocationPickerState extends State<ReportLocationPicker> {
               initialPosition: widget.initialCenter,
               expand: true,
               autoFit: false,
+              boundaryPolygons: widget.boundaryPolygons,
               onTap: (point) => setState(() => _selected = point),
               polylines: [
                 if (widget.route != null)
@@ -115,6 +123,14 @@ class _ReportLocationPickerState extends State<ReportLocationPicker> {
                             ),
                           ),
                           const SizedBox(height: 12),
+                          if (coverageMessage != null)
+                            Semantics(
+                              liveRegion: true,
+                              child: Text(
+                                coverageMessage,
+                                style: TextStyle(color: colors.error),
+                              ),
+                            ),
                           if (widget.currentPosition != null)
                             OutlinedButton.icon(
                               onPressed: () => setState(
@@ -124,7 +140,8 @@ class _ReportLocationPickerState extends State<ReportLocationPicker> {
                               label: const Text('Usar mi ubicación'),
                             ),
                           FilledButton.icon(
-                            onPressed: _selected == null
+                            onPressed:
+                                _selected == null || coverageMessage != null
                                 ? null
                                 : () => Navigator.pop(context, _selected),
                             icon: const Icon(Icons.check),

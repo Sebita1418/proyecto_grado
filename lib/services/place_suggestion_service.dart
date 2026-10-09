@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../models/place_suggestion.dart';
 import 'address_query.dart';
+import 'municipal_boundary_service.dart';
 
 enum PlaceSuggestionFailure { timeout, connectivity, http, invalidResponse }
 
@@ -30,8 +31,10 @@ class PlaceSuggestionService {
   PlaceSuggestionService({
     http.Client? client,
     this.timeout = const Duration(seconds: 8),
+    MunicipalBoundaryService? boundaryService,
   }) : _client = client ?? http.Client(),
-       _ownsClient = client == null;
+       _ownsClient = client == null,
+       _boundary = boundaryService ?? MunicipalBoundaryService.shared;
 
   static const double _bucaramangaLatitude = 7.119349;
   static const double _bucaramangaLongitude = -73.122742;
@@ -39,6 +42,7 @@ class PlaceSuggestionService {
   final http.Client _client;
   final bool _ownsClient;
   final Duration timeout;
+  final MunicipalBoundaryService _boundary;
   LatLng? searchBias;
 
   static Uri buildPhotonUri(String query, {LatLng? bias}) {
@@ -113,6 +117,7 @@ class PlaceSuggestionService {
       );
     }
 
+    await _boundary.load();
     try {
       final decoded = jsonDecode(utf8.decode(response.bodyBytes));
       if (decoded is! Map<String, dynamic>) {
@@ -198,6 +203,7 @@ class PlaceSuggestionService {
       houseNumber: house,
       city: city,
       precision: query.precisionFor(street, house, city),
+      coverage: _boundary.assessCoordinates(latitude, longitude),
     );
   }
 

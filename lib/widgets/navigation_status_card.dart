@@ -88,8 +88,13 @@ class NavigationManeuverCard extends StatelessWidget {
 }
 
 class NavigationStatusCard extends StatefulWidget {
-  const NavigationStatusCard({super.key, required this.session});
+  const NavigationStatusCard({
+    super.key,
+    required this.session,
+    this.coverageNotice,
+  });
   final NavigationSession session;
+  final String? coverageNotice;
 
   @override
   State<NavigationStatusCard> createState() => _NavigationStatusCardState();
@@ -136,6 +141,8 @@ class _NavigationStatusCardState extends State<NavigationStatusCard> {
             ],
           ),
           const SizedBox(height: 8),
+          if (widget.coverageNotice != null)
+            Semantics(liveRegion: true, child: Text(widget.coverageNotice!)),
           if (_expanded)
             Text(
               session.arrived

@@ -8,6 +8,7 @@ import '../models/address_precision.dart';
 
 import '../models/geocoding_result.dart';
 import 'address_query.dart';
+import 'municipal_boundary_service.dart';
 
 class GeocodingException implements Exception {
   const GeocodingException(this.message);
@@ -24,13 +25,16 @@ class GeocodingService {
     this.requestInterval = const Duration(seconds: 1),
     this.timeout = const Duration(seconds: 8),
     this.cacheEnabled = true,
+    MunicipalBoundaryService? boundaryService,
   }) : _client = client ?? http.Client(),
-       _ownsClient = client == null;
+       _ownsClient = client == null,
+       _boundary = boundaryService ?? MunicipalBoundaryService.shared;
 
   final http.Client _client;
   final bool _ownsClient;
   final Duration requestInterval, timeout;
   final bool cacheEnabled;
+  final MunicipalBoundaryService _boundary;
   LatLng? searchBias;
   final _cache = <String, List<GeocodingResult>>{};
   static Future<void> _queue = Future<void>.value();
@@ -47,7 +51,8 @@ class GeocodingService {
     final cacheKey = '$normalized|${bias?.latitude}|${bias?.longitude}';
     if (normalized.isEmpty) return const [];
     if (cacheEnabled && _cache.containsKey(cacheKey)) {
-      return _cache[cacheKey]!;
+      await _boundary.load();
+      return _readCache(cacheKey);
     }
     // Tests with an injected HTTP client can bypass real-time scheduling.
     if (requestInterval == Duration.zero) {
@@ -61,7 +66,8 @@ class GeocodingService {
     await previous;
     try {
       if (cacheEnabled && _cache.containsKey(cacheKey)) {
-        return _cache[cacheKey]!;
+        await _boundary.load();
+        return _readCache(cacheKey);
       }
       final last = _lastRequest;
       if (last != null) {
@@ -81,6 +87,30 @@ class GeocodingService {
     if (!cacheEnabled) return;
     if (_cache.length >= 100) _cache.remove(_cache.keys.first);
     _cache[key] = List.unmodifiable(results);
+  }
+
+  List<GeocodingResult> _readCache(String key) {
+    final results = _cache[key]!.map((result) {
+      final assessment = _boundary.assessCoordinates(
+        result.latitude,
+        result.longitude,
+      );
+      if (result.coverage.coverage == assessment.coverage &&
+          result.coverage.invalidCoordinates == assessment.invalidCoordinates) {
+        return result;
+      }
+      return GeocodingResult(
+        latitude: result.latitude,
+        longitude: result.longitude,
+        displayName: result.displayName,
+        road: result.road,
+        houseNumber: result.houseNumber,
+        city: result.city,
+        precision: result.precision,
+        coverage: assessment,
+      );
+    }).toList();
+    return _cache[key] = List.unmodifiable(results);
   }
 
   /// Explicit user resolution only. Stop after evidence of a full match.
@@ -116,6 +146,10 @@ class GeocodingService {
           houseNumber: result.houseNumber,
           city: result.city,
           precision: quality,
+          coverage: _boundary.assessCoordinates(
+            result.latitude,
+            result.longitude,
+          ),
         );
         if (!results.any(
           (r) =>
@@ -185,6 +219,7 @@ class GeocodingService {
       );
     }
 
+    await _boundary.load();
     try {
       final data = jsonDecode(utf8.decode(response.bodyBytes));
       if (data is! List) {
@@ -243,6 +278,7 @@ class GeocodingService {
             houseNumber: house,
             city: city,
             precision: parsed.precisionFor(road, house, city),
+            coverage: _boundary.assessCoordinates(latitude, longitude),
           ),
         );
       }

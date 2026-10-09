@@ -1,3 +1,5 @@
+import 'report_location_picker.dart';
+
 import 'dart:async';
 
 import '../mobility/decision/current_mobility_decision_adapter.dart';
@@ -57,6 +59,8 @@ class MapSearchPanel extends StatefulWidget {
     this.placeSuggestionService,
     this.routingService,
     this.onRouteChanged,
+    this.onOriginSelected,
+    this.onDestinationSelected,
     this.onStartNavigation,
     this.preferencesService = const MobilityPreferencesService(),
     this.recommendationEngine,
@@ -82,6 +86,7 @@ class MapSearchPanel extends StatefulWidget {
   final VoidCallback? onAnalytics, onReport;
   final ValueChanged<VoidCallback?>? onValidationAccessChanged;
   final ValueChanged<RouteResult?>? onRouteChanged;
+  final ValueChanged<LatLng?>? onOriginSelected, onDestinationSelected;
   final void Function(RouteResult route, String destination)? onStartNavigation;
   final MobilityPreferencesService preferencesService;
   final MobilityRecommendationEngine? recommendationEngine;
@@ -743,6 +748,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     _lastOriginText = text;
     _invalidate();
     _selectedOrigin = null;
+    widget.onOriginSelected?.call(null);
     final query = _origin.text.trim();
     final request = ++_originRequest;
     _originDebounce?.cancel();
@@ -792,6 +798,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       _originSuggestionError = null;
       _loadingOriginSuggestions = false;
     });
+    widget.onOriginSelected?.call(LatLng(place.latitude, place.longitude));
     FocusScope.of(context).unfocus();
   }
 
@@ -801,6 +808,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     _lastDestinationText = text;
     _invalidate();
     _selected = null;
+    widget.onDestinationSelected?.call(null);
     final query = _destination.text.trim();
     final request = ++_request;
     _debounce?.cancel();
@@ -858,6 +866,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       _suggestionError = null;
       _loadingSuggestions = false;
     });
+    widget.onDestinationSelected?.call(LatLng(place.latitude, place.longitude));
     FocusScope.of(context).unfocus();
   }
 
@@ -1149,6 +1158,52 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     }
   }
 
+  Future<void> _pickPoint({required bool origin}) async {
+    final controller = origin ? _origin : _destination;
+    final before = controller.text;
+    final version = origin ? ++_originRequest : ++_request;
+    (origin ? _originDebounce : _debounce)?.cancel();
+    final point = await Navigator.of(context).push<LatLng>(
+      MaterialPageRoute(
+        builder: (_) => ReportLocationPicker(
+          initialCenter:
+              widget.currentPosition ?? const LatLng(7.119349, -73.122742),
+          currentPosition: widget.currentPosition,
+          title: origin ? 'Seleccionar origen' : 'Seleccionar destino',
+          pointLabel: 'Punto seleccionado manualmente',
+          instruction: 'Toca el mapa para elegir la ubicación. No se confirma una dirección postal.',
+        ),
+      ),
+    );
+    if (!mounted ||
+        version != (origin ? _originRequest : _request) ||
+        before != controller.text) {
+      return;
+    }
+    setState(() {
+      if (origin) {
+        _loadingOriginSuggestions = false;
+      } else {
+        _loadingSuggestions = false;
+      }
+    });
+    if (point == null) return;
+    final place = PlaceSuggestion(
+      name: origin
+          ? 'Origen seleccionado en el mapa'
+          : 'Destino seleccionado en el mapa',
+      description:
+          '${point.latitude.toStringAsFixed(5)}, ${point.longitude.toStringAsFixed(5)}',
+      latitude: point.latitude,
+      longitude: point.longitude,
+    );
+    if (origin) {
+      _selectOrigin(place);
+    } else {
+      _select(place);
+    }
+  }
+
   Widget? _addressResults({required bool origin, Widget? child}) {
     final query = (origin ? _origin : _destination).text;
     final selected = origin ? _selectedOrigin : _selected;
@@ -1158,19 +1213,27 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         child: Text(selected!.precision!.label),
       );
     }
-    if (!AddressQuery.isAddress(query) || selected != null) return child;
+    if (selected != null) return child;
     final loading = origin ? _loadingOriginSuggestions : _loadingSuggestions;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         ?child,
+        if (AddressQuery.isAddress(query))
+          TextButton.icon(
+            onPressed: loading || _checking
+                ? null
+                : () => _findAddress(origin: origin),
+            icon: const Icon(Icons.search),
+            label: Text(
+              origin ? 'Buscar dirección de origen' : 'Buscar dirección',
+            ),
+          ),
         TextButton.icon(
-          onPressed: loading || _checking
-              ? null
-              : () => _findAddress(origin: origin),
-          icon: const Icon(Icons.search),
+          onPressed: _checking ? null : () => _pickPoint(origin: origin),
+          icon: const Icon(Icons.pin_drop_outlined),
           label: Text(
-            origin ? 'Buscar dirección de origen' : 'Buscar dirección',
+            origin ? 'Elegir origen en el mapa' : 'Elegir destino en el mapa',
           ),
         ),
       ],
@@ -1599,6 +1662,15 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                   : () => setState(() {
                                       _invalidate();
                                       _manualOrigin = true;
+                                      final place = _selectedOrigin;
+                                      if (place != null) {
+                                        widget.onOriginSelected?.call(
+                                          LatLng(
+                                            place.latitude,
+                                            place.longitude,
+                                          ),
+                                        );
+                                      }
                                     }),
                               child: const Text('Cambiar'),
                             ),
@@ -1612,6 +1684,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                           onPressed: () => setState(() {
                             _invalidate();
                             _manualOrigin = false;
+                            widget.onOriginSelected?.call(null);
                           }),
                           child: const Text('Usar mi ubicación'),
                         ),

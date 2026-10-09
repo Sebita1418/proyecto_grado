@@ -26,6 +26,12 @@ class AddressGeocoding extends GeocodingService {
     queries.add(query);
     return pending.future;
   }
+
+  @override
+  Future<List<GeocodingResult>> searchCandidates(String query) {
+    queries.add(query);
+    return pending.future.then((value) => value == null ? [] : [value]);
+  }
 }
 
 const address = GeocodingResult(

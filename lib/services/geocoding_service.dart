@@ -32,27 +32,36 @@ class GeocodingService {
   final Duration requestInterval, timeout;
   final bool cacheEnabled;
   LatLng? searchBias;
-  final _cache = <String, GeocodingResult?>{};
+  final _cache = <String, List<GeocodingResult>>{};
   static Future<void> _queue = Future<void>.value();
   static DateTime? _lastRequest;
 
   Future<GeocodingResult?> search(String query) async {
-    final normalized = AddressQuery.forProvider(query);
+    final candidates = await searchCandidates(query);
+    return candidates.isEmpty ? null : candidates.first;
+  }
+
+  Future<List<GeocodingResult>> searchCandidates(String query) async {
+    final normalized = AddressQuery(query).providerQuery;
     final bias = AddressQuery(query).hasCity ? null : searchBias;
     final cacheKey = '$normalized|${bias?.latitude}|${bias?.longitude}';
-    if (normalized.isEmpty) return null;
+    if (normalized.isEmpty) return const [];
     if (cacheEnabled && _cache.containsKey(cacheKey)) {
-      return _cache[cacheKey];
+      return _cache[cacheKey]!;
     }
     // Tests with an injected HTTP client can bypass real-time scheduling.
-    if (requestInterval == Duration.zero) return _search(normalized, bias);
+    if (requestInterval == Duration.zero) {
+      final result = await _search(normalized, bias);
+      _remember(cacheKey, result);
+      return result;
+    }
     final previous = _queue;
     final done = Completer<void>();
     _queue = done.future;
     await previous;
     try {
       if (cacheEnabled && _cache.containsKey(cacheKey)) {
-        return _cache[cacheKey];
+        return _cache[cacheKey]!;
       }
       final last = _lastRequest;
       if (last != null) {
@@ -61,12 +70,17 @@ class GeocodingService {
       }
       _lastRequest = DateTime.now();
       final result = await _search(normalized, bias);
-      if (_cache.length >= 100) _cache.remove(_cache.keys.first);
-      if (cacheEnabled) _cache[cacheKey] = result;
+      _remember(cacheKey, result);
       return result;
     } finally {
       done.complete();
     }
+  }
+
+  void _remember(String key, List<GeocodingResult> results) {
+    if (!cacheEnabled) return;
+    if (_cache.length >= 100) _cache.remove(_cache.keys.first);
+    _cache[key] = List.unmodifiable(results);
   }
 
   /// Explicit user resolution only. Stop after evidence of a full match.
@@ -74,49 +88,50 @@ class GeocodingService {
     String query, {
     bool Function()? isCurrent,
   }) async {
-    final parsed = AddressQuery(query);
+    final parsed = AddressQuery(AddressQuery(query).providerQuery);
     final bias = searchBias;
     final results = <GeocodingResult>[];
     for (final variant in parsed.variants.take(AddressQuery.maxVariants)) {
       if (isCurrent != null && !isCurrent()) break;
-      GeocodingResult? result;
+      List<GeocodingResult> matches;
       try {
         searchBias = bias;
-        result = await search(variant);
+        matches = await searchCandidates(variant);
       } catch (_) {
         if (results.isEmpty) rethrow;
         break;
       }
       if (isCurrent != null && !isCurrent()) break;
-      if (result == null) continue;
-      final quality = parsed.precisionFor(
-        result.road,
-        result.houseNumber,
-        result.city,
-      );
-      final candidate = GeocodingResult(
-        latitude: result.latitude,
-        longitude: result.longitude,
-        displayName: result.displayName,
-        road: result.road,
-        houseNumber: result.houseNumber,
-        city: result.city,
-        precision: quality,
-      );
-      if (!results.any(
-        (r) =>
-            r.latitude == candidate.latitude &&
-            r.longitude == candidate.longitude &&
-            r.displayName == candidate.displayName,
-      )) {
-        results.add(candidate);
+      for (final result in matches) {
+        final quality = parsed.precisionFor(
+          result.road,
+          result.houseNumber,
+          result.city,
+        );
+        final candidate = GeocodingResult(
+          latitude: result.latitude,
+          longitude: result.longitude,
+          displayName: result.displayName,
+          road: result.road,
+          houseNumber: result.houseNumber,
+          city: result.city,
+          precision: quality,
+        );
+        if (!results.any(
+          (r) =>
+              r.latitude == candidate.latitude &&
+              r.longitude == candidate.longitude &&
+              r.displayName == candidate.displayName,
+        )) {
+          results.add(candidate);
+        }
       }
-      if (quality == AddressPrecision.specific) break;
+      if (results.any((r) => r.precision == AddressPrecision.specific)) break;
     }
     return parsed.rank(results, bias: bias ?? AddressQuery.metropolitanBias);
   }
 
-  Future<GeocodingResult?> _search(String query, LatLng? bias) async {
+  Future<List<GeocodingResult>> _search(String query, LatLng? bias) async {
     final parsed = AddressQuery(query);
     final focus = bias ?? AddressQuery.metropolitanBias;
     final structured =
@@ -154,6 +169,10 @@ class GeocodingService {
             },
           )
           .timeout(timeout);
+    } on TimeoutException {
+      throw TimeoutException(
+        'Nominatim tardó demasiado. Reintenta o selecciona en el mapa.',
+      );
     } on http.ClientException catch (error) {
       throw GeocodingException(
         'No fue posible conectar con Nominatim: ${error.message}',
@@ -171,7 +190,7 @@ class GeocodingService {
       if (data is! List) {
         throw const FormatException('Se esperaba una lista de resultados.');
       }
-      if (data.isEmpty) return null;
+      if (data.isEmpty) return const [];
 
       final candidates = <GeocodingResult>[];
       for (final first in data) {
@@ -205,11 +224,13 @@ class GeocodingService {
         final road =
             field('road') ?? field('pedestrian') ?? field('residential');
         final house = field('house_number');
-        final city =
-            field('city') ??
-            field('town') ??
-            field('municipality') ??
-            field('village');
+        final city = AddressQuery.providerMunicipality(
+          field('city') ??
+              field('town') ??
+              field('municipality') ??
+              field('village'),
+          field('county'),
+        );
         if (parsed.hasCity && city != null && !parsed.cityMatches(city)) {
           continue;
         }
@@ -225,9 +246,7 @@ class GeocodingService {
           ),
         );
       }
-      return candidates.isEmpty
-          ? null
-          : parsed.rank(candidates, bias: focus).first;
+      return parsed.rank(candidates, bias: focus);
     } on FormatException catch (error) {
       throw GeocodingException(
         'Respuesta inválida de Nominatim: ${error.message}',

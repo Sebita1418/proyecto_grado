@@ -2,13 +2,24 @@ import '../models/address_precision.dart';
 
 import 'package:latlong2/latlong.dart';
 
+enum AddressQueryKind { place, road, numberedAddress, intersection }
+
 /// Query-only normalization. The original text is retained for the UI.
 class AddressQuery {
   AddressQuery(String input) : original = input, normalized = normalize(input) {
-    final match = RegExp(
+    var match = RegExp(
       r'^((?:Calle|Carrera|Avenida|Diagonal|Transversal)\s+\d+[a-z]?(?:\s+bis)?(?:\s+(?:sur|norte|este|oeste))?)(?:\s*#?\s*(\d+[a-z]?)\s*[- ]\s*(\d+[a-z]?))?(?:\s+(?:con\s+)?((?:Calle|Carrera|Avenida|Diagonal|Transversal)\s+\d+[a-z]?))?(.*)$',
       caseSensitive: false,
     ).firstMatch(normalized);
+    final tail = match?[5]?.trim() ?? '';
+    if (tail.isNotEmpty &&
+        !tail.startsWith(',') &&
+        !RegExp(
+          r'^(Bucaramanga|Floridablanca|Girón|Piedecuesta|Bogotá|Medellín)(?:,|$)',
+          caseSensitive: false,
+        ).hasMatch(tail)) {
+      match = null;
+    }
     primaryRoad = match?[1];
     secondaryNumber = match?[2];
     propertyNumber = match?[3];
@@ -18,6 +29,19 @@ class AddressQuery {
   final String original, normalized;
   late final String? primaryRoad, secondaryNumber, propertyNumber, crossingRoad;
   late final String locality;
+  AddressQueryKind get kind => primaryRoad == null
+      ? AddressQueryKind.place
+      : houseNumber != null
+      ? AddressQueryKind.numberedAddress
+      : crossingRoad != null
+      ? AddressQueryKind.intersection
+      : AddressQueryKind.road;
+
+  /// Provider context only; never replaces the user's original input.
+  String get providerQuery => primaryRoad != null && !hasCity
+      ? '$normalized, Bucaramanga, Santander, Colombia'
+      : normalized;
+
   bool get hasCity => locality.isNotEmpty;
   String? get houseNumber =>
       secondaryNumber == null ? null : '$secondaryNumber-$propertyNumber';
@@ -84,6 +108,28 @@ class AddressQuery {
       (city != null &&
           comparable(locality.split(',').first) == comparable(city));
 
+  /// Nominatim uses an urban perimeter as city and the municipality as county
+  /// in Santander. Only accept this documented administrative combination.
+  static String? providerMunicipality(String? city, String? county) {
+    final urban = city?.replaceFirst(
+      RegExp(r'^Per[ií]metro Urbano\s+', caseSensitive: false),
+      '',
+    );
+    const municipalities = [
+      'Bucaramanga',
+      'Floridablanca',
+      'Girón',
+      'Piedecuesta',
+    ];
+    if (county != null &&
+        municipalities.any((m) => comparable(m) == comparable(county)) &&
+        (city == null ||
+            (urban != city && comparable(urban!) == comparable(county)))) {
+      return county;
+    }
+    return city;
+  }
+
   int compatibility(String? road, String? house) {
     if (primaryRoad == null) return 0;
     if (road == null || comparable(road) != comparable(primaryRoad!)) return 0;
@@ -110,6 +156,7 @@ class AddressQuery {
   static const _roads = {
     'cra': 'Carrera',
     'cr': 'Carrera',
+    'kr': 'Carrera',
     'carrera': 'Carrera',
     'cl': 'Calle',
     'calle': 'Calle',
@@ -125,17 +172,19 @@ class AddressQuery {
       .trim()
       .replaceAllMapped(
         RegExp(
-          r'\b(carrera|cra|cr|calle|cl|avenida|av|diagonal|diag|transversal|trans)\.?\s+(?=\d)',
+          r'\b(carrera|cra|cr|kr|calle|cl|avenida|av|diagonal|diag|transversal|trans)\.?\s+(?=\d)',
           caseSensitive: false,
         ),
         (match) => '${_roads[match[1]!.toLowerCase()]} ',
       )
+      .replaceAllMapped(
+        RegExp(r'(\d[a-z]?)\s*-\s*(\d)', caseSensitive: false),
+        (match) => '${match[1]}-${match[2]}',
+      )
       .replaceAll(RegExp(r'\s+'), ' ');
 
-  static bool isAddress(String input) => RegExp(
-    r'^(Carrera|Calle|Avenida|Diagonal|Transversal)\s+\d',
-    caseSensitive: false,
-  ).hasMatch(normalize(input));
+  static bool isAddress(String input) =>
+      AddressQuery(input).primaryRoad != null;
 
   static String forProvider(String input) {
     final normalized = normalize(input);

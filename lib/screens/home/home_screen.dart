@@ -87,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _locating = false;
   bool _signingOut = false;
   RouteResult? _route;
+  LatLng? _plannedOrigin, _plannedDestination;
   IncidentReportDraft? _reportDraft;
   IncidentReportDraft? _preparedReport;
   bool _reportOpen = false;
@@ -481,6 +482,34 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? const EdgeInsets.all(48)
                       : _routePadding(constraints.biggest, wide),
                   overlayMarkers: [
+                    if (!navigating &&
+                        _plannedOrigin != null &&
+                        activeRoute == null)
+                      Marker(
+                        point: _plannedOrigin!,
+                        child: Tooltip(
+                          message: 'Origen seleccionado',
+                          child: Icon(
+                            Icons.trip_origin,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 32,
+                          ),
+                        ),
+                      ),
+                    if (!navigating &&
+                        _plannedDestination != null &&
+                        activeRoute == null)
+                      Marker(
+                        point: _plannedDestination!,
+                        child: Tooltip(
+                          message: 'Destino seleccionado',
+                          child: Icon(
+                            Icons.location_on,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 36,
+                          ),
+                        ),
+                      ),
                     if (_reportOpen &&
                         (_reportDraft?.coordinates ?? position) != null)
                       Marker(
@@ -822,6 +851,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         offstage: navigating,
                         child: MapSearchPanel(
                           initiallyCollapsed: widget.initiallyCollapsed,
+                          onOriginSelected: (point) {
+                            setState(() => _plannedOrigin = point);
+                            if (point != null) _mapController.move(point, 16);
+                          },
+                          onDestinationSelected: (point) {
+                            setState(() => _plannedDestination = point);
+                            if (point != null) _mapController.move(point, 16);
+                          },
                           onAnalytics: () => Navigator.of(context).push(
                             MaterialPageRoute<void>(
                               builder: (_) => const MobilityAnalyticsScreen(),

@@ -16,7 +16,7 @@ void main() {
 
     expect(find.text('Transporte Inteligente'), findsOneWidget);
     expect(find.text('Muévete mejor. Decide tu ruta.'), findsOneWidget);
-    expect(find.byIcon(Icons.directions_bus_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.route_outlined), findsOneWidget);
     expect(find.byIcon(Icons.menu), findsOneWidget);
     expect(find.byIcon(Icons.person_outline), findsOneWidget);
   });

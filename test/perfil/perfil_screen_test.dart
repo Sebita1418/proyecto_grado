@@ -35,6 +35,13 @@ void main() {
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       expect(find.text('Mi perfil'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Información de cuenta'),
+        120,
+        scrollable: find.byType(Scrollable),
+      );
+      await tester.tap(find.text('Información de cuenta'));
+      await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('Preferencias de movilidad'));
       await tester.tap(find.text('Preferencias de movilidad'));
       await tester.pumpAndSettle();
@@ -68,8 +75,27 @@ void main() {
       await tester.pumpWidget(MaterialApp(home: PerfilScreen(perfil: perfil)));
 
       expect(find.text('Mi perfil'), findsOneWidget);
-      expect(find.text('Brayan Jurado'), findsNWidgets(2));
-      expect(find.text('brayan@example.com'), findsNWidgets(2));
+      await tester.scrollUntilVisible(
+        find.text('Información de cuenta'),
+        120,
+        scrollable: find.byType(Scrollable),
+      );
+      await tester.tap(find.text('Información de cuenta'));
+      await tester.pumpAndSettle();
+      expect(
+        find.descendant(
+          of: find.byType(ExpansionTile),
+          matching: find.text('Brayan Jurado'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byType(ExpansionTile),
+          matching: find.text('brayan@example.com'),
+        ),
+        findsOneWidget,
+      );
       expect(find.text('Usuario'), findsOneWidget);
 
       expect(find.text('Nombre'), findsOneWidget);
@@ -95,7 +121,20 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(home: PerfilScreen(perfil: perfil)));
 
-      expect(find.text('Sebastián'), findsNWidgets(2));
+      await tester.scrollUntilVisible(
+        find.text('Información de cuenta'),
+        120,
+        scrollable: find.byType(Scrollable),
+      );
+      await tester.tap(find.text('Información de cuenta'));
+      await tester.pumpAndSettle();
+      expect(
+        find.descendant(
+          of: find.byType(ExpansionTile),
+          matching: find.text('Sebastián'),
+        ),
+        findsOneWidget,
+      );
       expect(find.text('Administrador'), findsOneWidget);
       await tester.scrollUntilVisible(
         find.text('Estado de la cuenta'),

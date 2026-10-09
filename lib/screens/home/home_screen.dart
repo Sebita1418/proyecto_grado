@@ -42,9 +42,11 @@ class HomeScreen extends StatefulWidget {
     this.routingService,
     this.placeSuggestionService,
     this.roadIncidentService,
+    this.initiallyCollapsed = true,
   });
   final LocationService? locationService;
   final RoadIncidentService? roadIncidentService;
+  final bool initiallyCollapsed;
   final Future<Perfil?> Function()? loadProfile;
   final GeocodingService? geocodingService;
   final OsrmRoutingService? routingService;
@@ -65,7 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Conservative reserved height for [NavigationHeader] so notices and
   /// floating controls never overlap it at large text scales.
-  static const double _headerReservedHeight = 60;
+  double get _headerReservedHeight =>
+      NavigationHeader.reservedHeight(MediaQuery.textScalerOf(context));
   final MapController _mapController = MapController();
   late final _location = widget.locationService ?? LocationService();
   late final _routing = widget.routingService ?? OsrmRoutingService();
@@ -89,12 +92,14 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _reportOpen = false;
   bool _showPosition = true;
   bool _showRoute = true;
-  bool _panelCollapsed = false;
+  bool _panelCollapsed = true;
+  VoidCallback? _validationAction;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    _panelCollapsed = widget.initiallyCollapsed;
     _navigation.addListener(_navigationChanged);
     _incidents.addListener(_incidentsChanged);
     _incidents.refresh();
@@ -200,16 +205,36 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_perfil != null) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => PerfilScreen(perfil: _perfil!)),
+        MaterialPageRoute(builder: (_) => _profilePage()),
       );
     } else {
       setState(() => _showProfileNotice = true);
     }
   }
 
+  Widget _profilePage() {
+    bool? authenticated;
+    String? provider;
+    try {
+      final auth = Supabase.instance.client.auth;
+      authenticated =
+          auth.currentSession != null && auth.currentUser?.id == _perfil?.id;
+      provider = auth.currentUser?.appMetadata['provider'] as String?;
+    } catch (_) {
+      /* Tests or an unavailable session remain explicitly unknown. */
+    }
+    return PerfilScreen(
+      perfil: _perfil!,
+      locationStatus: _locationStatus,
+      authenticated: authenticated,
+      provider: provider,
+      onSignOut: _signOut,
+    );
+  }
+
   Future<void> _openReportSheet() async {
     if (_reportOpen) return;
-    _reportOpen = true;
+    setState(() => _reportOpen = true);
     var published = false;
     await showModalBottomSheet<IncidentReportDraft>(
       context: context,
@@ -223,7 +248,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ? _navigation.currentPosition
               : _position,
           initialDraft: _reportDraft,
-          onDraftChanged: (draft) => _reportDraft = draft,
+          onDraftChanged: (draft) {
+            _reportDraft = draft;
+            if (mounted) setState(() {});
+          },
           onDiscard: () {
             setState(() {
               _reportDraft = null;
@@ -276,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-    _reportOpen = false;
+    if (mounted) setState(() => _reportOpen = false);
     if (mounted && published && !_navigation.isActive) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -411,6 +439,12 @@ class _HomeScreenState extends State<HomeScreen> {
         onHome: () => Navigator.pop(context),
         onRoutes: () => _open(const RutasScreen()),
         onAnalytics: () => _open(const MobilityAnalyticsScreen()),
+        onValidation: _validationAction == null
+            ? null
+            : () {
+                Navigator.pop(context);
+                _validationAction!();
+              },
         onRoadIncidents: () {
           Navigator.pop(context);
           _openReports();
@@ -418,7 +452,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onNearby: () => _open(const NearbyPlacesScreen()),
         onProfile: () {
           if (_perfil != null) {
-            _open(PerfilScreen(perfil: _perfil!));
+            _open(_profilePage());
           } else {
             Navigator.pop(context);
             setState(() => _showProfileNotice = true);
@@ -447,6 +481,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? const EdgeInsets.all(48)
                       : _routePadding(constraints.biggest, wide),
                   overlayMarkers: [
+                    if (_reportOpen &&
+                        (_reportDraft?.coordinates ?? position) != null)
+                      Marker(
+                        point: (_reportDraft?.coordinates ?? position)!,
+                        width: 36,
+                        height: 36,
+                        child: const Tooltip(
+                          message: 'Ubicación del borrador, sin publicar',
+                          child: Icon(
+                            Icons.location_on,
+                            color: Color(0xFFD83B46),
+                            size: 36,
+                          ),
+                        ),
+                      ),
                     for (final report in _incidents.reports)
                       Marker(
                         point: report.coordinates,
@@ -708,44 +757,47 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-              Positioned(
-                right: edge,
-                top: navigating
-                    ? short
-                          ? edge + 176
-                          : (wide
-                                ? edge + 64
-                                : edge + constraints.maxHeight * .30 + 8)
-                    : wide
-                    ? edge + 184
-                    : null,
-                bottom: wide || navigating
-                    ? null
-                    : (_panelCollapsed ? 64 : constraints.maxHeight * .48) +
-                          2 * edge,
-                child: SafeArea(
-                  top: false,
-                  child: short
-                      ? IconButton.filledTonal(
-                          tooltip: 'Reportar novedad vial',
-                          onPressed: _openReportSheet,
-                          icon: const Icon(Icons.add_location_alt_outlined),
-                        )
-                      : FloatingActionButton.extended(
-                          heroTag: 'report-incident',
-                          elevation: 3,
-                          backgroundColor: colorScheme.surface,
-                          foregroundColor: colorScheme.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+              if (navigating)
+                Positioned(
+                  right: edge,
+                  top: navigating
+                      ? short
+                            ? edge + 176
+                            : (wide
+                                  ? edge + 64
+                                  : edge + constraints.maxHeight * .30 + 8)
+                      : wide
+                      ? edge + 184
+                      : null,
+                  bottom: wide || navigating
+                      ? null
+                      : (_panelCollapsed
+                                ? 160
+                                : constraints.maxHeight * (short ? .48 : .70)) +
+                            2 * edge,
+                  child: SafeArea(
+                    top: false,
+                    child: short
+                        ? IconButton.filledTonal(
+                            tooltip: 'Reportar novedad vial',
+                            onPressed: _openReportSheet,
+                            icon: const Icon(Icons.add_location_alt_outlined),
+                          )
+                        : FloatingActionButton.extended(
+                            heroTag: 'report-incident',
+                            elevation: 3,
+                            backgroundColor: colorScheme.surface,
+                            foregroundColor: colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            tooltip: 'Reportar novedad vial',
+                            icon: const Icon(Icons.add_location_alt_outlined),
+                            label: const Text('Reportar'),
+                            onPressed: _openReportSheet,
                           ),
-                          tooltip: 'Reportar novedad vial',
-                          icon: const Icon(Icons.add_location_alt_outlined),
-                          label: const Text('Reportar'),
-                          onPressed: _openReportSheet,
-                        ),
+                  ),
                 ),
-              ),
               Positioned(
                 key: const ValueKey('route-panel'),
                 left: edge,
@@ -769,10 +821,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         key: const ValueKey('route-planner'),
                         offstage: navigating,
                         child: MapSearchPanel(
+                          initiallyCollapsed: widget.initiallyCollapsed,
+                          onAnalytics: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const MobilityAnalyticsScreen(),
+                            ),
+                          ),
+                          onReport: _openReportSheet,
+                          onValidationAccessChanged: (action) {
+                            if (mounted && _validationAction != action) {
+                              setState(() => _validationAction = action);
+                            }
+                          },
                           incidentReports: _incidents.reports,
                           reportsAvailable:
                               _incidents.ready && _incidents.error == null,
-                          maxHeight: constraints.maxHeight * .46,
+                          maxHeight:
+                              constraints.maxHeight *
+                              (short || _showProfileNotice ? .46 : .68),
                           onCollapsedChanged: (collapsed) =>
                               setState(() => _panelCollapsed = collapsed),
                           currentPosition: _position,

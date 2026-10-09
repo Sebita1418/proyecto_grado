@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../mobility/validation/mobility_validation.dart';
 import '../../theme/mobility_theme.dart';
+import '../../widgets/mobility_section_card.dart';
+import '../../widgets/mobility_evidence_summary.dart';
 
 class MobilityValidationScreen extends StatelessWidget {
   const MobilityValidationScreen({super.key, required this.snapshot});
@@ -11,22 +13,22 @@ class MobilityValidationScreen extends StatelessWidget {
       ? 'No evaluable (referencia cero o datos ausentes)'
       : '${value.toStringAsFixed(1)} %';
   Widget section(BuildContext context, String title, List<Widget> children) =>
-      Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 12),
-              ...children,
-            ],
-          ),
+      MobilitySectionCard(
+        title: title,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: children,
         ),
       );
+  Color ruleColor(BuildContext context, ValidationRuleStatus status) =>
+      switch (status) {
+        ValidationRuleStatus.pass => MobilityDesign.positive,
+        ValidationRuleStatus.fail => Theme.of(context).colorScheme.error,
+        ValidationRuleStatus.unknown => MobilityDesign.warning,
+        ValidationRuleStatus.notApplicable => Theme.of(
+          context,
+        ).colorScheme.onSurfaceVariant,
+      };
   @override
   Widget build(BuildContext context) {
     final s = snapshot;
@@ -41,7 +43,12 @@ class MobilityValidationScreen extends StatelessWidget {
       MobilityValidationStatus.noRecommendation => 'Sin recomendación',
     };
     return Scaffold(
-      appBar: AppBar(title: const Text('Validación de recomendación')),
+      appBar: AppBar(
+        toolbarHeight: MobilityDesign.appBarHeight(
+          MediaQuery.textScalerOf(context),
+        ),
+        title: const Text('Validación de recomendación', maxLines: 3),
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: ConstrainedBox(
@@ -52,6 +59,42 @@ class MobilityValidationScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text('Recomendación determinista · Datos observados'),
+                  MobilityEvidenceSummary(
+                    label: 'REGLAS OBSERVADAS',
+                    value:
+                        '${s.rules.where((r) => r.status == ValidationRuleStatus.pass).length} de ${s.rules.where((r) => r.status == ValidationRuleStatus.pass || r.status == ValidationRuleStatus.fail).length} criterios evaluables',
+                    detail: s.input.suggestedId == null
+                        ? 'No hay una salida sugerida para esta evaluación.'
+                        : status,
+                    icon: Icons.verified_user_outlined,
+                  ),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      for (final item in [
+                        'PASS',
+                        'FAIL',
+                        'UNKNOWN',
+                        'NOT_APPLICABLE',
+                      ])
+                        Chip(
+                          backgroundColor:
+                              (item == 'PASS'
+                                      ? MobilityDesign.positive
+                                      : item == 'FAIL'
+                                      ? MobilityDesign.danger
+                                      : item == 'UNKNOWN'
+                                      ? MobilityDesign.warning
+                                      : Colors.grey)
+                                  .withValues(alpha: .1),
+                          label: Text(
+                            item,
+                            style: const TextStyle(color: MobilityDesign.ink),
+                          ),
+                        ),
+                    ],
+                  ),
                   section(context, 'Resumen', [
                     Text(status),
                     Text('Alternativas evaluadas: ${s.evaluatedCount}'),
@@ -88,20 +131,39 @@ class MobilityValidationScreen extends StatelessWidget {
                     for (final rule in s.rules)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${switch (rule.status) {
-                                ValidationRuleStatus.pass => '✓ Cumple',
-                                ValidationRuleStatus.fail => '× No cumple',
-                                ValidationRuleStatus.unknown => '! No evaluable',
-                                ValidationRuleStatus.notApplicable => '— No aplica',
-                              }} · ${rule.label}',
-                              style: Theme.of(context).textTheme.titleSmall,
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: ruleColor(
+                              context,
+                              rule.status,
+                            ).withValues(alpha: .07),
+                            borderRadius: BorderRadius.circular(
+                              MobilityDesign.controlRadius,
                             ),
-                            Text(rule.explanation),
-                          ],
+                            border: Border.all(
+                              color: ruleColor(
+                                context,
+                                rule.status,
+                              ).withValues(alpha: .22),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${switch (rule.status) {
+                                  ValidationRuleStatus.pass => '✓ Cumple',
+                                  ValidationRuleStatus.fail => '× No cumple',
+                                  ValidationRuleStatus.unknown => '! No evaluable',
+                                  ValidationRuleStatus.notApplicable => '— No aplica',
+                                }} · ${rule.label}',
+                                style: Theme.of(context).textTheme.titleSmall
+                                    ?.copyWith(color: MobilityDesign.ink),
+                              ),
+                              Text(rule.explanation),
+                            ],
+                          ),
                         ),
                       ),
                   ]),

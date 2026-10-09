@@ -49,6 +49,23 @@ const secondRoute = RouteResult(
 );
 
 Future<void> tapLabel(WidgetTester tester, String label) async {
+  if (find.byType(Drawer).evaluate().isNotEmpty) {
+    final drawerTarget = find.descendant(
+      of: find.byType(Drawer),
+      matching: find.text(label),
+    );
+    await tester.scrollUntilVisible(
+      drawerTarget,
+      120,
+      scrollable: find.descendant(
+        of: find.byType(Drawer),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    await tester.tap(drawerTarget);
+    await tester.pumpAndSettle();
+    return;
+  }
   final tile = find.ancestor(
     of: find.text(label),
     matching: find.byType(ListTile),
@@ -188,6 +205,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: HomeScreen(
+          initiallyCollapsed: false,
           locationService: FixedLocation(),
           loadProfile: () async => null,
           geocodingService: FixedGeocoding(),
@@ -387,6 +405,7 @@ void main() {
             child: child!,
           ),
           home: HomeScreen(
+            initiallyCollapsed: false,
             locationService: FixedLocation(),
             loadProfile: () async => null,
             geocodingService: FixedGeocoding(),
@@ -829,7 +848,13 @@ void main() {
       ),
     );
     await tester.pump();
-    expect(find.text('11 min'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(RouteResultCard),
+        matching: find.text('11 min'),
+      ),
+      findsOneWidget,
+    );
   });
   testWidgets('selecciones Photon manuales evitan geocodificación', (
     tester,
@@ -907,7 +932,13 @@ void main() {
       );
       await tester.pump();
       expect(find.text('7.4 km'), findsOneWidget);
-      expect(find.text('18 min'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(RouteResultCard),
+          matching: find.text('18 min'),
+        ),
+        findsOneWidget,
+      );
       expect(find.byType(RouteResultCard), findsOneWidget);
       expect(find.text('Analizar rutas'), findsNothing);
       expect(find.text('Tu ubicación actual'), findsOneWidget);

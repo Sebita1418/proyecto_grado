@@ -21,6 +21,12 @@ class NavigationHeader extends StatelessWidget {
   final Widget? userAvatar;
   final String title;
   final String subtitle;
+  static double reservedHeight(TextScaler scaler) {
+    final scale = scaler.scale(14) / 14;
+    return scale <= 1.3
+        ? 60
+        : 16 + 2 * scaler.scale(14) * 1.2 + scaler.scale(12) * 1.25;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +34,8 @@ class NavigationHeader extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Material(
-      elevation: 5,
-      shadowColor: colorScheme.shadow.withValues(alpha: 0.18),
+      elevation: MobilityDesign.floatingElevation,
+      shadowColor: colorScheme.shadow.withValues(alpha: 0.12),
       color: colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
@@ -49,20 +55,19 @@ class NavigationHeader extends StatelessWidget {
                 tooltip: 'Abrir menú de navegación',
                 onPressed: onMenuPressed,
               ),
-              if (MediaQuery.sizeOf(context).width >= 400)
-                Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(11),
-                  ),
-                  child: Icon(
-                    Icons.directions_bus_outlined,
-                    color: colorScheme.onPrimaryContainer,
-                    size: 20,
-                  ),
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  borderRadius: BorderRadius.circular(11),
                 ),
+                child: Icon(
+                  Icons.route_outlined,
+                  color: colorScheme.onPrimary,
+                  size: 20,
+                ),
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
@@ -77,7 +82,10 @@ class NavigationHeader extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           height: 1.2,
                         ),
-                        maxLines: 1,
+                        maxLines:
+                            MediaQuery.textScalerOf(context).scale(14) > 18.2
+                            ? 2
+                            : 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

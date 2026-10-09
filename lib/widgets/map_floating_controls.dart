@@ -28,10 +28,11 @@ class MapFloatingControls extends StatelessWidget {
   final ValueChanged<bool> onShowPosition, onShowRoute;
 
   Widget _surface(BuildContext context, Widget child) => Material(
-    elevation: 5,
+    elevation: MobilityDesign.floatingElevation,
+    shadowColor: Theme.of(context).colorScheme.shadow.withValues(alpha: .12),
     color: Theme.of(context).colorScheme.surface,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
+      borderRadius: BorderRadius.circular(MobilityDesign.controlRadius),
       side: BorderSide(
         color: Theme.of(context).colorScheme.outlineVariant
             .withValues(alpha: .55),

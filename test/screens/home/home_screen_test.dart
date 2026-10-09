@@ -26,6 +26,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: HomeScreen(
+          initiallyCollapsed: false,
           locationService: FakeLocationService(
             const LocationResult(
               LocationStatus.coordinatesObtained,
@@ -46,7 +47,14 @@ void main() {
       of: find.byType(Drawer),
       matching: find.text('Perfil'),
     );
-    await tester.ensureVisible(profile);
+    await tester.scrollUntilVisible(
+      profile,
+      120,
+      scrollable: find.descendant(
+        of: find.byType(Drawer),
+        matching: find.byType(Scrollable),
+      ),
+    );
     await tester.pumpAndSettle();
     await tester.tap(profile);
     await tester.pumpAndSettle();
@@ -69,6 +77,7 @@ void main() {
               child: child!,
             ),
             home: HomeScreen(
+              initiallyCollapsed: false,
               locationService: FakeLocationService(
                 const LocationResult(
                   LocationStatus.coordinatesObtained,
@@ -87,7 +96,8 @@ void main() {
         await tester.tap(find.text('Reintentar'));
         await tester.pumpAndSettle();
         expect(loads, 2);
-        await tester.tap(find.byType(FloatingActionButton).first);
+        await tester.ensureVisible(find.byTooltip('Reportar novedad vial'));
+        await tester.tap(find.byTooltip('Reportar novedad vial'));
         await tester.pump();
         expect(find.byType(RouteMap), findsOneWidget);
         expect(find.byType(MaterialBanner), findsOneWidget);
@@ -195,6 +205,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: HomeScreen(
+          initiallyCollapsed: false,
           locationService: FakeLocationService(result),
           loadProfile: () async => null,
         ),
@@ -234,6 +245,14 @@ void main() {
       isTrue,
     );
     expect(find.text('Rutas'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Cerrar sesión'),
+      120,
+      scrollable: find.descendant(
+        of: find.byType(Drawer),
+        matching: find.byType(Scrollable),
+      ),
+    );
     expect(find.text('Puntos cercanos'), findsOneWidget);
     expect(find.text('Perfil'), findsOneWidget);
     expect(find.text('Cerrar sesión'), findsOneWidget);
@@ -258,6 +277,15 @@ void main() {
     );
     for (final useBackButton in [false, true]) {
       await tester.tap(find.byTooltip('Abrir menú de navegación'));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Puntos cercanos'),
+        120,
+        scrollable: find.descendant(
+          of: find.byType(Drawer),
+          matching: find.byType(Scrollable),
+        ),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('Puntos cercanos'));
       await tester.pumpAndSettle();

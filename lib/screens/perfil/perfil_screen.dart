@@ -2,46 +2,117 @@ import 'package:flutter/material.dart';
 
 import '../../models/perfil_model.dart';
 import '../preferences/mobility_preferences_screen.dart';
+import '../../services/location_service.dart';
+import '../../theme/mobility_theme.dart';
 
 class PerfilScreen extends StatelessWidget {
-  const PerfilScreen({super.key, required this.perfil});
+  const PerfilScreen({
+    super.key,
+    required this.perfil,
+    this.locationStatus,
+    this.authenticated,
+    this.provider,
+    this.onSignOut,
+  });
 
   final Perfil perfil;
+  final LocationStatus? locationStatus;
+  final bool? authenticated;
+  final String? provider;
+  final VoidCallback? onSignOut;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Mi perfil'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Mi perfil'),
+        toolbarHeight: MobilityDesign.appBarHeight(
+          MediaQuery.textScalerOf(context),
+        ),
+      ),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         children: [
-          const SizedBox(height: 12),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 26,
+                    child: Text(
+                      _obtenerInicial(perfil.nombre),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: colors.primary,
+                      ),
+                    ),
+                  ),
 
-          CircleAvatar(
-            radius: 48,
-            child: Text(
-              _obtenerInicial(perfil.nombre),
-              style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(perfil.nombre, style: theme.textTheme.titleMedium),
+
+                        const SizedBox(height: 6),
+
+                        Text(
+                          perfil.correo,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          authenticated == null
+                              ? 'Sesión no verificada'
+                              : authenticated!
+                              ? 'Sesión autenticada'
+                              : 'Sesión no disponible',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: authenticated == true
+                                ? MobilityDesign.positive
+                                : colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-
-          const SizedBox(height: 16),
-
+          const SizedBox(height: 12),
           Text(
-            perfil.nombre,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            'CUENTA',
+            style: theme.textTheme.labelSmall?.copyWith(letterSpacing: 1),
           ),
-
-          const SizedBox(height: 6),
-
-          Text(
-            perfil.correo,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+          _PerfilInfoCard(
+            icon: Icons.my_location,
+            label: 'Permiso de ubicación',
+            value: switch (locationStatus) {
+              LocationStatus.coordinatesObtained => 'Ubicación obtenida',
+              LocationStatus.permissionGranted => 'Permiso concedido',
+              LocationStatus.permissionDenied => 'Permiso denegado',
+              LocationStatus.permissionDeniedForever => 'Permiso bloqueado',
+              LocationStatus.serviceDisabled => 'GPS desactivado',
+              _ => 'Estado no disponible',
+            },
           ),
-
-          const SizedBox(height: 28),
+          _PerfilInfoCard(
+            icon: Icons.login_outlined,
+            label: 'Proveedor de cuenta',
+            value: provider == 'google'
+                ? 'Google'
+                : provider == 'email'
+                ? 'Correo electrónico'
+                : provider ?? 'No disponible',
+          ),
 
           Card(
             child: ListTile(
@@ -59,36 +130,66 @@ class PerfilScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          _PerfilInfoCard(
-            icon: Icons.person_outline,
-            label: 'Nombre',
-            value: perfil.nombre,
+          ExpansionTile(
+            title: const Text('Información de cuenta'),
+            children: [
+              _PerfilInfoCard(
+                icon: Icons.person_outline,
+                label: 'Nombre',
+                value: perfil.nombre,
+              ),
+
+              const SizedBox(height: 12),
+
+              _PerfilInfoCard(
+                icon: Icons.email_outlined,
+                label: 'Correo electrónico',
+                value: perfil.correo,
+              ),
+
+              const SizedBox(height: 12),
+
+              _PerfilInfoCard(
+                icon: Icons.badge_outlined,
+                label: 'Rol',
+                value: _formatearRol(perfil.rol),
+              ),
+
+              const SizedBox(height: 12),
+
+              _PerfilInfoCard(
+                icon: perfil.activo
+                    ? Icons.check_circle_outline
+                    : Icons.block_outlined,
+                label: 'Estado de la cuenta',
+                value: perfil.activo ? 'Activa' : 'Inactiva',
+              ),
+            ],
           ),
-
           const SizedBox(height: 12),
-
-          _PerfilInfoCard(
-            icon: Icons.email_outlined,
-            label: 'Correo electrónico',
-            value: perfil.correo,
+          Text(
+            'ACERCA DE',
+            style: theme.textTheme.labelSmall?.copyWith(letterSpacing: 1),
           ),
-
-          const SizedBox(height: 12),
-
-          _PerfilInfoCard(
-            icon: Icons.badge_outlined,
-            label: 'Rol',
-            value: _formatearRol(perfil.rol),
+          const _PerfilInfoCard(
+            icon: Icons.info_outline,
+            label: 'Transporte Inteligente',
+            value: 'Proyecto académico de movilidad',
           ),
-
-          const SizedBox(height: 12),
-
-          _PerfilInfoCard(
-            icon: perfil.activo
-                ? Icons.check_circle_outline
-                : Icons.block_outlined,
-            label: 'Estado de la cuenta',
-            value: perfil.activo ? 'Activa' : 'Inactiva',
+          const _PerfilInfoCard(
+            icon: Icons.shield_outlined,
+            label: 'Privacidad y datos',
+            value: 'Ubicación para consultar rutas y navegar. Indicadores históricos agregados.',
+          ),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: MobilityDesign.danger,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: onSignOut,
+            icon: const Icon(Icons.logout),
+            label: const Text('Cerrar sesión'),
           ),
         ],
       ),
@@ -132,11 +233,11 @@ class _PerfilInfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            Icon(icon, size: 30),
-            const SizedBox(width: 16),
+            Icon(icon, size: 22, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,7 +250,7 @@ class _PerfilInfoCard extends StatelessWidget {
                   Text(
                     value,
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

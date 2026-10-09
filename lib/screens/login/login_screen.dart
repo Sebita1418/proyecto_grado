@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/google_auth_service.dart';
 import '../../services/perfil_service.dart';
 import '../../widgets/google_sign_in_button.dart';
+import '../../theme/mobility_theme.dart';
 import '../home/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -227,21 +228,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(MobilityDesign.pageInset),
             child: Container(
               constraints: const BoxConstraints(maxWidth: 420),
-              padding: const EdgeInsets.all(28),
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                color: colors.surface,
+                borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
+                border: Border.all(
+                  color: colors.outlineVariant.withValues(alpha: .6),
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
+                    color: colors.shadow.withValues(alpha: 0.04),
                     blurRadius: 15,
                     offset: const Offset(0, 5),
                   ),
@@ -250,21 +255,21 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
-                    Icons.directions_bus,
-                    size: 80,
-                    color: Colors.blue,
-                  ),
+                  Icon(Icons.directions_bus, size: 64, color: colors.primary),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Transporte Inteligente',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Inicia sesión para continuar',
-                    style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colors.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 30),
                   TextField(
@@ -274,9 +279,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: InputDecoration(
                       labelText: 'Correo electrónico',
                       prefixIcon: const Icon(Icons.email_outlined),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -293,6 +295,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       labelText: 'Contraseña',
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
+                        tooltip: obscurePassword
+                            ? 'Mostrar contraseña'
+                            : 'Ocultar contraseña',
                         icon: Icon(
                           obscurePassword
                               ? Icons.visibility_off
@@ -306,15 +311,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 });
                               },
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                     ),
                   ),
                   const SizedBox(height: 25),
                   SizedBox(
                     width: double.infinity,
-                    height: 50,
+                    // Let labels grow under accessibility text scaling.
                     child: ElevatedButton(
                       onPressed: _bloqueado ? null : iniciarSesion,
                       child: isLoading
@@ -334,7 +336,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Text(
                           'o',
-                          style: TextStyle(color: Colors.grey[600]),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colors.onSurfaceVariant,
+                          ),
                         ),
                       ),
                       const Expanded(child: Divider()),

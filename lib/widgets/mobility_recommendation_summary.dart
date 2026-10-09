@@ -107,9 +107,7 @@ class MobilityRecommendationSummary extends StatelessWidget {
             color: theme.colorScheme.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(MobilityDesign.cardRadius),
-              side: BorderSide(
-                color: theme.colorScheme.primary.withValues(alpha: .36),
-              ),
+              side: BorderSide(color: theme.colorScheme.primary, width: 1.5),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -155,9 +153,26 @@ class MobilityRecommendationSummary extends StatelessWidget {
                       if (updating)
                         const Text('Actualizando análisis de movilidad…')
                       else ...[
-                        Text(
-                          'Alternativa ${suggestedIndex + 1} · ${insight.duration} · ${insight.distance}',
-                          style: theme.textTheme.titleSmall,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Alternativa ${suggestedIndex + 1} · ${insight.duration} · ${insight.distance}',
+                                style: theme.textTheme.titleSmall,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                insight.duration,
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 8),
                         for (final highlight in insight.highlights.take(3))

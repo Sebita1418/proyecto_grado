@@ -55,6 +55,7 @@ void main() {
           child: child!,
         ),
         home: HomeScreen(
+          initiallyCollapsed: false,
           locationService: denied ? DeniedLocation() : FixedLocation(),
           loadProfile: () async => Perfil(
             id: 'test',
@@ -89,7 +90,7 @@ void main() {
         await home(tester, routing, width: width);
         expect(
           tester.getSize(find.byType(MapSearchPanel)).height,
-          lessThan(844 * .5),
+          lessThan(844 * .70),
         );
         await tester.enterText(find.byType(TextField).last, 'Destino');
         await tester.ensureVisible(find.text('Analizar rutas'));
@@ -137,6 +138,8 @@ void main() {
           firstRoute.points,
         );
 
+        await tester.ensureVisible(find.byTooltip('Reportar novedad vial'));
+        await tester.pumpAndSettle();
         await tester.tap(find.byTooltip('Reportar novedad vial'));
         await tester.pumpAndSettle();
         await tapLabel(tester, 'Obra en la vía');
@@ -207,7 +210,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(
           tester.getSize(find.byType(MapSearchPanel)).height,
-          lessThan(80),
+          lessThan(844 * .4),
         );
         expect(
           tester

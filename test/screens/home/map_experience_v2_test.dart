@@ -47,6 +47,7 @@ void main() {
           child: child!,
         ),
         home: HomeScreen(
+          initiallyCollapsed: false,
           locationService: TestLocationService(),
           loadProfile: () async => null,
         ),
@@ -67,7 +68,7 @@ void main() {
       final panel = tester.getRect(find.byType(MapSearchPanel));
       expect(controls.overlaps(report), isFalse);
       expect(controls.overlaps(panel), isFalse);
-      expect(report.overlaps(panel), isFalse);
+      expect(panel.contains(report.center), isTrue);
       expect(panel.bottom, lessThanOrEqualTo(444));
       expect(tester.takeException(), isNull);
     },
@@ -89,7 +90,7 @@ void main() {
       // Verify floating controls
       expect(find.byTooltip('Mi ubicación'), findsWidgets);
       expect(find.byTooltip('Reportar novedad vial'), findsOneWidget);
-      expect(find.text('Reportar'), findsOneWidget);
+      expect(find.byTooltip('Reportar novedad vial'), findsOneWidget);
 
       // Verify mode selector in search panel
       expect(find.byType(TravelModeSelector), findsOneWidget);
@@ -149,8 +150,17 @@ void main() {
       expect(find.byType(ReportIncidentSheet), findsOneWidget);
 
       expect(
-        tester.widget<RouteMap>(find.byType(RouteMap)).overlayMarkers,
-        isEmpty,
+        tester
+            .widget<RouteMap>(find.byType(RouteMap))
+            .overlayMarkers
+            .single
+            .point,
+        const LatLng(7.1193, -73.1227),
+      );
+      expect(find.byType(RoadIncidentMarker), findsNothing);
+      expect(
+        find.byTooltip('Ubicación del borrador, sin publicar'),
+        findsOneWidget,
       );
 
       // Select 'Congestión'

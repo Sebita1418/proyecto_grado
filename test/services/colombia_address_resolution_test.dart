@@ -189,18 +189,18 @@ void main() {
     },
   );
   test(
-    'GPS produce viewbox de preferencia, sin imponer municipio ni bounded',
+    'dirección implícita usa Bucaramanga sin límites rectangulares',
     () async {
       final service = GeocodingService(
         requestInterval: Duration.zero,
         client: MockClient((request) async {
-          expect(request.url.queryParameters['viewbox'], startsWith('-73.28'));
+          expect(request.url.queryParameters.containsKey('viewbox'), isFalse);
           expect(request.url.queryParameters.containsKey('bounded'), isFalse);
-          expect(
-            request.url.queryParameters['q'],
-            isNot(contains('Bucaramanga')),
+          expect(request.url.queryParameters['q'], contains('Bucaramanga'));
+          return http.Response(
+            jsonEncode([candidate(house: '6-51', city: 'Bucaramanga')]),
+            200,
           );
-          return http.Response(jsonEncode([candidate(house: '6-51')]), 200);
         }),
       )..searchBias = const LatLng(7.06, -73.1);
       expect(
@@ -248,8 +248,11 @@ void main() {
       client: MockClient((request) async {
         calls++;
         expect(request.url.host, 'photon.komoot.io');
-        expect(request.url.queryParameters['lat'], '7.06');
-        expect(request.url.queryParameters['q'], 'Calle 69 # 6-51');
+        expect(request.url.queryParameters.containsKey('lat'), isFalse);
+        expect(
+          request.url.queryParameters['q'],
+          'Calle 69 # 6-51, Bucaramanga, Santander, Colombia',
+        );
         return http.Response(
           jsonEncode({
             'features': [
@@ -260,7 +263,7 @@ void main() {
                 'properties': {
                   'street': 'Calle 69',
                   'housenumber': '6-51',
-                  'city': 'Floridablanca',
+                  'city': 'Bucaramanga',
                 },
               },
             ],

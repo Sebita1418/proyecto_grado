@@ -54,7 +54,10 @@ void main() {
       final service = PlaceSuggestionService(
         client: MockClient((request) async {
           expect(request.url.host, 'photon.komoot.io');
-          expect(request.url.queryParameters['q'], 'Carrera 27 # 10-15');
+          expect(
+            request.url.queryParameters['q'],
+            'Carrera 27 # 10-15, Bucaramanga, Santander, Colombia',
+          );
           return http.Response(
             jsonEncode({
               'features': [

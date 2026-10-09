@@ -12,8 +12,12 @@ class ReportLocationPicker extends StatefulWidget {
     required this.initialCenter,
     this.route,
     this.currentPosition,
+    this.title = 'Ubicación del reporte',
+    this.pointLabel = 'Ubicación del borrador de novedad',
+    this.instruction = 'Toca el mapa para colocar el marcador del borrador.',
   });
 
+  final String title, pointLabel, instruction;
   final LatLng initialCenter;
   final RouteResult? route;
   final LatLng? currentPosition;
@@ -29,7 +33,7 @@ class _ReportLocationPickerState extends State<ReportLocationPicker> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Ubicación del reporte')),
+      appBar: AppBar(title: Text(widget.title)),
       body: Stack(
         children: [
           Positioned.fill(
@@ -70,7 +74,7 @@ class _ReportLocationPickerState extends State<ReportLocationPicker> {
                     height: 56,
                     child: Semantics(
                       container: true,
-                      label: 'Ubicación del borrador de novedad',
+                      label: widget.pointLabel,
                       child: Icon(
                         Icons.add_location_alt,
                         size: 48,
@@ -98,15 +102,15 @@ class _ReportLocationPickerState extends State<ReportLocationPicker> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Text(
-                            'Seleccionando ubicación del reporte',
+                          Text(
+                            widget.title,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Semantics(
                             liveRegion: true,
                             child: Text(
                               _selected == null
-                                  ? 'Toca el mapa para colocar el marcador del borrador.'
+                                  ? widget.instruction
                                   : '${_selected!.latitude.toStringAsFixed(5)}, ${_selected!.longitude.toStringAsFixed(5)}. Toca otro punto para moverlo.',
                             ),
                           ),

@@ -61,14 +61,11 @@ class PlaceSuggestionService {
   Future<List<PlaceSuggestion>> search(String query) async {
     final trimmedQuery = query.trim();
     if (trimmedQuery.length < 3) return const [];
-    final parsed = AddressQuery(trimmedQuery);
+    final parsed = AddressQuery(AddressQuery(trimmedQuery).providerQuery);
     final bias =
         searchBias ??
         (parsed.primaryRoad != null ? AddressQuery.metropolitanBias : null);
-    var uri = buildPhotonUri(
-      AddressQuery.forProvider(trimmedQuery),
-      bias: bias,
-    );
+    var uri = buildPhotonUri(parsed.normalized, bias: bias);
     if (parsed.hasCity) {
       final parameters = Map<String, String>.of(uri.queryParameters)
         ..remove('lat')
@@ -172,7 +169,10 @@ class PlaceSuggestionService {
 
     final descriptionParts = <String>[];
     final street = _text(properties['street']);
-    final city = _text(properties['city']);
+    final city = AddressQuery.providerMunicipality(
+      _text(properties['city']),
+      _text(properties['county']),
+    );
     if (query.hasCity && city != null && !query.cityMatches(city)) return null;
     final state = _text(properties['state']);
     final country = _text(properties['country']);

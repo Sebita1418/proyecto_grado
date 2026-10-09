@@ -1,20 +1,18 @@
 # Búsqueda de lugares y direcciones
 
 Photon conserva el autocomplete con debounce de 450 ms y descarte por versión
-de consulta. `AddressQuery` expande Cra/Cr, Cl, Av, Diag y Trans únicamente ante
+de consulta. `AddressQuery` expande Cra/Cr/Kr, Cl, Av, Diag y Trans únicamente ante
 numeración. Conserva la consulta original y separa vía principal, número
 secundario y placa: «Cl 69 6-51» representa Calle 69, secundario 6, placa 51.
 Reconoce «Calle 45 Carrera 27» y «Calle 45 con Carrera 27» como consultas de
 intersección; no construye ni interpola coordenadas para ellas.
 
 Una ciudad explícita tiene prioridad: no se añade Bucaramanga a la consulta.
-Sin ciudad, se usa el GPS disponible del panel como bias; si falta, se usa
-un centro de demostración metropolitano (7.08, -73.10), **solo para preferencia
-de búsqueda**, nunca como resultado. No se añade reverse geocoding ni se deduce
-un municipio por cercanía. El panel no dispone del centro del mapa en su
-contrato actual. Photon recibe lat/lon; Nominatim recibe un viewbox de ±0,18°,
-sin `bounded`, para favorecer resultados cercanos sin excluir otras zonas.
-Con ciudad escrita se omiten estos biases. Resultados cuya ciudad informada
+Una dirección sin ciudad recibe «Bucaramanga, Santander, Colombia» solo en la
+consulta al proveedor, conservando el texto original. Los POI mantienen su
+búsqueda anterior con preferencia por ubicación. Las direcciones con contexto
+municipal omiten lat/lon y viewbox: no se impone un rectángulo como límite.
+No se deduce un municipio por cercanía. Resultados cuya ciudad informada
 contradiga la solicitada se descartan; sin ciudad informada no se certifica
 una coincidencia específica con ciudad explícita.
 
@@ -44,8 +42,9 @@ dirección completa, con ciudad preservada en cada variante:
 
 Se detiene cuando existe evidencia específica; un error detiene la secuencia
 y conserva candidatos anteriores si existen. Cada consulta de dirección pide
-hasta cinco resultados con `addressdetails=1`, ordena y conserva el mejor;
-los mejores de las variantes se deduplican y vuelven a ordenar. Photon sigue
+hasta cinco resultados con `addressdetails=1` y los ordena;
+todos los candidatos válidos de las variantes se deduplican y vuelven a ordenar,
+incluyendo múltiples coincidencias específicas para selección explícita. Photon sigue
 haciendo una sola solicitud por consulta con debounce, sin fallback automático
 a Nominatim. Las consultas estructuradas nunca combinan `q` con `street/city`.
 
@@ -58,11 +57,20 @@ como tokens: `6-51` no equivale a `65-1`. No se modifica la duración OSRM.
 
 «Coincidencia específica» exige vía y numeración compatibles en los campos
 devueltos por el proveedor; también ciudad compatible cuando se escribió.
+El municipio se lee de campos administrativos: en los datos actuales de
+Nominatim, `city=Perímetro Urbano Bucaramanga` y `county=Bucaramanga` representan
+el municipio solicitado. Solo se admite esa combinación si ambos nombres
+concuerdan; no se infiere Bucaramanga para Floridablanca, Girón o Piedecuesta.
 No basta con repetir el texto solicitado en una etiqueta. «Coincidencia
 aproximada · numeración exacta no confirmada» identifica calles, intersecciones
 no verificadas o datos incompletos/incompatibles. Los POI se identifican como
 «Lugar». Se conservan las coordenadas reales y el aviso tras seleccionar.
-No hay interpolación de puertas ni editor nuevo de puntos en el mapa.
+No hay interpolación de puertas. «Elegir origen/destino en el mapa» reutiliza
+el selector de puntos de reportes con etiquetas específicas. Solo confirma
+coordenadas después de un toque o de elegir GPS y confirmar. Cancelar conserva
+la selección. El punto manual no certifica una dirección postal. Home muestra
+el marcador y centra el mapa inmediatamente al seleccionar, antes de calcular.
+Editar el campo retira el marcador previo.
 
 Nominatim tiene timeout de 8 s, caché de hasta 100 consultas por instancia y
 una cola compartida en el proceso con al menos 1 s entre solicitudes. La clave
@@ -77,6 +85,75 @@ indexada. El proveedor puede devolver una calle en vez del inmueble exacto:
 la UI muestra la etiqueta recibida, sin inventar numeración ni intersecciones.
 Los tests no certifican la existencia actual de una dirección en los datos
 públicos; HTTP, GPS y Realtime están controlados en las pruebas.
+
+## Cobertura real y alternativas (9 de octubre de 2026)
+
+Archivos de esta fase:
+
+- `lib/services/address_query.dart`: clasificación, Kr, espacios en placa y contexto municipal.
+- `lib/services/place_suggestion_service.dart`: contexto de direcciones y lectura administrativa de Photon.
+- `lib/services/geocoding_service.dart`: candidatos múltiples, caché de listas y errores de timeout.
+- `lib/widgets/map_search_panel.dart`: selección manual y notificación de puntos seleccionados/editados.
+- `lib/widgets/report_location_picker.dart`: etiquetas configurables; los reportes conservan sus valores por defecto.
+- `lib/screens/home/home_screen.dart`: marcadores y cámara de origen/destino antes del cálculo.
+- `test/services/address_search_test.dart` y `colombia_address_resolution_test.dart`: expectativas de contexto actualizadas.
+- `test/screens/home/address_flow_test.dart`: mock adaptado al contrato de candidatos múltiples.
+- Nuevos `test/services/bucaramanga_address_test.dart` y `test/screens/home/address_map_selection_test.dart`.
+- Este documento.
+
+Validación final ejecutada en esta fase:
+
+- `flutter analyze --no-pub`: `No issues found!` (3,4 s), evidencia en `address-analyze.log`.
+- `flutter test --no-pub`: `00:58 +653: All tests passed!`, evidencia en `address-full-tests.log`.
+- `git diff --check`: código 0. Git solo avisa de conversión futura LF/CRLF del panel.
+- `dart format`: limitado a los archivos Dart modificados o creados.
+
+La suite incluye formatos, clasificación, candidatos ambiguos, municipio,
+vacíos, HTTP/JSON/red, timeout, respuestas obsoletas, origen/destino, marcadores,
+selección manual y coordenadas entregadas al servicio OSRM simulado. Los tests
+de navegación, GPS, reportes y fidelidad visual existentes también pasaron.
+Las consultas reales son separadas de las pruebas deterministas.
+
+Estado final: rama `feature/bucaramanga-address-geocoding`, base `6b4e134`,
+diez archivos versionados modificados y dos pruebas nuevas. Sin cambios en
+`pubspec.lock`, dependencias o referencias Figma; `stash@{0}` se conserva.
+No se crearon commits, push ni PR. Los riesgos restantes son cobertura OSM,
+disponibilidad/cuotas de servidores públicos y ausencia de límite municipal
+oficial; no se promete precisión de puerta ni intersección no verificada.
+
+Tres consultas explícitas a Nominatim, espaciadas más de un segundo, dieron
+HTTP 200. Son observaciones de cobertura, no validaciones de domicilio:
+
+| Consulta en Bucaramanga, Santander, Colombia | Resultado del proveedor | Clasificación |
+| --- | --- | --- |
+| Carrera 27 # 45-30 | Cinco tramos de Carrera 27, sin `house_number`; primer punto 7.1383641, -73.1202986 | Aproximado y ambiguo; placa no confirmada |
+| Calle 36 # 15-20 | Cinco tramos de Calle 36, sin `house_number`; primer punto 7.1241595, -73.1115596 | Aproximado y ambiguo; placa no confirmada |
+| Calle 45 con Carrera 27 | Lista vacía | Sin cobertura de esta consulta |
+
+Estas coordenadas proceden del proveedor y se registran solo como evidencia;
+no son resultados fijos ni se incorporan al código. No demuestran que los
+primeros tramos sean cercanos a las placas solicitadas. El usuario puede
+seleccionar una aproximación con su aviso o elegir el punto en el mapa.
+
+Se mantienen Photon para autocomplete y Nominatim para resolución explícita,
+sin dependencias, credenciales ni cambios de facturación. Una instancia propia
+de estos proveedores permite controlar disponibilidad y límites, pero no añade
+las placas que falten en OSM. [Política de Nominatim](https://operations.osmfoundation.org/policies/nominatim/)
+y [API de Photon](https://github.com/komoot/photon/blob/master/docs/api-v1.md).
+
+[Mapbox Geocoding](https://docs.mapbox.com/api/search/geocoding/) ofrece campos
+de exactitud y coincidencia de dirección, pero requiere token y revisión de
+condiciones de almacenamiento y costos. [Google Geocoding](https://developers.google.com/maps/documentation/geocoding/usage-and-billing)
+requiere credenciales y facturación; también exige revisar sus condiciones para
+mostrar resultados en el mapa existente. No se han ensayado estos servicios
+con las direcciones locales, por lo que no se afirma mejor cobertura. Cambiar
+a ellos queda pendiente de autorización y de una comparación con muestra real.
+
+No existe en el repositorio un polígono municipal verificable. El filtro de
+campos administrativos reduce coincidencias contradictorias, pero no certifica
+pertenencia municipal cuando falta esa información ni limita los puntos
+manuales. Incorporar un polígono oficial con fuente, licencia y fecha y aplicar
+validación punto-en-polígono queda como siguiente tarea.
 
 ## Prueba manual de Sebastián
 

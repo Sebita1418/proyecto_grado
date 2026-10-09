@@ -1,4 +1,5 @@
 import 'address_precision.dart';
+import 'municipal_coverage.dart';
 
 class GeocodingResult implements AddressCandidate {
   const GeocodingResult({
@@ -9,6 +10,7 @@ class GeocodingResult implements AddressCandidate {
     this.houseNumber,
     this.city,
     this.precision,
+    this.coverage = const CoverageAssessment(MunicipalCoverage.unknown),
   });
 
   @override
@@ -16,6 +18,7 @@ class GeocodingResult implements AddressCandidate {
   @override
   final double longitude;
   final String displayName;
+  final CoverageAssessment coverage;
   @override
   final String? road;
   @override

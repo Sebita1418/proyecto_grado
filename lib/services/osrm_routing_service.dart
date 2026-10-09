@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
 import '../config/osrm_config.dart';
+import 'municipal_boundary_service.dart';
 import '../models/route_result.dart';
 import '../navigation/navigation_instruction.dart';
 import '../mobility/routing/routing_capabilities.dart';
@@ -25,14 +26,17 @@ class OsrmRoutingService {
     http.Client? client,
     Uri? endpoint,
     this.timeout = const Duration(seconds: 15),
+    MunicipalBoundaryService? boundaryService,
   }) : endpoint = endpoint ?? OsrmConfig.endpoint,
        _client = client ?? http.Client(),
-       _ownsClient = client == null;
+       _ownsClient = client == null,
+       _boundary = boundaryService ?? MunicipalBoundaryService.shared;
 
   final http.Client _client;
   final bool _ownsClient;
   final Uri endpoint;
   final Duration timeout;
+  final MunicipalBoundaryService _boundary;
   static final _publicClock = Stopwatch()..start();
   static Future<void> _publicQueue = Future.value();
   static int _nextPublicRequest = 0;
@@ -83,6 +87,14 @@ class OsrmRoutingService {
     if (!_validPoint(origin) || !_validPoint(destination)) {
       throw const OsrmRoutingException(
         'Las coordenadas de origen o destino son inválidas.',
+      );
+    }
+    await _boundary.load();
+    final coverageMessage = _boundary.endpointsMessage(origin, destination);
+    if (coverageMessage != null) {
+      throw OsrmRoutingException(
+        coverageMessage,
+        failure: RoutingFailure.unavailable,
       );
     }
     final coordinates =

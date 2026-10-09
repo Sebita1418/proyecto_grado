@@ -12,6 +12,7 @@ import '../../models/route_result.dart';
 import '../../models/road_incident_report.dart';
 import '../../services/location_service.dart';
 import '../../services/geocoding_service.dart';
+import '../../services/municipal_boundary_service.dart';
 import '../../services/osrm_routing_service.dart';
 import '../../services/place_suggestion_service.dart';
 import '../../services/perfil_service.dart';
@@ -43,10 +44,12 @@ class HomeScreen extends StatefulWidget {
     this.placeSuggestionService,
     this.roadIncidentService,
     this.initiallyCollapsed = true,
+    this.boundaryService,
   });
   final LocationService? locationService;
   final RoadIncidentService? roadIncidentService;
   final bool initiallyCollapsed;
+  final MunicipalBoundaryService? boundaryService;
   final Future<Perfil?> Function()? loadProfile;
   final GeocodingService? geocodingService;
   final OsrmRoutingService? routingService;
@@ -70,8 +73,11 @@ class _HomeScreenState extends State<HomeScreen> {
   double get _headerReservedHeight =>
       NavigationHeader.reservedHeight(MediaQuery.textScalerOf(context));
   final MapController _mapController = MapController();
+  late final _boundary =
+      widget.boundaryService ?? MunicipalBoundaryService.shared;
   late final _location = widget.locationService ?? LocationService();
-  late final _routing = widget.routingService ?? OsrmRoutingService();
+  late final _routing =
+      widget.routingService ?? OsrmRoutingService(boundaryService: _boundary);
   late final _navigation = NavigationSession(
     _location,
     reroute: _routing.route,
@@ -106,6 +112,9 @@ class _HomeScreenState extends State<HomeScreen> {
     _incidents.refresh();
     _loadProfile();
     _locate();
+    _boundary.load().then((_) {
+      if (mounted) setState(() {});
+    });
   }
 
   void _incidentsChanged() {
@@ -122,6 +131,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _startNavigation(RouteResult route, String destination) {
+    final coverageMessage = _boundary.endpointsMessage(
+      route.origin,
+      route.destination,
+    );
+    if (coverageMessage != null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(coverageMessage)));
+      return;
+    }
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     if (!_navigation.start(route, destination)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -476,6 +494,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   initialPosition: _initialCenter,
                   mapController: _mapController,
                   expand: true,
+                  boundaryPolygons: _boundary.polygons,
                   autoFit: !navigating,
                   onManualMove: navigating ? _navigation.pauseFollowing : null,
                   fitPadding: activeRoute == null
@@ -843,7 +862,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             maxHeight: constraints.maxHeight * .42,
                           ),
                           child: SingleChildScrollView(
-                            child: NavigationStatusCard(session: _navigation),
+                            child: NavigationStatusCard(
+                              session: _navigation,
+                              coverageNotice:
+                                  position == null ||
+                                      _boundary.assess(position).permitted
+                                  ? null
+                                  : '${_boundary.assess(position).label}: ubicación GPS actual. La ruta se conserva.',
+                            ),
                           ),
                         ),
                       Offstage(
@@ -851,6 +877,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         offstage: navigating,
                         child: MapSearchPanel(
                           initiallyCollapsed: widget.initiallyCollapsed,
+                          boundaryService: _boundary,
+                          onBoundaryChanged: () {
+                            if (mounted) setState(() {});
+                          },
                           onOriginSelected: (point) {
                             setState(() => _plannedOrigin = point);
                             if (point != null) _mapController.move(point, 16);

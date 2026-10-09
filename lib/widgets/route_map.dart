@@ -8,6 +8,7 @@ class RouteMap extends StatefulWidget {
     required this.initialPosition,
     this.markers = const <Marker>[],
     this.overlayMarkers = const <Marker>[],
+    this.boundaryPolygons = const [],
     this.polylines = const <Polyline>[],
     this.mapController,
     this.onTap,
@@ -22,6 +23,7 @@ class RouteMap extends StatefulWidget {
 
   /// Context overlays do not participate in automatic camera fitting.
   final List<Marker> overlayMarkers;
+  final List<List<List<LatLng>>> boundaryPolygons;
   final List<Polyline> polylines;
   final MapController? mapController;
   final ValueChanged<LatLng>? onTap;
@@ -123,13 +125,28 @@ class _RouteMapState extends State<RouteMap> {
               ),
               if (widget.polylines.isNotEmpty)
                 PolylineLayer(polylines: widget.polylines),
+              if (widget.boundaryPolygons.isNotEmpty)
+                PolylineLayer(
+                  polylines: [
+                    for (final polygon in widget.boundaryPolygons)
+                      for (final ring in polygon)
+                        Polyline(
+                          points: ring,
+                          color: Theme.of(context).colorScheme.primary
+                              .withValues(alpha: .55),
+                          strokeWidth: 2,
+                        ),
+                  ],
+                ),
               if (widget.markers.isNotEmpty)
                 MarkerLayer(markers: widget.markers),
               if (widget.overlayMarkers.isNotEmpty)
                 MarkerLayer(markers: widget.overlayMarkers),
-              const RichAttributionWidget(
+              RichAttributionWidget(
                 attributions: [
-                  TextSourceAttribution('OpenStreetMap contributors'),
+                  const TextSourceAttribution('OpenStreetMap contributors'),
+                  if (widget.boundaryPolygons.isNotEmpty)
+                    const TextSourceAttribution('DANE · MGN 2024 · CC BY 4.0'),
                 ],
               ),
             ],

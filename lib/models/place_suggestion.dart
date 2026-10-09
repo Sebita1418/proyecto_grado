@@ -1,4 +1,5 @@
 import 'address_precision.dart';
+import 'municipal_coverage.dart';
 
 class PlaceSuggestion implements AddressCandidate {
   const PlaceSuggestion({
@@ -10,9 +11,11 @@ class PlaceSuggestion implements AddressCandidate {
     this.road,
     this.houseNumber,
     this.city,
+    this.coverage = const CoverageAssessment(MunicipalCoverage.unknown),
   });
 
   final String name;
+  final CoverageAssessment coverage;
   final String description;
   @override
   final double latitude;

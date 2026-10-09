@@ -1,4 +1,5 @@
 import 'report_location_picker.dart';
+import '../services/municipal_boundary_service.dart';
 
 import 'dart:async';
 
@@ -61,6 +62,8 @@ class MapSearchPanel extends StatefulWidget {
     this.onRouteChanged,
     this.onOriginSelected,
     this.onDestinationSelected,
+    this.boundaryService,
+    this.onBoundaryChanged,
     this.onStartNavigation,
     this.preferencesService = const MobilityPreferencesService(),
     this.recommendationEngine,
@@ -87,6 +90,8 @@ class MapSearchPanel extends StatefulWidget {
   final ValueChanged<VoidCallback?>? onValidationAccessChanged;
   final ValueChanged<RouteResult?>? onRouteChanged;
   final ValueChanged<LatLng?>? onOriginSelected, onDestinationSelected;
+  final MunicipalBoundaryService? boundaryService;
+  final VoidCallback? onBoundaryChanged;
   final void Function(RouteResult route, String destination)? onStartNavigation;
   final MobilityPreferencesService preferencesService;
   final MobilityRecommendationEngine? recommendationEngine;
@@ -100,15 +105,20 @@ class MapSearchPanel extends StatefulWidget {
 
 class _MapSearchPanelState extends State<MapSearchPanel> {
   final _scrollController = ScrollController();
+  late final _boundary =
+      widget.boundaryService ?? MunicipalBoundaryService.shared;
   bool _collapsed = false;
   final _origin = TextEditingController();
   final _destination = TextEditingController();
   String _lastOriginText = '';
   String _lastDestinationText = '';
-  late final _geocoding = widget.geocodingService ?? GeocodingService();
+  late final _geocoding =
+      widget.geocodingService ?? GeocodingService(boundaryService: _boundary);
   late final _suggestions =
-      widget.placeSuggestionService ?? PlaceSuggestionService();
-  late final _routing = widget.routingService ?? OsrmRoutingService();
+      widget.placeSuggestionService ??
+      PlaceSuggestionService(boundaryService: _boundary);
+  late final _routing =
+      widget.routingService ?? OsrmRoutingService(boundaryService: _boundary);
   late final _modeRouting =
       widget.modeRoutingService ?? ModeRoutingService(driving: _routing);
   TransportMode _mode = TransportMode.driving;
@@ -724,6 +734,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
         _departure.isNow &&
         decision?.hasRecommendation == true &&
         route != null &&
+        _boundary.endpointsMessage(route.origin, route.destination) == null &&
         route.points.length >= 2 &&
         route.points.every(
           (point) =>
@@ -740,6 +751,20 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     _collapsed = widget.initiallyCollapsed;
     _destination.addListener(_onDestinationChanged);
     _origin.addListener(_onOriginChanged);
+    unawaited(_loadBoundary());
+  }
+
+  Future<void> _loadBoundary({bool retry = false}) async {
+    await _boundary.load(retry: retry);
+    if (mounted) setState(() {});
+    if (mounted) widget.onBoundaryChanged?.call();
+  }
+
+  bool _acceptPoint(LatLng point, String endpoint) {
+    final assessment = _boundary.assess(point);
+    if (assessment.permitted) return true;
+    _message(assessment.message(endpoint));
+    return false;
   }
 
   void _onOriginChanged() {
@@ -785,6 +810,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   }
 
   void _selectOrigin(PlaceSuggestion place) {
+    if (!_acceptPoint(LatLng(place.latitude, place.longitude), 'El origen')) {
+      return;
+    }
     _invalidate();
     _originDebounce?.cancel();
     ++_originRequest;
@@ -853,6 +881,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   }
 
   void _select(PlaceSuggestion place) {
+    if (!_acceptPoint(LatLng(place.latitude, place.longitude), 'El destino')) {
+      return;
+    }
     _invalidate();
     _debounce?.cancel();
     ++_request;
@@ -934,6 +965,13 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       if (!mounted || calculation != _calculation) return;
       if (destination == null) {
         throw const GeocodingException('No se encontró el destino.');
+      }
+      await _boundary.load();
+      if (!mounted || calculation != _calculation) return;
+      final coverageMessage = _boundary.endpointsMessage(origin, destination);
+      if (coverageMessage != null) {
+        _message(coverageMessage);
+        return;
       }
       final nonVehicleModes = _mode == TransportMode.driving
           ? null
@@ -1120,6 +1158,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           road: result.road,
           houseNumber: result.houseNumber,
           city: result.city,
+          coverage: _boundary.assessCoordinates(
+            result.latitude,
+            result.longitude,
+          ),
         );
       }).toList();
       setState(() {
@@ -1171,7 +1213,14 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           currentPosition: widget.currentPosition,
           title: origin ? 'Seleccionar origen' : 'Seleccionar destino',
           pointLabel: 'Punto seleccionado manualmente',
+          boundaryPolygons: _boundary.polygons,
           instruction: 'Toca el mapa para elegir la ubicación. No se confirma una dirección postal.',
+          validationMessage: (point) {
+            final assessment = _boundary.assess(point);
+            return assessment.permitted
+                ? null
+                : assessment.message(origin ? 'El origen' : 'El destino');
+          },
         ),
       ),
     );
@@ -1203,6 +1252,12 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       _select(place);
     }
   }
+
+  String _coverageSubtitle(PlaceSuggestion place) => [
+    place.description,
+    if (place.precision != null) place.precision!.label,
+    _boundary.assessCoordinates(place.latitude, place.longitude).label,
+  ].where((text) => text.isNotEmpty).join('\n');
 
   Widget? _addressResults({required bool origin, Widget? child}) {
     final query = (origin ? _origin : _destination).text;
@@ -1638,6 +1693,34 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                           child: Text(_recommendationNotice!),
                         ),
                       ),
+                    if (!_boundary.available ||
+                        (hasGps &&
+                            !_boundary
+                                .assess(widget.currentPosition!)
+                                .permitted))
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              !_boundary.available
+                                  ? 'Cobertura sin verificar: el límite municipal no está disponible.'
+                                  : 'Tu ubicación está fuera de Bucaramanga. Cambia el origen para planificar.',
+                            ),
+                            if (!_boundary.available)
+                              TextButton(
+                                onPressed: () => _loadBoundary(retry: true),
+                                child: const Text(
+                                  'Reintentar límite municipal',
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                     if (hasGps)
                       Padding(
                         padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
@@ -1758,20 +1841,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                           Icons.place_outlined,
                                         ),
                                         title: Text(place.name),
-                                        subtitle:
-                                            place.description.isEmpty &&
-                                                place.precision == null
-                                            ? null
-                                            : Text(
-                                                [
-                                                      place.description,
-                                                      if (place.precision !=
-                                                          null)
-                                                        place.precision!.label,
-                                                    ]
-                                                    .where((s) => s.isNotEmpty)
-                                                    .join('\n'),
-                                              ),
+                                        subtitle: Text(
+                                          _coverageSubtitle(place),
+                                        ),
                                         onTap: () => _selectOrigin(place),
                                       ),
                                     )
@@ -1796,20 +1868,9 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                           Icons.place_outlined,
                                         ),
                                         title: Text(place.name),
-                                        subtitle:
-                                            place.description.isEmpty &&
-                                                place.precision == null
-                                            ? null
-                                            : Text(
-                                                [
-                                                      place.description,
-                                                      if (place.precision !=
-                                                          null)
-                                                        place.precision!.label,
-                                                    ]
-                                                    .where((s) => s.isNotEmpty)
-                                                    .join('\n'),
-                                              ),
+                                        subtitle: Text(
+                                          _coverageSubtitle(place),
+                                        ),
                                         onTap: () => _select(place),
                                       ),
                                     )

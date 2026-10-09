@@ -149,11 +149,13 @@ mostrar resultados en el mapa existente. No se han ensayado estos servicios
 con las direcciones locales, por lo que no se afirma mejor cobertura. Cambiar
 a ellos queda pendiente de autorización y de una comparación con muestra real.
 
-No existe en el repositorio un polígono municipal verificable. El filtro de
-campos administrativos reduce coincidencias contradictorias, pero no certifica
-pertenencia municipal cuando falta esa información ni limita los puntos
-manuales. Incorporar un polígono oficial con fuente, licencia y fecha y aplicar
-validación punto-en-polígono queda como siguiente tarea.
+La fase territorial posterior incorpora el polígono municipal DANE MGN 2024
+para el municipio 68001, con procedencia y licencia documentadas. Photon y
+Nominatim conservan candidatos con estado de cobertura y el planificador
+revalida sus coordenadas, GPS y puntos manuales. Los campos textuales no
+autorizan un extremo: se exige validación punto-en-polígono. Si el recurso
+falla, la cobertura es desconocida y se ofrece reintento. Véase
+[Cobertura territorial de Bucaramanga](municipal-boundary.md).
 
 ## Prueba manual de Sebastián
 

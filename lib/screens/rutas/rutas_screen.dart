@@ -8,6 +8,7 @@ import '../../models/ruta_model.dart';
 import '../../models/geocoding_result.dart';
 import '../../models/place_suggestion.dart';
 import '../../services/geocoding_service.dart';
+import '../../services/municipal_boundary_service.dart';
 import '../../services/place_suggestion_service.dart';
 import '../../services/ruta_service.dart';
 import '../../widgets/route_map.dart';
@@ -19,23 +20,28 @@ class RutasScreen extends StatefulWidget {
     this.loadRoutes,
     this.geocodingService,
     this.placeSuggestionService,
+    this.boundaryService,
   });
 
   final Future<List<Ruta>> Function()? loadRoutes;
   final GeocodingService? geocodingService;
   final PlaceSuggestionService? placeSuggestionService;
+  final MunicipalBoundaryService? boundaryService;
 
   @override
   State<RutasScreen> createState() => _RutasScreenState();
 }
 
 class _RutasScreenState extends State<RutasScreen> {
+  late final _boundary =
+      widget.boundaryService ?? MunicipalBoundaryService.shared;
   late final Future<List<Ruta>> Function() _loadRoutes =
       widget.loadRoutes ?? RutaService().obtenerRutasActivas;
   late final GeocodingService _geocodingService =
-      widget.geocodingService ?? GeocodingService();
+      widget.geocodingService ?? GeocodingService(boundaryService: _boundary);
   late final PlaceSuggestionService _placeSuggestionService =
-      widget.placeSuggestionService ?? PlaceSuggestionService();
+      widget.placeSuggestionService ??
+      PlaceSuggestionService(boundaryService: _boundary);
 
   static const LatLng _initialMapPosition = LatLng(7.119349, -73.122742);
 
@@ -81,6 +87,9 @@ class _RutasScreenState extends State<RutasScreen> {
     buscarController.addListener(filtrarRutas);
     originController.addListener(_alCambiarOrigen);
     destinationController.addListener(_alCambiarDestino);
+    _boundary.load().then((_) {
+      if (mounted) setState(() {});
+    });
   }
 
   Future<void> cargarRutas() async {
@@ -248,6 +257,14 @@ class _RutasScreenState extends State<RutasScreen> {
     required bool esOrigen,
   }) {
     if (calculandoRuta) return;
+    final coverage = _boundary.assessCoordinates(
+      suggestion.latitude,
+      suggestion.longitude,
+    );
+    if (!coverage.permitted) {
+      _mostrarMensaje(coverage.message(esOrigen ? 'El origen' : 'El destino'));
+      return;
+    }
     if (esOrigen) {
       _debounceOrigen?.cancel();
       _solicitudOrigen++;
@@ -299,6 +316,15 @@ class _RutasScreenState extends State<RutasScreen> {
   // Conserva la selección por tap y el reinicio de #16 con coordenadas OSM.
   void _seleccionarPunto(LatLng point) {
     if (calculandoRuta) return;
+    final coverage = _boundary.assess(point);
+    if (!coverage.permitted) {
+      _mostrarMensaje(
+        coverage.message(
+          origenSeleccionado == null ? 'El origen' : 'El destino',
+        ),
+      );
+      return;
+    }
     if (origenSeleccionado != null && destinoSeleccionado != null) {
       _limpiarSeleccion();
     }
@@ -382,6 +408,16 @@ class _RutasScreenState extends State<RutasScreen> {
       if (!mounted || solicitud != _localizacion) return;
       if (destinoEncontrado == null) {
         _mostrarMensaje('No se encontró el destino: $destino.');
+        return;
+      }
+      await _boundary.load();
+      if (!mounted || solicitud != _localizacion) return;
+      final coverageMessage = _boundary.endpointsMessage(
+        LatLng(origenEncontrado.latitude, origenEncontrado.longitude),
+        LatLng(destinoEncontrado.latitude, destinoEncontrado.longitude),
+      );
+      if (coverageMessage != null) {
+        _mostrarMensaje(coverageMessage);
         return;
       }
 
@@ -486,9 +522,17 @@ class _RutasScreenState extends State<RutasScreen> {
                       dense: true,
                       leading: const Icon(Icons.location_on_outlined),
                       title: Text(suggestion.name),
-                      subtitle: suggestion.description.isEmpty
-                          ? null
-                          : Text(suggestion.description),
+                      subtitle: Text(
+                        [
+                          suggestion.description,
+                          _boundary
+                              .assessCoordinates(
+                                suggestion.latitude,
+                                suggestion.longitude,
+                              )
+                              .label,
+                        ].where((text) => text.isNotEmpty).join('\n'),
+                      ),
                       onTap: () => _seleccionarSugerencia(
                         suggestion,
                         esOrigen: esOrigen,
@@ -625,10 +669,23 @@ class _RutasScreenState extends State<RutasScreen> {
           const SizedBox(height: 10),
           RouteMap(
             initialPosition: _initialMapPosition,
+            boundaryPolygons: _boundary.polygons,
             markers: marcadores,
             onTap: calculandoRuta ? null : _seleccionarPunto,
           ),
           const SizedBox(height: 8),
+          if (!_boundary.available) ...[
+            const Text(
+              'Cobertura sin verificar: el límite municipal no está disponible.',
+            ),
+            TextButton(
+              onPressed: () async {
+                await _boundary.load(retry: true);
+                if (mounted) setState(() {});
+              },
+              child: const Text('Reintentar límite municipal'),
+            ),
+          ],
           Text(
             'El mapa muestra las ubicaciones seleccionadas. '
             'Aquí no se calculan recorridos, distancias ni tiempos. '

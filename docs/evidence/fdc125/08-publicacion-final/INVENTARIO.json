@@ -1,7 +1,8 @@
 {
-  "createdAt": "2026-10-17T04:47:10.148Z",
-  "scope": "exact versionable FDC125 files; inventory files themselves excluded to avoid recursion; private originals excluded; publication results included",
-  "fileCount": 208,
+  "createdAt": "2026-10-17T04:48:15.582Z",
+  "scope": "exact published FDC125 files including historical inventories; only this final inventory JSON/Markdown excluded to avoid recursion",
+  "totalPublishedFiles": 211,
+  "fileCount": 209,
   "files": [
     {
       "path": "01-trazabilidad/PR_BODY.md",
@@ -887,6 +888,11 @@
       "path": "07-integridad-y-versiones/APK-SHA256SUMS.txt",
       "sizeBytes": 129,
       "sha256": "a768d3dbe3d38abd638c95df6b552528e0c2ef924739506e0b70b62f46b3e11d"
+    },
+    {
+      "path": "07-integridad-y-versiones/INVENTARIO.md",
+      "sizeBytes": 5518,
+      "sha256": "794cb03039457598c034b329469ff77127a2d5098662bfe951449ba15a20862f"
     },
     {
       "path": "07-integridad-y-versiones/README.md",

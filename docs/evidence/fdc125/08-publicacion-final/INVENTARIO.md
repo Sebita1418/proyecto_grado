@@ -1,6 +1,6 @@
 # Inventario exacto de evidencia publicada
 
-**208 archivos**, más los dos inventarios, excluidos de su propio cálculo para evitar recursión. Los videos y fotogramas privados no se publican. Hashes verificables en [INVENTARIO.json](INVENTARIO.json); URLs reales en [PUBLICACION.json](PUBLICACION.json).
+**211 archivos publicados: 209 archivos inventariados y los dos archivos de este inventario**, excluidos de su propio cálculo para evitar recursión. Se incluye el inventario histórico del corte anterior. Videos privados y fotogramas de revisión no se publican. Hashes verificables en [INVENTARIO.json](INVENTARIO.json); URLs reales en [PUBLICACION.json](PUBLICACION.json).
 
 | Archivo relativo a fdc125 | Bytes | SHA-256 |
 |---|---:|---|
@@ -181,6 +181,7 @@
 | [06-capturas/V02-t85-analitica-derivada.png](../06-capturas/V02-t85-analitica-derivada.png) | 119744 | `873718bacf4d02d80cfc5898e61a77ac56045b94c004bfa0ec8157de3835696a` |
 | [06-capturas/manifest.json](../06-capturas/manifest.json) | 1352 | `42aed2de63d61379c95f46e3ab8dfc3ef7007f62828476c893b82801394a32b7` |
 | [07-integridad-y-versiones/APK-SHA256SUMS.txt](../07-integridad-y-versiones/APK-SHA256SUMS.txt) | 129 | `a768d3dbe3d38abd638c95df6b552528e0c2ef924739506e0b70b62f46b3e11d` |
+| [07-integridad-y-versiones/INVENTARIO.md](../07-integridad-y-versiones/INVENTARIO.md) | 5518 | `794cb03039457598c034b329469ff77127a2d5098662bfe951449ba15a20862f` |
 | [07-integridad-y-versiones/README.md](../07-integridad-y-versiones/README.md) | 3049 | `35192b4b4ee189f29ee89e9bffed09222a75c5d8fddad2d06d98086a63280a3b` |
 | [07-integridad-y-versiones/SHA256SUMS.json](../07-integridad-y-versiones/SHA256SUMS.json) | 11979 | `85f789497c170eab78884b94c98c106cb96838cc223bd98dc61478baa2c41fca` |
 | [07-integridad-y-versiones/assets-original.log](../07-integridad-y-versiones/assets-original.log) | 2360 | `28c646f7bed9118098285a2f7aa4ea648922e79909f5acae04e14bc488b0d3ea` |

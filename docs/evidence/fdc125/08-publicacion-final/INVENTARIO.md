@@ -1,6 +1,6 @@
-# Inventario exacto de evidencia versionable
+# Inventario exacto de evidencia publicada
 
-Cada fila corresponde a un archivo candidato comprobado. Se excluyen los propios inventarios para evitar recursión; `PUBLICACION.json` registra los enlaces finales después de publicar. Los videos y revisiones privados permanecen locales. Hashes detallados en [INVENTARIO.json](INVENTARIO.json).
+**208 archivos**, más los dos inventarios, excluidos de su propio cálculo para evitar recursión. Los videos y fotogramas privados no se publican. Hashes verificables en [INVENTARIO.json](INVENTARIO.json); URLs reales en [PUBLICACION.json](PUBLICACION.json).
 
 | Archivo relativo a fdc125 | Bytes | SHA-256 |
 |---|---:|---|
@@ -194,10 +194,14 @@ Cada fila corresponde a un archivo candidato comprobado. Se excluyen los propios
 | [07-integridad-y-versiones/privacy-review.json](../07-integridad-y-versiones/privacy-review.json) | 485 | `ce28420ea9c304bab26eeff180e2903354acd44e26ec1cbcd772fd08d5e4e11e` |
 | [07-integridad-y-versiones/signature-original.log](../07-integridad-y-versiones/signature-original.log) | 1946 | `17a8a5228f0f074b8e785e182c82e209b24a32fec25a2dd1bebdfa1c20e981c2` |
 | [07-integridad-y-versiones/version-final.json](../07-integridad-y-versiones/version-final.json) | 1968 | `4ea0c809e51386e6ed8f6195802a3322577e44c8b9d00a91a4e2ff524251e68e` |
-| [08-publicacion-final/ENTREGA.md](../08-publicacion-final/ENTREGA.md) | 3597 | `ce2e9df422cf278c67b670c86d6f0d0312d3e144f82da928305a1ceca83fa151` |
+| [08-publicacion-final/ENTREGA.md](../08-publicacion-final/ENTREGA.md) | 4476 | `1bac8d3d603f22abb2f69ff93fe23eb3d886230c8ce3e7e99645a81b4f5f306c` |
 | [08-publicacion-final/FDC125-TEXTO-TECNICO.md](../08-publicacion-final/FDC125-TEXTO-TECNICO.md) | 4563 | `4bb5029d61ef9c17ef4f9ae8e44be462c5f8448bf820aeceed09dfaaedcdb808` |
 | [08-publicacion-final/FINAL-QA.json](../08-publicacion-final/FINAL-QA.json) | 632 | `949f5a55e1975db0f893dd45df6dfcceecbef9bb60c05f9389941cd25f036c24` |
+| [08-publicacion-final/PREPUBLICACION.json](../08-publicacion-final/PREPUBLICACION.json) | 484 | `ebcf870ebb0a5adb0969cabceaff84824304163038239f8da51002e263f7b7f4` |
 | [08-publicacion-final/PRIVACIDAD.json](../08-publicacion-final/PRIVACIDAD.json) | 2155 | `25ec2ad1d0ff06a7359ae3e12992c84dbf9bd851683522ea7d2bdc8d06131517` |
+| [08-publicacion-final/PR_BODY.md](../08-publicacion-final/PR_BODY.md) | 2658 | `4a42bf3fc53a6a7ddda8db73b1233fdcaec465741d1f65c2b5187fb7b2500fe5` |
+| [08-publicacion-final/PUBLICACION.json](../08-publicacion-final/PUBLICACION.json) | 4722 | `95281ac1d8575c6494f298ac4121f8c5cb7ecff597be73ea4dd3bcd4fefedc28` |
+| [08-publicacion-final/RELEASE_NOTES.md](../08-publicacion-final/RELEASE_NOTES.md) | 2112 | `6c285632b318ea9858870119038cd7672ca6265ecfec1eb14bed73b7d4ef63c4` |
 | [08-publicacion-final/TRAZABILIDAD.md](../08-publicacion-final/TRAZABILIDAD.md) | 5660 | `fa522f763c407bb85ec0101a09a9aabc9a1910b6481d2fe543f4b782253f79f3` |
 | [08-publicacion-final/indice-maestro-original-corte-c.md](../08-publicacion-final/indice-maestro-original-corte-c.md) | 5680 | `bd8857578046e7ae8b4debb7e1eabfbdd4c59559fcc2be66e13d191cac410ba2` |
 | [08-publicacion-final/qa-analyze.log](../08-publicacion-final/qa-analyze.log) | 200 | `32312566aeb7e6807846795384a0983e9127641511f34b633080803d84d6dbd7` |
@@ -207,4 +211,4 @@ Cada fila corresponde a un archivo candidato comprobado. Se excluyen los propios
 | [08-publicacion-final/qa-results.json](../08-publicacion-final/qa-results.json) | 200 | `2e56dbac8fa6f010bd386904c5e42d202fb4ff031ab99ecb5ec290c00004b647` |
 | [08-publicacion-final/qa-tests-machine.log](../08-publicacion-final/qa-tests-machine.log) | 967280 | `76475e091fd34521548ba32d6684a1d8b616a340211d83ceec942d70ebf3c58e` |
 | [08-publicacion-final/qa-tests-machine.utf8.log](../08-publicacion-final/qa-tests-machine.utf8.log) | 484022 | `1474a4a7cee5881c998fe633ffc2099fc385931ed565f6108705e3701c997de8` |
-| [README.md](../README.md) | 4539 | `be9d3242a0e1b33cbcccde0482b89b03f314e36737a82868d72d54373bbf06a1` |
+| [README.md](../README.md) | 5419 | `5ddd57a23a7488e3bde33d49d90825821d9fda634dc962fb904365b7ca89649a` |

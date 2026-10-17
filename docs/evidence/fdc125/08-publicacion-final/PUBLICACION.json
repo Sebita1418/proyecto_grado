@@ -1,0 +1,122 @@
+{
+  "publishedAt": "2026-10-17T04:46:31.269Z",
+  "dateLocal": "2026-10-16",
+  "timezone": "America/Bogota",
+  "repository": "https://github.com/Sebita1418/proyecto_grado",
+  "repositoryPrivate": true,
+  "accessRequiresAuthorizedGithubLogin": true,
+  "sourceCommit": "e681c00d13e4aa4aa24cdf681a7dae8264e9b7a1",
+  "headBranch": "feature/android-end-to-end-validation",
+  "baseBranch": "develop",
+  "pullRequest": {
+    "baseRefName": "develop",
+    "headRefName": "feature/android-end-to-end-validation",
+    "mergeable": "MERGEABLE",
+    "state": "OPEN",
+    "statusCheckRollup": [],
+    "url": "https://github.com/Sebita1418/proyecto_grado/pull/58"
+  },
+  "merged": false,
+  "evidenceUrl": "https://github.com/Sebita1418/proyecto_grado/blob/feature/android-end-to-end-validation/docs/evidence/fdc125/README.md",
+  "evidenceTreeUrl": "https://github.com/Sebita1418/proyecto_grado/tree/feature/android-end-to-end-validation/docs/evidence/fdc125",
+  "release": {
+    "url": "https://github.com/Sebita1418/proyecto_grado/releases/tag/academic-20261016-v1.0.2",
+    "tag": "academic-20261016-v1.0.2",
+    "targetCommit": "e681c00d13e4aa4aa24cdf681a7dae8264e9b7a1",
+    "draft": false,
+    "prerelease": true,
+    "assets": [
+      {
+        "name": "INSTRUCCIONES.md",
+        "url": "https://github.com/Sebita1418/proyecto_grado/releases/download/academic-20261016-v1.0.2/INSTRUCCIONES.md",
+        "sizeBytes": 2759,
+        "state": "uploaded",
+        "digest": "sha256:a339a251a7489e2b253be5da7481aa3f172a60fcca545c5c898daea7574a6942"
+      },
+      {
+        "name": "SHA256SUMS.txt",
+        "url": "https://github.com/Sebita1418/proyecto_grado/releases/download/academic-20261016-v1.0.2/SHA256SUMS.txt",
+        "sizeBytes": 131,
+        "state": "uploaded",
+        "digest": "sha256:2886ea5cdb0fcce548bf2a354b40cef897477f866c496d9925ca20d0f7f7230e"
+      },
+      {
+        "name": "source-state.sha256",
+        "url": "https://github.com/Sebita1418/proyecto_grado/releases/download/academic-20261016-v1.0.2/source-state.sha256",
+        "sizeBytes": 25432,
+        "state": "uploaded",
+        "digest": "sha256:b2445ac61e770177230074e8f84cb070ea0064074ca5ecf36c4d740d01bf102a"
+      },
+      {
+        "name": "transporte-inteligente-1.0.2-2026101601-release-debug-signed.apk",
+        "url": "https://github.com/Sebita1418/proyecto_grado/releases/download/academic-20261016-v1.0.2/transporte-inteligente-1.0.2-2026101601-release-debug-signed.apk",
+        "sizeBytes": 60331195,
+        "state": "uploaded",
+        "digest": "sha256:435913b6c1eb08ace49d80005f7b20d4561a1428fa9d254ba45a769384d9eb40"
+      },
+      {
+        "name": "version.json",
+        "url": "https://github.com/Sebita1418/proyecto_grado/releases/download/academic-20261016-v1.0.2/version.json",
+        "sizeBytes": 3381,
+        "state": "uploaded",
+        "digest": "sha256:b6a6c3e7c3be8a37f28340be710180960e6cd822fba0611c0327cc8f1494480c"
+      }
+    ]
+  },
+  "apk": {
+    "url": "https://github.com/Sebita1418/proyecto_grado/releases/download/academic-20261016-v1.0.2/transporte-inteligente-1.0.2-2026101601-release-debug-signed.apk",
+    "sha256": "435913b6c1eb08ace49d80005f7b20d4561a1428fa9d254ba45a769384d9eb40",
+    "sizeBytes": 60331195,
+    "downloadVerification": {
+      "access": "authenticated private repository",
+      "sizeBytes": 60331195,
+      "sha256": "435913b6c1eb08ace49d80005f7b20d4561a1428fa9d254ba45a769384d9eb40",
+      "downloadVerified": true,
+      "verifiedAt": "2026-10-17T04:45:40.1136494Z"
+    },
+    "version": "1.0.2",
+    "build": 2026101601,
+    "signing": "Android Debug; academic demonstration",
+    "tomtomEnabled": false
+  },
+  "qa": {
+    "executedAt": "2026-10-17T04:42:06.120Z",
+    "commandResults": {
+      "finishedAt": "2026-10-17T04:40:48.7286300Z",
+      "nodeTestExitCode": 0,
+      "analyzeExitCode": 0,
+      "startedAt": "2026-10-17T04:38:32.7178240Z",
+      "flutterTestExitCode": 0
+    },
+    "flutter": {
+      "passed": 769,
+      "failed": 0,
+      "skipped": 0,
+      "done": {
+        "success": true,
+        "type": "done",
+        "time": 78400
+      }
+    },
+    "node": [
+      "# tests 13",
+      "# pass 13",
+      "# fail 0",
+      "# skipped 0",
+      "# duration_ms 1575.493"
+    ],
+    "scope": "current source and diagnostic entrypoint; no new APK; historical test outputs preserved"
+  },
+  "privacy": {
+    "privateVideosUploaded": false,
+    "secretsUploaded": false,
+    "review": "PRIVACIDAD.json",
+    "runtimeStateExcluded": true
+  },
+  "remaining": [
+    "authorized read access for evaluator",
+    "approved F-DC-124 literal and institutional title must be consulted",
+    "F-DC-125 insertion and review",
+    "no merge without review and approval"
+  ]
+}

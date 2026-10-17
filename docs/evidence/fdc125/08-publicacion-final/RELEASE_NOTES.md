@@ -14,3 +14,7 @@ Validación de cierre: analyze sin incidencias; 769 Flutter y 13 Node aprobadas.
 Descargar APK, SHA256SUMS.txt e INSTRUCCIONES.md. Verificar hash antes de instalar. `adb install -r <APK>` conserva datos si firma y versión son compatibles; también puede abrirse el APK en Android autorizando la app de origen. No requiere Docker ni secretos TomTom en el teléfono.
 
 Repositorio privado: la evaluadora debe tener acceso autorizado y sesión GitHub. No se adjuntan videos privados. Índice: docs/evidence/fdc125/README.md. PR hacia develop pendiente de revisión; esta Release no implica aprobación de merge.
+
+[PR #58 para revisión](https://github.com/Sebita1418/proyecto_grado/pull/58) · [Índice maestro de evidencia](https://github.com/Sebita1418/proyecto_grado/blob/feature/android-end-to-end-validation/docs/evidence/fdc125/README.md).
+
+Los enlaces requieren acceso autorizado al repositorio privado. La descarga del APK se verificó después de subirlo: tamaño y SHA idénticos al archivo académico original.

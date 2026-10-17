@@ -16,3 +16,11 @@ APK conservado: 1.0.2/2026101601, 60.331.195 bytes, SHA-256 `435913b6c1eb08ace49
 Entrada principal: `docs/evidence/fdc125/README.md`; matriz, texto para F-DC-125, inventario y controles de privacidad en `08-publicacion-final/`. El literal aprobado de F-DC-124 sigue pendiente de cotejo. El lock previo se incluye sin modificar bytes ni aplicar stash para conservar trazabilidad de dependencias.
 
 Base: develop. No fusionar sin revisión y aprobación. Repositorio y Release permanecen privados; la evaluadora requiere acceso autorizado.
+
+## Enlaces publicados
+
+- [Índice maestro de evidencia](https://github.com/Sebita1418/proyecto_grado/blob/feature/android-end-to-end-validation/docs/evidence/fdc125/README.md).
+- [Release académica con APK, hash e instrucciones](https://github.com/Sebita1418/proyecto_grado/releases/tag/academic-20261016-v1.0.2).
+- [Descarga del APK conservado](https://github.com/Sebita1418/proyecto_grado/releases/download/academic-20261016-v1.0.2/transporte-inteligente-1.0.2-2026101601-release-debug-signed.apk).
+
+Descarga autenticada verificada: 60.331.195 bytes y SHA-256 original. Acceso privado: requiere lectura autorizada del repositorio.

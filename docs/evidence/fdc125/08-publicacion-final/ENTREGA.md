@@ -25,3 +25,12 @@ Se preservan los bytes del lock de trabajo previo (SHA `cf0ea1843a277fb73974690d
 El control revisó candidatos de publicación y capturas: sin secretos de servidor, JWT, contraseñas ni videos privados. Los correos detectados pertenecen a fixtures de pruebas, no a cuentas observadas. La configuración Supabase usa la clave publicable del cliente prevista para distribución, que no sustituye autenticación ni concede privilegios de servicio; ningún TOMTOM_API_KEY o service_role se publica. Estado local de CLI, `.env`, almacenes de firma, artefactos y directorios de revisión permanecen excluidos.
 
 No se promete anonimato o acceso anónimo a un repositorio privado. `PUBLICACION.json` registra exclusivamente URLs devueltas/verificadas después de publicar.
+
+## Enlaces publicados y verificados
+
+- [PR #58 hacia develop](https://github.com/Sebita1418/proyecto_grado/pull/58).
+- [Índice maestro remoto](https://github.com/Sebita1418/proyecto_grado/blob/feature/android-end-to-end-validation/docs/evidence/fdc125/README.md).
+- [Release académica privada](https://github.com/Sebita1418/proyecto_grado/releases/tag/academic-20261016-v1.0.2).
+- [Descarga APK 1.0.2](https://github.com/Sebita1418/proyecto_grado/releases/download/academic-20261016-v1.0.2/transporte-inteligente-1.0.2-2026101601-release-debug-signed.apk).
+
+La descarga autenticada se verificó por tamaño y SHA-256; GitHub también informa el digest idéntico. No se probó acceso desde una cuenta de evaluadora aún no identificada/autorizada. No hay comprobaciones CI configuradas/reportadas para el PR al momento de consulta; la validación local está en FINAL-QA.json.

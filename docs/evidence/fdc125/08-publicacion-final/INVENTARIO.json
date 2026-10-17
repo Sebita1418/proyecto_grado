@@ -1,6 +1,7 @@
 {
-  "createdAt": "2026-10-17T04:43:03.791Z",
-  "scope": "versionable FDC125 evidence; private videos/review frames excluded; self/inventory excluded to avoid recursion; later publication results listed separately",
+  "createdAt": "2026-10-17T04:47:10.148Z",
+  "scope": "exact versionable FDC125 files; inventory files themselves excluded to avoid recursion; private originals excluded; publication results included",
+  "fileCount": 208,
   "files": [
     {
       "path": "01-trazabilidad/PR_BODY.md",
@@ -954,8 +955,8 @@
     },
     {
       "path": "08-publicacion-final/ENTREGA.md",
-      "sizeBytes": 3597,
-      "sha256": "ce2e9df422cf278c67b670c86d6f0d0312d3e144f82da928305a1ceca83fa151"
+      "sizeBytes": 4476,
+      "sha256": "1bac8d3d603f22abb2f69ff93fe23eb3d886230c8ce3e7e99645a81b4f5f306c"
     },
     {
       "path": "08-publicacion-final/FDC125-TEXTO-TECNICO.md",
@@ -968,9 +969,29 @@
       "sha256": "949f5a55e1975db0f893dd45df6dfcceecbef9bb60c05f9389941cd25f036c24"
     },
     {
+      "path": "08-publicacion-final/PREPUBLICACION.json",
+      "sizeBytes": 484,
+      "sha256": "ebcf870ebb0a5adb0969cabceaff84824304163038239f8da51002e263f7b7f4"
+    },
+    {
       "path": "08-publicacion-final/PRIVACIDAD.json",
       "sizeBytes": 2155,
       "sha256": "25ec2ad1d0ff06a7359ae3e12992c84dbf9bd851683522ea7d2bdc8d06131517"
+    },
+    {
+      "path": "08-publicacion-final/PR_BODY.md",
+      "sizeBytes": 2658,
+      "sha256": "4a42bf3fc53a6a7ddda8db73b1233fdcaec465741d1f65c2b5187fb7b2500fe5"
+    },
+    {
+      "path": "08-publicacion-final/PUBLICACION.json",
+      "sizeBytes": 4722,
+      "sha256": "95281ac1d8575c6494f298ac4121f8c5cb7ecff597be73ea4dd3bcd4fefedc28"
+    },
+    {
+      "path": "08-publicacion-final/RELEASE_NOTES.md",
+      "sizeBytes": 2112,
+      "sha256": "6c285632b318ea9858870119038cd7672ca6265ecfec1eb14bed73b7d4ef63c4"
     },
     {
       "path": "08-publicacion-final/TRAZABILIDAD.md",
@@ -1019,8 +1040,8 @@
     },
     {
       "path": "README.md",
-      "sizeBytes": 4539,
-      "sha256": "be9d3242a0e1b33cbcccde0482b89b03f314e36737a82868d72d54373bbf06a1"
+      "sizeBytes": 5419,
+      "sha256": "5ddd57a23a7488e3bde33d49d90825821d9fda634dc962fb904365b7ca89649a"
     }
   ]
 }

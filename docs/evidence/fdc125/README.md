@@ -42,3 +42,12 @@ Release académica, firma Android Debug, aplicación `com.example.transporte_int
 El repositorio permanece privado. Los videos originales con cuentas/conversaciones y los fotogramas de revisión sin anonimizar quedan excluidos de Git y Release. Acceso de evaluadora: ver ENTREGA; no se otorgan permisos ni se cambia visibilidad automáticamente.
 
 No se declara Big Data completo, reducción observada de tiempos, hora óptima por corredor, ganador multimodal ni cobertura general TomTom. Tráfico actual todavía no altera ranking o duración OSRM.
+
+## Publicación efectiva
+
+- [PR #58 hacia develop](https://github.com/Sebita1418/proyecto_grado/pull/58), abierto y sin fusionar.
+- [Release académica privada](https://github.com/Sebita1418/proyecto_grado/releases/tag/academic-20261016-v1.0.2).
+- [Descarga directa del APK 1.0.2](https://github.com/Sebita1418/proyecto_grado/releases/download/academic-20261016-v1.0.2/transporte-inteligente-1.0.2-2026101601-release-debug-signed.apk), verificada mediante descarga autenticada y SHA-256.
+- [Acta completa de publicación y assets](08-publicacion-final/PUBLICACION.json).
+
+El cierre reejecutó analyze sin incidencias, **769 Flutter y 13 Node aprobadas**, sin fallos ni omitidas: [FINAL-QA.json](08-publicacion-final/FINAL-QA.json). No son pruebas de un APK nuevo: se distribuye el binario conservado. Sin merge ni cambio de visibilidad; la evaluadora necesita acceso de lectura.

@@ -8,6 +8,7 @@ import 'package:transporte_inteligente/models/geocoding_result.dart';
 import 'package:transporte_inteligente/models/route_result.dart';
 import 'package:transporte_inteligente/models/road_incident_report.dart';
 import 'package:transporte_inteligente/services/geocoding_service.dart';
+import 'package:transporte_inteligente/services/location_service.dart';
 import 'package:transporte_inteligente/screens/home/home_screen.dart';
 import 'package:transporte_inteligente/widgets/navigation_status_card.dart';
 import 'package:transporte_inteligente/widgets/route_map.dart';
@@ -99,8 +100,37 @@ void main() {
             .overlaps(tester.getRect(find.byTooltip('Reportar novedad vial'))),
         isFalse,
       );
-      gps.position(const LatLng(0, .01));
+      gps.updates.add(
+        const LocationResult(
+          LocationStatus.coordinatesObtained,
+          coordinates: LatLng(0, .01),
+          accuracyMeters: 5,
+          speedMetersPerSecond: 10,
+          headingDegrees: 90,
+          headingAccuracyDegrees: 5,
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 16));
+      await tester.pump(const Duration(milliseconds: 300));
+      final controller = tester
+          .widget<RouteMap>(find.byType(RouteMap))
+          .mapController!;
+      expect(controller.camera.rotation, greaterThan(-90));
+      expect(controller.camera.rotation, lessThan(0));
       await tester.pumpAndSettle();
+      expect(controller.camera.rotation, closeTo(-90, .001));
+      final vehiclePixel = controller.camera.latLngToScreenOffset(
+        const LatLng(0, .01),
+      );
+      expect(
+        vehiclePixel.dy,
+        closeTo(
+          controller.camera.nonRotatedSize.height / 2 +
+              (size.height < 600 ? -size.height * .04 : size.height * .06),
+          1,
+        ),
+      );
       var map = tester.widget<RouteMap>(find.byType(RouteMap));
       expect(map.polylines.length, 2);
       expect(map.polylines.first.points.last.longitude, closeTo(.01, 1e-10));

@@ -829,10 +829,7 @@ void main() {
     await tester.enterText(find.byType(TextField).last, 'Cacique');
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pump();
-    expect(
-      find.text('No hay sugerencias disponibles. Puedes escribir y calcular.'),
-      findsOneWidget,
-    );
+    expect(find.textContaining('Photon'), findsOneWidget);
     await tester.ensureVisible(find.text('Analizar rutas'));
     await tester.tap(find.text('Analizar rutas'));
     await tester.pump();

@@ -1,0 +1,7 @@
+﻿{
+    "durationSeconds":  294.0524324,
+    "command":  "flutter build apk --release --no-pub --build-name=1.0.1 --build-number=20261016",
+    "startedUtc":  "2026-10-17T01:45:36.8000421Z",
+    "exitCode":  0,
+    "endedUtc":  "2026-10-17T01:50:30.8470744Z"
+}

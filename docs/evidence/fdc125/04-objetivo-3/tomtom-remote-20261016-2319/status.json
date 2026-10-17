@@ -1,0 +1,13 @@
+﻿{
+    "authenticationRestrictionsRemote":  "NOT TESTED: stopped at missing user session",
+    "checkedAt":  "2026-10-17T04:20:43.4776975Z",
+    "observedTraffic":  "NOT OBTAINED",
+    "apkChanged":  false,
+    "tomtomRequests":  0,
+    "githubPublished":  false,
+    "reason":  "No project Supabase Auth user JWT available to this process; CLI administrative login is not an Auth user session",
+    "sourceCodeChanged":  false,
+    "authenticatedFunctionRequest":  "NOT TESTED",
+    "status":  "BLOCKED",
+    "quotaIncrement":  "NOT TESTED: no provider request executed"
+}

@@ -1,0 +1,86 @@
+{
+  "project": "Transporte Inteligente",
+  "versionName": "1.0.2",
+  "versionCode": 2026101601,
+  "cut": "D: objective-3-intervention-20261016",
+  "createdAt": "2026-10-17T02:29:33.706Z",
+  "timezone": "America/Bogota",
+  "applicationId": "com.example.transporte_inteligente",
+  "minSdk": 24,
+  "targetSdk": 36,
+  "buildMode": "release",
+  "signing": "Android Debug; academic demonstration only, not production signing",
+  "certificateSha256": "27b98872756c1a1e6dea44defae811127be4dbf7f6e1c666dab9a8757c9d5a85",
+  "apk": {
+    "file": "transporte-inteligente-1.0.2-2026101601-release-debug-signed.apk",
+    "sizeBytes": 60331195,
+    "sha256": "435913b6c1eb08ace49d80005f7b20d4561a1428fa9d254ba45a769384d9eb40"
+  },
+  "source": {
+    "branch": "feature/android-end-to-end-validation",
+    "baseCommit": "226f1a4fb04fcc8b5bc8a2aed4e7e4a550b71fa4",
+    "localChanges": true,
+    "manifest": "source-state.sha256",
+    "fileCount": 233,
+    "sha256": "b2445ac61e770177230074e8f84cb070ea0064074ca5ecf36c4d740d01bf102a"
+  },
+  "tests": {
+    "command": "flutter test --no-pub --machine",
+    "passed": 769,
+    "failed": 0,
+    "skipped": 0,
+    "done": {
+      "success": true,
+      "type": "done",
+      "time": 86272
+    }
+  },
+  "additionalNodeTests": {
+    "passed": 6,
+    "failed": 0
+  },
+  "trafficProxyEnabled": false,
+  "trafficStatus": "BLOCKED: no key, no deployment, no real TomTom requests",
+  "historicalDataset": "external reproducible batch; not bundled or used for current route ranking",
+  "assets": [
+    {
+      "entry": "assets/flutter_assets/assets/geo/bucaramanga-mgn2024.geojson",
+      "sizeBytes": 181231,
+      "sha256": "1dca6635bceacb6ca36b038ecb8906ad1ff3f9e312f6e4bface812562059deb5"
+    },
+    {
+      "entry": "assets/flutter_assets/assets/geo/giron-mgn2024.geojson",
+      "sizeBytes": 314197,
+      "sha256": "d21059491f262a3369a10c33da38988a367fa5a9a1bff55d74600146208820a2"
+    },
+    {
+      "entry": "assets/flutter_assets/assets/geo/floridablanca-mgn2024.geojson",
+      "sizeBytes": 129423,
+      "sha256": "fa74508977642bd1631f5833f4db38d1624c91845675da880a42e41196e27794"
+    }
+  ],
+  "physicalValidation": {
+    "versionName": "1.0.2",
+    "versionCode": 2026101601,
+    "apkSha256": "435913b6c1eb08ace49d80005f7b20d4561a1428fa9d254ba45a769384d9eb40",
+    "device": {
+      "model": "Samsung Galaxy S22 / SM-S901U",
+      "serial": "R3CT30HX60V",
+      "android": "15",
+      "api": 35
+    },
+    "observedAt": "2026-10-17T02:32:50.337Z",
+    "installation": "PASS: adb install -r Success",
+    "installedApkHash": "PASS: exact match",
+    "componentLaunch": "PASS: am start -S -W Status ok; MainActivity; WaitTime 3122 ms",
+    "visibleApplication": "NOT TESTED: screen was off/locked; wake showed NotificationShade over focused app; awaiting human unlock",
+    "screenshot": {
+      "path": "artifacts/objective-3-android/s22-launch.png",
+      "sha256": "0663e04855d2404101762a726559f6156191fce0603e686354a55634a062fa3d",
+      "observation": "Always-on charging screen, not proof of visible Home; local ignored artifact"
+    },
+    "humanFunctionalTests": "NOT TESTED: no confirmation for this APK; previous videos are not attributed to this version"
+  },
+  "evidence": "docs/evidence/fdc125/04-objetivo-3/intervention-2026-10-16",
+  "buildCommand": "flutter build apk --release --no-pub --build-name=1.0.2 --build-number=2026101601"
+}

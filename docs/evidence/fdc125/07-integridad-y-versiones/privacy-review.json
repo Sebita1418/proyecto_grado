@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-16",
+  "textFilesChecked": 63,
+  "textPatternFindings": [],
+  "scope": "docs/evidence text files; revision-local excluded",
+  "notAProofOfNoSensitiveData": true,
+  "originalVideoPrivacy": {
+    "V01": "Google account names/emails and profile; audio not reviewed",
+    "V02": "private messages/contact and precise map position; audio not reviewed"
+  },
+  "originalsExcludedFromGit": true,
+  "derivedCapturesVisuallyReviewed": true,
+  "publicationExecuted": false
+}

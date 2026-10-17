@@ -83,7 +83,13 @@ class MobilityRecommendationSummary extends StatelessWidget {
             'Reportes viales pr\u00f3ximos: '
             '${_reportEvidence(insight, data.statusOf(MobilityDataKind.roadConditions))}.',
           ),
-          const Text('Tr\u00e1fico en tiempo real: no disponible.'),
+          Text(
+            recommendation.reasons.any(
+                  (r) => r.explanation.startsWith('TomTom:'),
+                )
+                ? 'Tráfico: fragmento parcial; no se utiliza para estimar la duración total.'
+                : 'Tr\u00e1fico en tiempo real: no disponible.',
+          ),
           const Text('Horario futuro: sin predicci\u00f3n.'),
         ],
       ),

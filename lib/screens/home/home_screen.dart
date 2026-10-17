@@ -7,6 +7,7 @@ import '../../models/perfil_model.dart';
 import '../../controllers/road_incident_controller.dart';
 import '../../services/road_incident_service.dart';
 import '../../navigation/navigation_session.dart';
+import '../../navigation/navigation_camera.dart';
 import '../../widgets/navigation_status_card.dart';
 import '../../models/route_result.dart';
 import '../../models/road_incident_report.dart';
@@ -45,7 +46,9 @@ class HomeScreen extends StatefulWidget {
     this.roadIncidentService,
     this.initiallyCollapsed = true,
     this.boundaryService,
+    this.navigationZoom = 16,
   });
+  final double navigationZoom;
   final LocationService? locationService;
   final RoadIncidentService? roadIncidentService;
   final bool initiallyCollapsed;
@@ -58,7 +61,14 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _cameraAnimation = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 650),
+  );
+  LatLng? _cameraFrom, _cameraTo;
+  double _rotationFrom = 0, _rotationDelta = 0, _zoomFrom = 16;
   static const _initialCenter = LatLng(7.119349, -73.122742);
 
   /// Margins that keep every floating control detached from the viewport
@@ -107,6 +117,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _panelCollapsed = widget.initiallyCollapsed;
+    _navigation.camera.zoom = widget.navigationZoom;
+    _cameraAnimation.addListener(_animateCamera);
     _navigation.addListener(_navigationChanged);
     _incidents.addListener(_incidentsChanged);
     _incidents.refresh();
@@ -124,7 +136,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void _navigationChanged() {
     if (!mounted) return;
     setState(() {});
-    final point = _navigation.currentPosition;
+    final point = _navigation.camera.position ?? _navigation.currentPosition;
+    if (!_navigation.following) _cameraAnimation.stop();
     if (_navigation.isActive && _navigation.following && point != null) {
       _followPosition(point);
     }
@@ -155,15 +168,47 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _followPosition(LatLng point) {
+    final camera = _mapController.camera;
+    _cameraFrom = camera.screenOffsetToLatLng(
+      Offset(
+            camera.nonRotatedSize.width / 2,
+            camera.nonRotatedSize.height / 2,
+          ) +
+          _navigationOffset,
+    );
+    _cameraTo = point;
+    _zoomFrom = _mapController.camera.zoom;
+    _rotationFrom = _mapController.camera.rotation;
+    _rotationDelta = NavigationCamera.angularDelta(
+      _rotationFrom,
+      _navigation.camera.rotation,
+    );
+    _cameraAnimation.forward(from: 0);
+  }
+
+  Offset get _navigationOffset {
     final size = MediaQuery.sizeOf(context);
-    // Mapa norte-arriba: desplazar el encuadre no supone heading del vehículo.
+    return Offset(
+      size.width >= 700 ? size.width * .15 : 0,
+      size.height < 600 ? -size.height * .04 : size.height * .06,
+    );
+  }
+
+  void _animateCamera() {
+    if (!_navigation.isActive || !_navigation.following || _cameraTo == null) {
+      _cameraAnimation.stop();
+      return;
+    }
+    final t = Curves.easeInOut.transform(_cameraAnimation.value);
+    final from = _cameraFrom!, to = _cameraTo!;
+    _mapController.rotate(_rotationFrom + _rotationDelta * t);
     _mapController.move(
-      point,
-      16,
-      offset: Offset(
-        size.width >= 700 ? size.width * .15 : 0,
-        size.height < 600 ? -size.height * .04 : size.height * .06,
+      LatLng(
+        from.latitude + (to.latitude - from.latitude) * t,
+        from.longitude + (to.longitude - from.longitude) * t,
       ),
+      _zoomFrom + (_navigation.camera.zoom.clamp(14, 18) - _zoomFrom) * t,
+      offset: _navigationOffset,
     );
   }
 
@@ -418,6 +463,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _cameraAnimation.dispose();
     _incidents.removeListener(_incidentsChanged);
     _incidents.dispose();
     _navigation.removeListener(_navigationChanged);
@@ -639,8 +685,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             ? (_navigation.projection?.remaining ??
                                   activeRoute.points)
                             : activeRoute.points,
-                        strokeWidth: 5,
-                        borderStrokeWidth: 2,
+                        strokeWidth: navigating ? 7 : 5,
+                        borderStrokeWidth: navigating ? 3 : 2,
                         borderColor: Colors.white,
                         color: colorScheme.primary,
                       ),

@@ -15,20 +15,32 @@ class AddressQuery {
     if (tail.isNotEmpty &&
         !tail.startsWith(',') &&
         !RegExp(
-          r'^(Bucaramanga|Floridablanca|Girón|Piedecuesta|Bogotá|Medellín)(?:,|$)',
+          r'^(Bucaramanga|Floridablanca|Gir[oó]n|Piedecuesta|Bogotá|Medellín)(?:,|$)',
           caseSensitive: false,
         ).hasMatch(tail)) {
       match = null;
     }
-    primaryRoad = match?[1];
+    final incomplete = match == null
+        ? RegExp(
+            r'^((?:Calle|Carrera|Avenida|Diagonal|Transversal)\s+\d+[a-z]?)\s*#\s*(\d+[a-z]?)(?:\s*,\s*(.*))?$',
+            caseSensitive: false,
+          ).firstMatch(normalized)
+        : null;
+    incompleteNumber = incomplete?[2];
+    primaryRoad = match?[1] ?? incomplete?[1];
     secondaryNumber = match?[2];
     propertyNumber = match?[3];
     crossingRoad = match?[4];
-    locality = match?[5]?.replaceFirst(RegExp(r'^[,\s]+'), '').trim() ?? '';
+    locality =
+        (match?[5] ?? incomplete?[3])
+            ?.replaceFirst(RegExp(r'^[,\s]+'), '')
+            .trim() ??
+        '';
   }
   final String original, normalized;
   late final String? primaryRoad, secondaryNumber, propertyNumber, crossingRoad;
   late final String locality;
+  late final String? incompleteNumber;
   AddressQueryKind get kind => primaryRoad == null
       ? AddressQueryKind.place
       : houseNumber != null
@@ -38,8 +50,11 @@ class AddressQuery {
       : AddressQueryKind.road;
 
   /// Provider context only; never replaces the user's original input.
-  String get providerQuery => primaryRoad != null && !hasCity
-      ? '$normalized, Bucaramanga, Santander, Colombia'
+  String get providerQuery => providerQueryFor();
+
+  String providerQueryFor({String municipality = 'Bucaramanga'}) =>
+      primaryRoad != null && !hasCity
+      ? '$normalized, $municipality, Santander, Colombia'
       : normalized;
 
   bool get hasCity => locality.isNotEmpty;
@@ -83,6 +98,12 @@ class AddressQuery {
   }
 
   List<String> get variants {
+    if (incompleteNumber != null) {
+      return [
+        normalized,
+        '$primaryRoad${locality.isEmpty ? '' : ', $locality'}',
+      ];
+    }
     if (houseNumber == null) return [normalized];
     final suffix = locality.isEmpty ? '' : ', $locality';
     return [
@@ -172,7 +193,7 @@ class AddressQuery {
       .trim()
       .replaceAllMapped(
         RegExp(
-          r'\b(carrera|cra|cr|kr|calle|cl|avenida|av|diagonal|diag|transversal|trans)\.?\s+(?=\d)',
+          r'\b(carrera|cra|cr|kr|calle|cl|avenida|av|diagonal|diag|transversal|trans)\.?\s*(?=\d)',
           caseSensitive: false,
         ),
         (match) => '${_roads[match[1]!.toLowerCase()]} ',

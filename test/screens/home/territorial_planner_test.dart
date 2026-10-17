@@ -77,7 +77,7 @@ void main() {
     gps.position(const LatLng(.002, .01));
     await tester.pumpAndSettle();
     expect(
-      find.textContaining('Fuera de Bucaramanga: ubicación GPS actual'),
+      find.textContaining('Fuera de la cobertura: ubicación GPS actual'),
       findsOneWidget,
     );
     expect(
@@ -135,7 +135,7 @@ void main() {
     final routing = ControlledRouting();
     await mount(tester, routing, gpsOutside: true);
     expect(
-      find.textContaining('Tu ubicación está fuera de Bucaramanga'),
+      find.textContaining('Tu ubicación está fuera de la cobertura'),
       findsOneWidget,
     );
     await tester.enterText(find.byType(TextField).last, 'Destino');
@@ -167,7 +167,7 @@ void main() {
     await tester.enterText(find.byType(TextField).last, 'Lugar externo');
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pumpAndSettle();
-    expect(find.textContaining('Fuera de Bucaramanga'), findsOneWidget);
+    expect(find.textContaining('Fuera de la cobertura'), findsOneWidget);
     await act(tester, 'Lugar externo');
     expect(find.textContaining('El destino está fuera'), findsOneWidget);
     expect(routing.calls, 0);
@@ -244,7 +244,7 @@ void main() {
     expect(routing.calls, 0);
     expect(find.textContaining('No se pudo verificar'), findsOneWidget);
     fail = false;
-    await tapLabel(tester, 'Reintentar límite municipal');
+    await tapLabel(tester, 'Reintentar cobertura');
     expect(service.available, isTrue);
     await act(tester, 'Analizar rutas');
     expect(

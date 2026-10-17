@@ -1,0 +1,8 @@
+﻿{
+    "exitCode":  0,
+    "temporaryDiagnostic":  true,
+    "finalAcademicApk":  false,
+    "command":  "flutter build apk --release --no-pub --target lib/traffic_probe_main.dart --build-name=1.0.2 --build-number=2026101601 --dart-define=TRAFFIC_PROXY_ENABLED=true",
+    "startedAt":  "2026-10-17T04:29:35.7340488Z",
+    "finishedAt":  "2026-10-17T04:31:36.0976023Z"
+}

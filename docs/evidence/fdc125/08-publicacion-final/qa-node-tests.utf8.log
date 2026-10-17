@@ -1,0 +1,88 @@
+TAP version 13
+# Subtest: proxy fails closed without credentials, auth, quota, or territorial match
+ok 1 - proxy fails closed without credentials, auth, quota, or territorial match
+  ---
+  duration_ms: 75.1191
+  type: 'test'
+  ...
+# Subtest: proxy bounded cache and redaction preserve observation timestamp
+ok 2 - proxy bounded cache and redaction preserve observation timestamp
+  ---
+  duration_ms: 9.1518
+  type: 'test'
+  ...
+# Subtest: provider failure exposes no secret, URL or provider body
+ok 3 - provider failure exposes no secret, URL or provider body
+  ---
+  duration_ms: 2.7244
+  type: 'test'
+  ...
+# Subtest: server polygon excludes holes and outside points
+ok 4 - server polygon excludes holes and outside points
+  ---
+  duration_ms: 0.7487
+  type: 'test'
+  ...
+# Subtest: generated module is deterministic and contains exactly all original geometries
+ok 5 - generated module is deterministic and contains exactly all original geometries
+  ---
+  duration_ms: 72.9438
+  type: 'test'
+  ...
+# Subtest: Bucaramanga: source bytes, numeric coordinates, rings and hashes unchanged
+ok 6 - Bucaramanga: source bytes, numeric coordinates, rings and hashes unchanged
+  ---
+  duration_ms: 10.047
+  type: 'test'
+  ...
+# Subtest: Girón: source bytes, numeric coordinates, rings and hashes unchanged
+ok 7 - Girón: source bytes, numeric coordinates, rings and hashes unchanged
+  ---
+  duration_ms: 7.8353
+  type: 'test'
+  ...
+# Subtest: Floridablanca: source bytes, numeric coordinates, rings and hashes unchanged
+ok 8 - Floridablanca: source bytes, numeric coordinates, rings and hashes unchanged
+  ---
+  duration_ms: 3.8879
+  type: 'test'
+  ...
+# Subtest: known interior municipalities and exterior Piedecuesta/Bogotá keep identical decisions
+ok 9 - known interior municipalities and exterior Piedecuesta/Bogotá keep identical decisions
+  ---
+  duration_ms: 33.3435
+  type: 'test'
+  ...
+# Subtest: municipal grid and ring boundary probes give identical old/new containment
+ok 10 - municipal grid and ring boundary probes give identical old/new containment
+  ---
+  duration_ms: 1149.3091
+  type: 'test'
+  ...
+# Subtest: entrypoint imports local bundle only; JWT and security implementation preserved
+ok 11 - entrypoint imports local bundle only; JWT and security implementation preserved
+  ---
+  duration_ms: 5.3621
+  type: 'test'
+  ...
+# Subtest: historical parser uses civil hour, validates dates, counts duplicates and omissions
+ok 12 - historical parser uses civil hour, validates dates, counts duplicates and omissions
+  ---
+  duration_ms: 30.9407
+  type: 'test'
+  ...
+# Subtest: historical aggregates conserve valid records in every dimension
+ok 13 - historical aggregates conserve valid records in every dimension
+  ---
+  duration_ms: 1.0334
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1575.493

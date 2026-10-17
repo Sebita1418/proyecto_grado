@@ -1,0 +1,17 @@
+{
+  "auditDate": "2026-10-15",
+  "branch": "feature/android-end-to-end-validation",
+  "scenarioTests": 12,
+  "scenarioPassed": 12,
+  "fullSuitePassed": 754,
+  "fullSuiteFailed": 0,
+  "analyzeExitCode": 0,
+  "testExitCode": 0,
+  "diffExitCode": 0,
+  "identicalScenarioOutputsInFocusedAndFullRuns": true,
+  "dataNature": "Deterministic synthetic fixtures; production components; no live network/DB observations",
+  "physicalTests": "AND-01..AND-10 NOT TESTED in this audit",
+  "fdc124LiteralCorrespondence": "NOT VERIFIED: source document absent; literal objective requested",
+  "functionalChanges": false,
+  "newApk": false
+}

@@ -1,0 +1,12 @@
+{
+  "reviewedAt": "2026-10-17T04:43:03.797Z",
+  "stagedFiles": 287,
+  "privateMediaStaged": false,
+  "evidenceGitBytesIdentical": true,
+  "evidenceFilesChecked": 216,
+  "sourceWhitespaceCheck": "PASS; evidence original whitespace explicitly preserved by .gitattributes",
+  "lockHandling": "existing working lock staged without byte changes; no dependency regeneration",
+  "repositoryPrivate": true,
+  "baseBranch": "develop",
+  "headBranch": "feature/android-end-to-end-validation"
+}

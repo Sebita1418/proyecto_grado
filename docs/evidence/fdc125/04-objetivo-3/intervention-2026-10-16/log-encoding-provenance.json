@@ -1,0 +1,65 @@
+[
+  {
+    "original": "tests-machine-final.log",
+    "originalSha256": "6dc0ffe558c834fccda19cc383266e90509d5bbd5e8be639d7a4505dbe6ea3e6",
+    "readable": "tests-machine-final.utf8.log",
+    "readableSha256": "3b8aa66076ab93b7b87afa85c90e6f218b714afd5c5cd03b1473608525976c10",
+    "transformation": "PowerShell original decoded by BOM; UTF-8 without BOM; text unchanged"
+  },
+  {
+    "original": "analyze-verified.log",
+    "originalSha256": "34b65782102daf768ec35c991b3750a863212086aef3639aaf3597f4c3fab712",
+    "readable": "analyze-verified.utf8.log",
+    "readableSha256": "6ac9e11b9ea0a4c2f09c243f5932cc2feb68208936c49805a6eb56b6abc9cbf0",
+    "transformation": "PowerShell original decoded by BOM; UTF-8 without BOM; text unchanged"
+  },
+  {
+    "original": "node-tests.log",
+    "originalSha256": "9d7eacfba9914adf4721919664af87e02b2c3a6b75ca8a9c31fcea6f387fa90d",
+    "readable": "node-tests.utf8.log",
+    "readableSha256": "1c4cb461b758a167c08628734b9b5f4062ef0ab85f8a93e4ae37d467855544a2",
+    "transformation": "PowerShell original decoded by BOM; UTF-8 without BOM; text unchanged"
+  },
+  {
+    "original": "build.log",
+    "originalSha256": "e74b8f52feb34ca08926f17860b551ca18650e96dd97bd3a3d247b8c64d718ff",
+    "readable": "build.utf8.log",
+    "readableSha256": "e22ba25aa052ceccd3a35b6a12abc4f812130dc8f4d9862039a84c703c19eb05",
+    "transformation": "PowerShell original decoded by BOM; UTF-8 without BOM; text unchanged"
+  },
+  {
+    "original": "historical-processing.log",
+    "originalSha256": "592ae8c11a58f3238be4b48eea7eed2d393385d5816b37cd37281d417d09e69c",
+    "readable": "historical-processing.utf8.log",
+    "readableSha256": "1c4cbd741ddfcc4aef6daa714e07fa7cc18c5bf3ab38ac5465859baedbed14d7",
+    "transformation": "PowerShell original decoded by BOM; UTF-8 without BOM; text unchanged"
+  },
+  {
+    "original": "osrm-collection.log",
+    "originalSha256": "7d75213a49231bdde51ef5f951d648dfd46a5bec32cae83ba0cf5b5fb2eaab96",
+    "readable": "osrm-collection.utf8.log",
+    "readableSha256": "04f693bb1fd1953dec60b18b1ec034f9cee1f265a265e7d016fdb3ee4032d2ea",
+    "transformation": "PowerShell original decoded by BOM; UTF-8 without BOM; text unchanged"
+  },
+  {
+    "original": "install.log",
+    "originalSha256": "4dbdc95cc34f134cec3335a1cb220862b88ecce0d65412b9bd88908c08194dc9",
+    "readable": "install.utf8.log",
+    "readableSha256": "c4aa470acafcf8576c15b0f0b5ae7e852d1ec5413372d0e6a9272e788e1306d3",
+    "transformation": "PowerShell original decoded by BOM; UTF-8 without BOM; text unchanged"
+  },
+  {
+    "original": "launch.log",
+    "originalSha256": "c11da0fa21f8f5ea9de842e99ecae2c8c088efea6b8b7bfd68fee4c845281350",
+    "readable": "launch.utf8.log",
+    "readableSha256": "9e6f58c61fc77f6f5bc2d28099beb78ae7dc22aaf86ec89f928c2d84d0b3ea1d",
+    "transformation": "PowerShell original decoded by BOM; UTF-8 without BOM; text unchanged"
+  },
+  {
+    "original": "signature.log",
+    "originalSha256": "17a8a5228f0f074b8e785e182c82e209b24a32fec25a2dd1bebdfa1c20e981c2",
+    "readable": "signature.utf8.log",
+    "readableSha256": "28d5dcb1726391e6365f51bf8f1bf1eee255cf76dd7c7508cbfedf9b9b3bb86a",
+    "transformation": "PowerShell original decoded by BOM; UTF-8 without BOM; text unchanged"
+  }
+]

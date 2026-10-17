@@ -1,0 +1,11 @@
+{
+  "command": "flutter test --no-pub --machine",
+  "passed": 769,
+  "failed": 0,
+  "skipped": 0,
+  "done": {
+    "success": true,
+    "type": "done",
+    "time": 86272
+  }
+}

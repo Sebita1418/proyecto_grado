@@ -1,0 +1,46 @@
+Running Gradle task 'assembleRelease'...                        
+
+C:\Proyectos\transporte_inteligente\android>if "Windows_NT" == "Windows_NT" setlocal
+
+C:\Proyectos\transporte_inteligente\android>set DEFAULT_JVM_OPTS= 
+
+C:\Proyectos\transporte_inteligente\android>set DIRNAME=C:\Proyectos\transporte_inteligente\android\ 
+
+C:\Proyectos\transporte_inteligente\android>if "C:\Proyectos\transporte_inteligente\android\" == "" set DIRNAME=. 
+
+C:\Proyectos\transporte_inteligente\android>set APP_BASE_NAME=gradlew 
+
+C:\Proyectos\transporte_inteligente\android>set APP_HOME=C:\Proyectos\transporte_inteligente\android\ 
+
+C:\Proyectos\transporte_inteligente\android>if defined JAVA_HOME goto findJavaFromJavaHome 
+
+C:\Proyectos\transporte_inteligente\android>set JAVA_EXE=java.exe 
+
+C:\Proyectos\transporte_inteligente\android>java.exe -version  1>NUL 2>&1 
+
+C:\Proyectos\transporte_inteligente\android>if "0" == "0" goto init 
+
+C:\Proyectos\transporte_inteligente\android>if not "Windows_NT" == "Windows_NT" goto win9xME_args 
+
+C:\Proyectos\transporte_inteligente\android>if "@eval[2+2]" == "4" goto 4NT_args 
+
+C:\Proyectos\transporte_inteligente\android>set CMD_LINE_ARGS= 
+
+C:\Proyectos\transporte_inteligente\android>set _SKIP=2 
+
+C:\Proyectos\transporte_inteligente\android>if "x-q" == "x" goto execute 
+
+C:\Proyectos\transporte_inteligente\android>set CMD_LINE_ARGS=-q -Ptarget-platform=android-arm,android-arm64,android-x64 -Ptarget=lib\main.dart -Pbase-application-name=android.app.Application -Pdart-defines=RkxVVFRFUl9CVUlMRF9OQU1FPTEuMC4y,RkxVVFRFUl9CVUlMRF9OVU1CRVI9MjAyNjEwMTYwMQ==,RkxVVFRFUl9WRVJTSU9OPTMuNDcuNw==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049YWJhZjljNTIzNw==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049ZGViMjg3NDgxZQ==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My4xMy41 -Pdart-obfuscation=false -Ptrack-widget-creation=true -Ptree-shake-icons=true -Pflutter.androidSdkRoot=C:\Android\sdk -Pflutter.installedNdkVersions=28.2.13676358 -Pflutter.sdkManagerPath=C:\Android\sdk\cmdline-tools\latest\bin\sdkmanager.bat assembleRelease 
+
+C:\Proyectos\transporte_inteligente\android>goto execute 
+
+C:\Proyectos\transporte_inteligente\android>set CLASSPATH=C:\Proyectos\transporte_inteligente\android\\gradle\wrapper\gradle-wrapper.jar 
+
+C:\Proyectos\transporte_inteligente\android>"java.exe"    "-Dorg.gradle.appname=gradlew" -classpath "C:\Proyectos\transporte_inteligente\android\\gradle\wrapper\gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain -q -Ptarget-platform=android-arm,android-arm64,android-x64 -Ptarget=lib\main.dart -Pbase-application-name=android.app.Application -Pdart-defines=RkxVVFRFUl9CVUlMRF9OQU1FPTEuMC4y,RkxVVFRFUl9CVUlMRF9OVU1CRVI9MjAyNjEwMTYwMQ==,RkxVVFRFUl9WRVJTSU9OPTMuNDcuNw==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049YWJhZjljNTIzNw==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049ZGViMjg3NDgxZQ==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My4xMy41 -Pdart-obfuscation=false -Ptrack-widget-creation=true -Ptree-shake-icons=true -Pflutter.androidSdkRoot=C:\Android\sdk -Pflutter.installedNdkVersions=28.2.13676358 -Pflutter.sdkManagerPath=C:\Android\sdk\cmdline-tools\latest\bin\sdkmanager.bat assembleRelease 
+Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 15392 bytes (99.1% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+
+C:\Proyectos\transporte_inteligente\android>if "0" == "0" goto mainEnd 
+
+C:\Proyectos\transporte_inteligente\android>if "Windows_NT" == "Windows_NT" endlocal
+Running Gradle task 'assembleRelease'...                          190,3s
+√ Built build\app\outputs\flutter-apk\app-release.apk (57.5MB)

@@ -1,0 +1,3 @@
+# Evidence is immutable: preserve original bytes and terminal whitespace.
+# Source code remains subject to the normal whitespace checks.
+docs/evidence/** -text -whitespace

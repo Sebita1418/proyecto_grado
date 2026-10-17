@@ -1,0 +1,5 @@
+{
+    "exitCode":  0,
+    "command":  "adb -s R3CT30HX60V shell am start -S -W -n com.example.transporte_inteligente/.MainActivity",
+    "finishedAt":  "2026-10-17T02:30:08.6485180Z"
+}

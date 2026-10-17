@@ -42,7 +42,7 @@ void main() {
             contains(
               scenario == 'unknown'
                   ? 'No se pudo verificar'
-                  : 'fuera de Bucaramanga',
+                  : 'fuera de la cobertura',
             ),
           ),
         ),

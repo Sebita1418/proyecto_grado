@@ -1,0 +1,34 @@
+[
+  {
+    "id": "V01",
+    "name": "WhatsApp Video 2026-10-15 at 23.13.00.mp4",
+    "path": "05-videos-originales/WhatsApp Video 2026-10-15 at 23.13.00.mp4",
+    "sizeBytes": 3183462,
+    "sha256": "dbb8b4b4c8ab117a2062c220eeb0ae542d6456737fb8c53001f01971df47bf35",
+    "classification": "original aportado por usuario; nombre no certifica fecha, dispositivo ni APK",
+    "privacy": "SENSIBLE: selector de cuentas con nombres/correos y perfil; no publicar original sin revisión",
+    "durationSeconds": 21.913604,
+    "width": 392,
+    "height": 850,
+    "containsAudio": true,
+    "observation": "Muestreo de 1 fotograma/s en 0..19 s y muestreo general: cierre de sesión, login Google/selector y retorno a Home; no se observa versionCode ni modelo",
+    "apk": "NO IDENTIFICADO",
+    "reviewMethod": "ffmpeg frames; no audio transcription; not continuous frame-by-frame review"
+  },
+  {
+    "id": "V02",
+    "name": "WhatsApp Video 2026-10-15 at 23.13.15.mp4",
+    "path": "05-videos-originales/WhatsApp Video 2026-10-15 at 23.13.15.mp4",
+    "sizeBytes": 16532097,
+    "sha256": "0640fc557724c7c73192028c7e9e68ca702aad08d7ec50014d8d6c8bf2cbfc5e",
+    "classification": "original aportado por usuario; nombre no certifica fecha, dispositivo ni APK",
+    "privacy": "SENSIBLE: pantalla de conversaciones privadas, posible identificador de contacto y posición precisa; no publicar original sin revisión",
+    "durationSeconds": 92.019625,
+    "width": 392,
+    "height": 850,
+    "containsAudio": true,
+    "observation": "Muestreo cada 10 s: búsqueda UIS, aviso fuera de cobertura, destino elegido, ruta/nav, formulario de reporte y analítica con 2 registros; no acredita desplazamiento real ni precisión GPS",
+    "apk": "NO IDENTIFICADO",
+    "reviewMethod": "ffmpeg sampled frames at ~0,10,...90 s; audio not transcribed"
+  }
+]

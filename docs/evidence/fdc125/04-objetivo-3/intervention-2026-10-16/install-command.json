@@ -1,0 +1,5 @@
+{
+    "exitCode":  0,
+    "command":  "adb -s R3CT30HX60V install -r APK_1.0.2_2026101601",
+    "finishedAt":  "2026-10-17T02:30:05.0824524Z"
+}

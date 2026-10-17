@@ -1,0 +1,7 @@
+﻿{
+    "exitCode":  64,
+    "command":  "flutter run --release --no-pub -d R3CT30HX60V --target lib/traffic_probe_main.dart --build-name=1.0.2 --build-number=2026101601 --dart-define=TRAFFIC_PROXY_ENABLED=true",
+    "temporaryDiagnostic":  true,
+    "finalAcademicApk":  false,
+    "finishedAt":  "2026-10-17T04:29:17.6962657Z"
+}

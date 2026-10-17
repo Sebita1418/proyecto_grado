@@ -1,0 +1,97 @@
+{
+  "reviewedAt": "2026-10-17T04:42:06.181Z",
+  "scanScope": "candidate source, documentation and evidence texts; original private videos and raw review frames excluded",
+  "secretMatches": [],
+  "emailMatches": [
+    {
+      "path": "test/screens/home/operational_coverage_flow_test.dart",
+      "kind": "email",
+      "count": 1,
+      "lines": [
+        187
+      ]
+    },
+    {
+      "path": "test/screens/login/google_oauth_flow_test.dart",
+      "kind": "email",
+      "count": 3,
+      "lines": [
+        27,
+        73,
+        87
+      ]
+    },
+    {
+      "path": "test/perfil/perfil_screen_test.dart",
+      "kind": "email",
+      "count": 4,
+      "lines": [
+        16,
+        70,
+        95,
+        117
+      ]
+    },
+    {
+      "path": "test/reports/road_incident_test.dart",
+      "kind": "email",
+      "count": 1,
+      "lines": [
+        144
+      ]
+    },
+    {
+      "path": "test/screens/home/address_map_selection_test.dart",
+      "kind": "email",
+      "count": 1,
+      "lines": [
+        35
+      ]
+    },
+    {
+      "path": "test/screens/home/home_screen_test.dart",
+      "kind": "email",
+      "count": 2,
+      "lines": [
+        151,
+        160
+      ]
+    },
+    {
+      "path": "test/screens/home/report_location_flow_test.dart",
+      "kind": "email",
+      "count": 1,
+      "lines": [
+        63
+      ]
+    },
+    {
+      "path": "test/visual/visual_fidelity_test.dart",
+      "kind": "email",
+      "count": 3,
+      "lines": [
+        89,
+        113,
+        395
+      ]
+    }
+  ],
+  "emailAssessment": "synthetic fixtures in test files; no observed personal accounts",
+  "screenshotsReviewed": [
+    "V01-t08-google-anonimizada.png",
+    "V01-t17-home-anonimizada.png",
+    "V02-t85-analitica-derivada.png",
+    "s22-real-traffic.png"
+  ],
+  "privateMediaUploaded": false,
+  "excluded": [
+    "deliveries/ git contents",
+    "artifacts/",
+    "supabase/.temp/",
+    ".env and signing stores",
+    "05-videos-originales video files",
+    "06-capturas/revision-local/"
+  ],
+  "repositoryRemainsPrivate": true,
+  "originalMasterIndexSha256": "bd8857578046e7ae8b4debb7e1eabfbdd4c59559fcc2be66e13d191cac410ba2"
+}

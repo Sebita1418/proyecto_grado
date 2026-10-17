@@ -1,0 +1,2 @@
+queriedAt,httpStatus,available,latencyMilliseconds,currentSpeedKmph,freeFlowSpeedKmph,currentTravelTimeSeconds,freeFlowTravelTimeSeconds,confidence
+2026-10-17T04:32:16.804Z,200,true,1581,51,51,828,828,1

@@ -1,0 +1,209 @@
+[
+  {
+    "id": "real-1-driving",
+    "mode": "driving",
+    "origin": {
+      "label": "Universidad Industrial de Santander, Bucaramanga, Colombia",
+      "latitude": 7.1409311,
+      "longitude": -73.1198652
+    },
+    "destination": {
+      "label": "Parque Santander, Bucaramanga, Colombia",
+      "latitude": 7.1196763,
+      "longitude": -73.1228536
+    },
+    "url": "https://router.project-osrm.org/route/v1/driving/-73.1198652,7.1409311;-73.1228536,7.1196763?alternatives=true&steps=true&overview=full&geometries=geojson",
+    "queriedAt": "2026-10-17T02:17:51.007Z",
+    "dataNature": "real OSRM provider response; estimated metrics, no observed traffic",
+    "status": 200,
+    "elapsedMilliseconds": 733.3265,
+    "sha256": "ba664273e650d26baea04750055792bb0a08460df29cf06383c1d9496d9ce0b2",
+    "file": "real-1-driving.json",
+    "routeCount": 2,
+    "code": "Ok"
+  },
+  {
+    "id": "real-1-walking",
+    "mode": "walking",
+    "origin": {
+      "label": "Universidad Industrial de Santander, Bucaramanga, Colombia",
+      "latitude": 7.1409311,
+      "longitude": -73.1198652
+    },
+    "destination": {
+      "label": "Parque Santander, Bucaramanga, Colombia",
+      "latitude": 7.1196763,
+      "longitude": -73.1228536
+    },
+    "url": "https://routing.openstreetmap.de/routed-foot/route/v1/driving/-73.1198652,7.1409311;-73.1228536,7.1196763?alternatives=true&steps=true&overview=full&geometries=geojson",
+    "queriedAt": "2026-10-17T02:17:52.856Z",
+    "dataNature": "real OSRM provider response; estimated metrics, no observed traffic",
+    "status": 200,
+    "elapsedMilliseconds": 585.4299000000001,
+    "sha256": "46ae39e22d3e97194aa3d65046b11a494a543fea0daccd3ac7734e9ea592b10c",
+    "file": "real-1-walking.json",
+    "routeCount": 2,
+    "code": "Ok"
+  },
+  {
+    "id": "real-1-cycling",
+    "mode": "cycling",
+    "origin": {
+      "label": "Universidad Industrial de Santander, Bucaramanga, Colombia",
+      "latitude": 7.1409311,
+      "longitude": -73.1198652
+    },
+    "destination": {
+      "label": "Parque Santander, Bucaramanga, Colombia",
+      "latitude": 7.1196763,
+      "longitude": -73.1228536
+    },
+    "url": "https://routing.openstreetmap.de/routed-bike/route/v1/driving/-73.1198652,7.1409311;-73.1228536,7.1196763?alternatives=true&steps=true&overview=full&geometries=geojson",
+    "queriedAt": "2026-10-17T02:17:54.554Z",
+    "dataNature": "real OSRM provider response; estimated metrics, no observed traffic",
+    "status": 200,
+    "elapsedMilliseconds": 208.39800000000014,
+    "sha256": "e5ba931aaee888c8d0c7192cb6bd04d5cb07819e476e90fadf088b1c3c10dd22",
+    "file": "real-1-cycling.json",
+    "routeCount": 2,
+    "code": "Ok"
+  },
+  {
+    "id": "real-2-driving",
+    "mode": "driving",
+    "origin": {
+      "label": "Floridablanca, Santander, Colombia",
+      "latitude": 7.0625677,
+      "longitude": -73.0859086
+    },
+    "destination": {
+      "label": "Parque Santander, Bucaramanga, Colombia",
+      "latitude": 7.1196763,
+      "longitude": -73.1228536
+    },
+    "url": "https://router.project-osrm.org/route/v1/driving/-73.0859086,7.0625677;-73.1228536,7.1196763?alternatives=true&steps=true&overview=full&geometries=geojson",
+    "queriedAt": "2026-10-17T02:17:55.881Z",
+    "dataNature": "real OSRM provider response; estimated metrics, no observed traffic",
+    "status": 200,
+    "elapsedMilliseconds": 535.5357000000004,
+    "sha256": "df96af7b4c676cda5b79c3c6ea646a52a487b5931f195904346ec7bb0656de11",
+    "file": "real-2-driving.json",
+    "routeCount": 2,
+    "code": "Ok"
+  },
+  {
+    "id": "real-2-walking",
+    "mode": "walking",
+    "origin": {
+      "label": "Floridablanca, Santander, Colombia",
+      "latitude": 7.0625677,
+      "longitude": -73.0859086
+    },
+    "destination": {
+      "label": "Parque Santander, Bucaramanga, Colombia",
+      "latitude": 7.1196763,
+      "longitude": -73.1228536
+    },
+    "url": "https://routing.openstreetmap.de/routed-foot/route/v1/driving/-73.0859086,7.0625677;-73.1228536,7.1196763?alternatives=true&steps=true&overview=full&geometries=geojson",
+    "queriedAt": "2026-10-17T02:17:57.524Z",
+    "dataNature": "real OSRM provider response; estimated metrics, no observed traffic",
+    "status": 200,
+    "elapsedMilliseconds": 380.6819999999998,
+    "sha256": "f9d5203587d3b3617eaa47d87526ab8d935d8f1f3174f9ad88e13e6285999d12",
+    "file": "real-2-walking.json",
+    "routeCount": 2,
+    "code": "Ok"
+  },
+  {
+    "id": "real-2-cycling",
+    "mode": "cycling",
+    "origin": {
+      "label": "Floridablanca, Santander, Colombia",
+      "latitude": 7.0625677,
+      "longitude": -73.0859086
+    },
+    "destination": {
+      "label": "Parque Santander, Bucaramanga, Colombia",
+      "latitude": 7.1196763,
+      "longitude": -73.1228536
+    },
+    "url": "https://routing.openstreetmap.de/routed-bike/route/v1/driving/-73.0859086,7.0625677;-73.1228536,7.1196763?alternatives=true&steps=true&overview=full&geometries=geojson",
+    "queriedAt": "2026-10-17T02:17:59.019Z",
+    "dataNature": "real OSRM provider response; estimated metrics, no observed traffic",
+    "status": 200,
+    "elapsedMilliseconds": 290.41709999999966,
+    "sha256": "00825d8f99b61294c23a4373c6b80900f969884f9d011706f7cc8cb1b9de9b36",
+    "file": "real-2-cycling.json",
+    "routeCount": 1,
+    "code": "Ok"
+  },
+  {
+    "id": "real-3-driving",
+    "mode": "driving",
+    "origin": {
+      "label": "Girón, Santander, Colombia",
+      "latitude": 7.069069,
+      "longitude": -73.1700282
+    },
+    "destination": {
+      "label": "Parque Santander, Bucaramanga, Colombia",
+      "latitude": 7.1196763,
+      "longitude": -73.1228536
+    },
+    "url": "https://router.project-osrm.org/route/v1/driving/-73.1700282,7.069069;-73.1228536,7.1196763?alternatives=true&steps=true&overview=full&geometries=geojson",
+    "queriedAt": "2026-10-17T02:18:00.433Z",
+    "dataNature": "real OSRM provider response; estimated metrics, no observed traffic",
+    "status": 200,
+    "elapsedMilliseconds": 237.10609999999906,
+    "sha256": "b6c2de3cc37ea2c91a414e907437777bc0a57e12b83e610bb7bf9a8fcfd65e51",
+    "file": "real-3-driving.json",
+    "routeCount": 1,
+    "code": "Ok"
+  },
+  {
+    "id": "real-3-walking",
+    "mode": "walking",
+    "origin": {
+      "label": "Girón, Santander, Colombia",
+      "latitude": 7.069069,
+      "longitude": -73.1700282
+    },
+    "destination": {
+      "label": "Parque Santander, Bucaramanga, Colombia",
+      "latitude": 7.1196763,
+      "longitude": -73.1228536
+    },
+    "url": "https://routing.openstreetmap.de/routed-foot/route/v1/driving/-73.1700282,7.069069;-73.1228536,7.1196763?alternatives=true&steps=true&overview=full&geometries=geojson",
+    "queriedAt": "2026-10-17T02:18:01.785Z",
+    "dataNature": "real OSRM provider response; estimated metrics, no observed traffic",
+    "status": 200,
+    "elapsedMilliseconds": 468.96930000000066,
+    "sha256": "bf545f6f3d2ae7121e293bccdbdcedaf561cdeb05a7249498851811417b60618",
+    "file": "real-3-walking.json",
+    "routeCount": 1,
+    "code": "Ok"
+  },
+  {
+    "id": "real-3-cycling",
+    "mode": "cycling",
+    "origin": {
+      "label": "Girón, Santander, Colombia",
+      "latitude": 7.069069,
+      "longitude": -73.1700282
+    },
+    "destination": {
+      "label": "Parque Santander, Bucaramanga, Colombia",
+      "latitude": 7.1196763,
+      "longitude": -73.1228536
+    },
+    "url": "https://routing.openstreetmap.de/routed-bike/route/v1/driving/-73.1700282,7.069069;-73.1228536,7.1196763?alternatives=true&steps=true&overview=full&geometries=geojson",
+    "queriedAt": "2026-10-17T02:18:03.369Z",
+    "dataNature": "real OSRM provider response; estimated metrics, no observed traffic",
+    "status": 200,
+    "elapsedMilliseconds": 480.6810000000005,
+    "sha256": "04a2d90ef21ce97b6cecc17e3db9d584d34dc314811ab744ac44d74f4ec4bb01",
+    "file": "real-3-cycling.json",
+    "routeCount": 1,
+    "code": "Ok"
+  }
+]

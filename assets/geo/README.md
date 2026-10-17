@@ -1,4 +1,39 @@
-# Bucaramanga: recurso territorial
+# Bucaramanga, Girón y Floridablanca: recursos territoriales
+
+La cobertura operativa incluye exclusivamente los tres municipios siguientes.
+Los tres archivos proceden de la misma capa Municipio (317), DANE MGN 2024,
+con `outFields=*`, `returnGeometry=true`, `outSR=4326`, `f=geojson` y filtro por
+DIVIPOLA. La exportación fue realizada por el servidor; los archivos conservan
+todos los anillos y posiciones, sin simplificación ni redondeo local.
+
+| Municipio | DIVIPOLA / OBJECTID | Archivo | Geometría | Posiciones | Bytes UTF-8 | Descarga |
+| --- | --- | --- | --- | --- | --- | --- |
+| Bucaramanga | 68001 / 846 | `bucaramanga-mgn2024.geojson` | Polygon, 1 anillo, sin huecos | 4436 | 181231 | 2026-10-09 |
+| Girón | 68307 / 881 | `giron-mgn2024.geojson` | Polygon, 1 anillo, sin huecos | 7696 | 314197 | 2026-10-14 |
+| Floridablanca | 68276 / 878 | `floridablanca-mgn2024.geojson` | Polygon, 1 anillo, sin huecos | 3165 | 129423 | 2026-10-14 |
+
+En los tres registros se verificó `mpio_tipo=MUNICIPIO`, `mpio_nano=2024`, el
+código concatenado y el nombre exacto (`BUCARAMANGA`, `GIRÓN`, `FLORIDABLANCA`).
+Se trata de municipios completos, no de cabeceras urbanas ni del área metropolitana.
+Piedecuesta no está incorporada.
+
+SHA-256 de las nuevas descargas:
+
+- Girón: `d21059491f262a3369a10c33da38988a367fa5a9a1bff55d74600146208820a2`.
+- Floridablanca: `fa74508977642bd1631f5833f4db38d1624c91845675da880a42e41196e27794`.
+
+Consultas exactas:
+
+- [Girón 68307](https://geoportal.dane.gov.co/mparcgis/rest/services/MGN2024/Serv_CapasMGN_2024/FeatureServer/317/query?where=mpio_cdpmp%3D%2768307%27&outFields=*&returnGeometry=true&outSR=4326&f=geojson).
+- [Floridablanca 68276](https://geoportal.dane.gov.co/mparcgis/rest/services/MGN2024/Serv_CapasMGN_2024/FeatureServer/317/query?where=mpio_cdpmp%3D%2768276%27&outFields=*&returnGeometry=true&outSR=4326&f=geojson).
+
+CRS de origen publicado por el servicio: EPSG:3857 (102100); archivos exportados
+en WGS84/EPSG:4326, orden longitud-latitud. La licencia CC BY 4.0 y atribución
+DANE descritas abajo aplican a los tres recursos. El código comprueba identidad
+municipal y vigencia al cargarlos. Los SHA-256 permiten auditar las descargas;
+no se sustituyeron límites por nombres, rectángulos o centroides.
+
+## Procedencia del recurso inicial de Bucaramanga
 
 `bucaramanga-mgn2024.geojson` es la respuesta original, sin simplificación ni
 redondeo local, de la capa **Municipio (317), Marco Geoestadístico Nacional 2024**,

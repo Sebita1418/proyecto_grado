@@ -1,0 +1,5 @@
+El flujo Android y las evidencias académicas se consolidan con OAuth nativo, cobertura Bucaramanga/Girón/Floridablanca, mejoras verificables de búsqueda y navegación 2D, y pruebas deterministas del procesamiento y recomendaciones.
+
+La evidencia F-DC-125 distingue el APK A del 14/10, el corte B con pruebas del 15/10 y el APK C 1.0.1/20261016. La ejecución actual registra 754 aprobadas, 0 fallidas y 0 omitidas; análisis y diff correctos. Los 12 casos OE3 ejecutan componentes reales sobre fixtures identificados. Pruebas físicas, versión de videos y brechas institucionales se documentan sin fabricar resultados.
+
+La firma C es Android Debug para demostración académica. No se implementan Big Data masivo, tráfico en vivo, predicción ni recomendación conjunta ruta/horario/medio. Videos privados, APK y ZIP quedan fuera del historial Git; su publicación requiere revisión y autorización. Revisar expresamente el estado previo de pubspec.lock y la correspondencia de inventario antes del commit final.

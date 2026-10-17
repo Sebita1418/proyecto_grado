@@ -24,8 +24,10 @@ import '../mobility/mobility_recommendation_engine.dart';
 import '../mobility/route_option.dart';
 import '../mobility/transport_mode.dart';
 import '../mobility/vehicle_recommendation_engine.dart';
+import '../mobility/traffic_aware_recommendation_engine.dart';
 import '../services/mobility_preferences_service.dart';
 import '../services/route_alternatives_analysis_service.dart';
+import '../services/route_traffic_service.dart';
 import 'mobility_recommendation_summary.dart';
 import '../mobility/validation/current_mobility_validation_adapter.dart';
 import '../mobility/validation/mobility_validation.dart';
@@ -67,6 +69,7 @@ class MapSearchPanel extends StatefulWidget {
     this.onStartNavigation,
     this.preferencesService = const MobilityPreferencesService(),
     this.recommendationEngine,
+    this.trafficService,
     this.maxHeight,
     this.onCollapsedChanged,
     this.incidentReports = const [],
@@ -95,6 +98,7 @@ class MapSearchPanel extends StatefulWidget {
   final void Function(RouteResult route, String destination)? onStartNavigation;
   final MobilityPreferencesService preferencesService;
   final MobilityRecommendationEngine? recommendationEngine;
+  final RouteTrafficService? trafficService;
   final double? maxHeight;
   final ValueChanged<bool>? onCollapsedChanged;
   final List<RoadIncidentReport> incidentReports;
@@ -139,6 +143,17 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
   ]);
   late final _engine =
       widget.recommendationEngine ?? VehicleRecommendationEngine();
+  late final _traffic =
+      widget.trafficService ?? RouteTrafficService(boundary: _boundary);
+
+  Future<MobilityRecommendation> _recommendWithTraffic(
+    MobilityContext trip,
+    List<RouteOption> options,
+  ) => TrafficAwareRecommendationEngine(
+    engine: _engine,
+    traffic: _traffic,
+  ).recommend(trip, options);
+
   MobilityRecommendation? _recommendation;
   bool _updatingRecommendation = false;
   final _incidentAnalyses = ValueNotifier<List<RouteIncidentAnalysis>>([]);
@@ -486,7 +501,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
             ),
         ];
         final analyses = _analyzeIncidents(results);
-        final recommendation = await _engine.recommend(
+        final recommendation = await _recommendWithTraffic(
           _withIncidents(trip, analyses),
           options,
         );
@@ -648,7 +663,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     _incidentAnalyses.value = analyses;
     setState(() => _updatingRecommendation = true);
     try {
-      final recommendation = await _engine.recommend(
+      final recommendation = await _recommendWithTraffic(
         _withIncidents(trip, analyses),
         _options,
       );
@@ -1040,7 +1055,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       _tripContext = context;
       _options = options;
       _incidentAnalyses.value = incidentAnalyses;
-      final recommendation = await _engine.recommend(
+      final recommendation = await _recommendWithTraffic(
         _withIncidents(context, incidentAnalyses),
         options,
       );
@@ -1140,7 +1155,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
             mounted && request == (origin ? _originRequest : _request),
       );
       if (!mounted || request != (origin ? _originRequest : _request)) return;
-      final places = results.map((result) {
+      var places = results.map((result) {
         final parts = result.displayName.split(',');
         final titleParts =
             parts.length > 1 &&
@@ -1164,6 +1179,11 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           ),
         );
       }).toList();
+      if (places.isEmpty) {
+        _suggestions.searchBias = widget.currentPosition;
+        places = await _suggestions.search(query);
+        if (!mounted || request != (origin ? _originRequest : _request)) return;
+      }
       setState(() {
         if (origin) {
           _originPlaces = places;
@@ -1253,9 +1273,16 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
     }
   }
 
-  String _coverageSubtitle(PlaceSuggestion place) => [
+  String _coverageSubtitle(PlaceSuggestion place, {bool origin = false}) => [
     place.description,
     if (place.precision != null) place.precision!.label,
+    if (AddressQuery((origin ? _origin : _destination).text).primaryRoad !=
+            null &&
+        place.road != null &&
+        AddressQuery((origin ? _origin : _destination).text)
+                .compatibility(place.road, place.houseNumber) ==
+            0)
+      'La vía devuelta no coincide con la solicitada.',
     _boundary.assessCoordinates(place.latitude, place.longitude).label,
   ].where((text) => text.isNotEmpty).join('\n');
 
@@ -1274,7 +1301,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
       mainAxisSize: MainAxisSize.min,
       children: [
         ?child,
-        if (AddressQuery.isAddress(query))
+        if (query.trim().length >= 3)
           TextButton.icon(
             onPressed: loading || _checking
                 ? null
@@ -1316,7 +1343,7 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              message.startsWith('No se encontró esa dirección') ? message : 'No hay sugerencias disponibles. Puedes escribir y calcular.',
+              message,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -1708,15 +1735,13 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                           children: [
                             Text(
                               !_boundary.available
-                                  ? 'Cobertura sin verificar: el límite municipal no está disponible.'
-                                  : 'Tu ubicación está fuera de Bucaramanga. Cambia el origen para planificar.',
+                                  ? 'Cobertura sin verificar: la cobertura territorial no está completa.'
+                                  : 'Tu ubicación está fuera de la cobertura. Cambia el origen para planificar.',
                             ),
                             if (!_boundary.available)
                               TextButton(
                                 onPressed: () => _loadBoundary(retry: true),
-                                child: const Text(
-                                  'Reintentar límite municipal',
-                                ),
+                                child: const Text('Reintentar cobertura'),
                               ),
                           ],
                         ),
@@ -1818,6 +1843,18 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                       originController: _origin,
                       destinationController: _destination,
                       onCalculate: _calculate,
+                      onSearchOrigin: () {
+                        FocusScope.of(context).unfocus();
+                        _findAddress(origin: true);
+                      },
+                      onSearchDestination: () {
+                        FocusScope.of(context).unfocus();
+                        if (_selected != null) {
+                          _calculate();
+                        } else {
+                          _findAddress(origin: false);
+                        }
+                      },
                       actionLabel: 'Analizar rutas',
                       isLoading: _checking,
                       originError: _originError,
@@ -1842,7 +1879,10 @@ class _MapSearchPanelState extends State<MapSearchPanel> {
                                         ),
                                         title: Text(place.name),
                                         subtitle: Text(
-                                          _coverageSubtitle(place),
+                                          _coverageSubtitle(
+                                            place,
+                                            origin: true,
+                                          ),
                                         ),
                                         onTap: () => _selectOrigin(place),
                                       ),

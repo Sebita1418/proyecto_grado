@@ -655,7 +655,7 @@ class _RutasScreenState extends State<RutasScreen> {
               const SizedBox(width: 8),
               const Expanded(
                 child: Text(
-                  'Mapa de Bucaramanga',
+                  'Mapa de Bucaramanga, Girón y Floridablanca',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -676,14 +676,14 @@ class _RutasScreenState extends State<RutasScreen> {
           const SizedBox(height: 8),
           if (!_boundary.available) ...[
             const Text(
-              'Cobertura sin verificar: el límite municipal no está disponible.',
+              'Cobertura sin verificar: la cobertura territorial no está completa.',
             ),
             TextButton(
               onPressed: () async {
                 await _boundary.load(retry: true);
                 if (mounted) setState(() {});
               },
-              child: const Text('Reintentar límite municipal'),
+              child: const Text('Reintentar cobertura'),
             ),
           ],
           Text(

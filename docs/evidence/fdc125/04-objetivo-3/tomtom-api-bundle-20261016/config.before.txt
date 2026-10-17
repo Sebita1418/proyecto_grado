@@ -1,0 +1,3 @@
+[functions.traffic-flow]
+verify_jwt = true
+static_files = ["./functions/traffic-flow/geo/*.geojson"]

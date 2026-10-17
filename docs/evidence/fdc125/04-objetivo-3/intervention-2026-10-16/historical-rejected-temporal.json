@@ -1,0 +1,35 @@
+[
+  {
+    "orden": "39114",
+    "fecha": "2022-07-01T00:00:00.000",
+    "hora": "2",
+    "gravedad": "Con Muertos",
+    "nombrecomuna": "03. SAN FRANCISCO",
+    "automovil": "0",
+    "moto": "1",
+    "bicicleta": "0",
+    "peaton": "0"
+  },
+  {
+    "orden": "39157",
+    "fecha": "2023-03-10T00:00:00.000",
+    "hora": "6.3",
+    "gravedad": "Con Muertos",
+    "nombrecomuna": "15. CENTRO",
+    "automovil": "1",
+    "moto": "1",
+    "bicicleta": "0",
+    "peaton": "0"
+  },
+  {
+    "orden": "39170",
+    "fecha": "2023-05-18T00:00:00.000",
+    "hora": "7.4",
+    "gravedad": "Con Muertos",
+    "nombrecomuna": "01. NORTE",
+    "automovil": "0",
+    "moto": "1",
+    "bicicleta": "0",
+    "peaton": "0"
+  }
+]

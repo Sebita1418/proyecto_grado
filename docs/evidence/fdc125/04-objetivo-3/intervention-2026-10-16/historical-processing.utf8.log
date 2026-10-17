@@ -1,0 +1,37 @@
+{
+  "received": 39193,
+  "valid": 39190,
+  "discarded": 3,
+  "discardedReasons": {
+    "invalid_date_or_hour": 3
+  },
+  "dateRange": {
+    "first": "2012-01-01",
+    "last": "2023-09-30"
+  },
+  "variables": [
+    "orden",
+    "fecha",
+    "hora",
+    "gravedad",
+    "nombrecomuna",
+    "automovil",
+    "moto",
+    "bicicleta",
+    "peaton"
+  ],
+  "groups": "196 aggregates written",
+  "interpretation": "Historical crash counts, not traffic speeds, exposure-adjusted risk, corridor demand, or optimal departure times. No current route ranking derived from these counts.",
+  "processingMilliseconds": 477.3919,
+  "executedAt": "2026-10-17T02:16:06.823Z",
+  "source": {
+    "url": "https://www.datos.gov.co/resource/7cci-nqqb.json?$select=orden,fecha,hora,gravedad,nombrecomuna,automovil,moto,bicicleta,peaton&$order=orden&$limit=50000",
+    "sha256": "9252e26f61aa9c3080b2f65509254bd4da7bd9a8561de319167b2ad11bcb42bf",
+    "bytes": 7828609,
+    "publisher": "Alcaldía de Bucaramanga, Santander",
+    "datasetId": "7cci-nqqb",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "scope": "One bounded request, limit 50000; does not assert portal completeness. Derived aggregates shared under CC BY-SA 4.0."
+  }
+}

@@ -47,7 +47,7 @@ void main() {
         .map((field) => field.controller!.text)
         .toList();
     await point(tester, const LatLng(9, -72));
-    expect(find.textContaining('fuera de Bucaramanga'), findsOneWidget);
+    expect(find.textContaining('fuera de la cobertura'), findsOneWidget);
     expect(
       tester
           .widgetList<TextField>(find.byType(TextField))

@@ -68,6 +68,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/geo/bucaramanga-mgn2024.geojson
+    - assets/geo/giron-mgn2024.geojson
+    - assets/geo/floridablanca-mgn2024.geojson
 
   # To add assets to your application, add an assets section, like this:
   # assets:

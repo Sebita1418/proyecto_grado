@@ -1,0 +1,5 @@
+﻿{
+    "exitCode":  0,
+    "command":  "supabase db query --linked --project-ref zdjhqcarmmdgdfzuxhgv --output json; SELECT quota configuration and current UTC usage only",
+    "executedAt":  "2026-10-17T04:20:43.3596512Z"
+}

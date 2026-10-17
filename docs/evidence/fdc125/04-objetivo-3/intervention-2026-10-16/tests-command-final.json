@@ -1,0 +1,6 @@
+{
+    "exitCode":  0,
+    "finishedAt":  "2026-10-17T02:24:16.8199124Z",
+    "command":  "flutter test --no-pub --machine",
+    "startedAt":  "2026-10-17T02:22:45.9658142Z"
+}

@@ -46,3 +46,24 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Academic evidence: keep original command outputs versionable.
+!docs/evidence/**/*.log
+# Distribute APK/packages and original videos via reviewed Release attachments.
+/deliveries/
+docs/evidence/fdc125/05-videos-originales/*.mp4
+docs/evidence/fdc125/05-videos-originales/*.mov
+docs/evidence/fdc125/05-videos-originales/*.mkv
+docs/evidence/fdc125/05-videos-originales/*.webm
+docs/evidence/fdc125/05-videos-originales/*.avi
+# Unredacted review frames stay local until privacy review.
+docs/evidence/fdc125/06-capturas/revision-local/
+# Runtime/deployment state and credentials are never publication artifacts.
+/supabase/.temp/
+/artifacts/
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+key.properties

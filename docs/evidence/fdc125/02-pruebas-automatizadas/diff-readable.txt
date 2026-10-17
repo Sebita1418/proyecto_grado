@@ -1,0 +1,10 @@
+git : warning: in the working copy of 'docs/municipal-boundary.md', LF will be replaced by CRLF the next time Git 
+touches it
+En línea: 2 Carácter: 808
++ ... e]::UtcNow; git diff --check > docs/evidence/fdc125/02-pruebas-automa ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+warning: in the working copy of 'lib/services/municipal_boundary_service.dart', LF will be replaced by CRLF the next 
+time Git touches it

@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-16",
+  "versionableFiles": 54,
+  "largeVersionableOver10MiB": [],
+  "excludedApk": {
+    "bytes": 60331195,
+    "sha256": "df46b68345ea3e07fce5eb57a452863fccf33b431e4c76be54361d44727bcd40"
+  },
+  "excludedOriginalVideos": [
+    {
+      "name": "WhatsApp Video 2026-10-15 at 23.13.00.mp4",
+      "bytes": 3183462,
+      "sha256": "dbb8b4b4c8ab117a2062c220eeb0ae542d6456737fb8c53001f01971df47bf35"
+    },
+    {
+      "name": "WhatsApp Video 2026-10-15 at 23.13.15.mp4",
+      "bytes": 16532097,
+      "sha256": "0640fc557724c7c73192028c7e9e68ca702aad08d7ec50014d8d6c8bf2cbfc5e"
+    }
+  ],
+  "publicationExecuted": false
+}

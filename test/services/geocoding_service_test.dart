@@ -29,8 +29,9 @@ void main() {
         expect(request.url.queryParameters, {
           'q': 'Parque Santander, Bucaramanga',
           'format': 'jsonv2',
-          'limit': '1',
+          'limit': '5',
           'countrycodes': 'co',
+          'addressdetails': '1',
         });
         expect(
           request.headers['User-Agent'],

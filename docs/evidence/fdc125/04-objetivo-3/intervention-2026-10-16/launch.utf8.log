@@ -1,0 +1,7 @@
+Stopping: com.example.transporte_inteligente
+Starting: Intent { cmp=com.example.transporte_inteligente/.MainActivity }
+Status: ok
+LaunchState: UNKNOWN (0)
+Activity: com.example.transporte_inteligente/.MainActivity
+WaitTime: 3122
+Complete

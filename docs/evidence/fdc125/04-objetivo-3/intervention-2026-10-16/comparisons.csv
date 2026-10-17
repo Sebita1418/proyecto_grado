@@ -1,0 +1,7 @@
+id,dataNature,baselineId,recommendedId,durationDifferenceSeconds,durationDifferencePercent,distanceDifferenceMeters,distanceDifferencePercent,algorithmMicroseconds,trafficObservedRouteCoverage,explainable
+"controlled-clear","B: synthetic routes and incident fixture","osrm-0","osrm-0","0.0","0.0","0.0","0.0","12184","0","true"
+"controlled-incident","B: synthetic routes and incident fixture","osrm-0","osrm-1","20.0","20.0","200.0","9.090909090909092","1095","0","true"
+"controlled-missing","B: synthetic route, missing incident data","osrm-0","osrm-0","0.0","0.0","0.0","0.0","291","0","true"
+"real-1-driving","A: captured real OSRM; replayed HTTP; incident and traffic unavailable","osrm-0","osrm-0","0.0","0.0","0.0","0.0","537","0","true"
+"real-2-driving","A: captured real OSRM; replayed HTTP; incident and traffic unavailable","osrm-0","osrm-0","0.0","0.0","0.0","0.0","813","0","true"
+"real-3-driving","A: captured real OSRM; replayed HTTP; incident and traffic unavailable","osrm-0","osrm-0","0.0","0.0","0.0","0.0","545","0","true"

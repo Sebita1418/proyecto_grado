@@ -65,7 +65,15 @@ class PlaceSuggestionService {
   Future<List<PlaceSuggestion>> search(String query) async {
     final trimmedQuery = query.trim();
     if (trimmedQuery.length < 3) return const [];
-    final parsed = AddressQuery(AddressQuery(trimmedQuery).providerQuery);
+    await _boundary.load();
+    final focus = searchBias;
+    final municipality = focus == null
+        ? null
+        : _boundary.assess(focus).municipalityName;
+    final parsed = AddressQuery(
+      AddressQuery(trimmedQuery)
+          .providerQueryFor(municipality: municipality ?? 'Bucaramanga'),
+    );
     final bias =
         searchBias ??
         (parsed.primaryRoad != null ? AddressQuery.metropolitanBias : null);
@@ -173,7 +181,9 @@ class PlaceSuggestionService {
         : baseName;
 
     final descriptionParts = <String>[];
-    final street = _text(properties['street']);
+    final street =
+        _text(properties['street']) ??
+        (properties['osm_key'] == 'highway' ? _text(properties['name']) : null);
     final city = AddressQuery.providerMunicipality(
       _text(properties['city']),
       _text(properties['county']),

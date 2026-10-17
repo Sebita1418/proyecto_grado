@@ -1,0 +1,481 @@
+{
+  "status": "PASS",
+  "allUnchanged": true,
+  "existingFilesChecked": 118,
+  "newDiagnosticEntrypoint": "lib/traffic_probe_main.dart",
+  "diagnosticSourceSha256": "6f39a62eda36038c5bddf709da63db8af6a9b27d8864d8173ceafcba9beb35b7",
+  "files": [
+    {
+      "path": "supabase/functions/traffic-flow/handler.mjs",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/traffic-flow/handler.test.mjs",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/traffic-quota.sql",
+      "unchanged": true
+    },
+    {
+      "path": "pubspec.lock",
+      "unchanged": true
+    },
+    {
+      "path": "assets/geo/bucaramanga-mgn2024.geojson",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/traffic-flow/geo/bucaramanga-mgn2024.geojson",
+      "unchanged": true
+    },
+    {
+      "path": "assets/geo/giron-mgn2024.geojson",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/traffic-flow/geo/giron-mgn2024.geojson",
+      "unchanged": true
+    },
+    {
+      "path": "assets/geo/floridablanca-mgn2024.geojson",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/traffic-flow/geo/floridablanca-mgn2024.geojson",
+      "unchanged": true
+    },
+    {
+      "path": "lib/config/auth_redirect.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/config/google_routes_config.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/config/osrm_config.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/config/supabase_config.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/controllers/historical_departure_guidance_controller.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/controllers/mobility_analytics_controller.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/controllers/road_incident_controller.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/controllers/route_planner_controller.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/main.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/analytics/historical_departure_guidance.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/analytics/mobility_analytics.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/analytics/mobility_analytics_repository.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/current_mobility_decision_adapter.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/departure_time_context.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/mobility_data_availability.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/mobility_decision_context.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/mobility_decision_coordinator.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/mobility_decision_result.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/mobility_option_availability.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/mobility_conditions.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/mobility_context.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/mobility_recommendation.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/mobility_recommendation_engine.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/route_incident_analysis.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/route_incident_analyzer.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/route_option.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/routing/routing_capabilities.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/traffic_aware_recommendation_engine.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/transport_mode.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/validation/current_mobility_validation_adapter.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/validation/mobility_validation.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/vehicle_recommendation_engine.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/vehicle_recommendation_policy.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/address_precision.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/geocoding_result.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/google_route_result.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/incident_report_draft.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/municipal_coverage.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/perfil_model.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/place_suggestion.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/road_incident_report.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/route_insight.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/route_result.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/ruta_model.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/navigation/navigation_camera.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/navigation/navigation_instruction.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/navigation/navigation_instruction_presentation.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/navigation/navigation_progress.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/navigation/navigation_session.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/admin/admin_screen.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/admin/rutas/rutas_admin_screen.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/admin/usuarios/usuarios_screen.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/analytics/mobility_analytics_screen.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/home/home_screen.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/login/login_screen.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/nearby/nearby_places_screen.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/perfil/perfil_screen.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/preferences/mobility_preferences_screen.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/rutas/rutas_screen.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/validation/mobility_validation_screen.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/address_query.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/geocoding_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/google_auth_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/google_routes_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/location_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/mobility_preferences_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/mode_routing_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/municipal_boundary_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/osrm_routing_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/perfil_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/place_suggestion_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/road_incident_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/route_alternatives_analysis_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/route_traffic_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/ruta_service.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/supabase_mobility_analytics_repository.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/theme/mobility_theme.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/utils/polyline_decoder.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/utils/route_markers.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/utils/route_polyline.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/app_navigation_drawer.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/departure_time_selector.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/google_sign_in_button.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/historical_departure_guidance_card.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/map_floating_controls.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/map_search_panel.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/mobility_evidence_summary.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/mobility_planner/departure_time_selector.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/mobility_planner/mobility_planner_section.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/mobility_recommendation_summary.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/mobility_section_card.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/navigation_header.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/navigation_status_card.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/report_incident_sheet.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/report_location_picker.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/road_incident_details_sheet.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/road_incident_marker.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/road_incident_reports_sheet.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/route_alternatives_selector.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/route_incident_status.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/route_map.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/route_planner_form.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/route_result_card.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/travel_mode_selector.dart",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/user_location_marker.dart",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/transporte-inteligente-1.0.0-20261014-release-debug-signed.apk",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/version-final-academica/transporte-inteligente-1.0.1-20261016-release-debug-signed.apk",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/objective-3-intervention-20261016/transporte-inteligente-1.0.2-2026101601-release-debug-signed.apk",
+      "unchanged": true
+    }
+  ]
+}

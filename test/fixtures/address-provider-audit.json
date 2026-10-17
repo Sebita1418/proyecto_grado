@@ -1,0 +1,1521 @@
+[
+  {
+    "status": 200,
+    "provider": "Photon",
+    "retrievedAt": "2026-10-14T21:32:40.2247363Z",
+    "body": {
+      "type": "FeatureCollection",
+      "features": []
+    },
+    "url": "https://photon.komoot.io/api/?q=Carrera%204%20%23%2048-25%2C%20Floridablanca&lat=7.08&lon=-73.10&limit=5",
+    "query": "Carrera 4 # 48-25, Floridablanca"
+  },
+  {
+    "status": 200,
+    "provider": "Nominatim",
+    "retrievedAt": "2026-10-14T21:32:42.2229158Z",
+    "body": [
+      {
+        "place_id": 305824553,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 71783507,
+        "lat": "7.0631718",
+        "lon": "-73.0897536",
+        "category": "highway",
+        "type": "residential",
+        "place_rank": 26,
+        "importance": 0.05338502098115507,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Comuna Florida - Casco Antiguo, Comuna 1 Florida-Casco Antiguo, Perímetro Urbano de Floridablanca, Floridablanca, Metropolitana, Santander, RAP Gran Santander, 681002, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "suburb": "Comuna Florida - Casco Antiguo",
+          "city_district": "Perímetro Urbano de Floridablanca",
+          "town": "Floridablanca",
+          "state_district": "Metropolitana",
+          "state": "Santander",
+          "ISO3166-2-lvl4": "CO-SAN",
+          "region": "RAP Gran Santander",
+          "postcode": "681002",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "7.0617379",
+          "7.0646020",
+          "-73.0903249",
+          "-73.0891938"
+        ]
+      },
+      {
+        "place_id": 309474248,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 96097432,
+        "lat": "7.0693023",
+        "lon": "-73.0944817",
+        "category": "highway",
+        "type": "residential",
+        "place_rank": 26,
+        "importance": 0.05338502098115507,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Lagos II, Comuna 6 Lagos-Bellavista, Perímetro Urbano de Floridablanca, Floridablanca, Metropolitana, Santander, RAP Gran Santander, 681002, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "suburb": "Lagos II",
+          "city_district": "Perímetro Urbano de Floridablanca",
+          "town": "Floridablanca",
+          "state_district": "Metropolitana",
+          "state": "Santander",
+          "ISO3166-2-lvl4": "CO-SAN",
+          "region": "RAP Gran Santander",
+          "postcode": "681002",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "7.0687293",
+          "7.0698754",
+          "-73.0948098",
+          "-73.0941536"
+        ]
+      },
+      {
+        "place_id": 309406085,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 809268347,
+        "lat": "7.0791617",
+        "lon": "-73.0978139",
+        "category": "highway",
+        "type": "residential",
+        "place_rank": 26,
+        "importance": 0.05338502098115507,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Barrio Escoflor, Comuna Villabel - Santa Ana, Comuna 7 Villabel-Santa Ana, Perímetro Urbano de Floridablanca, Floridablanca, Metropolitana, Santander, RAP Gran Santander, 681002, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "neighbourhood": "Barrio Escoflor",
+          "suburb": "Comuna Villabel - Santa Ana",
+          "city_district": "Perímetro Urbano de Floridablanca",
+          "town": "Floridablanca",
+          "state_district": "Metropolitana",
+          "state": "Santander",
+          "ISO3166-2-lvl4": "CO-SAN",
+          "region": "RAP Gran Santander",
+          "postcode": "681002",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "7.0787410",
+          "7.0794289",
+          "-73.0982908",
+          "-73.0974606"
+        ]
+      },
+      {
+        "place_id": 309300075,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 503590383,
+        "lat": "7.0613168",
+        "lon": "-73.0890310",
+        "category": "highway",
+        "type": "residential",
+        "place_rank": 26,
+        "importance": 0.05338502098115507,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Comuna Florida - Casco Antiguo, Comuna 1 Florida-Casco Antiguo, Perímetro Urbano de Floridablanca, Floridablanca, Metropolitana, Santander, RAP Gran Santander, 681004, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "suburb": "Comuna Florida - Casco Antiguo",
+          "city_district": "Perímetro Urbano de Floridablanca",
+          "town": "Floridablanca",
+          "state_district": "Metropolitana",
+          "state": "Santander",
+          "ISO3166-2-lvl4": "CO-SAN",
+          "region": "RAP Gran Santander",
+          "postcode": "681004",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "7.0610275",
+          "7.0616131",
+          "-73.0891438",
+          "-73.0889070"
+        ]
+      },
+      {
+        "place_id": 309428319,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 1447099520,
+        "lat": "7.0705799",
+        "lon": "-73.0823657",
+        "category": "highway",
+        "type": "pedestrian",
+        "place_rank": 26,
+        "importance": 0.05338502098115507,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Comuna Bucarica - Caracolí, Comuna 3 Bucarica-Caracolí, Perímetro Urbano de Floridablanca, Floridablanca, Metropolitana, Santander, RAP Gran Santander, 681002, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "suburb": "Comuna Bucarica - Caracolí",
+          "city_district": "Perímetro Urbano de Floridablanca",
+          "town": "Floridablanca",
+          "state_district": "Metropolitana",
+          "state": "Santander",
+          "ISO3166-2-lvl4": "CO-SAN",
+          "region": "RAP Gran Santander",
+          "postcode": "681002",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "7.0703538",
+          "7.0708059",
+          "-73.0823959",
+          "-73.0823356"
+        ]
+      }
+    ],
+    "url": "https://nominatim.openstreetmap.org/search?q=Carrera%204%20%23%2048-25%2C%20Floridablanca&format=jsonv2&limit=5&countrycodes=co&addressdetails=1",
+    "query": "Carrera 4 # 48-25, Floridablanca"
+  },
+  {
+    "status": 200,
+    "provider": "Photon",
+    "retrievedAt": "2026-10-14T21:32:44.7056346Z",
+    "body": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "N",
+            "osm_id": 5035398348,
+            "osm_key": "shop",
+            "osm_value": "car_parts",
+            "type": "house",
+            "housenumber": "Cra12calle5",
+            "name": "AC48-Repuetodo",
+            "street": "Carrera 12",
+            "locality": "Olaya",
+            "district": "Comuna Centro",
+            "city": "fusgasuga",
+            "county": "Sumapaz",
+            "state": "Cundinamarca",
+            "country": "Colombia",
+            "postcode": "252211",
+            "countrycode": "CO"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -74.3659347,
+              4.3448272
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "N",
+            "osm_id": 2483478300,
+            "osm_key": "building",
+            "osm_value": "house",
+            "type": "house",
+            "housenumber": "48",
+            "street": "ÑÐ»Ð¸ÑÐ° 25 ÐÐºÑÑÐ±ÑÑ",
+            "district": "ÐÑÐ°ÑÐ½Ð°Ñ ÐÐ¾ÑÐºÐ°",
+            "city": "ÐÑÐ¸Ð³Ð¾ÑÐ¸Ð¾Ð¿Ð¾Ð»Ñ",
+            "county": "ÐÑÐ¸Ð³Ð¾ÑÐ¸Ð¾Ð¿Ð¾Ð»ÑÑÐºÐ¸Ð¹ ÑÐ°Ð¹Ð¾Ð½",
+            "state": "UnitÄÈile administrativ-teritoriale din stÃ®nga Nistrului",
+            "country": "Moldova",
+            "postcode": "MD-4000",
+            "countrycode": "MD"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              29.3114116,
+              47.1435318
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 689895805,
+            "osm_key": "building",
+            "osm_value": "apartments",
+            "type": "house",
+            "housenumber": "48",
+            "name": "Bloc K25",
+            "street": "Strada General Constantin Argetoianu",
+            "district": "PiaÈa GÄrii",
+            "city": "Craiova",
+            "county": "Dolj",
+            "country": "RomÃ¢nia",
+            "postcode": "200016",
+            "countrycode": "RO",
+            "extent": [
+              23.8110302,
+              44.3279637,
+              23.8113539,
+              44.3277653
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              23.811192,
+              44.3278645
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "N",
+            "osm_id": 5909920919,
+            "osm_key": "shop",
+            "osm_value": "jewelry",
+            "type": "house",
+            "housenumber": "48",
+            "street": "25Î·Ï ÎÏÎ³Î¿ÏÏÏÎ¿Ï",
+            "district": "1Î· ÎÎ¿Î¹Î½ÏÏÎ·ÏÎ± ÎÏÎ±ÎºÎ»ÎµÎ¯Î¿Ï - ÎÎµÎ½ÏÏÎ¹ÎºÎ®",
+            "city": "ÎÏÎ¬ÎºÎ»ÎµÎ¹Î¿",
+            "county": "Î ÎµÏÎ¹ÏÎµÏÎµÎ¹Î±ÎºÎ® ÎÎ½ÏÏÎ·ÏÎ± ÎÏÎ±ÎºÎ»ÎµÎ¯Î¿Ï",
+            "state": "ÎÏÎ¿ÎºÎµÎ½ÏÏÏÎ¼Î­Î½Î· ÎÎ¹Î¿Î¯ÎºÎ·ÏÎ· ÎÏÎ®ÏÎ·Ï",
+            "country": "ÎÎ»Î»Î¬Ï",
+            "postcode": "712 02",
+            "countrycode": "GR"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              25.1341502,
+              35.3411432
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "N",
+            "osm_id": 5909920921,
+            "osm_key": "shop",
+            "osm_value": "gift",
+            "type": "house",
+            "housenumber": "48",
+            "name": "Prince of Crete",
+            "street": "25Î·Ï ÎÏÎ³Î¿ÏÏÏÎ¿Ï",
+            "district": "1Î· ÎÎ¿Î¹Î½ÏÏÎ·ÏÎ± ÎÏÎ±ÎºÎ»ÎµÎ¯Î¿Ï - ÎÎµÎ½ÏÏÎ¹ÎºÎ®",
+            "city": "ÎÏÎ¬ÎºÎ»ÎµÎ¹Î¿",
+            "county": "Î ÎµÏÎ¹ÏÎµÏÎµÎ¹Î±ÎºÎ® ÎÎ½ÏÏÎ·ÏÎ± ÎÏÎ±ÎºÎ»ÎµÎ¯Î¿Ï",
+            "state": "ÎÏÎ¿ÎºÎµÎ½ÏÏÏÎ¼Î­Î½Î· ÎÎ¹Î¿Î¯ÎºÎ·ÏÎ· ÎÏÎ®ÏÎ·Ï",
+            "country": "ÎÎ»Î»Î¬Ï",
+            "postcode": "712 02",
+            "countrycode": "GR"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              25.1341596,
+              35.3411979
+            ]
+          }
+        }
+      ]
+    },
+    "url": "https://photon.komoot.io/api/?q=Cra%204%20%23%2048-25&lat=7.08&lon=-73.10&limit=5",
+    "query": "Cra 4 # 48-25"
+  },
+  {
+    "status": 200,
+    "provider": "Nominatim",
+    "retrievedAt": "2026-10-14T21:32:46.3603188Z",
+    "body": [],
+    "url": "https://nominatim.openstreetmap.org/search?q=Cra%204%20%23%2048-25&format=jsonv2&limit=5&countrycodes=co&addressdetails=1",
+    "query": "Cra 4 # 48-25"
+  },
+  {
+    "status": 200,
+    "provider": "Photon",
+    "retrievedAt": "2026-10-14T21:32:48.7139122Z",
+    "body": {
+      "type": "FeatureCollection",
+      "features": []
+    },
+    "url": "https://photon.komoot.io/api/?q=Calle%2052%20%23%203%2C%20Floridablanca&lat=7.08&lon=-73.10&limit=5",
+    "query": "Calle 52 # 3, Floridablanca"
+  },
+  {
+    "status": 200,
+    "provider": "Nominatim",
+    "retrievedAt": "2026-10-14T21:32:50.6153152Z",
+    "body": [
+      {
+        "place_id": 309565816,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 1008782843,
+        "lat": "7.0881285",
+        "lon": "-73.0927081",
+        "category": "highway",
+        "type": "residential",
+        "place_rank": 26,
+        "importance": 0.05338502098115507,
+        "addresstype": "road",
+        "name": "Calle 52",
+        "display_name": "Calle 52, Las Villas, Comuna Caldas - El Reposo, Comuna 4 Caldas-Reposo, Perímetro Urbano de Floridablanca, Floridablanca, Metropolitana, Santander, RAP Gran Santander, 006547, Colombia",
+        "address": {
+          "road": "Calle 52",
+          "neighbourhood": "Las Villas",
+          "suburb": "Comuna Caldas - El Reposo",
+          "city_district": "Perímetro Urbano de Floridablanca",
+          "town": "Floridablanca",
+          "state_district": "Metropolitana",
+          "state": "Santander",
+          "ISO3166-2-lvl4": "CO-SAN",
+          "region": "RAP Gran Santander",
+          "postcode": "006547",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "7.0876430",
+          "7.0886950",
+          "-73.0930298",
+          "-73.0924894"
+        ]
+      }
+    ],
+    "url": "https://nominatim.openstreetmap.org/search?q=Calle%2052%20%23%203%2C%20Floridablanca&format=jsonv2&limit=5&countrycodes=co&addressdetails=1",
+    "query": "Calle 52 # 3, Floridablanca"
+  },
+  {
+    "status": 200,
+    "provider": "Photon",
+    "retrievedAt": "2026-10-14T21:32:53.0153756Z",
+    "body": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 1416852448,
+            "osm_key": "amenity",
+            "osm_value": "crematorium",
+            "type": "house",
+            "housenumber": "45-99",
+            "name": "Jardines de La Colina Crematorios",
+            "street": "Avenida Carrera 27",
+            "locality": "Sotomayor",
+            "district": "Comuna Cabecera del Llano",
+            "city": "Bucaramanga",
+            "county": "Bucaramanga",
+            "state": "Santander",
+            "country": "Colombia",
+            "postcode": "680003",
+            "countrycode": "CO",
+            "extent": [
+              -73.1151764,
+              7.1170158,
+              -73.1149807,
+              7.1168086
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -73.1150764,
+              7.1169017
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 1415270088,
+            "osm_key": "shop",
+            "osm_value": "stationery",
+            "type": "house",
+            "housenumber": "45-05",
+            "name": "Panamericana",
+            "street": "Avenida Carrera 27",
+            "locality": "Sotomayor",
+            "district": "Comuna Cabecera del Llano",
+            "city": "Bucaramanga",
+            "county": "Bucaramanga",
+            "state": "Santander",
+            "country": "Colombia",
+            "postcode": "680003",
+            "countrycode": "CO",
+            "extent": [
+              -73.1153029,
+              7.1178973,
+              -73.1147558,
+              7.1171727
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -73.1151382,
+              7.1175726
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 1417423022,
+            "osm_key": "building",
+            "osm_value": "yes",
+            "type": "house",
+            "housenumber": "45 Bis-28",
+            "name": "Edificio Marfil Plaza",
+            "street": "Carrera 27A",
+            "locality": "Sotomayor",
+            "district": "Comuna Cabecera del Llano",
+            "city": "Bucaramanga",
+            "county": "Bucaramanga",
+            "state": "Santander",
+            "country": "Colombia",
+            "postcode": "680003",
+            "countrycode": "CO",
+            "extent": [
+              -73.1147329,
+              7.1174355,
+              -73.1145121,
+              7.1172682
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -73.1146152,
+              7.1173504
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 1417423021,
+            "osm_key": "building",
+            "osm_value": "yes",
+            "type": "house",
+            "housenumber": "45 Bis-62",
+            "name": "Edificio Tarragona",
+            "street": "Carrera 27A",
+            "locality": "Sotomayor",
+            "district": "Comuna Cabecera del Llano",
+            "city": "Bucaramanga",
+            "county": "Bucaramanga",
+            "state": "Santander",
+            "country": "Colombia",
+            "postcode": "680003",
+            "countrycode": "CO",
+            "extent": [
+              -73.1147783,
+              7.1176733,
+              -73.1145141,
+              7.1174032
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -73.1146555,
+              7.1175275
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 560788864,
+            "osm_key": "building",
+            "osm_value": "university",
+            "type": "house",
+            "name": "(UIS 1) PorterÃ­a Avenida Carrera 27",
+            "street": "Calle de los Estudiantes",
+            "locality": "Universidad",
+            "district": "Comuna de San Francisco",
+            "city": "Bucaramanga",
+            "county": "Bucaramanga",
+            "state": "Santander",
+            "country": "Colombia",
+            "postcode": "680001",
+            "countrycode": "CO",
+            "extent": [
+              -73.1202754,
+              7.1391238,
+              -73.1202204,
+              7.1390113
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -73.1202474,
+              7.1390943
+            ]
+          }
+        }
+      ]
+    },
+    "url": "https://photon.komoot.io/api/?q=Calle%2045%20con%20Carrera%2027%2C%20Bucaramanga&lat=7.08&lon=-73.10&limit=5",
+    "query": "Calle 45 con Carrera 27, Bucaramanga"
+  },
+  {
+    "status": 200,
+    "provider": "Nominatim",
+    "retrievedAt": "2026-10-14T21:32:55.0160050Z",
+    "body": [],
+    "url": "https://nominatim.openstreetmap.org/search?q=Calle%2045%20con%20Carrera%2027%2C%20Bucaramanga&format=jsonv2&limit=5&countrycodes=co&addressdetails=1",
+    "query": "Calle 45 con Carrera 27, Bucaramanga"
+  },
+  {
+    "status": 200,
+    "provider": "Photon",
+    "retrievedAt": "2026-10-14T21:32:56.8971564Z",
+    "body": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "N",
+            "osm_id": 9025179682,
+            "osm_key": "shop",
+            "osm_value": "computer",
+            "type": "house",
+            "name": "PC system",
+            "street": "Via Giacomo Leopardi",
+            "city": "Torchiarolo",
+            "county": "Brindisi",
+            "state": "Puglia",
+            "country": "Italia",
+            "postcode": "72027",
+            "countrycode": "IT"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              18.0509569,
+              40.4817499
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "N",
+            "osm_id": 12708365628,
+            "osm_key": "shop",
+            "osm_value": "computer",
+            "type": "house",
+            "housenumber": "57",
+            "name": "PC System",
+            "street": "MÅynarska",
+            "locality": "Osiedle Marii DÄbrowskiej",
+            "district": "Kaliniec",
+            "city": "Kalisz",
+            "state": "wojewÃ³dztwo wielkopolskie",
+            "country": "Polska",
+            "postcode": "62-800",
+            "countrycode": "PL"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              18.0707758,
+              51.7516673
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "N",
+            "osm_id": 10195513677,
+            "osm_key": "shop",
+            "osm_value": "computer",
+            "type": "house",
+            "housenumber": "26",
+            "name": "PC system",
+            "street": "Via Giardino",
+            "city": "Locate di Triulzi",
+            "county": "Milano",
+            "state": "Lombardia",
+            "country": "Italia",
+            "postcode": "20085",
+            "countrycode": "IT"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              9.2235144,
+              45.3573074
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "N",
+            "osm_id": 13252426234,
+            "osm_key": "shop",
+            "osm_value": "computer",
+            "type": "house",
+            "housenumber": "29/a",
+            "name": "Pc System",
+            "street": "Via Giuseppe Verdi",
+            "district": "Borgo Colle",
+            "city": "Azzano Decimo",
+            "county": "Pordenone",
+            "state": "Friuli Venezia Giulia",
+            "country": "Italia",
+            "postcode": "33082",
+            "countrycode": "IT"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              12.714685,
+              45.883438
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 674155061,
+            "osm_key": "landuse",
+            "osm_value": "commercial",
+            "type": "locality",
+            "housenumber": "72",
+            "name": "PC System Srl",
+            "street": "Via Marco Polo",
+            "district": "Sardina",
+            "city": "Bientina",
+            "county": "Pisa",
+            "state": "Toscana",
+            "country": "Italia",
+            "postcode": "56031",
+            "countrycode": "IT",
+            "extent": [
+              10.6200679,
+              43.7019283,
+              10.6207655,
+              43.7012229
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              10.6204127,
+              43.701481
+            ]
+          }
+        }
+      ]
+    },
+    "url": "https://photon.komoot.io/api/?q=PC%20System&lat=7.08&lon=-73.10&limit=5",
+    "query": "PC System"
+  },
+  {
+    "status": 200,
+    "provider": "Nominatim",
+    "retrievedAt": "2026-10-14T21:32:58.7045120Z",
+    "body": [
+      {
+        "place_id": 310966924,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "node",
+        "osm_id": 4108997903,
+        "lat": "4.5590050",
+        "lon": "-74.1209106",
+        "category": "shop",
+        "type": "computer",
+        "place_rank": 30,
+        "importance": 0.00007831921873803338,
+        "addresstype": "shop",
+        "name": "Sl System Pc",
+        "display_name": "Sl System Pc, 49-08, Carrera 10, El Playón, UPZs de Bogotá, Localidad Rafael Uribe Uribe, Bogotá ciudad, Bogotá, Distrito Capital, RAP (Especial) Central, 111831, Colombia",
+        "address": {
+          "shop": "Sl System Pc",
+          "house_number": "49-08",
+          "road": "Carrera 10",
+          "neighbourhood": "El Playón",
+          "suburb": "Localidad Rafael Uribe Uribe",
+          "city": "Bogotá ciudad",
+          "state": "Bogotá, Distrito Capital",
+          "ISO3166-2-lvl4": "CO-DC",
+          "region": "RAP (Especial) Central",
+          "postcode": "111831",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "4.5589550",
+          "4.5590550",
+          "-74.1209606",
+          "-74.1208606"
+        ]
+      }
+    ],
+    "url": "https://nominatim.openstreetmap.org/search?q=PC%20System&format=jsonv2&limit=5&countrycodes=co&addressdetails=1",
+    "query": "PC System"
+  },
+  {
+    "status": 200,
+    "provider": "Photon",
+    "retrievedAt": "2026-10-14T21:33:00.4939610Z",
+    "body": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 669831283,
+            "osm_key": "building",
+            "osm_value": "house",
+            "type": "house",
+            "name": "cra 4-7-49",
+            "street": "Carrera 4",
+            "city": "Cerinza",
+            "county": "Cerinza",
+            "state": "BoyacÃ¡",
+            "country": "Colombia",
+            "postcode": "150640",
+            "countrycode": "CO",
+            "extent": [
+              -72.9463985,
+              5.9571847,
+              -72.9462201,
+              5.95713
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -72.946311,
+              5.9571581
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 669831882,
+            "osm_key": "building",
+            "osm_value": "house",
+            "type": "house",
+            "name": "cra 4 - 7 -53",
+            "street": "Carrera 4",
+            "city": "Cerinza",
+            "county": "Cerinza",
+            "state": "BoyacÃ¡",
+            "country": "Colombia",
+            "postcode": "150640",
+            "countrycode": "CO",
+            "extent": [
+              -72.9463871,
+              5.9573341,
+              -72.9462228,
+              5.9572442
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -72.946305,
+              5.9572811
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 783091125,
+            "osm_key": "highway",
+            "osm_value": "residential",
+            "type": "street",
+            "name": "Cra 4A",
+            "city": "Puerto Santander",
+            "county": "Oriental",
+            "state": "Norte de Santander",
+            "country": "Colombia",
+            "countrycode": "CO",
+            "extent": [
+              -72.4137087,
+              8.3537904,
+              -72.413563,
+              8.3534957
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -72.4136373,
+              8.3536438
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "N",
+            "osm_id": 6835875836,
+            "osm_key": "shop",
+            "osm_value": "convenience",
+            "type": "house",
+            "name": "Tienda Cra 4",
+            "street": "Carrera 4",
+            "locality": "MartÃ­n Galeano",
+            "district": "Los Laureles",
+            "city": "VÃ©lez",
+            "county": "VÃ©lez",
+            "state": "Santander",
+            "country": "Colombia",
+            "countrycode": "CO"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -73.6734035,
+              6.0126047
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 10584018,
+            "osm_key": "amenity",
+            "osm_value": "school",
+            "type": "house",
+            "housenumber": "103",
+            "name": "John McCrae Secondary School",
+            "street": "Malvern Drive",
+            "locality": "Old Barrhaven",
+            "district": "Nepean",
+            "city": "Nepean",
+            "county": "Eastern Ontario",
+            "state": "Ontario",
+            "country": "Canada",
+            "postcode": "K2J 4T2",
+            "countrycode": "CA",
+            "extent": [
+              -75.7653747,
+              45.2799301,
+              -75.7615325,
+              45.277089
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -75.7641772,
+              45.278481
+            ]
+          }
+        }
+      ]
+    },
+    "url": "https://photon.komoot.io/api/?q=Cra%204&lat=7.08&lon=-73.10&limit=5",
+    "query": "Cra 4"
+  },
+  {
+    "status": 200,
+    "provider": "Nominatim",
+    "retrievedAt": "2026-10-14T21:33:02.3120466Z",
+    "body": [
+      {
+        "place_id": 308516140,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 810545558,
+        "lat": "4.8127879",
+        "lon": "-74.0272739",
+        "category": "highway",
+        "type": "residential",
+        "place_rank": 26,
+        "importance": 0.05341165255207138,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, UPZs de Bogotá, Localidad Usaquén, Bogotá ciudad, Bogotá, Distrito Capital, RAP (Especial) Central, 110151, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "neighbourhood": "UPZs de Bogotá",
+          "suburb": "Localidad Usaquén",
+          "city": "Bogotá ciudad",
+          "state": "Bogotá, Distrito Capital",
+          "ISO3166-2-lvl4": "CO-DC",
+          "region": "RAP (Especial) Central",
+          "postcode": "110151",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "4.8114035",
+          "4.8136266",
+          "-74.0278991",
+          "-74.0260352"
+        ]
+      },
+      {
+        "place_id": 309059491,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 89700500,
+        "lat": "4.6433929",
+        "lon": "-74.0595945",
+        "category": "highway",
+        "type": "tertiary",
+        "place_rank": 26,
+        "importance": 0.05341165255207138,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, UPZs de Bogotá, Localidad Chapinero, Bogotá ciudad, Bogotá, Distrito Capital, RAP (Especial) Central, 110231, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "neighbourhood": "UPZs de Bogotá",
+          "suburb": "Localidad Chapinero",
+          "city": "Bogotá ciudad",
+          "state": "Bogotá, Distrito Capital",
+          "ISO3166-2-lvl4": "CO-DC",
+          "region": "RAP (Especial) Central",
+          "postcode": "110231",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "4.6420519",
+          "4.6442999",
+          "-74.0601914",
+          "-74.0584144"
+        ]
+      },
+      {
+        "place_id": 308679053,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 369238400,
+        "lat": "4.6935817",
+        "lon": "-74.1729530",
+        "category": "highway",
+        "type": "tertiary",
+        "place_rank": 26,
+        "importance": 0.05341165255207138,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Porvenir Río, Mosquera, Sabana Occidente, Cundinamarca, RAP (Especial) Central, 250040, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "neighbourhood": "Porvenir Río",
+          "town": "Mosquera",
+          "subregion": "Sabana Occidente",
+          "state": "Cundinamarca",
+          "ISO3166-2-lvl4": "CO-CUN",
+          "region": "RAP (Especial) Central",
+          "postcode": "250040",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "4.6909829",
+          "4.6962033",
+          "-74.1734661",
+          "-74.1727253"
+        ]
+      },
+      {
+        "place_id": 308672681,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 815963637,
+        "lat": "4.5824472",
+        "lon": "-74.0813983",
+        "category": "highway",
+        "type": "residential",
+        "place_rank": 26,
+        "importance": 0.05341165255207138,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Las Brisas, UPZs de Bogotá, Localidad San Cristóbal, Bogotá ciudad, Bogotá, Distrito Capital, RAP (Especial) Central, 110411, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "neighbourhood": "Las Brisas",
+          "suburb": "Localidad San Cristóbal",
+          "city": "Bogotá ciudad",
+          "state": "Bogotá, Distrito Capital",
+          "ISO3166-2-lvl4": "CO-DC",
+          "region": "RAP (Especial) Central",
+          "postcode": "110411",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "4.5814594",
+          "4.5831329",
+          "-74.0820491",
+          "-74.0804129"
+        ]
+      },
+      {
+        "place_id": 308918737,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 28159984,
+        "lat": "4.6593624",
+        "lon": "-74.0496744",
+        "category": "highway",
+        "type": "tertiary",
+        "place_rank": 26,
+        "importance": 0.05341165255207138,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, El Nogal, UPZs de Bogotá, Localidad Chapinero, Bogotá ciudad, Bogotá, Distrito Capital, RAP (Especial) Central, 110221, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "neighbourhood": "El Nogal",
+          "suburb": "Localidad Chapinero",
+          "city": "Bogotá ciudad",
+          "state": "Bogotá, Distrito Capital",
+          "ISO3166-2-lvl4": "CO-DC",
+          "region": "RAP (Especial) Central",
+          "postcode": "110221",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "4.6588195",
+          "4.6597117",
+          "-74.0501716",
+          "-74.0490556"
+        ]
+      }
+    ],
+    "url": "https://nominatim.openstreetmap.org/search?q=Cra%204&format=jsonv2&limit=5&countrycodes=co&addressdetails=1",
+    "query": "Cra 4"
+  },
+  {
+    "status": 200,
+    "provider": "Photon",
+    "retrievedAt": "2026-10-14T21:33:04.7345603Z",
+    "body": {
+      "type": "FeatureCollection",
+      "features": []
+    },
+    "url": "https://photon.komoot.io/api/?q=Carrera%204%20%23%2048-25%2C%20Giron&lat=7.08&lon=-73.10&limit=5",
+    "query": "Carrera 4 # 48-25, Giron"
+  },
+  {
+    "status": 200,
+    "provider": "Nominatim",
+    "retrievedAt": "2026-10-14T21:33:06.5318190Z",
+    "body": [],
+    "url": "https://nominatim.openstreetmap.org/search?q=Carrera%204%20%23%2048-25%2C%20Giron&format=jsonv2&limit=5&countrycodes=co&addressdetails=1",
+    "query": "Carrera 4 # 48-25, Giron"
+  },
+  {
+    "status": 200,
+    "provider": "Nominatim",
+    "retrievedAt": "2026-10-14T21:39:00.1615735Z",
+    "body": [
+      {
+        "place_id": 308980024,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 71783507,
+        "lat": "7.0631718",
+        "lon": "-73.0897536",
+        "category": "highway",
+        "type": "residential",
+        "place_rank": 26,
+        "importance": 0.05338502098115507,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Comuna Florida - Casco Antiguo, Comuna 1 Florida-Casco Antiguo, Perímetro Urbano de Floridablanca, Floridablanca, Metropolitana, Santander, RAP Gran Santander, 681002, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "suburb": "Comuna Florida - Casco Antiguo",
+          "city_district": "Perímetro Urbano de Floridablanca",
+          "town": "Floridablanca",
+          "state_district": "Metropolitana",
+          "state": "Santander",
+          "ISO3166-2-lvl4": "CO-SAN",
+          "region": "RAP Gran Santander",
+          "postcode": "681002",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "7.0617379",
+          "7.0646020",
+          "-73.0903249",
+          "-73.0891938"
+        ]
+      },
+      {
+        "place_id": 309839148,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 96097432,
+        "lat": "7.0693023",
+        "lon": "-73.0944817",
+        "category": "highway",
+        "type": "residential",
+        "place_rank": 26,
+        "importance": 0.05338502098115507,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Lagos II, Comuna 6 Lagos-Bellavista, Perímetro Urbano de Floridablanca, Floridablanca, Metropolitana, Santander, RAP Gran Santander, 681002, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "suburb": "Lagos II",
+          "city_district": "Perímetro Urbano de Floridablanca",
+          "town": "Floridablanca",
+          "state_district": "Metropolitana",
+          "state": "Santander",
+          "ISO3166-2-lvl4": "CO-SAN",
+          "region": "RAP Gran Santander",
+          "postcode": "681002",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "7.0687293",
+          "7.0698754",
+          "-73.0948098",
+          "-73.0941536"
+        ]
+      },
+      {
+        "place_id": 310018457,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 809268347,
+        "lat": "7.0791617",
+        "lon": "-73.0978139",
+        "category": "highway",
+        "type": "residential",
+        "place_rank": 26,
+        "importance": 0.05338502098115507,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Barrio Escoflor, Comuna Villabel - Santa Ana, Comuna 7 Villabel-Santa Ana, Perímetro Urbano de Floridablanca, Floridablanca, Metropolitana, Santander, RAP Gran Santander, 681002, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "neighbourhood": "Barrio Escoflor",
+          "suburb": "Comuna Villabel - Santa Ana",
+          "city_district": "Perímetro Urbano de Floridablanca",
+          "town": "Floridablanca",
+          "state_district": "Metropolitana",
+          "state": "Santander",
+          "ISO3166-2-lvl4": "CO-SAN",
+          "region": "RAP Gran Santander",
+          "postcode": "681002",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "7.0787410",
+          "7.0794289",
+          "-73.0982908",
+          "-73.0974606"
+        ]
+      },
+      {
+        "place_id": 310429366,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 503590383,
+        "lat": "7.0613168",
+        "lon": "-73.0890310",
+        "category": "highway",
+        "type": "residential",
+        "place_rank": 26,
+        "importance": 0.05338502098115507,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Comuna Florida - Casco Antiguo, Comuna 1 Florida-Casco Antiguo, Perímetro Urbano de Floridablanca, Floridablanca, Metropolitana, Santander, RAP Gran Santander, 681004, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "suburb": "Comuna Florida - Casco Antiguo",
+          "city_district": "Perímetro Urbano de Floridablanca",
+          "town": "Floridablanca",
+          "state_district": "Metropolitana",
+          "state": "Santander",
+          "ISO3166-2-lvl4": "CO-SAN",
+          "region": "RAP Gran Santander",
+          "postcode": "681004",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "7.0610275",
+          "7.0616131",
+          "-73.0891438",
+          "-73.0889070"
+        ]
+      },
+      {
+        "place_id": 310099261,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 1447099520,
+        "lat": "7.0705799",
+        "lon": "-73.0823657",
+        "category": "highway",
+        "type": "pedestrian",
+        "place_rank": 26,
+        "importance": 0.05338502098115507,
+        "addresstype": "road",
+        "name": "Carrera 4",
+        "display_name": "Carrera 4, Comuna Bucarica - Caracolí, Comuna 3 Bucarica-Caracolí, Perímetro Urbano de Floridablanca, Floridablanca, Metropolitana, Santander, RAP Gran Santander, 681002, Colombia",
+        "address": {
+          "road": "Carrera 4",
+          "suburb": "Comuna Bucarica - Caracolí",
+          "city_district": "Perímetro Urbano de Floridablanca",
+          "town": "Floridablanca",
+          "state_district": "Metropolitana",
+          "state": "Santander",
+          "ISO3166-2-lvl4": "CO-SAN",
+          "region": "RAP Gran Santander",
+          "postcode": "681002",
+          "country": "Colombia",
+          "country_code": "co"
+        },
+        "boundingbox": [
+          "7.0703538",
+          "7.0708059",
+          "-73.0823959",
+          "-73.0823356"
+        ]
+      }
+    ],
+    "url": "https://nominatim.openstreetmap.org/search?street=48-25%20Carrera%204&city=Floridablanca&country=Colombia&format=jsonv2&limit=5&countrycodes=co&addressdetails=1",
+    "query": "Carrera 4 48-25, Floridablanca",
+    "stage": "normalized-diagnostic"
+  },
+  {
+    "status": 200,
+    "provider": "Photon",
+    "retrievedAt": "2026-10-14T21:39:05.2077921Z",
+    "body": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 1010158409,
+            "osm_key": "highway",
+            "osm_value": "residential",
+            "type": "street",
+            "name": "Carrera 48",
+            "locality": "Venado de Oro",
+            "district": "Comuna Morrorico",
+            "city": "Bucaramanga",
+            "county": "Bucaramanga",
+            "state": "Santander",
+            "country": "Colombia",
+            "postcode": "680002",
+            "countrycode": "CO",
+            "extent": [
+              -73.1070537,
+              7.1299372,
+              -73.1068166,
+              7.1294557
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -73.1069812,
+              7.1296746
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 1383326432,
+            "osm_key": "highway",
+            "osm_value": "residential",
+            "type": "street",
+            "name": "Carrera 48",
+            "locality": "Terrazas",
+            "district": "Comuna Cabecera del Llano",
+            "city": "Bucaramanga",
+            "county": "Bucaramanga",
+            "state": "Santander",
+            "country": "Colombia",
+            "postcode": "680003",
+            "countrycode": "CO",
+            "extent": [
+              -73.1048365,
+              7.1096452,
+              -73.1046786,
+              7.1084761
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -73.104827,
+              7.1090297
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 70287401,
+            "osm_key": "highway",
+            "osm_value": "residential",
+            "type": "street",
+            "name": "Carrera 48",
+            "locality": "La Floresta",
+            "district": "Comuna Cabecera del Llano",
+            "city": "Bucaramanga",
+            "county": "Bucaramanga",
+            "state": "Santander",
+            "country": "Colombia",
+            "postcode": "680005",
+            "countrycode": "CO",
+            "extent": [
+              -73.1050932,
+              7.1072114,
+              -73.1047188,
+              7.1057236
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -73.1050748,
+              7.1064122
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 71008749,
+            "osm_key": "highway",
+            "osm_value": "tertiary",
+            "type": "street",
+            "name": "Carrera 48 Oeste",
+            "locality": "Estoraques",
+            "district": "Comuna Mutis",
+            "city": "Bucaramanga",
+            "county": "Bucaramanga",
+            "state": "Santander",
+            "country": "Colombia",
+            "postcode": "680004",
+            "countrycode": "CO",
+            "extent": [
+              -73.1451973,
+              7.0901424,
+              -73.1446887,
+              7.0890006
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -73.144943,
+              7.0895715
+            ]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "osm_type": "W",
+            "osm_id": 474653858,
+            "osm_key": "highway",
+            "osm_value": "residential",
+            "type": "street",
+            "name": "Carrera 48B",
+            "locality": "Terrazas",
+            "district": "Comuna Cabecera del Llano",
+            "city": "Bucaramanga",
+            "county": "Bucaramanga",
+            "state": "Santander",
+            "country": "Colombia",
+            "postcode": "680003",
+            "countrycode": "CO",
+            "extent": [
+              -73.1034631,
+              7.1125107,
+              -73.103205,
+              7.1119057
+            ]
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -73.10341,
+              7.1121737
+            ]
+          }
+        }
+      ]
+    },
+    "url": "https://photon.komoot.io/api/?q=Carrera%204%20%23%2048-25%2C%20Bucaramanga%2C%20Santander%2C%20Colombia&limit=5",
+    "query": "Carrera 4 # 48-25, Bucaramanga, Santander, Colombia",
+    "stage": "normalized-diagnostic"
+  },
+  {
+    "status": 200,
+    "provider": "Nominatim",
+    "retrievedAt": "2026-10-14T21:39:06.6634986Z",
+    "body": [],
+    "url": "https://nominatim.openstreetmap.org/search?q=PC%20System%2C%20Floridablanca&format=jsonv2&limit=5&countrycodes=co&addressdetails=1",
+    "query": "PC System, Floridablanca",
+    "stage": "normalized-diagnostic"
+  },
+  {
+    "status": 200,
+    "provider": "Photon",
+    "retrievedAt": "2026-10-14T21:39:10.9737498Z",
+    "body": {
+      "type": "FeatureCollection",
+      "features": []
+    },
+    "url": "https://photon.komoot.io/api/?q=Carera%204%20%23%2048-25%2C%20Floridablanca&limit=5",
+    "query": "Carera 4 # 48-25, Floridablanca",
+    "stage": "normalized-diagnostic"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "previousApkVersion": "1.0.1+20261016",
+  "previousSourceCount": 215,
+  "currentSourceCount": 233,
+  "sourceManifestSha256": "b2445ac61e770177230074e8f84cb070ea0064074ca5ecf36c4d740d01bf102a",
+  "changedPreviousSources": [
+    "lib/widgets/map_search_panel.dart",
+    "lib/widgets/mobility_recommendation_summary.dart"
+  ]
+}

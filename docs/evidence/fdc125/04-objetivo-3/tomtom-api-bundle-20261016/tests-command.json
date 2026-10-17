@@ -1,0 +1,5 @@
+{
+    "exitCode":  0,
+    "command":  "node --test tools/bundle-traffic-geometries.test.mjs supabase/functions/traffic-flow/handler.test.mjs",
+    "finishedAt":  "2026-10-17T04:09:13.8960871Z"
+}

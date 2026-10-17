@@ -1,0 +1,618 @@
+[
+  {
+    "id": "OE3-01",
+    "input": {
+      "origin": [
+        7.1,
+        -73.1
+      ],
+      "destination": [
+        7.2,
+        -73.2
+      ],
+      "mockHttp": true
+    },
+    "output": {
+      "routes": {
+        "driving": {
+          "seconds": 120,
+          "meters": 1000
+        },
+        "walking": {
+          "seconds": 900,
+          "meters": 1000
+        },
+        "cycling": {
+          "seconds": 300,
+          "meters": 1000
+        }
+      },
+      "requests": [
+        "https://fixture.invalid/car/route/v1/driving/-73.1,7.1;-73.2,7.2?steps=true&alternatives=true&overview=full&geometries=geojson",
+        "https://fixture.invalid/foot/route/v1/driving/-73.1,7.1;-73.2,7.2?steps=true&alternatives=true&overview=full&geometries=geojson",
+        "https://fixture.invalid/bike/route/v1/driving/-73.1,7.1;-73.2,7.2?steps=true&alternatives=true&overview=full&geometries=geojson"
+      ],
+      "publicTransport": "unsupported",
+      "crossModeRecommendation": "not implemented"
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "3 servicios por modo, 120/900/300 segundos; público no soportado; sin ganador multimodal",
+    "functions": "ModeRoutingService.route → OsrmRoutingService.routeAlternatives/_parseRoute",
+    "expected": "3 servicios por modo, 120/900/300 segundos; público no soportado; sin ganador multimodal",
+    "actual": {
+      "routes": {
+        "driving": {
+          "seconds": 120,
+          "meters": 1000
+        },
+        "walking": {
+          "seconds": 900,
+          "meters": 1000
+        },
+        "cycling": {
+          "seconds": 300,
+          "meters": 1000
+        }
+      },
+      "requests": [
+        "https://fixture.invalid/car/route/v1/driving/-73.1,7.1;-73.2,7.2?steps=true&alternatives=true&overview=full&geometries=geojson",
+        "https://fixture.invalid/foot/route/v1/driving/-73.1,7.1;-73.2,7.2?steps=true&alternatives=true&overview=full&geometries=geojson",
+        "https://fixture.invalid/bike/route/v1/driving/-73.1,7.1;-73.2,7.2?steps=true&alternatives=true&overview=full&geometries=geojson"
+      ],
+      "publicTransport": "unsupported",
+      "crossModeRecommendation": "not implemented"
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-01",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  },
+  {
+    "id": "OE3-02",
+    "input": {
+      "a": [
+        180,
+        1000
+      ],
+      "b": [
+        120,
+        2000
+      ],
+      "c": [
+        200,
+        500
+      ],
+      "units": [
+        "seconds",
+        "meters"
+      ]
+    },
+    "output": {
+      "selected": "b",
+      "seconds": 120,
+      "meters": 2000,
+      "alternatives": [
+        "a",
+        "c"
+      ],
+      "reasons": [
+        "Menor duración estimada entre las alternativas vehiculares elegibles recibidas."
+      ]
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "b, menor duración 120 s",
+    "functions": "VehicleRecommendationEngine.recommend",
+    "expected": "b, menor duración 120 s",
+    "actual": {
+      "selected": "b",
+      "seconds": 120,
+      "meters": 2000,
+      "alternatives": [
+        "a",
+        "c"
+      ],
+      "reasons": [
+        "Menor duración estimada entre las alternativas vehiculares elegibles recibidas."
+      ]
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-02",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  },
+  {
+    "id": "OE3-03",
+    "input": {
+      "a": [
+        180,
+        1000
+      ],
+      "b": [
+        240,
+        2000
+      ],
+      "c": [
+        200,
+        500
+      ],
+      "units": [
+        "seconds",
+        "meters"
+      ]
+    },
+    "output": {
+      "selected": "a",
+      "seconds": 180,
+      "meters": 1000,
+      "alternatives": [
+        "b",
+        "c"
+      ],
+      "reasons": [
+        "Menor duración estimada entre las alternativas vehiculares elegibles recibidas."
+      ]
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "a tras b=240 s",
+    "functions": "VehicleRecommendationEngine.recommend",
+    "expected": "a tras b=240 s",
+    "actual": {
+      "selected": "a",
+      "seconds": 180,
+      "meters": 1000,
+      "alternatives": [
+        "b",
+        "c"
+      ],
+      "reasons": [
+        "Menor duración estimada entre las alternativas vehiculares elegibles recibidas."
+      ]
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-03",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  },
+  {
+    "id": "OE3-04",
+    "input": {
+      "a": [
+        120,
+        2000
+      ],
+      "b": [
+        120,
+        1000
+      ]
+    },
+    "output": {
+      "selected": "b",
+      "seconds": 120,
+      "meters": 1000,
+      "alternatives": [
+        "a"
+      ],
+      "reasons": [
+        "Comparte la menor duración estimada entre las alternativas vehiculares elegibles recibidas.",
+        "Menor distancia como desempate entre las alternativas con igual duración estimada."
+      ]
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "b por distancia con duración empatada",
+    "functions": "VehicleRecommendationEngine.recommend",
+    "expected": "b por distancia con duración empatada",
+    "actual": {
+      "selected": "b",
+      "seconds": 120,
+      "meters": 1000,
+      "alternatives": [
+        "a"
+      ],
+      "reasons": [
+        "Comparte la menor duración estimada entre las alternativas vehiculares elegibles recibidas.",
+        "Menor distancia como desempate entre las alternativas con igual duración estimada."
+      ]
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-04",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  },
+  {
+    "id": "OE3-05",
+    "input": {
+      "a": [
+        100,
+        2200
+      ],
+      "b": [
+        120,
+        2400
+      ],
+      "origin": [
+        0,
+        0
+      ],
+      "destination": [
+        0,
+        0.02
+      ],
+      "detourVertex": [
+        0.003,
+        0.01
+      ],
+      "reportPoint": null,
+      "reportPersistence": "in-memory fixture, NOT a real DB insertion"
+    },
+    "output": {
+      "recommendation": {
+        "selected": "a",
+        "seconds": 100,
+        "meters": 2200,
+        "alternatives": [
+          "b"
+        ],
+        "reasons": [
+          "Ruta sugerida: sin reportes viales activos próximos en los datos disponibles.",
+          "Regla provisional: grupo comparable hasta 25 % más de duración y 50 % más de distancia que la ruta más rápida. La proximidad no confirma bloqueo ni sentido de circulación.",
+          "Menor duración estimada entre las alternativas finalistas con igual exposición. Tiempos y distancias del proveedor sin ajustes."
+        ]
+      },
+      "nearbyCounts": {
+        "a": 0,
+        "b": 0
+      }
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "a con conteos 0/0",
+    "functions": "RouteIncidentAnalyzer.analyze → VehicleRecommendationEngine.recommend",
+    "expected": "a con conteos 0/0",
+    "actual": {
+      "recommendation": {
+        "selected": "a",
+        "seconds": 100,
+        "meters": 2200,
+        "alternatives": [
+          "b"
+        ],
+        "reasons": [
+          "Ruta sugerida: sin reportes viales activos próximos en los datos disponibles.",
+          "Regla provisional: grupo comparable hasta 25 % más de duración y 50 % más de distancia que la ruta más rápida. La proximidad no confirma bloqueo ni sentido de circulación.",
+          "Menor duración estimada entre las alternativas finalistas con igual exposición. Tiempos y distancias del proveedor sin ajustes."
+        ]
+      },
+      "nearbyCounts": {
+        "a": 0,
+        "b": 0
+      }
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-05",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  },
+  {
+    "id": "OE3-06",
+    "input": {
+      "a": [
+        100,
+        2200
+      ],
+      "b": [
+        120,
+        2400
+      ],
+      "origin": [
+        0,
+        0
+      ],
+      "destination": [
+        0,
+        0.02
+      ],
+      "detourVertex": [
+        0.003,
+        0.01
+      ],
+      "reportPoint": [
+        0,
+        0.01
+      ],
+      "reportPersistence": "in-memory fixture, NOT a real DB insertion"
+    },
+    "output": {
+      "recommendation": {
+        "selected": "b",
+        "seconds": 120,
+        "meters": 2400,
+        "alternatives": [
+          "a"
+        ],
+        "reasons": [
+          "Ruta sugerida: sin reportes viales activos próximos en los datos disponibles.",
+          "Regla provisional: grupo comparable hasta 25 % más de duración y 50 % más de distancia que la ruta más rápida. La proximidad no confirma bloqueo ni sentido de circulación.",
+          "Única alternativa finalista tras comparar proximidad y límites de duración/distancia. Tiempos y distancias del proveedor sin ajustes."
+        ]
+      },
+      "nearbyCounts": {
+        "a": 1,
+        "b": 0
+      }
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "b con conteos a=1,b=0",
+    "functions": "RouteIncidentAnalyzer.analyze → VehicleRecommendationEngine.recommend",
+    "expected": "b con conteos a=1,b=0",
+    "actual": {
+      "recommendation": {
+        "selected": "b",
+        "seconds": 120,
+        "meters": 2400,
+        "alternatives": [
+          "a"
+        ],
+        "reasons": [
+          "Ruta sugerida: sin reportes viales activos próximos en los datos disponibles.",
+          "Regla provisional: grupo comparable hasta 25 % más de duración y 50 % más de distancia que la ruta más rápida. La proximidad no confirma bloqueo ni sentido de circulación.",
+          "Única alternativa finalista tras comparar proximidad y límites de duración/distancia. Tiempos y distancias del proveedor sin ajustes."
+        ]
+      },
+      "nearbyCounts": {
+        "a": 1,
+        "b": 0
+      }
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-06",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  },
+  {
+    "id": "OE3-07",
+    "input": {
+      "allowedModes": [
+        "walking"
+      ],
+      "candidateMode": "driving"
+    },
+    "output": {
+      "result": "NoEligibleVehicleRouteException",
+      "meaning": "no eligible vehicle; no invented multimodal winner"
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "NoEligibleVehicleRouteException",
+    "functions": "VehicleRecommendationEngine.recommend",
+    "expected": "NoEligibleVehicleRouteException",
+    "actual": {
+      "result": "NoEligibleVehicleRouteException",
+      "meaning": "no eligible vehicle; no invented multimodal winner"
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-07",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  },
+  {
+    "id": "OE3-08",
+    "input": {
+      "incidentAnalyses": "missing",
+      "a": [
+        100,
+        1000
+      ],
+      "b": [
+        120,
+        1100
+      ]
+    },
+    "output": {
+      "selected": "a",
+      "seconds": 100,
+      "meters": 1000,
+      "alternatives": [
+        "b"
+      ],
+      "reasons": [
+        "Menor duración estimada entre las alternativas vehiculares elegibles recibidas."
+      ]
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "a por duración; no afirmar cero reportes",
+    "functions": "VehicleRecommendationEngine.recommend",
+    "expected": "a por duración; no afirmar cero reportes",
+    "actual": {
+      "selected": "a",
+      "seconds": 100,
+      "meters": 1000,
+      "alternatives": [
+        "b"
+      ],
+      "reasons": [
+        "Menor duración estimada entre las alternativas vehiculares elegibles recibidas."
+      ]
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-08",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  },
+  {
+    "id": "OE3-09",
+    "input": {
+      "queryStart": "2026-09-09T05:00:00.000Z",
+      "queryEndExclusive": "2026-10-07T05:00:00.000Z",
+      "rows": 99
+    },
+    "output": {
+      "status": "insufficient",
+      "reason": "Datos insuficientes para orientar horarios",
+      "observations": 99,
+      "completeDays": 28,
+      "weekdayOccurrences": 4,
+      "selectedHour": 8,
+      "selectedHourObservations": 1,
+      "lowerHours": [],
+      "lowerCounts": []
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "insufficient, sin franjas",
+    "functions": "HistoricalDepartureGuidanceEvaluator.evaluate",
+    "expected": "insufficient, sin franjas",
+    "actual": {
+      "status": "insufficient",
+      "reason": "Datos insuficientes para orientar horarios",
+      "observations": 99,
+      "completeDays": 28,
+      "weekdayOccurrences": 4,
+      "selectedHour": 8,
+      "selectedHourObservations": 1,
+      "lowerHours": [],
+      "lowerCounts": []
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-09",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  },
+  {
+    "id": "OE3-10",
+    "input": {
+      "rows": 1316,
+      "queryStart": "2026-09-09T05:00:00.000Z",
+      "queryEndExclusive": "2026-10-07T05:00:00.000Z",
+      "selectedDeparture": "2026-10-14T13:00:00.000Z",
+      "generator": "28 days; 1 report/hour at :10; extra report at :20 except civil hour 8; synthetic only"
+    },
+    "output": {
+      "status": "observed",
+      "reason": "Menor actividad histórica de reportes",
+      "observations": 1316,
+      "completeDays": 28,
+      "weekdayOccurrences": 4,
+      "selectedHour": 8,
+      "selectedHourObservations": 4,
+      "lowerHours": [
+        8
+      ],
+      "lowerCounts": [
+        4
+      ]
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "observed, franja 08:00 con 4 registros en cuatro fechas",
+    "functions": "HistoricalDepartureGuidanceEvaluator.evaluate",
+    "expected": "observed, franja 08:00 con 4 registros en cuatro fechas",
+    "actual": {
+      "status": "observed",
+      "reason": "Menor actividad histórica de reportes",
+      "observations": 1316,
+      "completeDays": 28,
+      "weekdayOccurrences": 4,
+      "selectedHour": 8,
+      "selectedHourObservations": 4,
+      "lowerHours": [
+        8
+      ],
+      "lowerCounts": [
+        4
+      ]
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-10",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  },
+  {
+    "id": "OE3-11",
+    "input": {
+      "mutation": "swap civil hours 8 and 16; separately truncate original batch"
+    },
+    "output": {
+      "shifted": {
+        "status": "observed",
+        "reason": "Menor actividad histórica de reportes",
+        "observations": 1316,
+        "completeDays": 28,
+        "weekdayOccurrences": 4,
+        "selectedHour": 8,
+        "selectedHourObservations": 8,
+        "lowerHours": [
+          16
+        ],
+        "lowerCounts": [
+          4
+        ]
+      },
+      "partial": {
+        "status": "partial",
+        "reason": "Cobertura parcial: no permite orientar horarios.",
+        "observations": 1316,
+        "completeDays": 28,
+        "weekdayOccurrences": 4,
+        "selectedHour": 8,
+        "selectedHourObservations": 4,
+        "lowerHours": [],
+        "lowerCounts": []
+      }
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "franja 16:00 al intercambiar horas; partial al truncar",
+    "functions": "HistoricalDepartureGuidanceEvaluator.evaluate",
+    "expected": "franja 16:00 al intercambiar horas; partial al truncar",
+    "actual": {
+      "shifted": {
+        "status": "observed",
+        "reason": "Menor actividad histórica de reportes",
+        "observations": 1316,
+        "completeDays": 28,
+        "weekdayOccurrences": 4,
+        "selectedHour": 8,
+        "selectedHourObservations": 8,
+        "lowerHours": [
+          16
+        ],
+        "lowerCounts": [
+          4
+        ]
+      },
+      "partial": {
+        "status": "partial",
+        "reason": "Cobertura parcial: no permite orientar horarios.",
+        "observations": 1316,
+        "completeDays": 28,
+        "weekdayOccurrences": 4,
+        "selectedHour": 8,
+        "selectedHourObservations": 4,
+        "lowerHours": [],
+        "lowerCounts": []
+      }
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-11",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  },
+  {
+    "id": "OE3-12",
+    "input": {
+      "departure": "scheduled, instant + 1 day",
+      "currentVehicleRouteExists": true
+    },
+    "output": {
+      "hasRecommendation": false,
+      "reason": "insufficientEvidence"
+    },
+    "status": "PASS",
+    "dataNature": "synthetic fixture; production components executed",
+    "objective": "sin recomendación futura, insufficientEvidence",
+    "functions": "CurrentMobilityDecisionAdapter.build → MobilityDecisionCoordinator.decide",
+    "expected": "sin recomendación futura, insufficientEvidence",
+    "actual": {
+      "hasRecommendation": false,
+      "reason": "insufficientEvidence"
+    },
+    "evidence": "run-2026-10-16/scenarios.json#OE3-12",
+    "test": "test/objective_3_validation_test.dart",
+    "historicalIdentical": true
+  }
+]

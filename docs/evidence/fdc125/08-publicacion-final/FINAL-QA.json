@@ -1,0 +1,28 @@
+{
+  "executedAt": "2026-10-17T04:42:06.120Z",
+  "commandResults": {
+    "finishedAt": "2026-10-17T04:40:48.7286300Z",
+    "nodeTestExitCode": 0,
+    "analyzeExitCode": 0,
+    "startedAt": "2026-10-17T04:38:32.7178240Z",
+    "flutterTestExitCode": 0
+  },
+  "flutter": {
+    "passed": 769,
+    "failed": 0,
+    "skipped": 0,
+    "done": {
+      "success": true,
+      "type": "done",
+      "time": 78400
+    }
+  },
+  "node": [
+    "# tests 13",
+    "# pass 13",
+    "# fail 0",
+    "# skipped 0",
+    "# duration_ms 1575.493"
+  ],
+  "scope": "current source and diagnostic entrypoint; no new APK; historical test outputs preserved"
+}

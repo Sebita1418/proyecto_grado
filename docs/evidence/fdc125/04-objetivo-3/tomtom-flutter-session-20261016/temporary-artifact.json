@@ -1,0 +1,7 @@
+﻿{
+    "trafficProxyEnabled":  true,
+    "academicApk":  false,
+    "versionCode":  2026101601,
+    "target":  "lib/traffic_probe_main.dart",
+    "temporaryApkSha256":  "f0c5fd1c0fa1041535d66afec01e8f7797e1a8f5cc340ec376938cd16c858372"
+}

@@ -1,0 +1,128 @@
+{
+  "sealedAt": "2026-10-17T04:35:31.714Z",
+  "algorithm": "SHA-256",
+  "scope": "real Flutter-session TomTom diagnostic; no tokens or raw session objects recorded",
+  "remoteResult": "PASS",
+  "files": [
+    {
+      "file": "README.md",
+      "sizeBytes": 8053,
+      "sha256": "d372d2251c2a7ea7ad5dd0e3927fb9840464d17d6b8f32e5fcd7f5cb67fca56c"
+    },
+    {
+      "file": "academic-restored.json",
+      "sizeBytes": 252,
+      "sha256": "39771ec1a512084c1b09c02a68ec54baca75f4435248121f3b7e3916c5bf0c60"
+    },
+    {
+      "file": "diff-check.log",
+      "sizeBytes": 1210,
+      "sha256": "f315e417430388ab4e94c2d7cc3fbecc7842d2d67041c7b36089c790de5e2c9c"
+    },
+    {
+      "file": "diff-command.json",
+      "sizeBytes": 118,
+      "sha256": "1a14e30b8d4e224248eb9e19bffb4ab28bc03439a778c26a3d86aa60c067c681"
+    },
+    {
+      "file": "flutter-safe-events.log",
+      "sizeBytes": 447,
+      "sha256": "ef5de963796a2f05f062e0b459f130b2e52137c12c350eeb71a6ad97f397947d"
+    },
+    {
+      "file": "git-status.log",
+      "sizeBytes": 4576,
+      "sha256": "6e7f9110fef25854b6770d6cc03e4ad44c2bd646b71bb12217ae62db794aa318"
+    },
+    {
+      "file": "preservation.json",
+      "sizeBytes": 11747,
+      "sha256": "3b697db522e1538cbaa2c2952c768a7ca3953879d94e9e87344246c1e3c36ac6"
+    },
+    {
+      "file": "probe-analyze-final.log",
+      "sizeBytes": 198,
+      "sha256": "ec2bd22e9e35c72acf56b5a590546ce94c2427bc7d61bdc9e38b309156af9b77"
+    },
+    {
+      "file": "probe-analyze.log",
+      "sizeBytes": 2330,
+      "sha256": "ea1bed077c5c18aaf0f700a92712351188c30b07c3ae0596925c5af3274485e4"
+    },
+    {
+      "file": "quota-after.log",
+      "sizeBytes": 1674,
+      "sha256": "f2a472b5a68969e00dafe9dae1cb7fdaa9b7aa88b2ae3577048fea1fb52137a2"
+    },
+    {
+      "file": "quota-before.log",
+      "sizeBytes": 1674,
+      "sha256": "1c9b4a57c67b94616f861636fae91b1444c9c74ce80733f574e4b7a1e1bfdb7e"
+    },
+    {
+      "file": "remote-validation.json",
+      "sizeBytes": 2721,
+      "sha256": "87f3fd66d88542e0ceca5d69847ccb6cbd5eb986dc2408b5664b996269f2cdab"
+    },
+    {
+      "file": "restore-academic-install.log",
+      "sizeBytes": 78,
+      "sha256": "4dbdc95cc34f134cec3335a1cb220862b88ecce0d65412b9bd88908c08194dc9"
+    },
+    {
+      "file": "restore-academic-launch.log",
+      "sizeBytes": 512,
+      "sha256": "68c884e1ea20562b6cca4cf1175ba7d2861cc628fe1975828a281e7e7fc4aff1"
+    },
+    {
+      "file": "run-command.json",
+      "sizeBytes": 339,
+      "sha256": "d2657088270900aaaed0e6cf8cc97765f5556f1ef5c3898853d5858340b456ae"
+    },
+    {
+      "file": "s22-real-traffic.png",
+      "sizeBytes": 175563,
+      "sha256": "4f01646db23759850a39ecfa8625f4f10d1b5edacfa522e830c8e869d27ca20b"
+    },
+    {
+      "file": "screenshot-pull.log",
+      "sizeBytes": 950,
+      "sha256": "0705df8e26cc632f777ea25406a068531dc4332719e3b33142aebefcfd23e3a7"
+    },
+    {
+      "file": "temporary-artifact.json",
+      "sizeBytes": 247,
+      "sha256": "9c4bc2d1056d9e933fe50c05234cfae5fed00fb6b00018a757d26e080baf0bf2"
+    },
+    {
+      "file": "temporary-build-command.json",
+      "sizeBytes": 380,
+      "sha256": "9e25a6e02d375a317f20a9c794728947d2e77686bed69389413a801bdfc85622"
+    },
+    {
+      "file": "temporary-build.log",
+      "sizeBytes": 7918,
+      "sha256": "ba1cbd8f0bd52dd8df7574a99dcd528eef4c1d60a9da91fc4b88cb7553bdc817"
+    },
+    {
+      "file": "temporary-install.log",
+      "sizeBytes": 78,
+      "sha256": "4dbdc95cc34f134cec3335a1cb220862b88ecce0d65412b9bd88908c08194dc9"
+    },
+    {
+      "file": "temporary-launch.log",
+      "sizeBytes": 512,
+      "sha256": "f9a623cc7b5824edeecad5bf249a6349c313a9a280dbbe1a7ad252d0102e3ac8"
+    },
+    {
+      "file": "traffic-observation.csv",
+      "sizeBytes": 203,
+      "sha256": "f47c87f99fe1541214af39bac3c6c41e235732681939dfc1b6ae38e9cd424328"
+    },
+    {
+      "file": "unauthenticated-check.json",
+      "sizeBytes": 175,
+      "sha256": "afbdfc9c3f5022137f8ba721834a668efc4ff633f5ea6041ad44787c29ce3245"
+    }
+  ]
+}

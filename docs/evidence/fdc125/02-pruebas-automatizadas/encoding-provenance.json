@@ -1,0 +1,20 @@
+[
+  {
+    "original": "analyze-original.log",
+    "sha256": "3f49174e7fbce195d8537f25a3e7ed4baad624f226ada541da987f631f76c3d5",
+    "readable": "analyze-readable.txt",
+    "conversion": "UTF-16LE/BOM to UTF-8 only; original unchanged"
+  },
+  {
+    "original": "test-machine-original.log",
+    "sha256": "4c979a00698d3cca0a9f087da6768d08af247ede6036a7d4a7903b8d22a72056",
+    "readable": "test-machine-readable.jsonl",
+    "conversion": "UTF-16LE/BOM to UTF-8 only; original unchanged"
+  },
+  {
+    "original": "diff-original.log",
+    "sha256": "5bfa8002a251bdac33ea62f3f01383a82876a41e1dc3ae83aff81b7301a2b4ee",
+    "readable": "diff-readable.txt",
+    "conversion": "UTF-16LE/BOM to UTF-8 only; original unchanged"
+  }
+]

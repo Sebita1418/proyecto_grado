@@ -1,0 +1,61 @@
+# Inventario navegable de evidencia versionable
+
+No incluye videos originales, hojas privadas, este índice ni el manifiesto SHA256SUMS.json (para evitar autorreferencias). Los originales tienen manifiesto separado; SHA256SUMS.json registra integridad de todo el conjunto salvo sí mismo y hojas privadas.
+
+| Archivo | Bytes |
+|---|---|
+| [01-trazabilidad/code-state.json](../01-trazabilidad/code-state.json) | 493 |
+| [01-trazabilidad/git-diff-stat.txt](../01-trazabilidad/git-diff-stat.txt) | 3556 |
+| [01-trazabilidad/git-log.txt](../01-trazabilidad/git-log.txt) | 392 |
+| [01-trazabilidad/git-status-before.txt](../01-trazabilidad/git-status-before.txt) | 7306 |
+| [01-trazabilidad/git-status-current.txt](../01-trazabilidad/git-status-current.txt) | 3950 |
+| [01-trazabilidad/git-status-final.txt](../01-trazabilidad/git-status-final.txt) | 11944 |
+| [01-trazabilidad/github-snapshot.json](../01-trazabilidad/github-snapshot.json) | 516 |
+| [01-trazabilidad/origin-develop.txt](../01-trazabilidad/origin-develop.txt) | 124 |
+| [01-trazabilidad/PR_BODY.md](../01-trazabilidad/PR_BODY.md) | 1019 |
+| [01-trazabilidad/PUBLICACION.md](../01-trazabilidad/PUBLICACION.md) | 4916 |
+| [01-trazabilidad/README.md](../01-trazabilidad/README.md) | 2657 |
+| [01-trazabilidad/RELEASE_NOTES.md](../01-trazabilidad/RELEASE_NOTES.md) | 1077 |
+| [01-trazabilidad/source-state.sha256](../01-trazabilidad/source-state.sha256) | 23500 |
+| [01-trazabilidad/stash-list.txt](../01-trazabilidad/stash-list.txt) | 136 |
+| [02-pruebas-automatizadas/analyze-original.log](../02-pruebas-automatizadas/analyze-original.log) | 202 |
+| [02-pruebas-automatizadas/analyze-readable.txt](../02-pruebas-automatizadas/analyze-readable.txt) | 100 |
+| [02-pruebas-automatizadas/commands.json](../02-pruebas-automatizadas/commands.json) | 724 |
+| [02-pruebas-automatizadas/diff-original.log](../02-pruebas-automatizadas/diff-original.log) | 1230 |
+| [02-pruebas-automatizadas/diff-readable.txt](../02-pruebas-automatizadas/diff-readable.txt) | 616 |
+| [02-pruebas-automatizadas/encoding-provenance.json](../02-pruebas-automatizadas/encoding-provenance.json) | 723 |
+| [02-pruebas-automatizadas/final-diff-original.log](../02-pruebas-automatizadas/final-diff-original.log) | 1228 |
+| [02-pruebas-automatizadas/pre-build-diff.log](../02-pruebas-automatizadas/pre-build-diff.log) | 1230 |
+| [02-pruebas-automatizadas/README.md](../02-pruebas-automatizadas/README.md) | 2306 |
+| [02-pruebas-automatizadas/run-summary.json](../02-pruebas-automatizadas/run-summary.json) | 458 |
+| [02-pruebas-automatizadas/test-machine-original.log](../02-pruebas-automatizadas/test-machine-original.log) | 950938 |
+| [02-pruebas-automatizadas/test-machine-readable.jsonl](../02-pruebas-automatizadas/test-machine-readable.jsonl) | 475851 |
+| [02-pruebas-automatizadas/tests-results.json](../02-pruebas-automatizadas/tests-results.json) | 169020 |
+| [03-pruebas-android/devices-original.log](../03-pruebas-android/devices-original.log) | 1250 |
+| [03-pruebas-android/matrix.json](../03-pruebas-android/matrix.json) | 3666 |
+| [03-pruebas-android/README.md](../03-pruebas-android/README.md) | 3452 |
+| [04-objetivo-3/flow.md](../04-objetivo-3/flow.md) | 978 |
+| [04-objetivo-3/matrix.json](../04-objetivo-3/matrix.json) | 17880 |
+| [04-objetivo-3/README.md](../04-objetivo-3/README.md) | 8173 |
+| [04-objetivo-3/run-2026-10-16/scenarios.json](../04-objetivo-3/run-2026-10-16/scenarios.json) | 8939 |
+| [05-videos-originales/manifest.json](../05-videos-originales/manifest.json) | 1838 |
+| [05-videos-originales/README.md](../05-videos-originales/README.md) | 1238 |
+| [06-capturas/manifest.json](../06-capturas/manifest.json) | 1352 |
+| [06-capturas/README.md](../06-capturas/README.md) | 1112 |
+| [06-capturas/V01-t08-google-anonimizada.png](../06-capturas/V01-t08-google-anonimizada.png) | 28065 |
+| [06-capturas/V01-t17-home-anonimizada.png](../06-capturas/V01-t17-home-anonimizada.png) | 96333 |
+| [06-capturas/V02-t85-analitica-derivada.png](../06-capturas/V02-t85-analitica-derivada.png) | 119744 |
+| [07-integridad-y-versiones/APK-SHA256SUMS.txt](../07-integridad-y-versiones/APK-SHA256SUMS.txt) | 129 |
+| [07-integridad-y-versiones/assets-original.log](../07-integridad-y-versiones/assets-original.log) | 2360 |
+| [07-integridad-y-versiones/badging-original.log](../07-integridad-y-versiones/badging-original.log) | 12404 |
+| [07-integridad-y-versiones/build-command.json](../07-integridad-y-versiones/build-command.json) | 269 |
+| [07-integridad-y-versiones/build-final-original.log](../07-integridad-y-versiones/build-final-original.log) | 8922 |
+| [07-integridad-y-versiones/github-size-review.json](../07-integridad-y-versiones/github-size-review.json) | 641 |
+| [07-integridad-y-versiones/manifest-original.log](../07-integridad-y-versiones/manifest-original.log) | 24972 |
+| [07-integridad-y-versiones/originals-baseline.json](../07-integridad-y-versiones/originals-baseline.json) | 7907 |
+| [07-integridad-y-versiones/preservation-final.json](../07-integridad-y-versiones/preservation-final.json) | 541 |
+| [07-integridad-y-versiones/privacy-review.json](../07-integridad-y-versiones/privacy-review.json) | 485 |
+| [07-integridad-y-versiones/README.md](../07-integridad-y-versiones/README.md) | 3049 |
+| [07-integridad-y-versiones/signature-original.log](../07-integridad-y-versiones/signature-original.log) | 1946 |
+| [07-integridad-y-versiones/version-final.json](../07-integridad-y-versiones/version-final.json) | 1968 |
+| [README.md](../README.md) | 5680 |

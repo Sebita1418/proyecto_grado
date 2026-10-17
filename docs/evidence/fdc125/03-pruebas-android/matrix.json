@@ -1,0 +1,82 @@
+[
+  {
+    "id": "AND-01",
+    "objective": "Instalación, identidad y apertura",
+    "status": "Parcialmente observada",
+    "observation": "Apertura A observada 14/10 (log/captura previa); versión final C no instalada al no haber dispositivo",
+    "evidence": "../../../../deliveries/2026-10-14-android-academic/evidence/s22-launch.log",
+    "scope": "historical A or unversioned supplied clips; C NOT TESTED"
+  },
+  {
+    "id": "AND-02",
+    "objective": "Google OAuth completo",
+    "status": "Aprobada",
+    "observation": "V01 muestra salida de sesión, selector Google y retorno a Home; aprobación limitada al flujo grabado, APK/dispositivo sin identificar",
+    "evidence": "../06-capturas/V01-t08-google-anonimizada.png",
+    "scope": "historical A or unversioned supplied clips; C NOT TESTED"
+  },
+  {
+    "id": "AND-03",
+    "objective": "GPS y territorio",
+    "status": "Parcialmente observada",
+    "observation": "V02 mapa/punto y aviso de destino fuera de cobertura (~20 s); no prueba precisión ni todos los límites",
+    "evidence": "../05-videos-originales/manifest.json",
+    "scope": "historical A or unversioned supplied clips; C NOT TESTED"
+  },
+  {
+    "id": "AND-04",
+    "objective": "Búsqueda y candidato",
+    "status": "Parcialmente observada",
+    "observation": "V02 búsqueda UIS y destino elegido (~20–30 s); no prueba placa exacta",
+    "evidence": "../05-videos-originales/manifest.json",
+    "scope": "historical A or unversioned supplied clips; C NOT TESTED"
+  },
+  {
+    "id": "AND-05",
+    "objective": "Ruta y explicación de alternativa",
+    "status": "Parcialmente observada",
+    "observation": "V02 ruta/nav (~40 s); no se lee un ranking completo y sus motivos",
+    "evidence": "../05-videos-originales/manifest.json",
+    "scope": "historical A or unversioned supplied clips; C NOT TESTED"
+  },
+  {
+    "id": "AND-06",
+    "objective": "Mismo OD en caminata/bici",
+    "status": "No ejecutada",
+    "observation": "Tarjetas visibles, sin consulta comparativa acreditada; tests sintéticos separados",
+    "evidence": "../04-objetivo-3/README.md",
+    "scope": "historical A or unversioned supplied clips; C NOT TESTED"
+  },
+  {
+    "id": "AND-07",
+    "objective": "Reporte y efecto en recomendación",
+    "status": "Parcialmente observada",
+    "observation": "V02 formulario (~50 s) y analítica 2 registros (~80–85 s); no acredita inserción backend ni cambio de ranking",
+    "evidence": "../06-capturas/V02-t85-analitica-derivada.png",
+    "scope": "historical A or unversioned supplied clips; C NOT TESTED"
+  },
+  {
+    "id": "AND-08",
+    "objective": "Preferencias y elegibilidad",
+    "status": "No ejecutada",
+    "observation": "Sin evidencia visual del cambio de preferencias",
+    "evidence": "../04-objetivo-3/README.md",
+    "scope": "historical A or unversioned supplied clips; C NOT TESTED"
+  },
+  {
+    "id": "AND-09",
+    "objective": "Programar e historial suficiente/insuficiente",
+    "status": "No ejecutada",
+    "observation": "Analítica de 2 registros no acredita orientación por hora; casos deterministas no sustituyen prueba física",
+    "evidence": "../06-capturas/V02-t85-analitica-derivada.png",
+    "scope": "historical A or unversioned supplied clips; C NOT TESTED"
+  },
+  {
+    "id": "AND-10",
+    "objective": "GPS en movimiento, giro, pausa/recentrado",
+    "status": "Parcialmente observada",
+    "observation": "V02 nav/aviso esperando GPS y control volver a seguir (~40–70 s); no acredita movimiento real ni giro por rumbo fiable",
+    "evidence": "../05-videos-originales/manifest.json",
+    "scope": "historical A or unversioned supplied clips; C NOT TESTED"
+  }
+]

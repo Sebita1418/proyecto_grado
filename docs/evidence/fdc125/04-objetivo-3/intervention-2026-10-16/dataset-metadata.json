@@ -1,0 +1,1222 @@
+{
+  "id" : "7cci-nqqb",
+  "name" : "3. Accidentes de Transito ocurridos en el Municipio de Bucaramanga",
+  "assetType" : "dataset",
+  "attribution" : "Alcaldía de Bucaramanga, Santander",
+  "attributionLink" : "https://www.bucaramanga.gov.co/datos/",
+  "averageRating" : 0,
+  "category" : "Transporte",
+  "createdAt" : 1532526198,
+  "description" : "Georreferenciación de los accidentes ocurridos en el municipio de Bucaramanga según tipo de accidente, año, mes y día, tipo de  vehículo. (Histórico)",
+  "diciBackend" : false,
+  "displayType" : "table",
+  "downloadCount" : 7500,
+  "hideFromCatalog" : false,
+  "hideFromDataJson" : false,
+  "licenseId" : "CC_40_BY_SA",
+  "locale" : "en_US",
+  "locked" : false,
+  "newBackend" : true,
+  "numberOfComments" : 0,
+  "oid" : 40267291,
+  "provenance" : "official",
+  "publicationAppendEnabled" : false,
+  "publicationDate" : 1702416664,
+  "publicationGroup" : 15406273,
+  "publicationStage" : "published",
+  "resourceName" : "Accid",
+  "rowsUpdatedAt" : 1742401551,
+  "tableId" : 19395349,
+  "totalTimesRated" : 0,
+  "viewCount" : 40057,
+  "viewLastModified" : 1779122378,
+  "viewType" : "tabular",
+  "approvals" : [ {
+    "reviewedAt" : 1532527397,
+    "reviewedAutomatically" : true,
+    "state" : "approved",
+    "submissionId" : 5991441,
+    "submissionObject" : "public_audience_request",
+    "submissionOutcome" : "change_audience",
+    "submittedAt" : 1532527397,
+    "targetAudience" : "public",
+    "workflowId" : 2188,
+    "submissionDetails" : {
+      "permissionType" : "READ"
+    },
+    "submissionOutcomeApplication" : {
+      "failureCount" : 0,
+      "status" : "success"
+    },
+    "submitter" : {
+      "id" : "8id2-t5aq",
+      "displayName" : "AlcaldiaBGA"
+    }
+  } ],
+  "clientContext" : {
+    "clientContextVariables" : [ ],
+    "inheritedVariables" : { }
+  },
+  "columns" : [ {
+    "id" : 586614941,
+    "name" : "ORDEN",
+    "dataTypeName" : "text",
+    "description" : "Consecutivo autonumerico",
+    "fieldName" : "orden",
+    "position" : 1,
+    "renderTypeName" : "text",
+    "tableColumnId" : 141109851,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "9999",
+      "null" : "0",
+      "top" : [ {
+        "item" : "34884",
+        "count" : "1"
+      }, {
+        "item" : "32514",
+        "count" : "1"
+      }, {
+        "item" : "29365",
+        "count" : "1"
+      }, {
+        "item" : "247",
+        "count" : "1"
+      }, {
+        "item" : "12377",
+        "count" : "1"
+      }, {
+        "item" : "15352",
+        "count" : "1"
+      }, {
+        "item" : "36146",
+        "count" : "1"
+      }, {
+        "item" : "35250",
+        "count" : "1"
+      }, {
+        "item" : "30543",
+        "count" : "1"
+      }, {
+        "item" : "15967",
+        "count" : "1"
+      }, {
+        "item" : "16715",
+        "count" : "1"
+      }, {
+        "item" : "13727",
+        "count" : "1"
+      }, {
+        "item" : "24993",
+        "count" : "1"
+      }, {
+        "item" : "8484",
+        "count" : "1"
+      }, {
+        "item" : "33223",
+        "count" : "1"
+      }, {
+        "item" : "8662",
+        "count" : "1"
+      }, {
+        "item" : "35080",
+        "count" : "1"
+      }, {
+        "item" : "34940",
+        "count" : "1"
+      }, {
+        "item" : "16328",
+        "count" : "1"
+      }, {
+        "item" : "2571",
+        "count" : "1"
+      } ],
+      "smallest" : "1",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : { }
+  }, {
+    "id" : 586614942,
+    "name" : "FECHA",
+    "dataTypeName" : "text",
+    "description" : "Descripcion Dia y hora ocurrido el accidente",
+    "fieldName" : "fecha",
+    "position" : 2,
+    "renderTypeName" : "text",
+    "tableColumnId" : 121719813,
+    "width" : 160,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "2023-09-30T00:00:00.000",
+      "null" : "0",
+      "top" : [ {
+        "item" : "2013-05-11T00:00:00.000",
+        "count" : "26"
+      }, {
+        "item" : "2018-12-22T00:00:00.000",
+        "count" : "26"
+      }, {
+        "item" : "2016-02-02T00:00:00.000",
+        "count" : "24"
+      }, {
+        "item" : "2019-03-01T00:00:00.000",
+        "count" : "23"
+      }, {
+        "item" : "2013-04-04T00:00:00.000",
+        "count" : "23"
+      }, {
+        "item" : "2018-11-14T00:00:00.000",
+        "count" : "23"
+      }, {
+        "item" : "2018-03-16T00:00:00.000",
+        "count" : "22"
+      }, {
+        "item" : "2015-02-21T00:00:00.000",
+        "count" : "22"
+      }, {
+        "item" : "2013-12-07T00:00:00.000",
+        "count" : "22"
+      }, {
+        "item" : "2019-09-26T00:00:00.000",
+        "count" : "22"
+      }, {
+        "item" : "2012-03-31T00:00:00.000",
+        "count" : "22"
+      }, {
+        "item" : "2012-02-17T00:00:00.000",
+        "count" : "22"
+      }, {
+        "item" : "2017-05-08T00:00:00.000",
+        "count" : "21"
+      }, {
+        "item" : "2012-12-18T00:00:00.000",
+        "count" : "21"
+      }, {
+        "item" : "2014-04-05T00:00:00.000",
+        "count" : "21"
+      }, {
+        "item" : "2019-03-20T00:00:00.000",
+        "count" : "21"
+      }, {
+        "item" : "2012-02-25T00:00:00.000",
+        "count" : "21"
+      }, {
+        "item" : "2012-02-18T00:00:00.000",
+        "count" : "21"
+      }, {
+        "item" : "2018-11-17T00:00:00.000",
+        "count" : "21"
+      }, {
+        "item" : "2015-09-05T00:00:00.000",
+        "count" : "21"
+      } ],
+      "smallest" : "2012-01-01T00:00:00.000",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "view" : "default_date_time"
+    }
+  }, {
+    "id" : 586614943,
+    "name" : "AÑO",
+    "dataTypeName" : "text",
+    "description" : "Año de ocurrencia del accidente",
+    "fieldName" : "a_o",
+    "position" : 3,
+    "renderTypeName" : "text",
+    "tableColumnId" : 85400040,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "2023",
+      "null" : "0",
+      "top" : [ {
+        "item" : "2012",
+        "count" : "4342"
+      }, {
+        "item" : "2013",
+        "count" : "4054"
+      }, {
+        "item" : "2018",
+        "count" : "3917"
+      }, {
+        "item" : "2017",
+        "count" : "3812"
+      }, {
+        "item" : "2015",
+        "count" : "3765"
+      }, {
+        "item" : "2016",
+        "count" : "3739"
+      }, {
+        "item" : "2014",
+        "count" : "3724"
+      }, {
+        "item" : "2019",
+        "count" : "3716"
+      }, {
+        "item" : "2021",
+        "count" : "2719"
+      }, {
+        "item" : "2020",
+        "count" : "2261"
+      }, {
+        "item" : "2022",
+        "count" : "2220"
+      }, {
+        "item" : "2023",
+        "count" : "924"
+      } ],
+      "smallest" : "2012",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : { }
+  }, {
+    "id" : 586614944,
+    "name" : "MES",
+    "dataTypeName" : "text",
+    "description" : "Mes de ocurrencia del accidente",
+    "fieldName" : "mes",
+    "position" : 4,
+    "renderTypeName" : "text",
+    "tableColumnId" : 85400039,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "12. Diciembre",
+      "null" : "0",
+      "top" : [ {
+        "item" : "03. Marzo",
+        "count" : "3473"
+      }, {
+        "item" : "09. Septiembre",
+        "count" : "3465"
+      }, {
+        "item" : "05. Mayo",
+        "count" : "3462"
+      }, {
+        "item" : "02. Febrero",
+        "count" : "3361"
+      }, {
+        "item" : "10. Octubre",
+        "count" : "3294"
+      }, {
+        "item" : "12. Diciembre",
+        "count" : "3280"
+      }, {
+        "item" : "08. Agosto",
+        "count" : "3278"
+      }, {
+        "item" : "07. Julio",
+        "count" : "3222"
+      }, {
+        "item" : "04. Abril",
+        "count" : "3123"
+      }, {
+        "item" : "11. Noviembre",
+        "count" : "3112"
+      }, {
+        "item" : "01. Enero",
+        "count" : "3089"
+      }, {
+        "item" : "06. Junio",
+        "count" : "3034"
+      } ],
+      "smallest" : "01. Enero",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : { }
+  }, {
+    "id" : 586614945,
+    "name" : "DÍA",
+    "dataTypeName" : "text",
+    "description" : "Día de la semana[Lunes-Dominigo] de la ocurrencia del accidente",
+    "fieldName" : "d_a",
+    "position" : 5,
+    "renderTypeName" : "text",
+    "tableColumnId" : 85400038,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "07. Domingo",
+      "null" : "0",
+      "top" : [ {
+        "item" : "06. Sabado",
+        "count" : "6462"
+      }, {
+        "item" : "05. Viernes",
+        "count" : "5968"
+      }, {
+        "item" : "02. Martes",
+        "count" : "5828"
+      }, {
+        "item" : "03. Miercoles",
+        "count" : "5710"
+      }, {
+        "item" : "04. Jueves",
+        "count" : "5702"
+      }, {
+        "item" : "01. Lunes",
+        "count" : "5387"
+      }, {
+        "item" : "07. Domingo",
+        "count" : "4136"
+      } ],
+      "smallest" : "01. Lunes",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : { }
+  }, {
+    "id" : 586614946,
+    "name" : "GRAVEDAD",
+    "dataTypeName" : "text",
+    "description" : "Descripción de si hubo daños personales o materiales[con heridos, con muertos o sólo daños]",
+    "fieldName" : "gravedad",
+    "position" : 6,
+    "renderTypeName" : "text",
+    "tableColumnId" : 67560818,
+    "width" : 196,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "Solo daños",
+      "null" : "0",
+      "top" : [ {
+        "item" : "Solo daños",
+        "count" : "19602"
+      }, {
+        "item" : "Con heridos",
+        "count" : "18982"
+      }, {
+        "item" : "Con muertos",
+        "count" : "503"
+      }, {
+        "item" : "Con Muertos",
+        "count" : "106"
+      } ],
+      "smallest" : "Con heridos",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : { }
+  }, {
+    "id" : 586614947,
+    "name" : "PEATON",
+    "dataTypeName" : "text",
+    "description" : "Número de peatones involucrados",
+    "fieldName" : "peaton",
+    "position" : 7,
+    "renderTypeName" : "text",
+    "tableColumnId" : 141109850,
+    "width" : 172,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "7",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "35380"
+      }, {
+        "item" : "1",
+        "count" : "3555"
+      }, {
+        "item" : "2",
+        "count" : "215"
+      }, {
+        "item" : "3",
+        "count" : "31"
+      }, {
+        "item" : "4",
+        "count" : "7"
+      }, {
+        "item" : "6",
+        "count" : "3"
+      }, {
+        "item" : "5",
+        "count" : "1"
+      }, {
+        "item" : "7",
+        "count" : "1"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614948,
+    "name" : "AUTOMOVIL",
+    "dataTypeName" : "text",
+    "description" : "Número de automoviles involucrados",
+    "fieldName" : "automovil",
+    "position" : 8,
+    "renderTypeName" : "text",
+    "tableColumnId" : 141109849,
+    "width" : 208,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "5",
+      "null" : "0",
+      "top" : [ {
+        "item" : "1",
+        "count" : "18248"
+      }, {
+        "item" : "0",
+        "count" : "14985"
+      }, {
+        "item" : "2",
+        "count" : "5600"
+      }, {
+        "item" : "3",
+        "count" : "324"
+      }, {
+        "item" : "4",
+        "count" : "29"
+      }, {
+        "item" : "5",
+        "count" : "3"
+      }, {
+        "item" : "17",
+        "count" : "1"
+      }, {
+        "item" : "29",
+        "count" : "1"
+      }, {
+        "item" : "13",
+        "count" : "1"
+      }, {
+        "item" : "10",
+        "count" : "1"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614949,
+    "name" : "CAMPERO",
+    "dataTypeName" : "text",
+    "description" : "Número de vehículos camperos involucrados",
+    "fieldName" : "campero",
+    "position" : 9,
+    "renderTypeName" : "text",
+    "tableColumnId" : 141109848,
+    "width" : 196,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "2",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "36890"
+      }, {
+        "item" : "1",
+        "count" : "2240"
+      }, {
+        "item" : "2",
+        "count" : "63"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614950,
+    "name" : "CAMIONETA",
+    "dataTypeName" : "text",
+    "description" : "Número de camionetas involucrados",
+    "fieldName" : "camioneta",
+    "position" : 10,
+    "renderTypeName" : "text",
+    "tableColumnId" : 141109847,
+    "width" : 208,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "3",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "32007"
+      }, {
+        "item" : "1",
+        "count" : "6660"
+      }, {
+        "item" : "2",
+        "count" : "514"
+      }, {
+        "item" : "3",
+        "count" : "12"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614951,
+    "name" : "MICRO",
+    "dataTypeName" : "text",
+    "description" : "Número de vehículos microbuses involucrados",
+    "fieldName" : "micro",
+    "position" : 11,
+    "renderTypeName" : "text",
+    "tableColumnId" : 121719812,
+    "width" : 160,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "2",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "38404"
+      }, {
+        "item" : "1",
+        "count" : "783"
+      }, {
+        "item" : "2",
+        "count" : "6"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614952,
+    "name" : "BUSETA",
+    "dataTypeName" : "text",
+    "description" : "Número de busetas involucrados",
+    "fieldName" : "buseta",
+    "position" : 12,
+    "renderTypeName" : "text",
+    "tableColumnId" : 121719815,
+    "width" : 172,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "2",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "37531"
+      }, {
+        "item" : "1",
+        "count" : "1610"
+      }, {
+        "item" : "2",
+        "count" : "52"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614953,
+    "name" : "BUS",
+    "dataTypeName" : "text",
+    "description" : "Número de buses involucrados",
+    "fieldName" : "bus",
+    "position" : 13,
+    "renderTypeName" : "text",
+    "tableColumnId" : 141109846,
+    "width" : 136,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "2",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "37343"
+      }, {
+        "item" : "1",
+        "count" : "1816"
+      }, {
+        "item" : "2",
+        "count" : "34"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614954,
+    "name" : "CAMION",
+    "dataTypeName" : "text",
+    "description" : "Número de camiones involucrados",
+    "fieldName" : "camion",
+    "position" : 14,
+    "renderTypeName" : "text",
+    "tableColumnId" : 141109845,
+    "width" : 172,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "3",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "36053"
+      }, {
+        "item" : "1",
+        "count" : "3016"
+      }, {
+        "item" : "2",
+        "count" : "122"
+      }, {
+        "item" : "3",
+        "count" : "2"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614955,
+    "name" : "VOLQUETA",
+    "dataTypeName" : "text",
+    "description" : "Número de volquetas involucrados",
+    "fieldName" : "volqueta",
+    "position" : 15,
+    "renderTypeName" : "text",
+    "tableColumnId" : 121719814,
+    "width" : 196,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "2",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "38650"
+      }, {
+        "item" : "1",
+        "count" : "536"
+      }, {
+        "item" : "2",
+        "count" : "7"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614956,
+    "name" : "MOTO",
+    "dataTypeName" : "text",
+    "description" : "Número de motos involucrados",
+    "fieldName" : "moto",
+    "position" : 16,
+    "renderTypeName" : "text",
+    "tableColumnId" : 141109844,
+    "width" : 148,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "8",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "18268"
+      }, {
+        "item" : "1",
+        "count" : "17420"
+      }, {
+        "item" : "2",
+        "count" : "3398"
+      }, {
+        "item" : "3",
+        "count" : "95"
+      }, {
+        "item" : "4",
+        "count" : "8"
+      }, {
+        "item" : "6",
+        "count" : "1"
+      }, {
+        "item" : "8",
+        "count" : "1"
+      }, {
+        "item" : "7",
+        "count" : "1"
+      }, {
+        "item" : "5",
+        "count" : "1"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614957,
+    "name" : "BICICLETA",
+    "dataTypeName" : "text",
+    "description" : "Número de bicicletas involucrados",
+    "fieldName" : "bicicleta",
+    "position" : 17,
+    "renderTypeName" : "text",
+    "tableColumnId" : 141109843,
+    "width" : 208,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "3",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "38507"
+      }, {
+        "item" : "1",
+        "count" : "680"
+      }, {
+        "item" : "2",
+        "count" : "5"
+      }, {
+        "item" : "3",
+        "count" : "1"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614958,
+    "name" : "OTRO",
+    "dataTypeName" : "text",
+    "description" : "Número de otros vehículos involucrados, distintos a los mencionados previamente",
+    "fieldName" : "otro",
+    "position" : 18,
+    "renderTypeName" : "text",
+    "tableColumnId" : 141109842,
+    "width" : 148,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "2",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "38391"
+      }, {
+        "item" : "1",
+        "count" : "770"
+      }, {
+        "item" : "2",
+        "count" : "32"
+      } ],
+      "smallest" : "0",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "decimalSeparator" : ".",
+      "groupSeparator" : ","
+    }
+  }, {
+    "id" : 586614960,
+    "name" : "BARRIO",
+    "dataTypeName" : "text",
+    "description" : "Barrio en donde se produjo el accidente",
+    "fieldName" : "barrio",
+    "position" : 19,
+    "renderTypeName" : "text",
+    "tableColumnId" : 67560832,
+    "width" : 172,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "Villas de San Ignacio",
+      "null" : "0",
+      "top" : [ {
+        "item" : "Centro",
+        "count" : "3861"
+      }, {
+        "item" : "Cabecera Del Llano",
+        "count" : "2360"
+      }, {
+        "item" : "San Francisco",
+        "count" : "1974"
+      }, {
+        "item" : "NO DISPONIBLE",
+        "count" : "1553"
+      }, {
+        "item" : "Provenza",
+        "count" : "1408"
+      }, {
+        "item" : "La Concordia",
+        "count" : "1376"
+      }, {
+        "item" : "Sotomayor",
+        "count" : "1272"
+      }, {
+        "item" : "Rio de Oro I",
+        "count" : "1136"
+      }, {
+        "item" : "Antonia Santos Centro",
+        "count" : "1102"
+      }, {
+        "item" : "San Alonso",
+        "count" : "1002"
+      }, {
+        "item" : "Alarcon",
+        "count" : "886"
+      }, {
+        "item" : "Real De Minas",
+        "count" : "860"
+      }, {
+        "item" : "Mejoras Publicas",
+        "count" : "829"
+      }, {
+        "item" : "Comuneros",
+        "count" : "821"
+      }, {
+        "item" : "Ricaurte",
+        "count" : "819"
+      }, {
+        "item" : "Diamante Ii",
+        "count" : "763"
+      }, {
+        "item" : "La Aurora",
+        "count" : "716"
+      }, {
+        "item" : "Conucos",
+        "count" : "716"
+      }, {
+        "item" : "Puerta del Sol",
+        "count" : "612"
+      }, {
+        "item" : "Campo Hermoso",
+        "count" : "584"
+      } ],
+      "smallest" : "10 de mayo Santa Barbara",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : { }
+  }, {
+    "id" : 586614961,
+    "name" : "HORA",
+    "dataTypeName" : "text",
+    "description" : "Hora en la que se produjo el accidente",
+    "fieldName" : "hora",
+    "position" : 20,
+    "renderTypeName" : "text",
+    "tableColumnId" : 85400041,
+    "width" : 148,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "7.4",
+      "null" : "0",
+      "top" : [ {
+        "item" : "1899-12-31T16:00:00.000",
+        "count" : "576"
+      }, {
+        "item" : "1899-12-31T15:00:00.000",
+        "count" : "560"
+      }, {
+        "item" : "1899-12-31T12:30:00.000",
+        "count" : "560"
+      }, {
+        "item" : "1899-12-31T19:00:00.000",
+        "count" : "543"
+      }, {
+        "item" : "1899-12-31T14:00:00.000",
+        "count" : "526"
+      }, {
+        "item" : "1899-12-31T12:00:00.000",
+        "count" : "523"
+      }, {
+        "item" : "1899-12-31T17:00:00.000",
+        "count" : "520"
+      }, {
+        "item" : "1899-12-31T18:30:00.000",
+        "count" : "504"
+      }, {
+        "item" : "1899-12-31T10:00:00.000",
+        "count" : "502"
+      }, {
+        "item" : "1899-12-31T11:00:00.000",
+        "count" : "487"
+      }, {
+        "item" : "1899-12-31T11:30:00.000",
+        "count" : "487"
+      }, {
+        "item" : "1899-12-31T15:30:00.000",
+        "count" : "472"
+      }, {
+        "item" : "1899-12-31T16:30:00.000",
+        "count" : "457"
+      }, {
+        "item" : "1899-12-31T14:30:00.000",
+        "count" : "450"
+      }, {
+        "item" : "1899-12-31T18:00:00.000",
+        "count" : "444"
+      }, {
+        "item" : "1899-12-31T10:30:00.000",
+        "count" : "429"
+      }, {
+        "item" : "1899-12-31T17:30:00.000",
+        "count" : "422"
+      }, {
+        "item" : "1899-12-31T13:00:00.000",
+        "count" : "421"
+      }, {
+        "item" : "1899-12-31T08:00:00.000",
+        "count" : "412"
+      }, {
+        "item" : "1899-12-31T09:30:00.000",
+        "count" : "412"
+      } ],
+      "smallest" : "1899-12-31T00:00:00.000",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : {
+      "view" : "default_date_time"
+    }
+  }, {
+    "id" : 586614962,
+    "name" : "ENTIDAD",
+    "dataTypeName" : "text",
+    "description" : "Entidad que atendió el accidente[agente Oficina de Tránsito de Bucaramanga; agente Policía Nacional]",
+    "fieldName" : "entidad",
+    "position" : 21,
+    "renderTypeName" : "text",
+    "tableColumnId" : 67560834,
+    "width" : 184,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "AGENTES POLICIA NACIONAL",
+      "null" : "0",
+      "top" : [ {
+        "item" : "AGENTES DTB",
+        "count" : "36658"
+      }, {
+        "item" : "AGENTES POLICIA NACIONAL",
+        "count" : "2535"
+      } ],
+      "smallest" : "AGENTES DTB",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : { }
+  }, {
+    "id" : 586614963,
+    "name" : "COMUNA",
+    "dataTypeName" : "text",
+    "description" : "Comuna en donde se produjo el accidente",
+    "fieldName" : "nombrecomuna",
+    "position" : 22,
+    "renderTypeName" : "text",
+    "tableColumnId" : 67560835,
+    "width" : 244,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "NO DISPONIBLE",
+      "null" : "0",
+      "top" : [ {
+        "item" : "12. CABECERA DEL LLANO",
+        "count" : "6415"
+      }, {
+        "item" : "03. SAN FRANCISCO",
+        "count" : "5287"
+      }, {
+        "item" : "13. ORIENTAL",
+        "count" : "5093"
+      }, {
+        "item" : "15. CENTRO",
+        "count" : "4405"
+      }, {
+        "item" : "06. LA CONCORDIA",
+        "count" : "3180"
+      }, {
+        "item" : "10. PROVENZA",
+        "count" : "2421"
+      }, {
+        "item" : "04. OCCIDENTAL",
+        "count" : "2143"
+      }, {
+        "item" : "NO DISPONIBLE",
+        "count" : "1553"
+      }, {
+        "item" : "05. GARCIA ROVIRA",
+        "count" : "1517"
+      }, {
+        "item" : "01. NORTE",
+        "count" : "1209"
+      }, {
+        "item" : "09. LA PEDREGOSA",
+        "count" : "1188"
+      }, {
+        "item" : "07. LA CIUDADELA",
+        "count" : "861"
+      }, {
+        "item" : "16. LAGOS DEL CACIQUE",
+        "count" : "806"
+      }, {
+        "item" : "11. SUR",
+        "count" : "716"
+      }, {
+        "item" : "17. MUTIS",
+        "count" : "693"
+      }, {
+        "item" : "08. SUR OCCIDENTE",
+        "count" : "612"
+      }, {
+        "item" : "02. NORORIENTAL",
+        "count" : "535"
+      }, {
+        "item" : "14. MORRORICO",
+        "count" : "420"
+      }, {
+        "item" : "CORREG. 1",
+        "count" : "83"
+      }, {
+        "item" : "CORREG. 3",
+        "count" : "55"
+      } ],
+      "smallest" : "01. NORTE",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : { }
+  }, {
+    "id" : 586614964,
+    "name" : "Propietario de Vehículo",
+    "dataTypeName" : "text",
+    "description" : "Si pertenece a empresa o particular",
+    "fieldName" : "propietario_de_veh_culo",
+    "position" : 23,
+    "renderTypeName" : "text",
+    "tableColumnId" : 67560836,
+    "width" : 376,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "Particular",
+      "null" : "0",
+      "top" : [ {
+        "item" : "Particular",
+        "count" : "27981"
+      }, {
+        "item" : "Empresa",
+        "count" : "11212"
+      } ],
+      "smallest" : "Empresa",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : { }
+  }, {
+    "id" : 586614965,
+    "name" : "DIURNIO/NOCTURNO",
+    "dataTypeName" : "text",
+    "description" : "jornada en la que ocurrió el accidente",
+    "fieldName" : "diurnio_nocturno",
+    "position" : 24,
+    "renderTypeName" : "text",
+    "tableColumnId" : 67560837,
+    "width" : 292,
+    "cachedContents" : {
+      "non_null" : "39193",
+      "largest" : "Nocturno",
+      "null" : "0",
+      "top" : [ {
+        "item" : "Diurno",
+        "count" : "27567"
+      }, {
+        "item" : "Nocturno",
+        "count" : "11626"
+      } ],
+      "smallest" : "Diurno",
+      "count" : "39193",
+      "cardinality" : "39193"
+    },
+    "format" : { }
+  } ],
+  "grants" : [ {
+    "inherited" : false,
+    "type" : "viewer",
+    "flags" : [ "public" ]
+  } ],
+  "license" : {
+    "name" : "Creative Commons Attribution | Share Alike 4.0 International",
+    "logoUrl" : "images/licenses/cc30bysa.png",
+    "termsLink" : "http://creativecommons.org/licenses/by-sa/4.0/legalcode"
+  },
+  "metadata" : {
+    "custom_fields" : {
+      "Información de la Entidad" : {
+        "Municipio" : "Bucaramanga",
+        "Nombre de la Entidad" : "Alcaldía de Bucaramanga, Santander",
+        "DIVIPOLA Municipio" : "68001",
+        "Orden" : "Territorial",
+        "Sector" : "Planeación",
+        "Departamento" : "Santander"
+      },
+      "Información de Datos" : {
+        "Cobertura Geográfica" : "Municipal",
+        "Idioma" : "Español",
+        "Frecuencia de Actualización" : "Anual"
+      }
+    }
+  },
+  "owner" : {
+    "id" : "8id2-t5aq",
+    "displayName" : "AlcaldiaBGA",
+    "profileImageUrlLarge" : "/api/users/8id2-t5aq/profile_images/LARGE",
+    "profileImageUrlMedium" : "/api/users/8id2-t5aq/profile_images/THUMB",
+    "profileImageUrlSmall" : "/api/users/8id2-t5aq/profile_images/TINY",
+    "screenName" : "AlcaldiaBGA",
+    "type" : "interactive",
+    "flags" : [ "acceptedEula", "mayBeStoriesCoOwner" ]
+  },
+  "query" : { },
+  "rights" : [ "read" ],
+  "tableAuthor" : {
+    "id" : "8id2-t5aq",
+    "displayName" : "AlcaldiaBGA",
+    "profileImageUrlLarge" : "/api/users/8id2-t5aq/profile_images/LARGE",
+    "profileImageUrlMedium" : "/api/users/8id2-t5aq/profile_images/THUMB",
+    "profileImageUrlSmall" : "/api/users/8id2-t5aq/profile_images/TINY",
+    "screenName" : "AlcaldiaBGA",
+    "type" : "interactive",
+    "flags" : [ "acceptedEula", "mayBeStoriesCoOwner" ]
+  },
+  "tags" : [ "alcaldía bucaramanga", "bucaramanga", "transito", "observatorio digital de bucaramanga", "tipo vehiculo", "conducta", "gravedad del accidente", "comuna", "peaton", "año", "mes", "día" ],
+  "flags" : [ "default", "ownerMayBeContacted", "restorable", "restorePossibleForType" ]
+}

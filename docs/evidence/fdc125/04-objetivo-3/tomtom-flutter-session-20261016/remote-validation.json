@@ -1,0 +1,81 @@
+{
+  "status": "PASS: one real remote observation through active Flutter session",
+  "dateLocal": "2026-10-16",
+  "timezone": "America/Bogota",
+  "projectRef": "zdjhqcarmmdgdfzuxhgv",
+  "device": "Samsung Galaxy S22 / SM-S901U, R3CT30HX60V, Android 15",
+  "coordinate": {
+    "latitude": 7.1196763,
+    "longitude": -73.1228536,
+    "source": "preserved Parque Santander reference; Bucaramanga DANE coverage"
+  },
+  "sessionVerification": {
+    "phase": "session",
+    "sessionPresent": true,
+    "trafficEnabled": true,
+    "valid": true,
+    "checkedAt": "2026-10-17T04:32:12.115203Z"
+  },
+  "traffic": {
+    "phase": "traffic",
+    "httpStatus": 200,
+    "available": true,
+    "requestedAt": "2026-10-17T04:32:15.166276Z",
+    "queriedAt": "2026-10-17T04:32:16.804Z",
+    "latencyMilliseconds": 1581,
+    "currentSpeedKmph": 51,
+    "freeFlowSpeedKmph": 51,
+    "currentTravelTimeSeconds": 828,
+    "freeFlowTravelTimeSeconds": 828,
+    "confidence": 1
+  },
+  "quota": {
+    "before": {
+      "checked_at_utc": "2026-10-17 04:26:20.152531+00",
+      "daily_limit": 10,
+      "enabled": true,
+      "quota_day_utc": "2026-10-17",
+      "requests_today": 0
+    },
+    "after": {
+      "checked_at_utc": "2026-10-17 04:32:49.215596+00",
+      "daily_limit": 10,
+      "enabled": true,
+      "quota_day_utc": "2026-10-17",
+      "requests_today": 1
+    },
+    "delta": 1,
+    "remaining": 9
+  },
+  "unauthenticatedCheck": {
+    "authenticated": false,
+    "httpStatus": 401,
+    "checkedAt": "2026-10-17T04:32:43.0476464Z",
+    "tokensSent": false,
+    "latencyMilliseconds": 716
+  },
+  "temporaryDiagnostic": {
+    "trafficProxyEnabled": true,
+    "academicApk": false,
+    "versionCode": 2026101601,
+    "target": "lib/traffic_probe_main.dart",
+    "temporaryApkSha256": "f0c5fd1c0fa1041535d66afec01e8f7797e1a8f5cc340ec376938cd16c858372"
+  },
+  "academicRestored": {
+    "restoreLaunchExitCode": 0,
+    "matchesAcademic": true,
+    "checkedAt": "2026-10-17T04:33:17.4364279Z",
+    "installedSha256": "435913b6c1eb08ace49d80005f7b20d4561a1428fa9d254ba45a769384d9eb40",
+    "restoreInstallExitCode": 0
+  },
+  "limitations": [
+    "one coordinate and one instant; not coverage of every road or municipality",
+    "currentSpeed equals freeFlowSpeed: no observed slowdown in this sample",
+    "provider confidence is not proof of map matching or directional correspondence",
+    "currentTravelTime refers to provider road fragment, not OSRM route ETA",
+    "no ranking change; no optimal schedule or travel savings demonstrated",
+    "original academic APK remains traffic-disabled; no new final APK generated",
+    "no fresh Google account-selection flow tested; existing session reused"
+  ],
+  "credentialsLogged": false
+}

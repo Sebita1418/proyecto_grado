@@ -1,0 +1,5280 @@
+[
+  {
+    "id": 17,
+    "name": "America/Bogota midnight/day/hour transition independent of local timezone",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/historical_departure_guidance_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 20,
+    "name": "RoutePlannerController starts in idle state",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/controllers/route_planner_controller_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 22,
+    "name": "RoutePlannerController forwards coordinates to route computation",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/controllers/route_planner_controller_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 23,
+    "name": "RoutePlannerController stores route when calculation succeeds",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/controllers/route_planner_controller_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 24,
+    "name": "RoutePlannerController exposes Google Routes error message",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/controllers/route_planner_controller_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 21,
+    "name": "sufficient complete repeated sample identifies observed hour, not future traffic",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/historical_departure_guidance_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 25,
+    "name": "RoutePlannerController uses generic message for unexpected errors",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/controllers/route_planner_controller_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 27,
+    "name": "RoutePlannerController notifies listeners when calculation starts and ends",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/controllers/route_planner_controller_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 28,
+    "name": "RoutePlannerController remains loading while route computation is pending",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/controllers/route_planner_controller_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 29,
+    "name": "RoutePlannerController reset returns controller to idle state",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/controllers/route_planner_controller_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 26,
+    "name": "thresholds: short coverage, sparse global sample and missing hourly/day repetitions reject orientation",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/historical_departure_guidance_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 30,
+    "name": "empty is successful absence, partial/future/truncated/invalid never produce guidance",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/historical_departure_guidance_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 33,
+    "name": "partial boundary days excluded; half-open query; no extrapolation, ties and order determinism",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/historical_departure_guidance_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 34,
+    "name": "presentation result is aggregate, not a projection of personal data",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/historical_departure_guidance_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 35,
+    "name": "controller loads same analytics repository once, preserves latest selection and caches for 10 minutes",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/historical_departure_guidance_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 36,
+    "name": "error is not zero; retry, stale force response and disposal",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/historical_departure_guidance_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 40,
+    "name": "now conserva el instante explícito sin consultar reloj",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/departure_time_context_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 43,
+    "name": "scheduled conserva fecha sin inferir condiciones futuras",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/departure_time_context_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 42,
+    "name": "empty, one observation, immutable and actual category vocabulary",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/mobility_analytics_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 44,
+    "name": "el tipo temporal no depende del reloj actual ni pierde zona",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/departure_time_context_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 45,
+    "name": "categories, predominant, ties, peak, order independence and determinism",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/mobility_analytics_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 46,
+    "name": "half-open exact boundaries and hourly/daily grouping",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/mobility_analytics_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 47,
+    "name": "server evaluation, expiry equality, cancelled and timezone mapping",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/mobility_analytics_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 48,
+    "name": "partial never becomes trustworthy empty",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/mobility_analytics_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 53,
+    "name": "evidencia completa conserva las seis categorías",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_data_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 54,
+    "name": "evidencia parcial no satisface disponibilidad suficiente",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_data_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 55,
+    "name": "sin datos de incidentes no equivale a cero incidentes",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_data_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 56,
+    "name": "datos disponibles no afirman condiciones favorables",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_data_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 57,
+    "name": "sin evidencia temporal no se infieren condiciones normales",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_data_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 58,
+    "name": "snapshot de datos no cambia con el mapa de entrada",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_data_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 62,
+    "name": "compone viaje, preferencias y varios modos sin duplicar coordenadas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_context_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 63,
+    "name": "rechaza modos duplicados aunque tengan estados diferentes",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_context_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 64,
+    "name": "rechaza modo ajeno a preferencias permitidas sin fallback",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_context_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 65,
+    "name": "acepta contexto sin opciones sin fabricar medios",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_context_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 66,
+    "name": "scheduled no permite evaluación con solo datos actuales de ruta",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_context_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 67,
+    "name": "scheduled representa insuficiencia temporal sin predicción",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_context_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 68,
+    "name": "permite futura evidencia temporal declarada sin producirla",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_context_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 69,
+    "name": "copia opciones y protege colecciones expuestas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_context_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 51,
+    "name": "repository RPC, bounds, historical mapping, empty, malformed and errors",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/mobility_analytics_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 72,
+    "name": "controller transitions, periods and retry",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/mobility_analytics_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 75,
+    "name": "stale response and disposal do not overwrite latest query",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/analytics/mobility_analytics_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 74,
+    "name": "driving preserves the real recommendation, reasons and alternatives",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_coordinator_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 77,
+    "name": "no routes do not fabricate evidence or a recommendation",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_coordinator_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 78,
+    "name": "available route without engine result is not treated as evaluated",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_coordinator_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 79,
+    "name": "TransportMode.walking does not reuse driving routes or invent travel times",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_coordinator_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 80,
+    "name": "TransportMode.cycling does not reuse driving routes or invent travel times",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_coordinator_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 81,
+    "name": "TransportMode.publicTransport does not reuse driving routes or invent travel times",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_coordinator_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 82,
+    "name": "scheduled departure without temporal evidence has no recommendation",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_coordinator_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 83,
+    "name": "engine update failure leaves availability temporary",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_coordinator_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 84,
+    "name": "missing reports are not represented as clear road conditions",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_coordinator_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 85,
+    "name": "routes from another trip do not provide route evidence",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_coordinator_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 86,
+    "name": "walking routes do not enable driving",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_coordinator_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 90,
+    "name": "rechaza rutas de otro viaje tanto recomendadas como alternativas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 91,
+    "name": "no oculta alternativas de un modo no evaluable en la recomendación",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 92,
+    "name": "reutiliza recomendación real del motor vehicular sin recalcular",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 93,
+    "name": "ausencia de evidencia es resultado válido sin excepción",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 94,
+    "name": "contexto vacío permite ausencia de opciones evaluables",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 95,
+    "name": "no confunde capacidad con evaluación efectivamente realizada",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 96,
+    "name": "evaluación inconclusa conserva opciones evaluadas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 97,
+    "name": "MobilityOptionStatus.unsupported no admite recomendación ni evaluación",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 98,
+    "name": "MobilityOptionStatus.insufficientData no admite recomendación ni evaluación",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 99,
+    "name": "MobilityOptionStatus.temporarilyUnavailable no admite recomendación ni evaluación",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 100,
+    "name": "rechaza evaluación duplicada o de modo no considerado",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 101,
+    "name": "rechaza recomendación de modo que no fue evaluado",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 102,
+    "name": "rechaza razones de ausencia contradictorias",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 103,
+    "name": "snapshot de evaluación y resultados derivados son inmutables",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_decision_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 107,
+    "name": "driving evaluable está soportado y tiene evidencia suficiente",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_option_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 108,
+    "name": "soportado con datos insuficientes no se puede evaluar",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_option_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 109,
+    "name": "indisponibilidad temporal no elimina soporte ni evidencia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_option_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 110,
+    "name": "TransportMode.walking existe sin fingir soporte ni datos productivos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_option_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 111,
+    "name": "TransportMode.cycling existe sin fingir soporte ni datos productivos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_option_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 112,
+    "name": "TransportMode.publicTransport existe sin fingir soporte ni datos productivos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_option_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 113,
+    "name": "unsupported nunca es evaluable aunque tenga evidencia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_option_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 114,
+    "name": "rechaza evaluable con evidencia desconocida o parcial",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_option_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 115,
+    "name": "rechaza insuficiencia sin identificar evidencia faltante",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_option_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 116,
+    "name": "requisitos adicionales tipados conservan carencias del transporte",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/decision/mobility_option_availability_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 120,
+    "name": "modos de transporte son independientes de perfiles de proveedor",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/mobility_domain_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 121,
+    "name": "condiciones desconocidas no equivalen a congestión o reportes cero",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/mobility_domain_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 122,
+    "name": "condiciones conocidas conservan evidencia y momento",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/mobility_domain_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 123,
+    "name": "adapta RouteResult sin duplicar mediciones y copia geometría",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/mobility_domain_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 124,
+    "name": "RouteOption rechaza mediciones y geometría inválidas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/mobility_domain_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 125,
+    "name": "MobilityContext conserva origen, modos y condiciones sin inventarlas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/mobility_domain_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 126,
+    "name": "recomendación conserva alternativas y razones estructuradas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/mobility_domain_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 127,
+    "name": "contrato del motor recibe contexto y opciones sin imponer estrategia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/mobility_domain_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 131,
+    "name": "segmento largo: reporte en el medio distante de ambos vértices es relevante",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 132,
+    "name": "distancia perpendicular 80.0 m: relevante true",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 133,
+    "name": "distancia perpendicular 124.9 m: relevante true",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 134,
+    "name": "distancia perpendicular 125.1 m: relevante false",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 135,
+    "name": "distancia perpendicular 200.0 m: relevante false",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 136,
+    "name": "proyección se limita al segmento, no a la recta infinita",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 137,
+    "name": "segmentos repetidos y geometría degenerada no producen NaN",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 138,
+    "name": "geometría inválida se rechaza sin falsa ausencia de reportes",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 139,
+    "name": "cero reportes, colección inmutable y texto explicable",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 140,
+    "name": "múltiples categorías, cierre y deduplicación por identidad",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 141,
+    "name": "expirado, cancelado, coordenadas y fechas inválidas no participan",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 142,
+    "name": "dos alternativas analizadas de forma independiente",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 143,
+    "name": "expiración cambia análisis con reloj explícito",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 144,
+    "name": "prefiere ausencia de cierre dentro de límites, sin alterar minutos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 145,
+    "name": "menor exposición decide entre alternativas comparables",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 146,
+    "name": "no favorece desvío desproporcionado: (126.0, 3000.0)",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 147,
+    "name": "no favorece desvío desproporcionado: (120.0, 3301.0)",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 148,
+    "name": "límites inclusivos de duración y distancia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 149,
+    "name": "misma exposición conserva duración como criterio",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 150,
+    "name": "misma exposición y duración conserva distancia y orden",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 151,
+    "name": "cierre tiene prioridad sobre conteo, sin afirmar bloqueo",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/route_incident_analysis_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 153,
+    "name": "extracted bounds preserve public engine constants",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 156,
+    "name": "one alternative, known zero, ranks, safe percentages, immutable",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 157,
+    "name": "fastest but not shortest with unknown conditions retains UNKNOWN",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 158,
+    "name": "closure priority suggests slower shortest option; real differences and manual selection",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 159,
+    "name": "fewer reports within exact bounds, excludes outside despite zero reports",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 160,
+    "name": "ties preserve provider order and distance tie-break; engine consistency",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 161,
+    "name": "consistency matrix runs productive engine then independently checks all stages",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 162,
+    "name": "all closures is not applicable avoidance, still minimizes reports",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 163,
+    "name": "missing/mismatched incident snapshot never becomes favorable zero",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 164,
+    "name": "known reports with one unknown closure keeps aggregate evidence unknown",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 165,
+    "name": "no eligible output is legitimate; missing output with eligible options remains unknown",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 166,
+    "name": "rejects tampered recommendation/marker/reasons; not a tautological validator",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 167,
+    "name": "deterministic under DTO reorder preserving original providerOrder",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 168,
+    "name": "zero denominator with positive numerator yields no percentage",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/validation/mobility_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 172,
+    "name": "menor duración gana aunque la distancia sea mayor; conserva alternativas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 173,
+    "name": "duración empatada usa distancia y explica el desempate",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 174,
+    "name": "empate completo conserva orden del proveedor y es reproducible",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 175,
+    "name": "una candidata no afirma ganar una comparación",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 176,
+    "name": "vacío produce ausencia explícita de decisión",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 177,
+    "name": "driving incluido permite vehículo pero no simula otros modos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 178,
+    "name": "sin driving permitido no hay fallback silencioso",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 179,
+    "name": "sin candidatas driving no inventa una aunque el contexto lo permita",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 180,
+    "name": "rechaza identidades duplicadas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 181,
+    "name": "rechaza candidatas de otro origen o destino",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 182,
+    "name": "rechaza métricas inválidas -1.0 en frontera del motor",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 183,
+    "name": "rechaza métricas inválidas NaN en frontera del motor",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 184,
+    "name": "rechaza métricas inválidas Infinity en frontera del motor",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 185,
+    "name": "condiciones desconocidas siguen desconocidas y no producen razones",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 186,
+    "name": "compara sin redondear y acepta métricas cero",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/mobility/vehicle_recommendation_engine_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 191,
+    "name": "GoogleRouteResult parses a valid Google Routes response",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/google_route_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 192,
+    "name": "GoogleRouteResult supports decimal duration values",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/google_route_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 193,
+    "name": "GoogleRouteResult throws when routes list is empty",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/google_route_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 194,
+    "name": "GoogleRouteResult throws when distance is missing",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/google_route_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 195,
+    "name": "GoogleRouteResult throws when duration is invalid",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/google_route_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 196,
+    "name": "GoogleRouteResult throws when polyline is missing",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/google_route_result_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 200,
+    "name": "sin incidentes muestra ausencia solo con evidencia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/route_insight_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 201,
+    "name": "reporte próximo se muestra sin atribuir un cierre",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/route_insight_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 202,
+    "name": "cierre próximo se cuenta y no afirma ausencia de cierres",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/route_insight_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 203,
+    "name": "varias alternativas explica variables disponibles",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/route_insight_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 204,
+    "name": "una alternativa no inventa comparación",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/route_insight_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 205,
+    "name": "duración explica el motivo real del motor",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/route_insight_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 206,
+    "name": "menor exposición cambia sugerencia sin inventar menor duración",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/route_insight_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 207,
+    "name": "cierre influye y conserva explicación explícita del motor",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/route_insight_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 208,
+    "name": "datos ausentes o de otra ruta no generan razones sin evidencia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/models/route_insight_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 212,
+    "name": "GNSS fiable dirige cámara 2D y preserva zoom configurable",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_camera_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 213,
+    "name": "rotación usa camino corto al cruzar norte",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_camera_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 214,
+    "name": "detenido conserva rumbo y evita jitter de posición",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_camera_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 215,
+    "name": "rumbo inestable o metadatos ausentes no giran",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_camera_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 216,
+    "name": "GPS impreciso conserva último encuadre y recupera siguiente fix",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_camera_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 217,
+    "name": "GPS impreciso no dispara llegada ni recálculo, seguimiento pausa y recentra",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_camera_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 221,
+    "name": "proyección ponderada por distancia y separación sin perder geometría",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_session_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 222,
+    "name": "start, GPS, desvío, llegada y finish cancelan seguimiento",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_session_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 223,
+    "name": "estado LocationStatus.permissionDenied es visible y cancela el stream",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_session_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 224,
+    "name": "estado LocationStatus.permissionDeniedForever es visible y cancela el stream",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_session_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 225,
+    "name": "estado LocationStatus.serviceDisabled es visible y cancela el stream",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_session_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 226,
+    "name": "error de stream y dispose liberan listeners",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_session_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 227,
+    "name": "rechaza geometría inválida sin suscribirse",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_session_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 76,
+    "name": "data and full scroll responsive 320.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 234,
+    "name": "OE3-01 mismo OD delega tres modos y rechaza transporte público",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 235,
+    "name": "OE3-02 duración cambia sugerencia con mismo OD",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 236,
+    "name": "OE3-03 duración cambia sugerencia con mismo OD",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 237,
+    "name": "OE3-04 empate en duración se explica por distancia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 238,
+    "name": "OE3-05 snapshot de incidentes cambia sugerencia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 239,
+    "name": "OE3-06 snapshot de incidentes cambia sugerencia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 240,
+    "name": "OE3-07 preferencia sin driving no produce vehículo ni comparación multimodal",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 241,
+    "name": "OE3-08 falta de snapshot no equivale a cero incidentes",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 242,
+    "name": "OE3-09 historial insuficiente se abstiene de orientar",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 243,
+    "name": "OE3-10 historial suficiente solo describe menor actividad observada",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 230,
+    "name": "data and full scroll responsive 390.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 244,
+    "name": "OE3-11 cambiar registros cambia franja; lote parcial se abstiene",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 246,
+    "name": "OE3-12 Programar no produce recomendación futura",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/objective_3_validation_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 255,
+    "name": "mapping estable, desconocidos, parsing y coordenadas inválidas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/reports/road_incident_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 232,
+    "name": "OSRM conserva alternativas y steps; desconocidos seguros; steps defectuosos no inventan guía",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_v2_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 257,
+    "name": "traducción sin calle inventada e iconos según dirección",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_v2_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 258,
+    "name": "distancia decrece, supera step con tolerancia, jitter no retrocede y llegada elimina siguiente",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_v2_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 259,
+    "name": "desvío aislado no recalcula; confirmado single-flight reemplaza geometría y steps",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_v2_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 245,
+    "name": "data and full scroll responsive 768.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 260,
+    "name": "error conserva ruta; cooldown controla reintento y GPS obsoleto se ignora",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_v2_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 262,
+    "name": "respuesta stale tras finish no sustituye ruta",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_v2_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 263,
+    "name": "respuesta stale tras dispose no sustituye ruta",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_v2_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 264,
+    "name": "respuesta stale tras rejoin no sustituye ruta",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_v2_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 265,
+    "name": "respuesta stale tras new-session no sustituye ruta",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_v2_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 266,
+    "name": "respuesta stale tras moved no sustituye ruta",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/navigation/navigation_v2_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 256,
+    "name": "service hace INSERT autenticado sin fechas/estado y fetch limitado robusto",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/reports/road_incident_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 272,
+    "name": "service no publica sin sesión",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/reports/road_incident_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 261,
+    "name": "data and full scroll responsive 1440.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 276,
+    "name": "loading, empty, error and retry",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 273,
+    "name": "controller carga una vez, deduplica, refresca eventos y cancela",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 278,
+    "name": "controller error, doble publicación, carrera fetch y dispose",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 279,
+    "name": "caducidad local retira marcadores sin hacer polling",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 277,
+    "name": "accessible progress with 0 observations",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 282,
+    "name": "accessible progress with 1 observations",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 283,
+    "name": "accessible progress with 2 observations",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 267,
+    "name": "panel de maniobra y finalizar accesibles a 390.0 con texto grande",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 285,
+    "name": "panel de maniobra y finalizar accesibles a 768.0 con texto grande",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 284,
+    "name": "drawer preserves entries and opens analytics callback",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 286,
+    "name": "panel de maniobra y finalizar accesibles a 1440.0 con texto grande",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 287,
+    "name": "partial with no valid observations is not a successful empty state",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 253,
+    "name": "lista realtime conserva una suscripción y reintenta a 320.0 / 150%",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 249,
+    "name": "Perfil abre preferencias; reabrir recupera la confirmación local",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 292,
+    "name": "lista realtime conserva una suscripción y reintenta a 390.0 / 150%",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 296,
+    "name": "PerfilScreen muestra correctamente la información del perfil",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 298,
+    "name": "PerfilScreen muestra una cuenta inactiva correctamente",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 297,
+    "name": "lista realtime conserva una suscripción y reintenta a 768.0 / 150%",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 269,
+    "name": "publicar bloquea doble tap y conserva datos ante error; reintenta",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 301,
+    "name": "lista realtime conserva una suscripción y reintenta a 1440.0 / 150%",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 271,
+    "name": "dirección confirmada select con fallback y coordenadas reales",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 308,
+    "name": "dirección confirmada stale con fallback y coordenadas reales",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 309,
+    "name": "dirección confirmada empty con fallback y coordenadas reales",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 294,
+    "name": "confirmación del teclado muestra candidatos: ambiguity",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 302,
+    "name": "Home muestra reporte remoto, detalle privado y refresh sin duplicados",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 313,
+    "name": "confirmación del teclado muestra candidatos: fallback",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 312,
+    "name": "dirección confirmada origin con fallback y coordenadas reales",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 316,
+    "name": "confirmación del teclado muestra candidatos: stale",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 317,
+    "name": "dirección confirmada approximate con fallback y coordenadas reales",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 318,
+    "name": "confirmación del teclado muestra candidatos: empty",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 304,
+    "name": "aviso Perfil permite reintentar y usar mapa a 320.0 con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 275,
+    "name": "selección manual actualiza marcadores y OSRM a 390.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 320,
+    "name": "confirmación del teclado muestra candidatos: error",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 319,
+    "name": "dirección confirmada calculate con fallback y coordenadas reales",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 305,
+    "name": "preview, editar, publicar y realtime dejan un solo marcador y limpian borrador",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 311,
+    "name": "teclado conserva controles separados y planner dentro del viewport",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 323,
+    "name": "aviso Perfil permite reintentar y usar mapa a 390.0 con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 331,
+    "name": "Map Experience V2 muestra NavigationHeader flotante y mapa full-screen",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 332,
+    "name": "aviso Perfil permite reintentar y usar mapa a 768.0 con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 338,
+    "name": "aviso Perfil permite reintentar y usar mapa a 1440.0 con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 324,
+    "name": "selección manual actualiza marcadores y OSRM a 768.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 307,
+    "name": "Realtime actualiza selector abierto a 320.0, conserva selección y no llama OSRM",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 333,
+    "name": "menú del NavigationHeader abre Drawer con Reportes de la vía",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 322,
+    "name": "decision flow, schedule and navigation preserve selection at 320.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 346,
+    "name": "botón flotante Reportar abre ReportIncidentSheet y envía draft honesto",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 341,
+    "name": "Perfil sin datos permite recuperar y navegar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 350,
+    "name": "elección de modo en viaje no sobreescribe preferencias persistidas en SharedPreferences",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 345,
+    "name": "Realtime actualiza selector abierto a 390.0, conserva selección y no llama OSRM",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 340,
+    "name": "Home entrega el servicio al flujo de destino",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 349,
+    "name": "decision flow, schedule and navigation preserve selection at 390.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 352,
+    "name": "Home Map Experience V2 se adapta sin overflow a 320 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 342,
+    "name": "GPS Girón permite planificar hacia Parque Santander",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 356,
+    "name": "Home Map Experience V2 se adapta sin overflow a 390 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 354,
+    "name": "mínimo, debounce, resultado y selección conservan coordenadas",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 357,
+    "name": "GPS Girón permite planificar hacia Floridablanca",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 358,
+    "name": "Home Map Experience V2 se adapta sin overflow a 768 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 351,
+    "name": "Perfil fallido permite recuperar y navegar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 355,
+    "name": "decision flow, schedule and navigation preserve selection at 768.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 359,
+    "name": "consulta final y respuesta obsoleta",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 361,
+    "name": "Home Map Experience V2 se adapta sin overflow a 1440 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 353,
+    "name": "Realtime actualiza selector abierto a 768.0, conserva selección y no llama OSRM",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 364,
+    "name": "vacío termina loading; error permite cálculo manual",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 360,
+    "name": "origen manual Girón y destino Bucaramanga usan coordenadas seleccionadas",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 362,
+    "name": "Perfil durante carga informa sin duplicar solicitud y permite otro reintento",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 371,
+    "name": "Perfil pendiente tras dispose no actualiza Home",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 363,
+    "name": "decision flow, schedule and navigation preserve selection at 1440.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 373,
+    "name": "modos configurados permiten selección y transporte público no solicita routing",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 372,
+    "name": "Home muestra OSM, ubicación y navegación",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 376,
+    "name": "scheduling before calculation does not request routing or invent a result",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 377,
+    "name": "sin permiso conserva mapa y origen manual",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 367,
+    "name": "Realtime actualiza selector abierto a 1440.0, conserva selección y no llama OSRM",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 383,
+    "name": "reportes no disponibles no se presentan como ausencia de reportes",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 370,
+    "name": "mapa y publicación de reportes conservan GPS Girón",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 335,
+    "name": "navegación GPS y retorno al resultado a Size(320.0, 844.0)",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 382,
+    "name": "Puntos cercanos abre la pantalla y permite volver al mapa",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 384,
+    "name": "recomendaciones tardías no sobrescriben el snapshot más reciente",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 375,
+    "name": "modos guardados con driving permiten sugerencia sin afirmar default",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 348,
+    "name": "reporte conserva ruta, borrador y preferencias a 320.0 / texto 150%",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 392,
+    "name": "abrir navegador propaga Android y no autentica ni navega",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 396,
+    "name": "categorías cambian la selección sin fabricar resultados",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 404,
+    "name": "sin overflow a 320.0 px y texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 403,
+    "name": "error de lanzamiento false mantiene login y permite reintentar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 405,
+    "name": "sin overflow a 390.0 px y texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 406,
+    "name": "error de lanzamiento exception mantiene login y permite reintentar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 398,
+    "name": "carga agotada libera la pantalla e ignora respuesta tardía",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 407,
+    "name": "sin overflow a 768.0 px y texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 410,
+    "name": "sin overflow a 1440.0 px y texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 379,
+    "name": "GPS exterior durante navegación informa sin finalizar la ruta",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 388,
+    "name": "navegación GPS y retorno al resultado a Size(390.0, 844.0)",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 409,
+    "name": "guardado pendiente bloquea duplicados y salir es seguro",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 399,
+    "name": "modos sin driving conservan entradas, no dibujan ni seleccionan; relee al reintentar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 408,
+    "name": "callback PKCE establece sesión, valida perfil y restaura sesión persistida",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 417,
+    "name": "error del stream de callback se muestra sin sesión ni navegación",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 411,
+    "name": "GPS fuera informa, evita OSRM y permite elegir otro origen",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 415,
+    "name": "carga, confirma y reabre sin persistir cambios temporales",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 421,
+    "name": "carga pendiente muestra progreso y salir es seguro",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 418,
+    "name": "destino geocodificado fuera nunca consulta OSRM",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 416,
+    "name": "fallo de almacenamiento no se trata como ausencia de preferencias",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 422,
+    "name": "fallo de carga permite elegir y guardar sin crash",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 423,
+    "name": "sugerencia fuera mantiene etiqueta pero rechaza selección",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 401,
+    "name": "timeout de origen libera carga y descarta respuesta tardía",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 426,
+    "name": "preferencias tardías se descartan tras edición",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 427,
+    "name": "fallo al guardar conserva confirmación y permite reintentar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 431,
+    "name": "estado inicial sin preferencias supuestas ni promesas falsas",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 430,
+    "name": "preferencias tardías se descartan tras dispose",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 428,
+    "name": "selección manual fuera deja mover mapa y confirmar un punto dentro",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 429,
+    "name": "timeout de destino libera carga y descarta respuesta tardía",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 432,
+    "name": "selección confirmada usa los modos del contrato existente",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 433,
+    "name": "motor tardío no reemplaza un cálculo vigente",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 437,
+    "name": "edición invalida espera y su respuesta no termina una nueva carga",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 436,
+    "name": "desconocido no permite calcular; retry recupera planificación",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 414,
+    "name": "navegación GPS y retorno al resultado a Size(768.0, 844.0)",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 402,
+    "name": "reporte conserva ruta, borrador y preferencias a 390.0 / texto 150%",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 438,
+    "name": "vacío no confirma y deshacer recupera lo confirmado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 440,
+    "name": "error Nominatim en origen es comprensible y recuperable",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 444,
+    "name": "selección accesible sin overflow a 320.0 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 441,
+    "name": "ruta con tramo exterior conserva extremos válidos y permite iniciar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 446,
+    "name": "selección accesible sin overflow a 390.0 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 445,
+    "name": "error Nominatim en destino es comprensible y recuperable",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 425,
+    "name": "tap exterior en Rutas conserva ambos extremos anteriores",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 449,
+    "name": "selección accesible sin overflow a 768.0 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 435,
+    "name": "real snapshot responsive 320.0, manual different",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 452,
+    "name": "selección accesible sin overflow a 1440.0 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 451,
+    "name": "tap con cobertura desconocida no añade marcador",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 450,
+    "name": "dispose durante espera de destino descarta respuesta y timeout",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 453,
+    "name": "real snapshot responsive 390.0, manual different",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 456,
+    "name": "error Photon no expone detalles y permite fallback manual",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 462,
+    "name": "normaliza abreviatura sin espacio: Cra4 # 48-25, Floridablanca",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_navigation_audit_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 463,
+    "name": "normaliza abreviatura sin espacio: Cra.4 # 48-25, Floridablanca",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_navigation_audit_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 464,
+    "name": "normaliza abreviatura sin espacio: Carrera 4 # 48-25, Floridablanca",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_navigation_audit_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 465,
+    "name": "placa incompleta mantiene contexto sin precisión específica",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_navigation_audit_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 466,
+    "name": "error de digitación no se convierte en placa inventada",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_navigation_audit_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 467,
+    "name": "Photon reconoce vía highway distinta sin acreditar placa",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_navigation_audit_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 468,
+    "name": "reproduce evidencia Nominatim: Carrera 4 # 48-25, Floridablanca",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_navigation_audit_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 469,
+    "name": "reproduce evidencia Nominatim: Calle 52 # 3, Floridablanca",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_navigation_audit_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 470,
+    "name": "reproduce evidencia Nominatim: Calle 45 con Carrera 27, Bucaramanga",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_navigation_audit_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 471,
+    "name": "reproduce evidencia Nominatim: PC System",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_navigation_audit_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 459,
+    "name": "real snapshot responsive 768.0, manual different",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 460,
+    "name": "catálogo filtra \"NORTE\" y permite limpiar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 474,
+    "name": "real snapshot responsive 1440.0, manual different",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 439,
+    "name": "alternativas sincronizan Home, mapa y detalles a 320.0 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 478,
+    "name": "normaliza Cra. 27",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 480,
+    "name": "normaliza Cr 27",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 481,
+    "name": "normaliza Cl 36",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 482,
+    "name": "normaliza Av 5",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 483,
+    "name": "normaliza Diag 8",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 484,
+    "name": "normaliza Trans 9",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 485,
+    "name": "contexto local para Carrera 27",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 486,
+    "name": "contexto local para Calle 36",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 476,
+    "name": "unknown and one route are honest",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 487,
+    "name": "contexto local para Carrera 33 # 48-21",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 489,
+    "name": "contexto local para Carrera 33 con Calle 52",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 475,
+    "name": "catálogo filtra \" terminal \" y permite limpiar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 490,
+    "name": "contexto local para Calle 45 Carrera 27",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 492,
+    "name": "conserva ciudad o POI: Carrera 27 # 10-15, Bucaramanga",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 493,
+    "name": "conserva ciudad o POI: Calle 5, Floridablanca",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 494,
+    "name": "conserva ciudad o POI: Calle 5 Bogotá",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 495,
+    "name": "conserva ciudad o POI: Carrera 33, Medellín",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 496,
+    "name": "conserva ciudad o POI: UIS",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 499,
+    "name": "conserva ciudad o POI: Cacique",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 500,
+    "name": "conserva ciudad o POI: Parque Caracolí",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 501,
+    "name": "conserva ciudad o POI: Hospital Internacional",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 498,
+    "name": "Android usa el callback nativo exacto",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/auth_redirect_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 503,
+    "name": "web conserva origin incluso en TargetPlatform.android",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/auth_redirect_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 504,
+    "name": "web conserva origin incluso en TargetPlatform.fuchsia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/auth_redirect_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 505,
+    "name": "web conserva origin incluso en TargetPlatform.iOS",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/auth_redirect_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 506,
+    "name": "web conserva origin incluso en TargetPlatform.linux",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/auth_redirect_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 507,
+    "name": "web conserva origin incluso en TargetPlatform.macOS",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/auth_redirect_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 502,
+    "name": "Photon consulta dirección normalizada y muestra numeración real",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 508,
+    "name": "web conserva origin incluso en TargetPlatform.windows",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/auth_redirect_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 509,
+    "name": "autocomplete vacío nunca llama a Nominatim",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 510,
+    "name": "otras plataformas nativas conservan el comportamiento previo",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/auth_redirect_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 511,
+    "name": "búsqueda confirmada normaliza y cachea coordenadas de Nominatim",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/address_search_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 488,
+    "name": "no recommendation does not become a technical failure",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 491,
+    "name": "catálogo filtra \"Universidad\" y permite limpiar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 442,
+    "name": "navegación GPS y retorno al resultado a Size(1440.0, 844.0)",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 520,
+    "name": "municipio de los datos reales de Nominatim conserva perímetro urbano",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 521,
+    "name": "dirección numerada: Carrera 27 # 45-30",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 522,
+    "name": "dirección numerada: Cra 27 45-30",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 523,
+    "name": "dirección numerada: Kr 27 # 45-30",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 524,
+    "name": "dirección numerada:   kR.  27 # 45 - 30  ",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 525,
+    "name": "intersección: Calle 45 con Carrera 27",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 526,
+    "name": "intersección: Carrera 33 con Calle 48",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 527,
+    "name": "nombre de lugar: Calle 36 Café",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 528,
+    "name": "nombre de lugar: Carrera 27 Restaurante",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 529,
+    "name": "nombre de lugar: Cacique",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 530,
+    "name": "nombre de lugar: UIS",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 517,
+    "name": "catálogo filtra \"EXPRESO\" y permite limpiar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 531,
+    "name": "conserva candidatos ambiguos y cachea la lista completa",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 533,
+    "name": "otra ciudad se descarta; ciudad ausente no certifica precisión",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 534,
+    "name": "timeout de Nominatim se presenta como error del servicio",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 535,
+    "name": "Photon descarta coincidencias de municipios vecinos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/bucaramanga_address_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 443,
+    "name": "reporte conserva ruta, borrador y preferencias a 768.0 / texto 150%",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 532,
+    "name": "catálogo filtra \"sin coincidencias\" y permite limpiar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 541,
+    "name": "parse completo y original: Calle 69 # 6-51",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 542,
+    "name": "parse completo y original: Cl 69 # 6-51",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 543,
+    "name": "parse completo y original: Calle 69 6-51",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 544,
+    "name": "parse carrera: Carrera 27 # 36-14",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 545,
+    "name": "parse carrera: Carrera 27 36-14",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 549,
+    "name": "parse carrera: Cra 27 # 36-14",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 550,
+    "name": "parse carrera: Cr 27 36-14",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 551,
+    "name": "conserva ciudad explícita Floridablanca en todas las variantes",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 552,
+    "name": "conserva ciudad explícita Bucaramanga en todas las variantes",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 553,
+    "name": "conserva ciudad explícita Girón en todas las variantes",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 554,
+    "name": "conserva ciudad explícita Piedecuesta en todas las variantes",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 555,
+    "name": "conserva ciudad explícita Bogotá en todas las variantes",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 556,
+    "name": "orden progresivo conserva placa en tres consultas antes de calle",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 557,
+    "name": "intersección conservada sin inventar coordenadas Calle 45 Carrera 27",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 558,
+    "name": "intersección conservada sin inventar coordenadas Calle 45 con Carrera 27",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 559,
+    "name": "precisión exige vía, placa y ciudad compatibles",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 548,
+    "name": "GeocodingService envía los parámetros esperados y obtiene un resultado válido",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/geocoding_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 560,
+    "name": "ranking: compatibilidad, ciudad, proximidad, completitud y orden",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 562,
+    "name": "Nominatim evalúa cinco candidatos y se detiene al encontrar placa",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 539,
+    "name": "recargar catálogo conserva consulta y aplica filtro a datos nuevos",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 563,
+    "name": "fallback limitado, estructurado y calle aproximada sin placa inventada",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 565,
+    "name": "dirección implícita usa Bucaramanga sin límites rectangulares",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 566,
+    "name": "ciudad explícita no se sustituye por otra del proveedor",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 567,
+    "name": "stale detiene nuevas variantes; cero requests si ya estaba obsoleta",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 568,
+    "name": "Photon una petición con GPS y clasificación específica",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/colombia_address_resolution_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 564,
+    "name": "catálogo informa carga y error sin detalles; reintento recupera",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 479,
+    "name": "alternativas sincronizan Home, mapa y detalles a 390.0 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 574,
+    "name": "GoogleAuthService returns true when OAuth operation returns true",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_auth_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 576,
+    "name": "GoogleAuthService returns false when OAuth operation returns false",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_auth_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 577,
+    "name": "GoogleAuthService passes redirectTo to OAuth operation",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_auth_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 578,
+    "name": "GoogleAuthService passes null when redirectTo is not provided",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_auth_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 579,
+    "name": "GoogleAuthService wraps OAuth errors in GoogleAuthException",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_auth_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 514,
+    "name": "planner opens observed validation without new routing or changing selection",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 571,
+    "name": "debounce por campo, mínimo tres y respuestas obsoletas",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 561,
+    "name": "GeocodingService devuelve null cuando la lista está vacía",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/geocoding_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 588,
+    "name": "GoogleRoutesService sends the expected request and parses the route",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_routes_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 589,
+    "name": "GoogleRoutesService throws when API key is empty",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_routes_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 590,
+    "name": "GoogleRoutesService throws when origin latitude is invalid",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_routes_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 591,
+    "name": "GoogleRoutesService throws when destination longitude is invalid",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_routes_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 592,
+    "name": "GoogleRoutesService exposes Google error message on HTTP error",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_routes_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 593,
+    "name": "GoogleRoutesService throws when successful response is invalid",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_routes_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 594,
+    "name": "GoogleRoutesService uses a generic message for non JSON HTTP errors",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/google_routes_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 518,
+    "name": "navegación GPS y retorno al resultado a Size(390.0, 420.0)",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 585,
+    "name": "GeocodingService informa un código HTTP de error",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/geocoding_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 584,
+    "name": "selección Photon evita fallback y editar invalida coordenadas",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 602,
+    "name": "stream termina sin abrir GPS cuando no hay permiso",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/location_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 603,
+    "name": "stream termina cuando GPS está deshabilitado",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/location_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 604,
+    "name": "obtiene coordenadas reales del gateway",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/location_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 605,
+    "name": "informa permiso denegado",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/location_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 606,
+    "name": "informa servicio deshabilitado",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/location_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 607,
+    "name": "captura errores inesperados",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/location_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 611,
+    "name": "traduce fallos de acceso para carga y guardado",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mobility_preferences_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 612,
+    "name": "no oculta errores de programación",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mobility_preferences_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 600,
+    "name": "tap y reinicio preservan selección sin routing ni red",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 613,
+    "name": "un guardado rechazado no informa éxito",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mobility_preferences_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 615,
+    "name": "almacenamiento vacío no supone preferencias",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mobility_preferences_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 616,
+    "name": "guarda y recupera un modo con identificador estable",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mobility_preferences_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 617,
+    "name": "recupera múltiples modos y reemplaza la selección anterior",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mobility_preferences_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 618,
+    "name": "ignora obsoletos y duplicados conservando los conocidos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mobility_preferences_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 619,
+    "name": "dato obsoleto obsolete produce selección vacía",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mobility_preferences_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 620,
+    "name": "dato obsoleto 42 produce selección vacía",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mobility_preferences_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 621,
+    "name": "dato obsoleto [flying] produce selección vacía",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mobility_preferences_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 622,
+    "name": "dato obsoleto [] produce selección vacía",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mobility_preferences_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 614,
+    "name": "dispose cancela debounce y descarta respuesta pendiente",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 575,
+    "name": "alternativas sincronizan Home, mapa y detalles a 768.0 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 628,
+    "name": "configured servers are separate foot and bike graphs, not car URL substitutions",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mode_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 629,
+    "name": "mode request delegates to correct graph; metrics/alternatives/geometry/steps unchanged",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mode_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 630,
+    "name": "typed no route, invalid payload, unavailable, network and timeout",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mode_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 631,
+    "name": "disabled configured mode makes no request",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/mode_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 625,
+    "name": "dispose durante fallback no actualiza pantalla destruida",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 538,
+    "name": "reporte conserva ruta, borrador y preferencias a 1440.0 / texto 150%",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 640,
+    "name": "autointersección con área no nula se rechaza",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 641,
+    "name": "hueco exterior y CRS distinto se rechazan",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 642,
+    "name": "interior, exterior, hueco y todos los segmentos/vértices de frontera",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 643,
+    "name": "MultiPolygon incluye segunda isla y mantiene huecos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 644,
+    "name": "FeatureCollection y orientación inversa preservan membresía",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 645,
+    "name": "coordenadas inválidas nunca se validan ni se llaman fuera",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 646,
+    "name": "geometría corrupta produce desconocido: {",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 647,
+    "name": "geometría corrupta produce desconocido: {}",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 648,
+    "name": "geometría corrupta produce desconocido: {\"type\":\"Point\",\"coordinates\":[0,0]}",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 649,
+    "name": "geometría corrupta produce desconocido: {\"type\":\"FeatureCollection\",\"features\":[]}",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 650,
+    "name": "geometría corrupta produce desconocido: {\"type\":\"Feature\",\"geometry\":null}",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 651,
+    "name": "geometría corrupta produce desconocido: {\"type\":\"Polygon\",\"coordinates\":[[[0,0],[1,1],[2,2],[0,0]]]}",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 652,
+    "name": "geometría corrupta produce desconocido: {\"type\":\"Polygon\",\"coordinates\":[[[0,0],[1,0],[1,1],[0,1]]]}",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 653,
+    "name": "geometría corrupta produce desconocido: {\"type\":\"Polygon\",\"coordinates\":[[[181,0],[182,0],[182,1],[181,0]]]}",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 654,
+    "name": "archivo ausente, caché de fallo, retry y recuperación",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 655,
+    "name": "peticiones concurrentes comparten una carga",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 656,
+    "name": "extremos dentro no validan ni rechazan geometría intermedia de ruta",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 637,
+    "name": "asset oficial identifica municipio 68001 y conserva todos sus vértices",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_real_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 659,
+    "name": "puntos reales con procedencia OSM: UIS/parque dentro, municipios vecinos fuera",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/municipal_boundary_real_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 638,
+    "name": "borrador preparado tiene marcador explícito y se puede descartar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 668,
+    "name": "alternativas admite una sola ruta sin fabricar más",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 626,
+    "name": "alternativas sincronizan Home, mapa y detalles a 1440.0 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 663,
+    "name": "tres assets reales conservan identidad, geometría y municipio de referencia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_coverage_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 671,
+    "name": "unión configurable de municipios sin disolver anillos ni islas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_coverage_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 672,
+    "name": "fallo parcial missing conserva dentro verificado y nunca infiere fuera",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_coverage_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 673,
+    "name": "fallo parcial wrong-code conserva dentro verificado y nunca infiere fuera",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_coverage_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 674,
+    "name": "fallo parcial corrupt-geometry conserva dentro verificado y nunca infiere fuera",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_coverage_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 678,
+    "name": "PlaceSuggestionService construye URI Photon sin HTTP para \"cacique\"",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 679,
+    "name": "PlaceSuggestionService construye URI Photon sin HTTP para \"centro comercial cacique\"",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 680,
+    "name": "PlaceSuggestionService construye URI Photon sin HTTP para \"Clínica Chicamocha\"",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 681,
+    "name": "PlaceSuggestionService construye URI Photon sin HTTP para \"calle 36 # 15-32\"",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 675,
+    "name": "configuración Bucaramanga exclusiva sigue rechazando vecinos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_coverage_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 683,
+    "name": "frontera compartida devuelve ambos municipios de forma determinista",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_coverage_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 682,
+    "name": "PlaceSuggestionService construye el URI Photon con parámetros de texto",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 684,
+    "name": "PlaceSuggestionService omite lang=es que el endpoint público rechaza con HTTP 400",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 687,
+    "name": "PlaceSuggestionService termina una solicitud que no responde",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 599,
+    "name": "GeocodingService rechaza JSON inválido y respuestas inesperadas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/geocoding_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 688,
+    "name": "PlaceSuggestionService consulta Photon y parsea varios resultados",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 690,
+    "name": "PlaceSuggestionService no consulta Photon para texto vacío o de menos de tres caracteres",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 691,
+    "name": "PlaceSuggestionService clasifica fallo de conectividad del cliente",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 692,
+    "name": "PlaceSuggestionService devuelve una lista vacía para un FeatureCollection vacío",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 693,
+    "name": "PlaceSuggestionService informa un código HTTP de error",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 694,
+    "name": "PlaceSuggestionService rechaza JSON inválido y respuestas inesperadas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 697,
+    "name": "PlaceSuggestionService ignora features sin coordenadas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 698,
+    "name": "PlaceSuggestionService ignora coordenadas inválidas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/place_suggestion_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 696,
+    "name": "lista vacía no fabrica índices ni diferencias",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/route_alternatives_analysis_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 699,
+    "name": "una alternativa tiene ambos mínimos y diferencias cero",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/route_alternatives_analysis_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 702,
+    "name": "más rápida y más corta pueden ser distintas y no ser la primera",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/route_alternatives_analysis_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 703,
+    "name": "una alternativa puede ser simultáneamente más rápida y más corta",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/route_alternatives_analysis_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 704,
+    "name": "empate de duración conserva la primera mínima sin desempatar por distancia",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/route_alternatives_analysis_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 705,
+    "name": "empate de distancia conserva la primera mínima sin desempatar por duración",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/route_alternatives_analysis_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 706,
+    "name": "empate total es estable y diferencias son inmutables",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/route_alternatives_analysis_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 707,
+    "name": "compara antes de redondear y admite cero",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/route_alternatives_analysis_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 708,
+    "name": "no reordena, copia ni altera rutas o geometrías",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/route_alternatives_analysis_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 709,
+    "name": "rechaza métricas inválidas sin ocultarlas con valores inventados",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/route_alternatives_analysis_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 712,
+    "name": "Photon usa contexto GPS verificado Girón",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 713,
+    "name": "Photon usa contexto GPS verificado Floridablanca",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 714,
+    "name": "Photon usa contexto GPS verificado Bucaramanga",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 715,
+    "name": "Nominatim usa contexto GPS verificado Girón",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 716,
+    "name": "Nominatim usa contexto GPS verificado Floridablanca",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 717,
+    "name": "Nominatim usa contexto GPS verificado Bucaramanga",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 718,
+    "name": "ciudad explícita conserva destino Bucaramanga con GPS de Girón",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 719,
+    "name": "nombre textual no autoriza Piedecuesta ni cambia el municipio geométrico",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/operational_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 664,
+    "name": "sin GPS no prepara sin coordenadas; cancelar y volver no inventa ubicación",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 669,
+    "name": "alternativas conserva orden, geometrías y métricas independientes",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 670,
+    "name": "recalcular reemplaza candidatas; error limpia y permite reintentar",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 727,
+    "name": "retry actualiza cobertura cacheada sin repetir petición HTTP",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/territorial_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 728,
+    "name": "Photon conserva y clasifica dentro/fuera por coordenadas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/territorial_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 729,
+    "name": "Nominatim conserva y clasifica dentro/fuera por coordenadas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/territorial_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 730,
+    "name": "fallo del asset conserva coordenadas reales con estado desconocido",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/territorial_geocoding_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 723,
+    "name": "capas reales no recalculan; drawer identifica mapa y perfil real",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 736,
+    "name": "OSRM no recibe HTTP con cobertura origin",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/territorial_routing_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 737,
+    "name": "OSRM no recibe HTTP con cobertura destination",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/territorial_routing_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 738,
+    "name": "OSRM no recibe HTTP con cobertura unknown",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/territorial_routing_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 725,
+    "name": "GPS invalida solicitud; respuesta obsoleta (error=false) no reemplaza actual",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 739,
+    "name": "OSRM conserva tramo externo con extremos dentro",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/territorial_routing_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 740,
+    "name": "GPS invalida solicitud; respuesta obsoleta (error=true) no reemplaza actual",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 746,
+    "name": "PolylineDecoder decodifica una polyline v├ílida",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/utils/polyline_decoder_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 747,
+    "name": "PolylineDecoder devuelve una lista vac├¡a cuando la polyline est├í vac├¡a",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/utils/polyline_decoder_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 748,
+    "name": "PolylineDecoder lanza FormatException cuando la polyline est├í incompleta",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/utils/polyline_decoder_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 753,
+    "name": "RouteMarkers crea exactamente dos marcadores",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/utils/route_markers_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 754,
+    "name": "RouteMarkers conserva las coordenadas de origen y destino",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/utils/route_markers_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 755,
+    "name": "RouteMarkers usa identificadores diferentes para origen y destino",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/utils/route_markers_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 743,
+    "name": "respuesta obsoleta no termina la carga vigente",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 761,
+    "name": "RoutePolyline crea una polyline cuando hay al menos dos puntos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/utils/route_polyline_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 762,
+    "name": "RoutePolyline devuelve conjunto vac├¡o cuando no hay puntos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/utils/route_polyline_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 763,
+    "name": "RoutePolyline devuelve conjunto vac├¡o cuando hay solo un punto",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/utils/route_polyline_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 758,
+    "name": "GPS invalida lista y cierra selector abierto",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 766,
+    "name": "dispose descarta una consulta pendiente",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 767,
+    "name": "respuesta vacía no fabrica rutas",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 689,
+    "name": "GeocodingService rechaza coordenadas inválidas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/geocoding_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 772,
+    "name": "cursor conserva selección y ruta; editar invalida origen",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 769,
+    "name": "muestra el texto Continuar con Google",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 783,
+    "name": "ejecuta el callback al presionar el botón",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 784,
+    "name": "no ejecuta el callback cuando está deshabilitado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 785,
+    "name": "muestra indicador y bloquea el callback mientras carga",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 724,
+    "name": "alternativa defectuosa invalida toda la respuesta",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 782,
+    "name": "cursor conserva selección y ruta; editar invalida destino",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 774,
+    "name": "historical card responsive 320.0 text 1.0, source/privacy/disclaimer",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 789,
+    "name": "fallo Photon es discreto y permite calcular con Nominatim",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 777,
+    "name": "login visual matrix 320.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 790,
+    "name": "historical card responsive 320.0 text 2.0, source/privacy/disclaimer",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 779,
+    "name": "evidencia distingue fuente disponible de no disponible",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 794,
+    "name": "login visual matrix 320.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 795,
+    "name": "historical card responsive 390.0 text 1.0, source/privacy/disclaimer",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 797,
+    "name": "login visual matrix 390.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 791,
+    "name": "selecciones Photon manuales evitan geocodificación",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 796,
+    "name": "resumen compacto abre motivos reales sin cambiar selección",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 803,
+    "name": "sugerencia legible y accesible a 320.0 con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 799,
+    "name": "login visual matrix 390.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 804,
+    "name": "sugerencia legible y accesible a 390.0 con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 806,
+    "name": "sugerencia legible y accesible a 768.0 con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 798,
+    "name": "historical card responsive 390.0 text 2.0, source/privacy/disclaimer",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 807,
+    "name": "sugerencia legible y accesible a 1440.0 con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 805,
+    "name": "login visual matrix 768.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 809,
+    "name": "selección manual distinta no se presenta como sugerencia",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 811,
+    "name": "volver manualmente a la sugerida conserva autoría de selección",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 808,
+    "name": "historical card responsive 768.0 text 1.0, source/privacy/disclaimer",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 810,
+    "name": "login visual matrix 768.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 815,
+    "name": "login visual matrix 1440.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 814,
+    "name": "historical card responsive 768.0 text 2.0, source/privacy/disclaimer",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 816,
+    "name": "login visual matrix 1440.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 817,
+    "name": "historical card responsive 1440.0 text 1.0, source/privacy/disclaimer",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 802,
+    "name": "loading bloquea duplicados y éxito dibuja geometría y métricas",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 819,
+    "name": "historical card responsive 1440.0 text 2.0, source/privacy/disclaimer",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 776,
+    "name": "rechaza hora pasada del día actual sin cambiar la salida",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 793,
+    "name": "four mode cards, actual evidence states and responsive 320.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 801,
+    "name": "NavigationHeader muestra título, subtítulo e icono",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 823,
+    "name": "four mode cards, actual evidence states and responsive 390.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 820,
+    "name": "error termina loading y no dibuja ruta",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 821,
+    "name": "loading, error, retry, empty, partial and insufficient retain distinct meanings",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 822,
+    "name": "planificador 320.0 con texto 1.5, estados y controles accesibles",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 825,
+    "name": "four mode cards, actual evidence states and responsive 768.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 827,
+    "name": "latest scheduled date while loading updates cached result without another query",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 824,
+    "name": "NavigationHeader ejecuta callbacks de menú y perfil",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 829,
+    "name": "four mode cards, actual evidence states and responsive 1440.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 831,
+    "name": "NavigationHeader permite título, subtítulo y avatar personalizados",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 828,
+    "name": "planificador 390.0 con texto 1.5, estados y controles accesibles",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 833,
+    "name": "NavigationHeader es responsive y accesible a 320 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 834,
+    "name": "planificador 768.0 con texto 1.5, estados y controles accesibles",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 837,
+    "name": "NavigationHeader es responsive y accesible a 390 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 818,
+    "name": "home visual matrix 320.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 826,
+    "name": "programar salida comunica el límite y bloquea navegación futura",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 839,
+    "name": "NavigationHeader es responsive y accesible a 768 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 838,
+    "name": "planificador 1440.0 con texto 1.5, estados y controles accesibles",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 842,
+    "name": "NavigationHeader es responsive y accesible a 1440 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 841,
+    "name": "programar antes de analizar no solicita una ruta futura",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 840,
+    "name": "home visual matrix 320.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 848,
+    "name": "home visual matrix 390.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 843,
+    "name": "programa con controles reales y vuelve a Ahora",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 788,
+    "name": "alternativas rechaza respuesta vacía, JSON y code inválidos",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 849,
+    "name": "home visual matrix 390.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 850,
+    "name": "cancelar selector conserva salida programada",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 852,
+    "name": "home visual matrix 768.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 830,
+    "name": "Programar preserves selection/route and orientation makes zero routing or navigation calls",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 857,
+    "name": "home visual matrix 768.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 836,
+    "name": "volver al GPS reemplaza la coordenada manual y guarda el borrador",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 862,
+    "name": "home visual matrix 1440.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 832,
+    "name": "mode changes use real request, keep endpoints, unsupported/errors preserve route",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 865,
+    "name": "scheduled departure remains explicit and without prediction",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 864,
+    "name": "home visual matrix 1440.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 863,
+    "name": "teclado y texto ampliado permiten preparar; descripción limitada a 200",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 869,
+    "name": "ReportIncidentSheet muestra encabezado y las seis categorías",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 868,
+    "name": "planner visual matrix 320.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 873,
+    "name": "planner visual matrix 320.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 872,
+    "name": "botón Preparar reporte bloqueado sin tipo; seleccionar tipo lo habilita y envía draft",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 876,
+    "name": "planner visual matrix 390.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 877,
+    "name": "ubicación informa coordenadas o ausencia de GPS sin mentir",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 878,
+    "name": "planner visual matrix 390.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 879,
+    "name": "botón Cambiar ubicación ejecuta callback preparado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 881,
+    "name": "ReportIncidentSheet es responsive y accesible a 320 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 861,
+    "name": "etiquetas y diferencias usan mínimos independientes con semántica",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 880,
+    "name": "planner visual matrix 768.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 882,
+    "name": "ReportIncidentSheet es responsive y accesible a 390 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 883,
+    "name": "una opción muestra ambas etiquetas y los empates respetan orden",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 884,
+    "name": "planner visual matrix 768.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 885,
+    "name": "ReportIncidentSheet es responsive y accesible a 768 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 890,
+    "name": "ReportIncidentSheet es responsive y accesible a 1440 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 856,
+    "name": "categorías y detalle accesibles a 390.0 / altura reducida",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 888,
+    "name": "diferencias pequeñas y horas no muestran ceros ni falsa precisión",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 889,
+    "name": "planner visual matrix 1440.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 851,
+    "name": "alternativas rechaza HTTP, timeout y red",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 894,
+    "name": "sin candidatas no ofrece controles ni una selección ficticia",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 895,
+    "name": "planner visual matrix 1440.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 871,
+    "name": "categorías a 320 px / 150 %, proximidad y detalle reutilizado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 897,
+    "name": "seleccionar rutas obtenidas por OSRM no hace otra consulta HTTP",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 891,
+    "name": "categorías y detalle accesibles a 768.0 / altura reducida",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 875,
+    "name": "tarjeta y detalle sin overflow a 390.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 898,
+    "name": "result visual matrix 320.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 903,
+    "name": "tarjeta y detalle sin overflow a 768.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 904,
+    "name": "result visual matrix 320.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 896,
+    "name": "route conserva la primera ruta y su solicitud sin alternativas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 901,
+    "name": "selector accesible y compacto a 320.0 px con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 906,
+    "name": "result visual matrix 390.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 905,
+    "name": "tarjeta y detalle sin overflow a 1440.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 887,
+    "name": "auto-fit considera toda la geometría de la ruta",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 902,
+    "name": "categorías y detalle accesibles a 1440.0 / altura reducida",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 913,
+    "name": "transmite el tap OSM y acepta polylines opcionales",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 911,
+    "name": "result visual matrix 390.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 912,
+    "name": "detalle abierto se actualiza y conserva selección manual",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 916,
+    "name": "RouteMap renderiza el mapa con OpenStreetMap",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 908,
+    "name": "selector accesible y compacto a 390.0 px con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 917,
+    "name": "result visual matrix 768.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 918,
+    "name": "RouteMap expone la semántica del mapa",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 925,
+    "name": "sin marcadores conserva el centro y zoom iniciales",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 922,
+    "name": "result visual matrix 768.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 907,
+    "name": "envía contrato OSRM y conserva orden, coordenadas y métricas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 921,
+    "name": "selector accesible y compacto a 768.0 px con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 926,
+    "name": "ajusta la cámara en búsquedas sucesivas",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 927,
+    "name": "result visual matrix 1440.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 930,
+    "name": "result visual matrix 1440.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 929,
+    "name": "selector accesible y compacto a 1440.0 px con texto ampliado",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 932,
+    "name": "una ruta no ofrece un selector ficticio",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 931,
+    "name": "schedule visual matrix 320.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 933,
+    "name": "cerrar la lista no cambia la selección",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 934,
+    "name": "schedule visual matrix 320.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 910,
+    "name": "etiquetas de Rutas conservan callback y bloqueo durante localización",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 937,
+    "name": "schedule visual matrix 390.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 938,
+    "name": "muestra los campos de origen y destino",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 939,
+    "name": "schedule visual matrix 390.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 940,
+    "name": "ejecuta onCalculate al presionar el botón",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 924,
+    "name": "resumen se adapta a 320 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 942,
+    "name": "muestra errores de origen y destino",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 941,
+    "name": "schedule visual matrix 768.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 944,
+    "name": "muestra estado de carga mientras calcula la ruta",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 943,
+    "name": "resumen se adapta a 390 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 945,
+    "name": "schedule visual matrix 768.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 949,
+    "name": "schedule visual matrix 1440.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 946,
+    "name": "resumen se adapta a 768 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 936,
+    "name": "TravelModeSelector muestra los cuatro modos de transporte",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 951,
+    "name": "resumen se adapta a 1440 px",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 950,
+    "name": "schedule visual matrix 1440.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 952,
+    "name": "salida programada muestra estados sin datos horarios",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 953,
+    "name": "reports visual matrix 320.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 955,
+    "name": "reports visual matrix 320.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 954,
+    "name": "seleccionar Vehículo invoca onModeSelected y no modos en desarrollo",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 957,
+    "name": "reports visual matrix 390.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 958,
+    "name": "tap en modo no disponible sin callback muestra SnackBar informativo",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 960,
+    "name": "TravelModeSelector es responsive y accesible a 320 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 961,
+    "name": "TravelModeSelector es responsive y accesible a 390 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 959,
+    "name": "reports visual matrix 390.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 962,
+    "name": "TravelModeSelector es responsive y accesible a 768 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 963,
+    "name": "reports visual matrix 768.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 964,
+    "name": "TravelModeSelector es responsive y accesible a 1440 px con texto 1.5x",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 965,
+    "name": "reports visual matrix 768.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 966,
+    "name": "reports visual matrix 1440.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 967,
+    "name": "reports visual matrix 1440.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 928,
+    "name": "rechaza HTTP, timeout y error de red",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 968,
+    "name": "navigation visual matrix 320.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 970,
+    "name": "navigation visual matrix 320.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 971,
+    "name": "navigation visual matrix 390.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 972,
+    "name": "navigation visual matrix 390.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 973,
+    "name": "navigation visual matrix 768.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 974,
+    "name": "navigation visual matrix 768.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 975,
+    "name": "navigation visual matrix 1440.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 956,
+    "name": "muestra la pantalla de inicio de sesión",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 976,
+    "name": "navigation visual matrix 1440.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 978,
+    "name": "analytics visual matrix 320.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 979,
+    "name": "analytics visual matrix 320.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 980,
+    "name": "analytics visual matrix 390.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 981,
+    "name": "analytics visual matrix 390.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 982,
+    "name": "analytics visual matrix 768.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 983,
+    "name": "analytics visual matrix 768.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 984,
+    "name": "analytics visual matrix 1440.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 985,
+    "name": "analytics visual matrix 1440.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 986,
+    "name": "validation visual matrix 320.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 987,
+    "name": "validation visual matrix 320.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 969,
+    "name": "rechaza JSON, code y rutas vacías",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 988,
+    "name": "validation visual matrix 390.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 990,
+    "name": "validation visual matrix 390.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 991,
+    "name": "validation visual matrix 768.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 992,
+    "name": "validation visual matrix 768.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 993,
+    "name": "validation visual matrix 1440.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 994,
+    "name": "validation visual matrix 1440.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 995,
+    "name": "profile visual matrix 320.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 996,
+    "name": "profile visual matrix 320.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 997,
+    "name": "profile visual matrix 390.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 998,
+    "name": "profile visual matrix 390.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 999,
+    "name": "profile visual matrix 768.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1000,
+    "name": "profile visual matrix 768.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1001,
+    "name": "profile visual matrix 1440.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1002,
+    "name": "profile visual matrix 1440.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1003,
+    "name": "drawer visual matrix 320.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1004,
+    "name": "drawer visual matrix 320.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1005,
+    "name": "drawer visual matrix 390.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1006,
+    "name": "drawer visual matrix 390.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1007,
+    "name": "drawer visual matrix 768.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1008,
+    "name": "drawer visual matrix 768.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1009,
+    "name": "drawer visual matrix 1440.0 text 1.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1010,
+    "name": "drawer visual matrix 1440.0 text 2.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 989,
+    "name": "rechaza geometrías ausentes, vacías y coordenadas inválidas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1011,
+    "name": "login actions and report submit remain reachable with keyboard/text 2x at 320.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1013,
+    "name": "login actions and report submit remain reachable with keyboard/text 2x at 390.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1014,
+    "name": "login actions and report submit remain reachable with keyboard/text 2x at 768.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1015,
+    "name": "login actions and report submit remain reachable with keyboard/text 2x at 1440.0",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1016,
+    "name": "PASS FAIL UNKNOWN NOT_APPLICABLE keep explicit text in styled criteria",
+    "url": "package:flutter_test/src/widget_tester.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1012,
+    "name": "rechaza distancia y duración inválidas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  },
+  {
+    "id": 1018,
+    "name": "rechaza coordenadas de solicitud inválidas",
+    "url": "file:///C:/Proyectos/transporte_inteligente/test/services/osrm_routing_service_test.dart",
+    "result": "success",
+    "skipped": false
+  }
+]

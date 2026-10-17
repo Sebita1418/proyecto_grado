@@ -1,0 +1,629 @@
+{
+  "verifiedAt": "2026-10-17T04:09:52.853Z",
+  "status": "PASS",
+  "allProtectedFilesUnchanged": true,
+  "protectedFiles": 118,
+  "securityWrapperTailUnchanged": true,
+  "moduleBytes": 595550,
+  "moduleSha256": "615b82bd90da87a9cf83fe68d1994b7bed5ad78a378f25cadd58e2bca9a3de41",
+  "sources": [
+    {
+      "code": "68001",
+      "name": "Bucaramanga",
+      "asset": "assets/geo/bucaramanga-mgn2024.geojson",
+      "originalSha256": "1dca6635bceacb6ca36b038ecb8906ad1ff3f9e312f6e4bface812562059deb5",
+      "featureCount": 1,
+      "geometriesSha256": "4742233a21a023e9e4869562c568e8ad4aebfc7f4417d125f65a8dee0c225b44"
+    },
+    {
+      "code": "68307",
+      "name": "Girón",
+      "asset": "assets/geo/giron-mgn2024.geojson",
+      "originalSha256": "d21059491f262a3369a10c33da38988a367fa5a9a1bff55d74600146208820a2",
+      "featureCount": 1,
+      "geometriesSha256": "ed53e7363230c793e6092df7c608a78a4660de6d2db5a78ea3ed74936d616926"
+    },
+    {
+      "code": "68276",
+      "name": "Floridablanca",
+      "asset": "assets/geo/floridablanca-mgn2024.geojson",
+      "originalSha256": "fa74508977642bd1631f5833f4db38d1624c91845675da880a42e41196e27794",
+      "featureCount": 1,
+      "geometriesSha256": "8a75d516117ef8dd797cedaf621b139e01adcf870dd4d155bcde713b134abbd6"
+    }
+  ],
+  "checks": [
+    {
+      "path": "supabase/functions/traffic-flow/handler.mjs",
+      "sha256": "45240fba37845031422ad1a95c23ec3faff13ffc5f6a223571cff45a59e805e9",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/traffic-flow/handler.test.mjs",
+      "sha256": "8349da473642eeb371b8e7c84d3526f8a3a1c313dc6143e064a95a28313ae85b",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/traffic-quota.sql",
+      "sha256": "d5fd741b5f2ae1b80d265c6925238e5e40830fb25801c0ad7436a8dadd52a89b",
+      "unchanged": true
+    },
+    {
+      "path": "pubspec.lock",
+      "sha256": "cf0ea1843a277fb73974690d7759d01fda55f02983292e6562b68b2691a443c3",
+      "unchanged": true
+    },
+    {
+      "path": "assets/geo/bucaramanga-mgn2024.geojson",
+      "sha256": "1dca6635bceacb6ca36b038ecb8906ad1ff3f9e312f6e4bface812562059deb5",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/traffic-flow/geo/bucaramanga-mgn2024.geojson",
+      "sha256": "1dca6635bceacb6ca36b038ecb8906ad1ff3f9e312f6e4bface812562059deb5",
+      "unchanged": true
+    },
+    {
+      "path": "assets/geo/giron-mgn2024.geojson",
+      "sha256": "d21059491f262a3369a10c33da38988a367fa5a9a1bff55d74600146208820a2",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/traffic-flow/geo/giron-mgn2024.geojson",
+      "sha256": "d21059491f262a3369a10c33da38988a367fa5a9a1bff55d74600146208820a2",
+      "unchanged": true
+    },
+    {
+      "path": "assets/geo/floridablanca-mgn2024.geojson",
+      "sha256": "fa74508977642bd1631f5833f4db38d1624c91845675da880a42e41196e27794",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/functions/traffic-flow/geo/floridablanca-mgn2024.geojson",
+      "sha256": "fa74508977642bd1631f5833f4db38d1624c91845675da880a42e41196e27794",
+      "unchanged": true
+    },
+    {
+      "path": "lib/config/auth_redirect.dart",
+      "sha256": "bb3b419d8302bd473cfe693d38d85307474780a4d94162872644f876bb9549f2",
+      "unchanged": true
+    },
+    {
+      "path": "lib/config/google_routes_config.dart",
+      "sha256": "6d3454c9b55650690809789d1d68e69e4f7830d3f30108908060b8edf6b723bf",
+      "unchanged": true
+    },
+    {
+      "path": "lib/config/osrm_config.dart",
+      "sha256": "39a31cff64d9e3ba717c691abc65334a59322e9f803db05524bfc92f6f91d605",
+      "unchanged": true
+    },
+    {
+      "path": "lib/config/supabase_config.dart",
+      "sha256": "dddfc1d1dcc312be4091d22d44ab92119d6c6db41f7c13005b3f19d0e69984a5",
+      "unchanged": true
+    },
+    {
+      "path": "lib/controllers/historical_departure_guidance_controller.dart",
+      "sha256": "b3f5ad9466ed4ea56cdbd0e12b08903974bcd14bd07243f8a233c98098f16178",
+      "unchanged": true
+    },
+    {
+      "path": "lib/controllers/mobility_analytics_controller.dart",
+      "sha256": "21bfeafbd091a98514da5190401688491205bf04be1f56e18ccd6ef9a1d4d437",
+      "unchanged": true
+    },
+    {
+      "path": "lib/controllers/road_incident_controller.dart",
+      "sha256": "2cfd092144275d300153619c0bf8a99ed39ddaca1e83fbc9fe7ec79057aa8320",
+      "unchanged": true
+    },
+    {
+      "path": "lib/controllers/route_planner_controller.dart",
+      "sha256": "c3d41b9bd8324c12121c543e3c43bc8e7e0df25ff6c01b11ee9eab001a4b4194",
+      "unchanged": true
+    },
+    {
+      "path": "lib/main.dart",
+      "sha256": "cc00f337c8adb6a55aa628ac3343c633970048db3cc6170caf52c09224c32cd3",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/analytics/historical_departure_guidance.dart",
+      "sha256": "33d96f5e942f5133401c982dc9f9aa4eeeebf9006a4db1c48eda28bf884fd1fd",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/analytics/mobility_analytics.dart",
+      "sha256": "de1b9c15a6a5da366c13b608cf8e767295194d6d23a9f81a29f9ec40147e2725",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/analytics/mobility_analytics_repository.dart",
+      "sha256": "032a8ad2d6424968cf9640138f1a1567ad1256606b4210b17f816d697b9c74fb",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/current_mobility_decision_adapter.dart",
+      "sha256": "6383982b9e5c5343915ecf31aef2c2e1485229085d3749bc296083e50b0f3094",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/departure_time_context.dart",
+      "sha256": "0c5b7bfc77f5678d2f20b17911eda743d36a092b3005fc81671f5e8a90a5d84a",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/mobility_data_availability.dart",
+      "sha256": "de2509cae38ccab5c3f49848614342f6fb9e87d2fb481eb4c21698fe5afb394f",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/mobility_decision_context.dart",
+      "sha256": "133d49e1eccede8aa39290ffa82e2e48bd33fbd5a4bd11a874981180678d2301",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/mobility_decision_coordinator.dart",
+      "sha256": "96104c6280ebc8d1af708ae9e8b312ab68228cea3e7cbdc81e0afa96747885aa",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/mobility_decision_result.dart",
+      "sha256": "b4d40b39b32e34c554d9b3cc605b225ad8d7c39e0583c46b388642c6c6e0dac4",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/decision/mobility_option_availability.dart",
+      "sha256": "ca054e8271a89f1a60c46d7fea9a393f6cbe8d8cde4c8d325a47c9df99216c87",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/mobility_conditions.dart",
+      "sha256": "7ccaa173e7a5b20022182ae8b9fd60021b2ce9d040739bda91e86364559746d6",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/mobility_context.dart",
+      "sha256": "2e8cb25bd21c1f6699cd709a84d281da61cad27890ccc24b95d8ce00b3501e92",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/mobility_recommendation.dart",
+      "sha256": "0bbafe784844286e991ea104214b1863164be7f5692d2f4e0de73c4903353122",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/mobility_recommendation_engine.dart",
+      "sha256": "00958ab0aaa926fe56dd0d6d459de1b582eebae8181841101ea36b1157127bcb",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/route_incident_analysis.dart",
+      "sha256": "a60abb07cf61a225d706209fd9d59bd048f266e49cd3d2118348f42a6eab780c",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/route_incident_analyzer.dart",
+      "sha256": "467aec9d6936701a5895f5e36d3c5a7f91074dd4f20d44f0e2349d1473bf99af",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/route_option.dart",
+      "sha256": "06422c1a3738bd3d56f19176bff39f1e06ea046ec27f8fd68869fad74cc9a090",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/routing/routing_capabilities.dart",
+      "sha256": "782de4e938b63ce0e44a37f3f25dc4e99f3a05942d0f0294726fbe74dadf5cb5",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/traffic_aware_recommendation_engine.dart",
+      "sha256": "9f6583964de977612a07b983feb30ed4c5b43d3d99d25d506be1b62b3508e219",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/transport_mode.dart",
+      "sha256": "495d914178466f9e30217e3f26a62e2ff535d83b1cfa9949b41be44d25eee43f",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/validation/current_mobility_validation_adapter.dart",
+      "sha256": "3c31558e51b52761be489d7e0e442327a570af2f46c0b7bb8c9e7ab9ba001099",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/validation/mobility_validation.dart",
+      "sha256": "5db023ae549bb8ac9804d22d60847a18bf49031e6e8d4af1a014924a8dfe2267",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/vehicle_recommendation_engine.dart",
+      "sha256": "0bf802afab059b509171c4dcb1ea18cfa66b8d73d8e52c43d4dc07ebc9863f22",
+      "unchanged": true
+    },
+    {
+      "path": "lib/mobility/vehicle_recommendation_policy.dart",
+      "sha256": "d4f63bd8a67fd484e9e52eb385623795d571fac08322c1c2249f686a84fab7d5",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/address_precision.dart",
+      "sha256": "7112b50363375953ea5deec166cb025343da9edc87985181d306bd8606482379",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/geocoding_result.dart",
+      "sha256": "8412e9dc80f1246f5c76cad6c3910ae92782f66b168dc87c5f4d00d0778d7be4",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/google_route_result.dart",
+      "sha256": "fdd8cf86a838b86c4661e9446c24588edf287cdabe1c1173142ccfed39dd654e",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/incident_report_draft.dart",
+      "sha256": "9e7af36826c7de3cdc1205d26c0b6a9907f06eeb7335b1b9230026b50fc5b6a5",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/municipal_coverage.dart",
+      "sha256": "2bcf3ca971adf68bd5c9681be893be8ae41548391dd674778c73c41f453c3823",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/perfil_model.dart",
+      "sha256": "bc22a281d799ab2289b951c42e59bf09ccea3235703ad7b08bcd5f59280327e0",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/place_suggestion.dart",
+      "sha256": "d09c50e2d0aef56018bac62245ec3c6c5499f821fe0687c26c6b357c694501f4",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/road_incident_report.dart",
+      "sha256": "db190a309a9140ac76043cc7a99280c2280cac6f91d09fe99b96fcfe4bc0d8f2",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/route_insight.dart",
+      "sha256": "b9e17984e09fe89a12947e50113c1e3184399ee8bfd1b88ec48f68111741e2f4",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/route_result.dart",
+      "sha256": "c610cc31d9e88ec8fd8f9b361917ea7493196e1a611262d5251f8f61cd2bdc8f",
+      "unchanged": true
+    },
+    {
+      "path": "lib/models/ruta_model.dart",
+      "sha256": "35739a548665735482825937e9966e7018fb89975f4e09a06b7d109603e1965e",
+      "unchanged": true
+    },
+    {
+      "path": "lib/navigation/navigation_camera.dart",
+      "sha256": "5e8c6e3a2acdc2b01bdf5c5651b29a2ad95b40cf384bc4caeb6537b8cbad42f7",
+      "unchanged": true
+    },
+    {
+      "path": "lib/navigation/navigation_instruction.dart",
+      "sha256": "033b3e00b878370271a2f943ac713903100fcd3749e035801cca456c36ea5f95",
+      "unchanged": true
+    },
+    {
+      "path": "lib/navigation/navigation_instruction_presentation.dart",
+      "sha256": "596a1e389976fcd7c019b79976ae2c513610c4d241bf9869855b5c4db0ffc355",
+      "unchanged": true
+    },
+    {
+      "path": "lib/navigation/navigation_progress.dart",
+      "sha256": "bcb49b6c2c093a77d0067c19ff5d51dc4c4c8de1cd56933bcbc67bf10a31dad1",
+      "unchanged": true
+    },
+    {
+      "path": "lib/navigation/navigation_session.dart",
+      "sha256": "2208265e25a1481dcbfe69587093990b7eca9545f81bcd917785aa7601137010",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/admin/admin_screen.dart",
+      "sha256": "5a0e9da130e6ce8c4d5642888d90f1f2197697a1cd800311c693612f9ba57c9a",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/admin/rutas/rutas_admin_screen.dart",
+      "sha256": "e30858325e50c115bbf9750b529f3754da68f73bb096148245524ba08019c662",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/admin/usuarios/usuarios_screen.dart",
+      "sha256": "6cafd7dc9d216382d6e599858c54797a24db21b24b5510dbe30767df6e58eeeb",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/analytics/mobility_analytics_screen.dart",
+      "sha256": "efd07994f6ff2a848cad4ca9e14af6c038f7e326a04d06299a49da2bd93f8f76",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/home/home_screen.dart",
+      "sha256": "32f0ca04239a03906ab0b2e3744198fd281a4f89ba7d4e4cd1d8c98093c3f2cb",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/login/login_screen.dart",
+      "sha256": "50954277e0042bcbb3d01bd39fc1142f305c78392e72517e026fbbcdb9b09322",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/nearby/nearby_places_screen.dart",
+      "sha256": "22be913353297cd8d6d042ac8ad088a663516ceb1f5d73c454550444007acea6",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/perfil/perfil_screen.dart",
+      "sha256": "d2ef434b309bcdb42d48bdef048af89e54dd706f3ef602348182354136a62ff6",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/preferences/mobility_preferences_screen.dart",
+      "sha256": "8511c47361fc173434c006cd369ba0e51af4570a0da9e8b5d9aaa4afdbbd3b97",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/rutas/rutas_screen.dart",
+      "sha256": "e31b7c5c8d014ce5c6a211de8cd893d47158864dd29d34024a1ed0c99a1a86d3",
+      "unchanged": true
+    },
+    {
+      "path": "lib/screens/validation/mobility_validation_screen.dart",
+      "sha256": "a93be40a6c51bdc43a717c195b77397063b07c1c296d2ed3e2fcd23fb1996e12",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/address_query.dart",
+      "sha256": "a5b03817558adc3179f5c52c337878b0b6999815c13d588388513194acbdd290",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/geocoding_service.dart",
+      "sha256": "9613bd0a68f0a043912f0119859b868b0cd8354a75ff0f90749b0d6e57d9ff3f",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/google_auth_service.dart",
+      "sha256": "f8c1ff9b996307b95c521201c14119281c6a827d44583feb58c4d57dda63e7fd",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/google_routes_service.dart",
+      "sha256": "65790f48a992667d9ca690e1bd11a6356401203fb5024d68ce278cc4c9c3f20e",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/location_service.dart",
+      "sha256": "716636a6cb1cdff8ff1cc28b720ad97d18471f710ddf233bbc5fecdcb43d01b6",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/mobility_preferences_service.dart",
+      "sha256": "0bb09f6582927bcb08425d9d5889c2e7139b62895a9cf18e34664236322c3de3",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/mode_routing_service.dart",
+      "sha256": "711b60c705f037aa3bff407a962e4aa702562d9ceab86873fc92afa23f393daf",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/municipal_boundary_service.dart",
+      "sha256": "2e1c196d8bd2a89fafc2f4b43909dc546d4cb3ae40876a929d3fe36b4f17051a",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/osrm_routing_service.dart",
+      "sha256": "fc8be9d77815dcdcd5fdf6f24cb583141c1b5a1c8aa07ef826176a64ce8120ca",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/perfil_service.dart",
+      "sha256": "dc174c68f7b7412e536a310dca6d2098de5afdb157789efcb60740e828ac2a3f",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/place_suggestion_service.dart",
+      "sha256": "22d84ffd0037652f0bf10277c0f2bb01c7deae049f071a9192b98a137a999530",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/road_incident_service.dart",
+      "sha256": "f5927dc766e18935b35b1f0f9252a75a69641336a26bb9a41b2db0a76e0639cb",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/route_alternatives_analysis_service.dart",
+      "sha256": "639038ae9683b9c1deff91a54ef88187ea825b0c8f4bd006b49898f9fb5e2286",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/route_traffic_service.dart",
+      "sha256": "d48e0e418bbbe85ac1fedc9eb177fded217d92a61b6d9b5de9d8600b93ff67d6",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/ruta_service.dart",
+      "sha256": "f4effd025ee435e89b9fc6052b0569350305c698dd6b7bb55047af58f5d09288",
+      "unchanged": true
+    },
+    {
+      "path": "lib/services/supabase_mobility_analytics_repository.dart",
+      "sha256": "67eb2587bf03f85fba7b71e37b3f53f662c1974cec3a5ea129c436d32071f865",
+      "unchanged": true
+    },
+    {
+      "path": "lib/theme/mobility_theme.dart",
+      "sha256": "62b5a438030c83cbd239d4fcd7c4d4e03ad65cdba33caec9e2728c344df38d74",
+      "unchanged": true
+    },
+    {
+      "path": "lib/utils/polyline_decoder.dart",
+      "sha256": "93e8461d2620efede78b880b4b9b696febdd82f8897e0b388bb29881d575d2df",
+      "unchanged": true
+    },
+    {
+      "path": "lib/utils/route_markers.dart",
+      "sha256": "c93b2632e8e742e992277310aa396d10b21fab584d8fe57b96710d570ee76a49",
+      "unchanged": true
+    },
+    {
+      "path": "lib/utils/route_polyline.dart",
+      "sha256": "104bc8f4eeaf408c4e651271b6d0b6b0300ccfd68bcb2dc742340e386c4e9e7d",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/app_navigation_drawer.dart",
+      "sha256": "52c128fc4be9096f8c712d57d2d2ef5da1982f020087772e9871d9046d722d5a",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/departure_time_selector.dart",
+      "sha256": "627b5578c0a81ddc39903279979dbe5268bd179a18c33b8386cb3c722c9e74b9",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/google_sign_in_button.dart",
+      "sha256": "08dff3442d7d973f0c43908beb138a6bb3dcfdd7642a693241e32ff4e047c10e",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/historical_departure_guidance_card.dart",
+      "sha256": "5b881ecb0419bfe26bae26b4d6939dd0a7df3dd2df48077fef20b6ead2d2d891",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/map_floating_controls.dart",
+      "sha256": "7cc369a7a11172451044878bf95effe6d812d8cd49a1ecc5aa0983f135c9bf8c",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/map_search_panel.dart",
+      "sha256": "b42e2bfd47be0d27424c93b281f0df4e9404b3ffe5894e7187ef2b22a361fa60",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/mobility_evidence_summary.dart",
+      "sha256": "674d9d5d3b1b39ccea22f3530ac2942b3941e6d769d3006e141bf1d6e713059a",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/mobility_planner/departure_time_selector.dart",
+      "sha256": "b54a266b10c8e46107965a4392386f7982be9cb8d5cbb832a9eb55d4dc624a44",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/mobility_planner/mobility_planner_section.dart",
+      "sha256": "0c41cba34d0cb0575375037d6288327462ecba89713512e2b9b3c899f9883961",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/mobility_recommendation_summary.dart",
+      "sha256": "3463969dd0df27a8a21b962d87b3eb03358185f7a09ace5f491793228cfe7376",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/mobility_section_card.dart",
+      "sha256": "5cedc342ca62974718a01626f09bde3964806db5085688b89f2074696506343a",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/navigation_header.dart",
+      "sha256": "d951210a1ca4cddb876b4a571617216fd2aa72080fd36bc35f62ac9d8d1fa904",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/navigation_status_card.dart",
+      "sha256": "d8f287e02e24a052d6678812c160ae9c5463ed65495e160b8ed90766a8ff27f9",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/report_incident_sheet.dart",
+      "sha256": "a62b248146e870e4d8e1b286058efb15701f8c3965f32570df1f3bf354e1b046",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/report_location_picker.dart",
+      "sha256": "4f9c59682852398a3e3bb16771db155878c22b04f8dbcb1708f4a18d598b6ecc",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/road_incident_details_sheet.dart",
+      "sha256": "0a9b3accdf3ce1e0ac8d29540e1a9ecf1fe1c0f228a79a926a7ec8e646aaaff4",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/road_incident_marker.dart",
+      "sha256": "3c479be085d14769bf43404f020c57b4b5b650d6cdb207996ad036f8ca522ff1",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/road_incident_reports_sheet.dart",
+      "sha256": "7f9611cb6364fa27ee2ee840f6673ca1b34675a92953308f9caaae136f49e03d",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/route_alternatives_selector.dart",
+      "sha256": "67484e2cc471aab29b2bfa1a6d255673e0be8b24e69e71789efc1f6de44cd8e5",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/route_incident_status.dart",
+      "sha256": "fd202f29c4ac1203f65dbbe9e7b08a0085c464244d13106b45e61832ada94e1c",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/route_map.dart",
+      "sha256": "2a26c5c05d1d31cc48f07377c63c339f47f7225e26d198666bea10daf718fda0",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/route_planner_form.dart",
+      "sha256": "00db17990662d85360530706e73673cd7271057e6a11f5a3e4aacfefcacd30d6",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/route_result_card.dart",
+      "sha256": "fbe5ef9829b8684ad0d02a023917e43b20ad052f1e3d21ef1576fb36a29fd54b",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/travel_mode_selector.dart",
+      "sha256": "5f0e541bc72b6be06185ca924437b8f9a2e24ed91c93b82c99218911629c9f8d",
+      "unchanged": true
+    },
+    {
+      "path": "lib/widgets/user_location_marker.dart",
+      "sha256": "7c3b23560f8826e9089f10241d0d16c6f28bb0f35cda988b6b18c18b46a12d0d",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/transporte-inteligente-1.0.0-20261014-release-debug-signed.apk",
+      "sha256": "040768c25ab2075125957dafe47939f82e57f4299c0a8a78b48b5ef4236fc6c3",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/version-final-academica/transporte-inteligente-1.0.1-20261016-release-debug-signed.apk",
+      "sha256": "df46b68345ea3e07fce5eb57a452863fccf33b431e4c76be54361d44727bcd40",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/objective-3-intervention-20261016/transporte-inteligente-1.0.2-2026101601-release-debug-signed.apk",
+      "sha256": "435913b6c1eb08ace49d80005f7b20d4561a1428fa9d254ba45a769384d9eb40",
+      "unchanged": true
+    }
+  ],
+  "remoteDeployment": "NOT TESTED",
+  "remoteTraffic": "NOT TESTED"
+}

@@ -140,10 +140,7 @@ void main() {
     );
     await tester.pump();
     expect(find.text('Buscando lugares...'), findsNothing);
-    expect(
-      find.text('No hay sugerencias disponibles. Puedes escribir y calcular.'),
-      findsOneWidget,
-    );
+    expect(find.text('Fallo de conexión'), findsOneWidget);
     expect(
       tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
       isNotNull,

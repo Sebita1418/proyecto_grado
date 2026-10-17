@@ -1,0 +1,2 @@
+﻿TOMTOM_PROBE_SAFE {"phase":"session","sessionPresent":true,"trafficEnabled":true,"valid":true,"checkedAt":"2026-10-17T04:32:12.115203Z"}
+TOMTOM_PROBE_SAFE {"phase":"traffic","httpStatus":200,"available":true,"requestedAt":"2026-10-17T04:32:15.166276Z","queriedAt":"2026-10-17T04:32:16.804Z","latencyMilliseconds":1581,"currentSpeedKmph":51,"freeFlowSpeedKmph":51,"currentTravelTimeSeconds":828,"freeFlowTravelTimeSeconds":828,"confidence":1}

@@ -46,8 +46,14 @@ class GeocodingService {
   }
 
   Future<List<GeocodingResult>> searchCandidates(String query) async {
-    final normalized = AddressQuery(query).providerQuery;
-    final bias = AddressQuery(query).hasCity ? null : searchBias;
+    final focus = searchBias;
+    await _boundary.load();
+    final municipality = focus == null
+        ? null
+        : _boundary.assess(focus).municipalityName;
+    final normalized = AddressQuery(query)
+        .providerQueryFor(municipality: municipality ?? 'Bucaramanga');
+    final bias = AddressQuery(query).hasCity ? null : focus;
     final cacheKey = '$normalized|${bias?.latitude}|${bias?.longitude}';
     if (normalized.isEmpty) return const [];
     if (cacheEnabled && _cache.containsKey(cacheKey)) {
@@ -96,7 +102,8 @@ class GeocodingService {
         result.longitude,
       );
       if (result.coverage.coverage == assessment.coverage &&
-          result.coverage.invalidCoordinates == assessment.invalidCoordinates) {
+          result.coverage.invalidCoordinates == assessment.invalidCoordinates &&
+          result.coverage.label == assessment.label) {
         return result;
       }
       return GeocodingResult(
@@ -118,8 +125,18 @@ class GeocodingService {
     String query, {
     bool Function()? isCurrent,
   }) async {
-    final parsed = AddressQuery(AddressQuery(query).providerQuery);
-    final bias = searchBias;
+    final focus = searchBias;
+    if (isCurrent != null && !isCurrent()) return const [];
+    await _boundary.load();
+    if (isCurrent != null && !isCurrent()) return const [];
+    final municipality = focus == null
+        ? null
+        : _boundary.assess(focus).municipalityName;
+    final parsed = AddressQuery(
+      AddressQuery(query)
+          .providerQueryFor(municipality: municipality ?? 'Bucaramanga'),
+    );
+    final bias = focus;
     final results = <GeocodingResult>[];
     for (final variant in parsed.variants.take(AddressQuery.maxVariants)) {
       if (isCurrent != null && !isCurrent()) break;
@@ -183,9 +200,9 @@ class GeocodingService {
           'state': parsed.locality.split(',')[1].trim(),
       },
       'format': 'jsonv2',
-      'limit': parsed.primaryRoad == null ? '1' : '5',
+      'limit': '5',
       'countrycodes': 'co',
-      if (parsed.primaryRoad != null) 'addressdetails': '1',
+      'addressdetails': '1',
       if (parsed.primaryRoad != null && !parsed.hasCity)
         'viewbox':
             '${(focus.longitude - .18).clamp(-180, 180)},${(focus.latitude + .18).clamp(-90, 90)},${(focus.longitude + .18).clamp(-180, 180)},${(focus.latitude - .18).clamp(-90, 90)}',

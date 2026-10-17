@@ -8,8 +8,10 @@ Reconoce «Calle 45 Carrera 27» y «Calle 45 con Carrera 27» como consultas de
 intersección; no construye ni interpola coordenadas para ellas.
 
 Una ciudad explícita tiene prioridad: no se añade Bucaramanga a la consulta.
-Una dirección sin ciudad recibe «Bucaramanga, Santander, Colombia» solo en la
-consulta al proveedor, conservando el texto original. Los POI mantienen su
+Una dirección sin ciudad recibe el municipio del GPS identificado por GIS
+(Bucaramanga, Girón o Floridablanca), Santander y Colombia solo en la consulta
+al proveedor. Si no puede identificarse, se conserva Bucaramanga como contexto.
+El texto original permanece intacto. Los POI mantienen su
 búsqueda anterior con preferencia por ubicación. Las direcciones con contexto
 municipal omiten lat/lon y viewbox: no se impone un rectángulo como límite.
 No se deduce un municipio por cercanía. Resultados cuya ciudad informada
@@ -155,7 +157,8 @@ Nominatim conservan candidatos con estado de cobertura y el planificador
 revalida sus coordenadas, GPS y puntos manuales. Los campos textuales no
 autorizan un extremo: se exige validación punto-en-polígono. Si el recurso
 falla, la cobertura es desconocida y se ofrece reintento. Véase
-[Cobertura territorial de Bucaramanga](municipal-boundary.md).
+[Cobertura territorial](municipal-boundary.md) y su
+[ampliación a tres municipios](operational-coverage.md).
 
 ## Prueba manual de Sebastián
 

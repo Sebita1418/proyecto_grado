@@ -1,17 +1,25 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../services/google_auth_service.dart';
+import '../../config/auth_redirect.dart';
 import '../../services/perfil_service.dart';
 import '../../widgets/google_sign_in_button.dart';
 import '../../theme/mobility_theme.dart';
 import '../home/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({
+    super.key,
+    this.googleAuthService,
+    this.authenticatedBuilder,
+    this.perfilService,
+  });
+  final GoogleAuthService? googleAuthService;
+  final WidgetBuilder? authenticatedBuilder;
+  final PerfilService? perfilService;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -21,8 +29,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final PerfilService _perfilService = PerfilService();
-  final GoogleAuthService _googleAuthService = GoogleAuthService();
+  late final PerfilService _perfilService =
+      widget.perfilService ?? PerfilService();
+  late final GoogleAuthService _googleAuthService =
+      widget.googleAuthService ?? GoogleAuthService();
 
   StreamSubscription<AuthState>? _authSubscription;
 
@@ -37,18 +47,25 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
 
-    _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((
-      data,
-    ) async {
-      if (data.session == null) {
-        return;
-      }
+    _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen(
+      (data) async {
+        if (data.session == null) {
+          return;
+        }
 
-      if (data.event == AuthChangeEvent.signedIn ||
-          data.event == AuthChangeEvent.initialSession) {
-        await _validarPerfilYNavegar();
-      }
-    });
+        if (data.event == AuthChangeEvent.signedIn ||
+            data.event == AuthChangeEvent.initialSession) {
+          await _validarPerfilYNavegar();
+        }
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        if (!mounted) return;
+        setState(() => isGoogleLoading = false);
+        mostrarMensaje(
+          'No fue posible completar el inicio de sesión. Intenta de nuevo.',
+        );
+      },
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final session = Supabase.instance.client.auth.currentSession;
@@ -111,20 +128,16 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final redirectTo = kIsWeb ? Uri.base.origin : null;
+      final redirectTo = AuthRedirect.current();
 
       final iniciado = await _googleAuthService.signIn(redirectTo: redirectTo);
 
       if (!iniciado && mounted) {
         mostrarMensaje('No fue posible abrir el inicio de sesión con Google.');
       }
-    } on GoogleAuthException catch (error) {
-      debugPrint('ERROR GOOGLE LOGIN: $error');
-
+    } on GoogleAuthException {
       mostrarMensaje('No fue posible iniciar sesión con Google.');
-    } catch (error) {
-      debugPrint('ERROR GOOGLE LOGIN: $error');
-
+    } catch (_) {
       mostrarMensaje('Ocurrió un error al iniciar sesión con Google.');
     } finally {
       if (mounted) {
@@ -174,7 +187,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(
+          builder:
+              widget.authenticatedBuilder ?? (context) => const HomeScreen(),
+        ),
       );
     } catch (error) {
       debugPrint('ERROR VALIDANDO PERFIL: $error');

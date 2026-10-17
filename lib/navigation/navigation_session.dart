@@ -7,6 +7,7 @@ import '../models/route_result.dart';
 import '../services/location_service.dart';
 import 'navigation_progress.dart';
 import 'navigation_instruction.dart';
+import 'navigation_camera.dart';
 
 enum NavigationState {
   navigating,
@@ -63,6 +64,7 @@ class NavigationSession extends ChangeNotifier {
   bool arrived = false;
   bool offRoute = false;
   bool following = true;
+  final camera = NavigationCamera();
   double get progress => projection?.progress ?? 0;
   double get remainingDistance => (route?.distanceMeters ?? 0) * (1 - progress);
 
@@ -104,6 +106,7 @@ class NavigationSession extends ChangeNotifier {
     arrived = false;
     offRoute = false;
     following = true;
+    camera.reset();
     notice = 'Buscando ubicación GPS…';
     isActive = true;
     final generation = ++_generation;
@@ -128,6 +131,11 @@ class NavigationSession extends ChangeNotifier {
           return;
         }
         _lastFixAt = result.recordedAt ?? _lastFixAt;
+        if (!camera.accept(result)) {
+          notice = 'GPS impreciso. Esperando una ubicación fiable.';
+          notifyListeners();
+          return;
+        }
         _acceptPosition(result.coordinates!);
       },
       onError: (Object error) {

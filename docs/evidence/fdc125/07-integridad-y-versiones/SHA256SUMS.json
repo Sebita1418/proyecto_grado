@@ -1,0 +1,358 @@
+{
+  "date": "2026-10-16",
+  "algorithm": "SHA-256",
+  "excludes": [
+    "07-integridad-y-versiones/SHA256SUMS.json",
+    "06-capturas/revision-local/"
+  ],
+  "files": [
+    {
+      "path": "01-trazabilidad/code-state.json",
+      "sizeBytes": 493,
+      "sha256": "e0bd0d8cc038143172fe6ed132fa21b29ab2eee798e5b3ac1e9f5e53ce58ddec",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/git-diff-stat.txt",
+      "sizeBytes": 3556,
+      "sha256": "3916261a691f4e8d436df2ab22617a2855a777b0920c8e59a5474428d56853d3",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/git-log.txt",
+      "sizeBytes": 392,
+      "sha256": "dcdc348db7ad822c3e96a2d972951adf0f4d0b2ed184bc9cf6589fc43e438b72",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/git-status-before.txt",
+      "sizeBytes": 7306,
+      "sha256": "e5ef299f30e69124614940e34ecdaf142c23099efcce70bc738895740361db64",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/git-status-current.txt",
+      "sizeBytes": 3950,
+      "sha256": "a78d9790a2149e3c470ed8044f48e32cbe34fd42a3d7085f0eded1941669061c",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/git-status-final.txt",
+      "sizeBytes": 11944,
+      "sha256": "20345a97b7207114d36dd3d5770477d9a0828278ae6418d217b6117c3e540b59",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/github-snapshot.json",
+      "sizeBytes": 516,
+      "sha256": "7361df260f2be0ccbf48a33cf3b4a1640e93447ea92ad7196c9b4201d5be0d40",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/origin-develop.txt",
+      "sizeBytes": 124,
+      "sha256": "9fd07e567a45e575feee844da03bd69009e951c67b54387d2fc875f0c5aa6470",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/PR_BODY.md",
+      "sizeBytes": 1019,
+      "sha256": "d41f92138fa4816ed2b92b8b45a69796abef973b1226e4b9721ba60721c9a97d",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/PUBLICACION.md",
+      "sizeBytes": 4916,
+      "sha256": "837f9a9d6d526e3ba33db7c9f77acb4809996e31464159693833b72cce6ad61c",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/README.md",
+      "sizeBytes": 2657,
+      "sha256": "73b7477c7abcb94788f7edf1638943e41c3ee945edb91bb6cf8ea7f9950edd5f",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/RELEASE_NOTES.md",
+      "sizeBytes": 1077,
+      "sha256": "e97958800406c148cb6cf6f8e14aea51306e61a007f1fcc6d11f7a751b292bc5",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/source-state.sha256",
+      "sizeBytes": 23500,
+      "sha256": "15e672c04262b4b4d40175334cd784ab9f26ad283166495f90a924c36ec1ac69",
+      "localOnly": false
+    },
+    {
+      "path": "01-trazabilidad/stash-list.txt",
+      "sizeBytes": 136,
+      "sha256": "9e8bdb6a8fd878055bc81eb88c120e10a49470c9a21403b6fea5cb8e863ea21f",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/analyze-original.log",
+      "sizeBytes": 202,
+      "sha256": "3f49174e7fbce195d8537f25a3e7ed4baad624f226ada541da987f631f76c3d5",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/analyze-readable.txt",
+      "sizeBytes": 100,
+      "sha256": "09939e64a042a960b7c393f350a766eb172c88bedacefbe75874faf832a1a037",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/commands.json",
+      "sizeBytes": 724,
+      "sha256": "d5ca5a35443878b1ed5a85003dddb160ec43aed3bb8deedfb29d7e43e189b54a",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/diff-original.log",
+      "sizeBytes": 1230,
+      "sha256": "5bfa8002a251bdac33ea62f3f01383a82876a41e1dc3ae83aff81b7301a2b4ee",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/diff-readable.txt",
+      "sizeBytes": 616,
+      "sha256": "babec19e78cb5a32d88cad4772fb3fb14db77becf38c794e83fadc714f307a27",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/encoding-provenance.json",
+      "sizeBytes": 723,
+      "sha256": "4843147c311971e08a5e4d603490f48b2ed2048f7a01105c4dcf9e45ba9e0cb9",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/final-diff-original.log",
+      "sizeBytes": 1228,
+      "sha256": "49e60ac8713ea32e036c9214897db6683a21581e01cabf0b92f6e12273d53c52",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/pre-build-diff.log",
+      "sizeBytes": 1230,
+      "sha256": "aaa76a624c3dd95b41a97ffe0a0a0d837a1da0d087ee7b52f99083d1d8ca3cd9",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/README.md",
+      "sizeBytes": 2306,
+      "sha256": "71232cd32662d947e4153ae71d8e2bb8e860fe9cf49f9f0ee130189c955fbee3",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/run-summary.json",
+      "sizeBytes": 458,
+      "sha256": "e565b3a2764e2a01149cf7e7d83a1129b87a68484bf2741193d1c52259920509",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/test-machine-original.log",
+      "sizeBytes": 950938,
+      "sha256": "4c979a00698d3cca0a9f087da6768d08af247ede6036a7d4a7903b8d22a72056",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/test-machine-readable.jsonl",
+      "sizeBytes": 475851,
+      "sha256": "738ab797deb3bcbb0b71cf6b5ab84ce0e980c448eb8974248389e70e022a8881",
+      "localOnly": false
+    },
+    {
+      "path": "02-pruebas-automatizadas/tests-results.json",
+      "sizeBytes": 169020,
+      "sha256": "cda36b307a72563a2b8b44302bdd150b466faf190d786493c6e54c1c5deb903a",
+      "localOnly": false
+    },
+    {
+      "path": "03-pruebas-android/devices-original.log",
+      "sizeBytes": 1250,
+      "sha256": "14a3ef666e4a7a2a7aa50b6ff2cf233008210d2cc2ee5b7c16ddb94b165fb80a",
+      "localOnly": false
+    },
+    {
+      "path": "03-pruebas-android/matrix.json",
+      "sizeBytes": 3666,
+      "sha256": "3dfc16dad277e20e5998b688dcd3211376160c6a70935324c4a04f1abe2201d8",
+      "localOnly": false
+    },
+    {
+      "path": "03-pruebas-android/README.md",
+      "sizeBytes": 3452,
+      "sha256": "1ac5c6243154742dd013945b4dd27ea390b56f57ee6cb2ee1e31955fc66ed1a1",
+      "localOnly": false
+    },
+    {
+      "path": "04-objetivo-3/flow.md",
+      "sizeBytes": 978,
+      "sha256": "2223349c6b3c686b69a36099847101ba63efc02e809bbdab2f140b73834d475f",
+      "localOnly": false
+    },
+    {
+      "path": "04-objetivo-3/matrix.json",
+      "sizeBytes": 17880,
+      "sha256": "11b2251e4e0e8b5ea5334eea8b99e4317079e4bc37a70b4fe9b83cf40286e320",
+      "localOnly": false
+    },
+    {
+      "path": "04-objetivo-3/README.md",
+      "sizeBytes": 8173,
+      "sha256": "f40583f7b3190d41fe3935df89ea891508cbb69ccdec45dc352ddaaca38b8043",
+      "localOnly": false
+    },
+    {
+      "path": "04-objetivo-3/run-2026-10-16/scenarios.json",
+      "sizeBytes": 8939,
+      "sha256": "0ca40bc84a7157e15e7d30ee7cd89a06bd795f240f938f1902175deb763b0ccb",
+      "localOnly": false
+    },
+    {
+      "path": "05-videos-originales/manifest.json",
+      "sizeBytes": 1838,
+      "sha256": "417fb2cbb63b0fb2dd30a0f02f568806e86979779dec90e02f609640d273158c",
+      "localOnly": false
+    },
+    {
+      "path": "05-videos-originales/README.md",
+      "sizeBytes": 1238,
+      "sha256": "31635062d0f92cca91d89f3f74a76ce67d8d651db71f8d53af8184ca7370e5c5",
+      "localOnly": false
+    },
+    {
+      "path": "05-videos-originales/WhatsApp Video 2026-10-15 at 23.13.00.mp4",
+      "sizeBytes": 3183462,
+      "sha256": "dbb8b4b4c8ab117a2062c220eeb0ae542d6456737fb8c53001f01971df47bf35",
+      "localOnly": true
+    },
+    {
+      "path": "05-videos-originales/WhatsApp Video 2026-10-15 at 23.13.15.mp4",
+      "sizeBytes": 16532097,
+      "sha256": "0640fc557724c7c73192028c7e9e68ca702aad08d7ec50014d8d6c8bf2cbfc5e",
+      "localOnly": true
+    },
+    {
+      "path": "06-capturas/manifest.json",
+      "sizeBytes": 1352,
+      "sha256": "42aed2de63d61379c95f46e3ab8dfc3ef7007f62828476c893b82801394a32b7",
+      "localOnly": false
+    },
+    {
+      "path": "06-capturas/README.md",
+      "sizeBytes": 1112,
+      "sha256": "e799a3b0f4dae8d9a13e48b14200c3c517f7e82b36c9c7da061b46f3e6d1f241",
+      "localOnly": false
+    },
+    {
+      "path": "06-capturas/V01-t08-google-anonimizada.png",
+      "sizeBytes": 28065,
+      "sha256": "bc1c41b493b7b7e7200417b6fab5abb0989b12fbfebc6231c60198400e61af84",
+      "localOnly": false
+    },
+    {
+      "path": "06-capturas/V01-t17-home-anonimizada.png",
+      "sizeBytes": 96333,
+      "sha256": "c9c699287e8b6a87f18e83bee57ca7129677ab009839689219b252e91b7d933b",
+      "localOnly": false
+    },
+    {
+      "path": "06-capturas/V02-t85-analitica-derivada.png",
+      "sizeBytes": 119744,
+      "sha256": "873718bacf4d02d80cfc5898e61a77ac56045b94c004bfa0ec8157de3835696a",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/APK-SHA256SUMS.txt",
+      "sizeBytes": 129,
+      "sha256": "a768d3dbe3d38abd638c95df6b552528e0c2ef924739506e0b70b62f46b3e11d",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/assets-original.log",
+      "sizeBytes": 2360,
+      "sha256": "28c646f7bed9118098285a2f7aa4ea648922e79909f5acae04e14bc488b0d3ea",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/badging-original.log",
+      "sizeBytes": 12404,
+      "sha256": "c667d7e035488a861fc4f7f5cfce79ea88444789670c965f8d8a0c86d210ba25",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/build-command.json",
+      "sizeBytes": 269,
+      "sha256": "8a148c13f322c4f48fedc15b5ec5190caa95839d634c8b943f2a08a88b48956d",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/build-final-original.log",
+      "sizeBytes": 8922,
+      "sha256": "15f41e9fe6b72525ccb8813c58482c721abaf8884c9886cc4ed709f37682a598",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/github-size-review.json",
+      "sizeBytes": 641,
+      "sha256": "373f0e805567d29ba722770477c995ce6415cbf966d616cd7da29fc47cd96356",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/INVENTARIO.md",
+      "sizeBytes": 5518,
+      "sha256": "794cb03039457598c034b329469ff77127a2d5098662bfe951449ba15a20862f",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/manifest-original.log",
+      "sizeBytes": 24972,
+      "sha256": "6268eff994c2eb67f76ef53fe57101827f7a1cef9e5be8df92b946989ca2664a",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/originals-baseline.json",
+      "sizeBytes": 7907,
+      "sha256": "c2221f62e9ef97740cd4a02ff2b44f91530601892ab5132592ca9ffc21f1c4ea",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/preservation-final.json",
+      "sizeBytes": 541,
+      "sha256": "d218f5e848876e9dc04b846592515817b48b43f7528168786fda5373541cf7d2",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/privacy-review.json",
+      "sizeBytes": 485,
+      "sha256": "ce28420ea9c304bab26eeff180e2903354acd44e26ec1cbcd772fd08d5e4e11e",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/README.md",
+      "sizeBytes": 3049,
+      "sha256": "35192b4b4ee189f29ee89e9bffed09222a75c5d8fddad2d06d98086a63280a3b",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/signature-original.log",
+      "sizeBytes": 1946,
+      "sha256": "17a8a5228f0f074b8e785e182c82e209b24a32fec25a2dd1bebdfa1c20e981c2",
+      "localOnly": false
+    },
+    {
+      "path": "07-integridad-y-versiones/version-final.json",
+      "sizeBytes": 1968,
+      "sha256": "4ea0c809e51386e6ed8f6195802a3322577e44c8b9d00a91a4e2ff524251e68e",
+      "localOnly": false
+    },
+    {
+      "path": "README.md",
+      "sizeBytes": 5680,
+      "sha256": "bd8857578046e7ae8b4debb7e1eabfbdd4c59559fcc2be66e13d191cac410ba2",
+      "localOnly": false
+    }
+  ]
+}

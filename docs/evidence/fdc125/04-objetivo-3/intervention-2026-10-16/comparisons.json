@@ -1,0 +1,280 @@
+[
+  {
+    "id": "controlled-clear",
+    "dataNature": "B: synthetic routes and incident fixture",
+    "origin": [
+      0.0,
+      0.0
+    ],
+    "destination": [
+      0.0,
+      0.02
+    ],
+    "allowedModes": [
+      "driving"
+    ],
+    "requestedAt": "2026-09-27T12:00:00.000Z",
+    "baselinePolicy": "first OSRM alternative supplied, not observed fastest travel",
+    "baselineId": "osrm-0",
+    "recommendedId": "osrm-0",
+    "alternatives": [
+      {
+        "id": "osrm-0",
+        "mode": "driving",
+        "distanceMeters": 2200.0,
+        "durationSeconds": 100.0,
+        "activeNearbyReports": 0
+      },
+      {
+        "id": "osrm-1",
+        "mode": "driving",
+        "distanceMeters": 2400.0,
+        "durationSeconds": 120.0,
+        "activeNearbyReports": 0
+      }
+    ],
+    "durationDifferenceSeconds": 0.0,
+    "durationDifferencePercent": 0.0,
+    "distanceDifferenceMeters": 0.0,
+    "distanceDifferencePercent": 0.0,
+    "algorithmMicroseconds": 12184,
+    "trafficObservedRouteCoverage": 0,
+    "contextualScore": null,
+    "explainable": true,
+    "reasons": [
+      "Ruta sugerida: sin reportes viales activos próximos en los datos disponibles.",
+      "Regla provisional: grupo comparable hasta 25 % más de duración y 50 % más de distancia que la ruta más rápida. La proximidad no confirma bloqueo ni sentido de circulación.",
+      "Menor duración estimada entre las alternativas finalistas con igual exposición. Tiempos y distancias del proveedor sin ajustes.",
+      "Se respetan los modos permitidos para esta consulta: vehículo. La comparación de tiempos entre modos usa sus rutas consultadas, sin una puntuación multimodal inventada.",
+      "Tráfico actual no disponible (BLOCKED: sin proveedor configurado). OSRM no incluye tráfico en vivo; consulta el historial general al elegir una salida programada."
+    ]
+  },
+  {
+    "id": "controlled-incident",
+    "dataNature": "B: synthetic routes and incident fixture",
+    "origin": [
+      0.0,
+      0.0
+    ],
+    "destination": [
+      0.0,
+      0.02
+    ],
+    "allowedModes": [
+      "driving"
+    ],
+    "requestedAt": "2026-09-27T12:00:00.000Z",
+    "baselinePolicy": "first OSRM alternative supplied, not observed fastest travel",
+    "baselineId": "osrm-0",
+    "recommendedId": "osrm-1",
+    "alternatives": [
+      {
+        "id": "osrm-0",
+        "mode": "driving",
+        "distanceMeters": 2200.0,
+        "durationSeconds": 100.0,
+        "activeNearbyReports": 1
+      },
+      {
+        "id": "osrm-1",
+        "mode": "driving",
+        "distanceMeters": 2400.0,
+        "durationSeconds": 120.0,
+        "activeNearbyReports": 0
+      }
+    ],
+    "durationDifferenceSeconds": 20.0,
+    "durationDifferencePercent": 20.0,
+    "distanceDifferenceMeters": 200.0,
+    "distanceDifferencePercent": 9.090909090909092,
+    "algorithmMicroseconds": 1095,
+    "trafficObservedRouteCoverage": 0,
+    "contextualScore": null,
+    "explainable": true,
+    "reasons": [
+      "Ruta sugerida: sin reportes viales activos próximos en los datos disponibles.",
+      "Regla provisional: grupo comparable hasta 25 % más de duración y 50 % más de distancia que la ruta más rápida. La proximidad no confirma bloqueo ni sentido de circulación.",
+      "Única alternativa finalista tras comparar proximidad y límites de duración/distancia. Tiempos y distancias del proveedor sin ajustes.",
+      "Se respetan los modos permitidos para esta consulta: vehículo. La comparación de tiempos entre modos usa sus rutas consultadas, sin una puntuación multimodal inventada.",
+      "Tráfico actual no disponible (BLOCKED: sin proveedor configurado). OSRM no incluye tráfico en vivo; consulta el historial general al elegir una salida programada."
+    ]
+  },
+  {
+    "id": "controlled-missing",
+    "dataNature": "B: synthetic route, missing incident data",
+    "origin": [
+      0.0,
+      0.0
+    ],
+    "destination": [
+      0.0,
+      0.02
+    ],
+    "allowedModes": [
+      "driving"
+    ],
+    "requestedAt": "2026-09-27T12:00:00.000Z",
+    "baselinePolicy": "first OSRM alternative supplied, not observed fastest travel",
+    "baselineId": "osrm-0",
+    "recommendedId": "osrm-0",
+    "alternatives": [
+      {
+        "id": "osrm-0",
+        "mode": "driving",
+        "distanceMeters": 2200.0,
+        "durationSeconds": 100.0,
+        "activeNearbyReports": null
+      }
+    ],
+    "durationDifferenceSeconds": 0.0,
+    "durationDifferencePercent": 0.0,
+    "distanceDifferenceMeters": 0.0,
+    "distanceDifferencePercent": 0.0,
+    "algorithmMicroseconds": 291,
+    "trafficObservedRouteCoverage": 0,
+    "contextualScore": null,
+    "explainable": true,
+    "reasons": [
+      "Única alternativa vehicular elegible recibida para este cálculo.",
+      "Se respetan los modos permitidos para esta consulta: vehículo. La comparación de tiempos entre modos usa sus rutas consultadas, sin una puntuación multimodal inventada.",
+      "Tráfico actual no disponible (BLOCKED: sin proveedor configurado). OSRM no incluye tráfico en vivo; consulta el historial general al elegir una salida programada."
+    ]
+  },
+  {
+    "id": "real-1-driving",
+    "dataNature": "A: captured real OSRM; replayed HTTP; incident and traffic unavailable",
+    "origin": [
+      7.1409311,
+      -73.1198652
+    ],
+    "destination": [
+      7.1196763,
+      -73.1228536
+    ],
+    "allowedModes": [
+      "driving"
+    ],
+    "requestedAt": "2026-10-17T02:17:51.007Z",
+    "baselinePolicy": "first OSRM alternative supplied, not observed fastest travel",
+    "baselineId": "osrm-0",
+    "recommendedId": "osrm-0",
+    "alternatives": [
+      {
+        "id": "osrm-0",
+        "mode": "driving",
+        "distanceMeters": 4021.4,
+        "durationSeconds": 421.5,
+        "activeNearbyReports": null
+      },
+      {
+        "id": "osrm-1",
+        "mode": "driving",
+        "distanceMeters": 3694.3,
+        "durationSeconds": 457.7,
+        "activeNearbyReports": null
+      }
+    ],
+    "durationDifferenceSeconds": 0.0,
+    "durationDifferencePercent": 0.0,
+    "distanceDifferenceMeters": 0.0,
+    "distanceDifferencePercent": 0.0,
+    "algorithmMicroseconds": 537,
+    "trafficObservedRouteCoverage": 0,
+    "contextualScore": null,
+    "explainable": true,
+    "reasons": [
+      "Menor duración estimada entre las alternativas vehiculares elegibles recibidas.",
+      "Se respetan los modos permitidos para esta consulta: vehículo. La comparación de tiempos entre modos usa sus rutas consultadas, sin una puntuación multimodal inventada.",
+      "Tráfico actual no disponible (BLOCKED: sin proveedor configurado). OSRM no incluye tráfico en vivo; consulta el historial general al elegir una salida programada."
+    ]
+  },
+  {
+    "id": "real-2-driving",
+    "dataNature": "A: captured real OSRM; replayed HTTP; incident and traffic unavailable",
+    "origin": [
+      7.0625677,
+      -73.0859086
+    ],
+    "destination": [
+      7.1196763,
+      -73.1228536
+    ],
+    "allowedModes": [
+      "driving"
+    ],
+    "requestedAt": "2026-10-17T02:17:55.881Z",
+    "baselinePolicy": "first OSRM alternative supplied, not observed fastest travel",
+    "baselineId": "osrm-0",
+    "recommendedId": "osrm-0",
+    "alternatives": [
+      {
+        "id": "osrm-0",
+        "mode": "driving",
+        "distanceMeters": 9041.5,
+        "durationSeconds": 539.3,
+        "activeNearbyReports": null
+      },
+      {
+        "id": "osrm-1",
+        "mode": "driving",
+        "distanceMeters": 10794.8,
+        "durationSeconds": 578.8,
+        "activeNearbyReports": null
+      }
+    ],
+    "durationDifferenceSeconds": 0.0,
+    "durationDifferencePercent": 0.0,
+    "distanceDifferenceMeters": 0.0,
+    "distanceDifferencePercent": 0.0,
+    "algorithmMicroseconds": 813,
+    "trafficObservedRouteCoverage": 0,
+    "contextualScore": null,
+    "explainable": true,
+    "reasons": [
+      "Menor duración estimada entre las alternativas vehiculares elegibles recibidas.",
+      "Se respetan los modos permitidos para esta consulta: vehículo. La comparación de tiempos entre modos usa sus rutas consultadas, sin una puntuación multimodal inventada.",
+      "Tráfico actual no disponible (BLOCKED: sin proveedor configurado). OSRM no incluye tráfico en vivo; consulta el historial general al elegir una salida programada."
+    ]
+  },
+  {
+    "id": "real-3-driving",
+    "dataNature": "A: captured real OSRM; replayed HTTP; incident and traffic unavailable",
+    "origin": [
+      7.069069,
+      -73.1700282
+    ],
+    "destination": [
+      7.1196763,
+      -73.1228536
+    ],
+    "allowedModes": [
+      "driving"
+    ],
+    "requestedAt": "2026-10-17T02:18:00.433Z",
+    "baselinePolicy": "first OSRM alternative supplied, not observed fastest travel",
+    "baselineId": "osrm-0",
+    "recommendedId": "osrm-0",
+    "alternatives": [
+      {
+        "id": "osrm-0",
+        "mode": "driving",
+        "distanceMeters": 10455.2,
+        "durationSeconds": 630.5,
+        "activeNearbyReports": null
+      }
+    ],
+    "durationDifferenceSeconds": 0.0,
+    "durationDifferencePercent": 0.0,
+    "distanceDifferenceMeters": 0.0,
+    "distanceDifferencePercent": 0.0,
+    "algorithmMicroseconds": 545,
+    "trafficObservedRouteCoverage": 0,
+    "contextualScore": null,
+    "explainable": true,
+    "reasons": [
+      "Única alternativa vehicular elegible recibida para este cálculo.",
+      "Se respetan los modos permitidos para esta consulta: vehículo. La comparación de tiempos entre modos usa sus rutas consultadas, sin una puntuación multimodal inventada.",
+      "Tráfico actual no disponible (BLOCKED: sin proveedor configurado). OSRM no incluye tráfico en vivo; consulta el historial general al elegir una salida programada."
+    ]
+  }
+]

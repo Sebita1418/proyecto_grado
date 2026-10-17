@@ -1,0 +1,53 @@
+{
+  "project": "Transporte Inteligente",
+  "purpose": "Entrega académica F-DC-125; no distribución de producción",
+  "date": "2026-10-16",
+  "applicationId": "com.example.transporte_inteligente",
+  "versionName": "1.0.1",
+  "versionCode": 20261016,
+  "buildMode": "release",
+  "signing": {
+    "type": "Android Debug",
+    "scheme": "v2",
+    "certificateSha256": "27b98872756c1a1e6dea44defae811127be4dbf7f6e1c666dab9a8757c9d5a85"
+  },
+  "apk": {
+    "file": "transporte-inteligente-1.0.1-20261016-release-debug-signed.apk",
+    "sizeBytes": 60331195,
+    "sha256": "df46b68345ea3e07fce5eb57a452863fccf33b431e4c76be54361d44727bcd40"
+  },
+  "branch": "feature/android-end-to-end-validation",
+  "baseCommit": "226f1a4fb04fcc8b5bc8a2aed4e7e4a550b71fa4",
+  "sourceStateSha256": "15e672c04262b4b4d40175334cd784ab9f26ad283166495f90a924c36ec1ac69",
+  "workingTree": "dirty; tested source-state.sha256 includes uncommitted files",
+  "flutter": "3.47.7",
+  "dart": "3.13.5",
+  "tests": {
+    "passed": 754,
+    "failed": 0,
+    "skipped": 0,
+    "analysis": "PASS",
+    "diff": "PASS",
+    "physical": "NOT TESTED: Samsung S22 not connected"
+  },
+  "buildCommand": "flutter build apk --release --no-pub --build-name=1.0.1 --build-number=20261016",
+  "assets": [
+    {
+      "entry": "assets/flutter_assets/assets/geo/bucaramanga-mgn2024.geojson",
+      "sizeBytes": 181231,
+      "sha256": "1dca6635bceacb6ca36b038ecb8906ad1ff3f9e312f6e4bface812562059deb5"
+    },
+    {
+      "entry": "assets/flutter_assets/assets/geo/giron-mgn2024.geojson",
+      "sizeBytes": 314197,
+      "sha256": "d21059491f262a3369a10c33da38988a367fa5a9a1bff55d74600146208820a2"
+    },
+    {
+      "entry": "assets/flutter_assets/assets/geo/floridablanca-mgn2024.geojson",
+      "sizeBytes": 129423,
+      "sha256": "fa74508977642bd1631f5833f4db38d1624c91845675da880a42e41196e27794"
+    }
+  ],
+  "oauthCallback": "transporteinteligente://login-callback/",
+  "createdAt": "2026-10-17T01:51:02.614Z"
+}

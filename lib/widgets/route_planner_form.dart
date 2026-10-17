@@ -5,6 +5,7 @@ class RoutePlannerForm extends StatelessWidget {
   final TextEditingController destinationController;
   final VoidCallback onCalculate;
   final bool isLoading;
+  final VoidCallback? onSearchOrigin, onSearchDestination;
 
   final String? originError;
   final String? destinationError;
@@ -24,6 +25,8 @@ class RoutePlannerForm extends StatelessWidget {
     required this.destinationController,
     required this.onCalculate,
     this.isLoading = false,
+    this.onSearchOrigin,
+    this.onSearchDestination,
     this.originError,
     this.destinationError,
     this.originSuggestions,
@@ -55,7 +58,10 @@ class RoutePlannerForm extends StatelessWidget {
             TextField(
               controller: originController,
               enabled: !isLoading,
-              textInputAction: TextInputAction.next,
+              textInputAction: onSearchOrigin == null
+                  ? TextInputAction.next
+                  : TextInputAction.search,
+              onSubmitted: (_) => onSearchOrigin?.call(),
               decoration: InputDecoration(
                 labelText: 'Origen',
                 hintText: 'Busca un lugar o dirección',
@@ -72,7 +78,7 @@ class RoutePlannerForm extends StatelessWidget {
             controller: destinationController,
             autofillHints: const [AutofillHints.fullStreetAddress],
             enabled: !isLoading,
-            textInputAction: TextInputAction.done,
+            textInputAction: TextInputAction.search,
             decoration: InputDecoration(
               labelText: 'Destino',
               hintText: 'Busca un lugar o dirección',
@@ -81,7 +87,7 @@ class RoutePlannerForm extends StatelessWidget {
             ),
             onSubmitted: (_) {
               if (!isLoading) {
-                onCalculate();
+                (onSearchDestination ?? onCalculate)();
               }
             },
           ),

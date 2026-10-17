@@ -1,4 +1,13 @@
-# Cobertura territorial de Bucaramanga
+# Cobertura territorial
+
+La configuración operativa actual incluye **Bucaramanga, Girón y Floridablanca**,
+con los tres municipios DANE MGN 2024. Piedecuesta no está incluida. Véase
+[la ampliación, sus estados parciales y validación](operational-coverage.md).
+
+El informe siguiente conserva la evidencia de la fase original de Bucaramanga
+sola. Sus pruebas continúan ejecutándose con esa configuración explícita.
+
+# Fase original: Bucaramanga
 
 La validación se centraliza en `MunicipalBoundaryService`, con un recurso local
 versionado del DANE MGN 2024, municipio 68001. La fuente, consulta exacta, CRS,

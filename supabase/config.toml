@@ -1,0 +1,2 @@
+[functions.traffic-flow]
+verify_jwt = true

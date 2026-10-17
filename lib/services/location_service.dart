@@ -12,11 +12,23 @@ enum LocationStatus {
 }
 
 class LocationResult {
-  const LocationResult(this.status, {this.coordinates, this.recordedAt});
+  const LocationResult(
+    this.status, {
+    this.coordinates,
+    this.recordedAt,
+    this.accuracyMeters,
+    this.speedMetersPerSecond,
+    this.headingDegrees,
+    this.headingAccuracyDegrees,
+  });
 
   final LocationStatus status;
   final LatLng? coordinates;
   final DateTime? recordedAt;
+  final double? accuracyMeters,
+      speedMetersPerSecond,
+      headingDegrees,
+      headingAccuracyDegrees;
 }
 
 abstract class LocationGateway {
@@ -79,6 +91,10 @@ class LocationService {
           LocationStatus.coordinatesObtained,
           coordinates: point,
           recordedAt: position.timestamp,
+          accuracyMeters: position.accuracy,
+          speedMetersPerSecond: position.speed,
+          headingDegrees: position.heading,
+          headingAccuracyDegrees: position.headingAccuracy,
         );
       }
     } catch (_) {

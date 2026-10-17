@@ -1,0 +1,22 @@
+{
+  "versionName": "1.0.2",
+  "versionCode": 2026101601,
+  "apkSha256": "435913b6c1eb08ace49d80005f7b20d4561a1428fa9d254ba45a769384d9eb40",
+  "device": {
+    "model": "Samsung Galaxy S22 / SM-S901U",
+    "serial": "R3CT30HX60V",
+    "android": "15",
+    "api": 35
+  },
+  "observedAt": "2026-10-17T02:32:50.337Z",
+  "installation": "PASS: adb install -r Success",
+  "installedApkHash": "PASS: exact match",
+  "componentLaunch": "PASS: am start -S -W Status ok; MainActivity; WaitTime 3122 ms",
+  "visibleApplication": "NOT TESTED: screen was off/locked; wake showed NotificationShade over focused app; awaiting human unlock",
+  "screenshot": {
+    "path": "artifacts/objective-3-android/s22-launch.png",
+    "sha256": "0663e04855d2404101762a726559f6156191fce0603e686354a55634a062fa3d",
+    "observation": "Always-on charging screen, not proof of visible Home; local ignored artifact"
+  },
+  "humanFunctionalTests": "NOT TESTED: no confirmation for this APK; previous videos are not attributed to this version"
+}

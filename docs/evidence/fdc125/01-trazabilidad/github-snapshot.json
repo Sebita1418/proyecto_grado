@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-16",
+  "repo": "Sebita1418/proyecto_grado",
+  "url": "https://github.com/Sebita1418/proyecto_grado",
+  "private": true,
+  "defaultBranch": "main",
+  "workingBranch": "feature/android-end-to-end-validation",
+  "pullRequestTarget": "develop",
+  "localDevelop": "226f1a4fb04fcc8b5bc8a2aed4e7e4a550b71fa4",
+  "remoteDevelopObserved": "226f1a4fb04fcc8b5bc8a2aed4e7e4a550b71fa4",
+  "ghVersion": "2.101.0",
+  "authenticated": true,
+  "credentialValuesRecorded": false,
+  "publicationExecuted": false
+}

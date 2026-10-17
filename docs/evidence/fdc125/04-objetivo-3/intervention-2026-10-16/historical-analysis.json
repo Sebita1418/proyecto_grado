@@ -1,0 +1,1018 @@
+{
+  "received": 39193,
+  "valid": 39190,
+  "discarded": 3,
+  "discardedReasons": {
+    "invalid_date_or_hour": 3
+  },
+  "dateRange": {
+    "first": "2012-01-01",
+    "last": "2023-09-30"
+  },
+  "variables": [
+    "orden",
+    "fecha",
+    "hora",
+    "gravedad",
+    "nombrecomuna",
+    "automovil",
+    "moto",
+    "bicicleta",
+    "peaton"
+  ],
+  "groups": [
+    {
+      "dimension": "commune",
+      "value": "01. NORTE",
+      "count": 1208
+    },
+    {
+      "dimension": "commune",
+      "value": "02. NORORIENTAL",
+      "count": 535
+    },
+    {
+      "dimension": "commune",
+      "value": "03. SAN FRANCISCO",
+      "count": 5286
+    },
+    {
+      "dimension": "commune",
+      "value": "04. OCCIDENTAL",
+      "count": 2143
+    },
+    {
+      "dimension": "commune",
+      "value": "05. GARCIA ROVIRA",
+      "count": 1517
+    },
+    {
+      "dimension": "commune",
+      "value": "06. LA CONCORDIA",
+      "count": 3180
+    },
+    {
+      "dimension": "commune",
+      "value": "07. LA CIUDADELA",
+      "count": 861
+    },
+    {
+      "dimension": "commune",
+      "value": "08. SUR OCCIDENTE",
+      "count": 612
+    },
+    {
+      "dimension": "commune",
+      "value": "09. LA PEDREGOSA",
+      "count": 1188
+    },
+    {
+      "dimension": "commune",
+      "value": "10. PROVENZA",
+      "count": 2421
+    },
+    {
+      "dimension": "commune",
+      "value": "11. SUR",
+      "count": 716
+    },
+    {
+      "dimension": "commune",
+      "value": "12. CABECERA DEL LLANO",
+      "count": 6415
+    },
+    {
+      "dimension": "commune",
+      "value": "13. ORIENTAL",
+      "count": 5093
+    },
+    {
+      "dimension": "commune",
+      "value": "14. MORRORICO",
+      "count": 420
+    },
+    {
+      "dimension": "commune",
+      "value": "15. CENTRO",
+      "count": 4404
+    },
+    {
+      "dimension": "commune",
+      "value": "16. LAGOS DEL CACIQUE",
+      "count": 806
+    },
+    {
+      "dimension": "commune",
+      "value": "17. MUTIS",
+      "count": 693
+    },
+    {
+      "dimension": "commune",
+      "value": "CORREG. 1",
+      "count": 83
+    },
+    {
+      "dimension": "commune",
+      "value": "CORREG. 2",
+      "count": 1
+    },
+    {
+      "dimension": "commune",
+      "value": "CORREG. 3",
+      "count": 55
+    },
+    {
+      "dimension": "commune",
+      "value": "NO DISPONIBLE",
+      "count": 1553
+    },
+    {
+      "dimension": "hour",
+      "value": "00",
+      "count": 408
+    },
+    {
+      "dimension": "hour",
+      "value": "01",
+      "count": 384
+    },
+    {
+      "dimension": "hour",
+      "value": "02",
+      "count": 411
+    },
+    {
+      "dimension": "hour",
+      "value": "03",
+      "count": 347
+    },
+    {
+      "dimension": "hour",
+      "value": "04",
+      "count": 335
+    },
+    {
+      "dimension": "hour",
+      "value": "05",
+      "count": 644
+    },
+    {
+      "dimension": "hour",
+      "value": "06",
+      "count": 1457
+    },
+    {
+      "dimension": "hour",
+      "value": "07",
+      "count": 2039
+    },
+    {
+      "dimension": "hour",
+      "value": "08",
+      "count": 2062
+    },
+    {
+      "dimension": "hour",
+      "value": "09",
+      "count": 2018
+    },
+    {
+      "dimension": "hour",
+      "value": "10",
+      "count": 2270
+    },
+    {
+      "dimension": "hour",
+      "value": "11",
+      "count": 2508
+    },
+    {
+      "dimension": "hour",
+      "value": "12",
+      "count": 2927
+    },
+    {
+      "dimension": "hour",
+      "value": "13",
+      "count": 2119
+    },
+    {
+      "dimension": "hour",
+      "value": "14",
+      "count": 2563
+    },
+    {
+      "dimension": "hour",
+      "value": "15",
+      "count": 2490
+    },
+    {
+      "dimension": "hour",
+      "value": "16",
+      "count": 2487
+    },
+    {
+      "dimension": "hour",
+      "value": "17",
+      "count": 2375
+    },
+    {
+      "dimension": "hour",
+      "value": "18",
+      "count": 2597
+    },
+    {
+      "dimension": "hour",
+      "value": "19",
+      "count": 2177
+    },
+    {
+      "dimension": "hour",
+      "value": "20",
+      "count": 1585
+    },
+    {
+      "dimension": "hour",
+      "value": "21",
+      "count": 1369
+    },
+    {
+      "dimension": "hour",
+      "value": "22",
+      "count": 1034
+    },
+    {
+      "dimension": "hour",
+      "value": "23",
+      "count": 584
+    },
+    {
+      "dimension": "month",
+      "value": "2012-01",
+      "count": 317
+    },
+    {
+      "dimension": "month",
+      "value": "2012-02",
+      "count": 376
+    },
+    {
+      "dimension": "month",
+      "value": "2012-03",
+      "count": 394
+    },
+    {
+      "dimension": "month",
+      "value": "2012-04",
+      "count": 342
+    },
+    {
+      "dimension": "month",
+      "value": "2012-05",
+      "count": 352
+    },
+    {
+      "dimension": "month",
+      "value": "2012-06",
+      "count": 321
+    },
+    {
+      "dimension": "month",
+      "value": "2012-07",
+      "count": 334
+    },
+    {
+      "dimension": "month",
+      "value": "2012-08",
+      "count": 384
+    },
+    {
+      "dimension": "month",
+      "value": "2012-09",
+      "count": 382
+    },
+    {
+      "dimension": "month",
+      "value": "2012-10",
+      "count": 389
+    },
+    {
+      "dimension": "month",
+      "value": "2012-11",
+      "count": 357
+    },
+    {
+      "dimension": "month",
+      "value": "2012-12",
+      "count": 394
+    },
+    {
+      "dimension": "month",
+      "value": "2013-01",
+      "count": 314
+    },
+    {
+      "dimension": "month",
+      "value": "2013-02",
+      "count": 308
+    },
+    {
+      "dimension": "month",
+      "value": "2013-03",
+      "count": 354
+    },
+    {
+      "dimension": "month",
+      "value": "2013-04",
+      "count": 351
+    },
+    {
+      "dimension": "month",
+      "value": "2013-05",
+      "count": 367
+    },
+    {
+      "dimension": "month",
+      "value": "2013-06",
+      "count": 304
+    },
+    {
+      "dimension": "month",
+      "value": "2013-07",
+      "count": 344
+    },
+    {
+      "dimension": "month",
+      "value": "2013-08",
+      "count": 333
+    },
+    {
+      "dimension": "month",
+      "value": "2013-09",
+      "count": 368
+    },
+    {
+      "dimension": "month",
+      "value": "2013-10",
+      "count": 354
+    },
+    {
+      "dimension": "month",
+      "value": "2013-11",
+      "count": 317
+    },
+    {
+      "dimension": "month",
+      "value": "2013-12",
+      "count": 340
+    },
+    {
+      "dimension": "month",
+      "value": "2014-01",
+      "count": 289
+    },
+    {
+      "dimension": "month",
+      "value": "2014-02",
+      "count": 312
+    },
+    {
+      "dimension": "month",
+      "value": "2014-03",
+      "count": 347
+    },
+    {
+      "dimension": "month",
+      "value": "2014-04",
+      "count": 275
+    },
+    {
+      "dimension": "month",
+      "value": "2014-05",
+      "count": 302
+    },
+    {
+      "dimension": "month",
+      "value": "2014-06",
+      "count": 269
+    },
+    {
+      "dimension": "month",
+      "value": "2014-07",
+      "count": 298
+    },
+    {
+      "dimension": "month",
+      "value": "2014-08",
+      "count": 345
+    },
+    {
+      "dimension": "month",
+      "value": "2014-09",
+      "count": 320
+    },
+    {
+      "dimension": "month",
+      "value": "2014-10",
+      "count": 344
+    },
+    {
+      "dimension": "month",
+      "value": "2014-11",
+      "count": 291
+    },
+    {
+      "dimension": "month",
+      "value": "2014-12",
+      "count": 332
+    },
+    {
+      "dimension": "month",
+      "value": "2015-01",
+      "count": 281
+    },
+    {
+      "dimension": "month",
+      "value": "2015-02",
+      "count": 326
+    },
+    {
+      "dimension": "month",
+      "value": "2015-03",
+      "count": 303
+    },
+    {
+      "dimension": "month",
+      "value": "2015-04",
+      "count": 311
+    },
+    {
+      "dimension": "month",
+      "value": "2015-05",
+      "count": 338
+    },
+    {
+      "dimension": "month",
+      "value": "2015-06",
+      "count": 291
+    },
+    {
+      "dimension": "month",
+      "value": "2015-07",
+      "count": 315
+    },
+    {
+      "dimension": "month",
+      "value": "2015-08",
+      "count": 321
+    },
+    {
+      "dimension": "month",
+      "value": "2015-09",
+      "count": 348
+    },
+    {
+      "dimension": "month",
+      "value": "2015-10",
+      "count": 324
+    },
+    {
+      "dimension": "month",
+      "value": "2015-11",
+      "count": 314
+    },
+    {
+      "dimension": "month",
+      "value": "2015-12",
+      "count": 293
+    },
+    {
+      "dimension": "month",
+      "value": "2016-01",
+      "count": 278
+    },
+    {
+      "dimension": "month",
+      "value": "2016-02",
+      "count": 342
+    },
+    {
+      "dimension": "month",
+      "value": "2016-03",
+      "count": 316
+    },
+    {
+      "dimension": "month",
+      "value": "2016-04",
+      "count": 360
+    },
+    {
+      "dimension": "month",
+      "value": "2016-05",
+      "count": 315
+    },
+    {
+      "dimension": "month",
+      "value": "2016-06",
+      "count": 294
+    },
+    {
+      "dimension": "month",
+      "value": "2016-07",
+      "count": 284
+    },
+    {
+      "dimension": "month",
+      "value": "2016-08",
+      "count": 304
+    },
+    {
+      "dimension": "month",
+      "value": "2016-09",
+      "count": 315
+    },
+    {
+      "dimension": "month",
+      "value": "2016-10",
+      "count": 314
+    },
+    {
+      "dimension": "month",
+      "value": "2016-11",
+      "count": 304
+    },
+    {
+      "dimension": "month",
+      "value": "2016-12",
+      "count": 313
+    },
+    {
+      "dimension": "month",
+      "value": "2017-01",
+      "count": 246
+    },
+    {
+      "dimension": "month",
+      "value": "2017-02",
+      "count": 283
+    },
+    {
+      "dimension": "month",
+      "value": "2017-03",
+      "count": 295
+    },
+    {
+      "dimension": "month",
+      "value": "2017-04",
+      "count": 296
+    },
+    {
+      "dimension": "month",
+      "value": "2017-05",
+      "count": 380
+    },
+    {
+      "dimension": "month",
+      "value": "2017-06",
+      "count": 314
+    },
+    {
+      "dimension": "month",
+      "value": "2017-07",
+      "count": 319
+    },
+    {
+      "dimension": "month",
+      "value": "2017-08",
+      "count": 336
+    },
+    {
+      "dimension": "month",
+      "value": "2017-09",
+      "count": 361
+    },
+    {
+      "dimension": "month",
+      "value": "2017-10",
+      "count": 329
+    },
+    {
+      "dimension": "month",
+      "value": "2017-11",
+      "count": 323
+    },
+    {
+      "dimension": "month",
+      "value": "2017-12",
+      "count": 330
+    },
+    {
+      "dimension": "month",
+      "value": "2018-01",
+      "count": 291
+    },
+    {
+      "dimension": "month",
+      "value": "2018-02",
+      "count": 306
+    },
+    {
+      "dimension": "month",
+      "value": "2018-03",
+      "count": 323
+    },
+    {
+      "dimension": "month",
+      "value": "2018-04",
+      "count": 325
+    },
+    {
+      "dimension": "month",
+      "value": "2018-05",
+      "count": 351
+    },
+    {
+      "dimension": "month",
+      "value": "2018-06",
+      "count": 316
+    },
+    {
+      "dimension": "month",
+      "value": "2018-07",
+      "count": 323
+    },
+    {
+      "dimension": "month",
+      "value": "2018-08",
+      "count": 313
+    },
+    {
+      "dimension": "month",
+      "value": "2018-09",
+      "count": 339
+    },
+    {
+      "dimension": "month",
+      "value": "2018-10",
+      "count": 318
+    },
+    {
+      "dimension": "month",
+      "value": "2018-11",
+      "count": 351
+    },
+    {
+      "dimension": "month",
+      "value": "2018-12",
+      "count": 361
+    },
+    {
+      "dimension": "month",
+      "value": "2019-01",
+      "count": 281
+    },
+    {
+      "dimension": "month",
+      "value": "2019-02",
+      "count": 296
+    },
+    {
+      "dimension": "month",
+      "value": "2019-03",
+      "count": 347
+    },
+    {
+      "dimension": "month",
+      "value": "2019-04",
+      "count": 273
+    },
+    {
+      "dimension": "month",
+      "value": "2019-05",
+      "count": 333
+    },
+    {
+      "dimension": "month",
+      "value": "2019-06",
+      "count": 290
+    },
+    {
+      "dimension": "month",
+      "value": "2019-07",
+      "count": 334
+    },
+    {
+      "dimension": "month",
+      "value": "2019-08",
+      "count": 302
+    },
+    {
+      "dimension": "month",
+      "value": "2019-09",
+      "count": 338
+    },
+    {
+      "dimension": "month",
+      "value": "2019-10",
+      "count": 319
+    },
+    {
+      "dimension": "month",
+      "value": "2019-11",
+      "count": 305
+    },
+    {
+      "dimension": "month",
+      "value": "2019-12",
+      "count": 298
+    },
+    {
+      "dimension": "month",
+      "value": "2020-01",
+      "count": 285
+    },
+    {
+      "dimension": "month",
+      "value": "2020-02",
+      "count": 296
+    },
+    {
+      "dimension": "month",
+      "value": "2020-03",
+      "count": 203
+    },
+    {
+      "dimension": "month",
+      "value": "2020-04",
+      "count": 81
+    },
+    {
+      "dimension": "month",
+      "value": "2020-05",
+      "count": 123
+    },
+    {
+      "dimension": "month",
+      "value": "2020-06",
+      "count": 120
+    },
+    {
+      "dimension": "month",
+      "value": "2020-07",
+      "count": 159
+    },
+    {
+      "dimension": "month",
+      "value": "2020-08",
+      "count": 165
+    },
+    {
+      "dimension": "month",
+      "value": "2020-09",
+      "count": 179
+    },
+    {
+      "dimension": "month",
+      "value": "2020-10",
+      "count": 236
+    },
+    {
+      "dimension": "month",
+      "value": "2020-11",
+      "count": 193
+    },
+    {
+      "dimension": "month",
+      "value": "2020-12",
+      "count": 221
+    },
+    {
+      "dimension": "month",
+      "value": "2021-01",
+      "count": 197
+    },
+    {
+      "dimension": "month",
+      "value": "2021-02",
+      "count": 175
+    },
+    {
+      "dimension": "month",
+      "value": "2021-03",
+      "count": 253
+    },
+    {
+      "dimension": "month",
+      "value": "2021-04",
+      "count": 196
+    },
+    {
+      "dimension": "month",
+      "value": "2021-05",
+      "count": 208
+    },
+    {
+      "dimension": "month",
+      "value": "2021-06",
+      "count": 217
+    },
+    {
+      "dimension": "month",
+      "value": "2021-07",
+      "count": 209
+    },
+    {
+      "dimension": "month",
+      "value": "2021-08",
+      "count": 239
+    },
+    {
+      "dimension": "month",
+      "value": "2021-09",
+      "count": 251
+    },
+    {
+      "dimension": "month",
+      "value": "2021-10",
+      "count": 256
+    },
+    {
+      "dimension": "month",
+      "value": "2021-11",
+      "count": 244
+    },
+    {
+      "dimension": "month",
+      "value": "2021-12",
+      "count": 274
+    },
+    {
+      "dimension": "month",
+      "value": "2022-01",
+      "count": 220
+    },
+    {
+      "dimension": "month",
+      "value": "2022-02",
+      "count": 231
+    },
+    {
+      "dimension": "month",
+      "value": "2022-03",
+      "count": 232
+    },
+    {
+      "dimension": "month",
+      "value": "2022-04",
+      "count": 196
+    },
+    {
+      "dimension": "month",
+      "value": "2022-05",
+      "count": 269
+    },
+    {
+      "dimension": "month",
+      "value": "2022-06",
+      "count": 216
+    },
+    {
+      "dimension": "month",
+      "value": "2022-07",
+      "count": 224
+    },
+    {
+      "dimension": "month",
+      "value": "2022-08",
+      "count": 137
+    },
+    {
+      "dimension": "month",
+      "value": "2022-09",
+      "count": 148
+    },
+    {
+      "dimension": "month",
+      "value": "2022-10",
+      "count": 110
+    },
+    {
+      "dimension": "month",
+      "value": "2022-11",
+      "count": 113
+    },
+    {
+      "dimension": "month",
+      "value": "2022-12",
+      "count": 123
+    },
+    {
+      "dimension": "month",
+      "value": "2023-01",
+      "count": 90
+    },
+    {
+      "dimension": "month",
+      "value": "2023-02",
+      "count": 109
+    },
+    {
+      "dimension": "month",
+      "value": "2023-03",
+      "count": 106
+    },
+    {
+      "dimension": "month",
+      "value": "2023-04",
+      "count": 117
+    },
+    {
+      "dimension": "month",
+      "value": "2023-05",
+      "count": 123
+    },
+    {
+      "dimension": "month",
+      "value": "2023-06",
+      "count": 83
+    },
+    {
+      "dimension": "month",
+      "value": "2023-07",
+      "count": 78
+    },
+    {
+      "dimension": "month",
+      "value": "2023-08",
+      "count": 100
+    },
+    {
+      "dimension": "month",
+      "value": "2023-09",
+      "count": 116
+    },
+    {
+      "dimension": "severity",
+      "value": "con heridos",
+      "count": 18982
+    },
+    {
+      "dimension": "severity",
+      "value": "con muertos",
+      "count": 606
+    },
+    {
+      "dimension": "severity",
+      "value": "solo daños",
+      "count": 19602
+    },
+    {
+      "dimension": "weekday",
+      "value": "1",
+      "count": 5386
+    },
+    {
+      "dimension": "weekday",
+      "value": "2",
+      "count": 5829
+    },
+    {
+      "dimension": "weekday",
+      "value": "3",
+      "count": 5712
+    },
+    {
+      "dimension": "weekday",
+      "value": "4",
+      "count": 5699
+    },
+    {
+      "dimension": "weekday",
+      "value": "5",
+      "count": 5967
+    },
+    {
+      "dimension": "weekday",
+      "value": "6",
+      "count": 6460
+    },
+    {
+      "dimension": "weekday",
+      "value": "7",
+      "count": 4137
+    }
+  ],
+  "interpretation": "Historical crash counts, not traffic speeds, exposure-adjusted risk, corridor demand, or optimal departure times. No current route ranking derived from these counts.",
+  "processingMilliseconds": 477.3919,
+  "executedAt": "2026-10-17T02:16:06.823Z",
+  "source": {
+    "url": "https://www.datos.gov.co/resource/7cci-nqqb.json?$select=orden,fecha,hora,gravedad,nombrecomuna,automovil,moto,bicicleta,peaton&$order=orden&$limit=50000",
+    "sha256": "9252e26f61aa9c3080b2f65509254bd4da7bd9a8561de319167b2ad11bcb42bf",
+    "bytes": 7828609,
+    "publisher": "Alcaldía de Bucaramanga, Santander",
+    "datasetId": "7cci-nqqb",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "scope": "One bounded request, limit 50000; does not assert portal completeness. Derived aggregates shared under CC BY-SA 4.0."
+  }
+}

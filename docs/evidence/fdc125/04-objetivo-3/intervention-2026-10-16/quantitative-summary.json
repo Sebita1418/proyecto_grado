@@ -1,0 +1,12 @@
+{
+  "executedAt": "2026-10-17T02:24:45.570Z",
+  "realRequests": 9,
+  "realSuccessfulRequests": 9,
+  "realRouteAlternatives": 14,
+  "comparedRecommendationScenarios": 6,
+  "explainableScenarios": 6,
+  "explainablePercent": 100,
+  "realTrafficRequests": 0,
+  "trafficStatus": "BLOCKED: user has no key; client disabled; no provider coverage measured",
+  "warning": "Recommendation scenarios combine explicitly labelled controlled fixtures and captured real OSRM. Replay uses mock HTTP transport with original bytes. Timings are single local test executions, not a statistical benchmark, device latency, observed travel times or real savings."
+}

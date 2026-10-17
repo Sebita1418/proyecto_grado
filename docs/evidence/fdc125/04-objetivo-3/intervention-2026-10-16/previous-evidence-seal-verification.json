@@ -1,0 +1,238 @@
+{
+  "verifiedAt": "2026-10-17T02:36:12.212Z",
+  "allUnchanged": true,
+  "files": [
+    {
+      "path": "01-trazabilidad/code-state.json",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/git-diff-stat.txt",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/git-log.txt",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/git-status-before.txt",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/git-status-current.txt",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/git-status-final.txt",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/github-snapshot.json",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/origin-develop.txt",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/PR_BODY.md",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/PUBLICACION.md",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/RELEASE_NOTES.md",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/source-state.sha256",
+      "unchanged": true
+    },
+    {
+      "path": "01-trazabilidad/stash-list.txt",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/analyze-original.log",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/analyze-readable.txt",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/commands.json",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/diff-original.log",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/diff-readable.txt",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/encoding-provenance.json",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/final-diff-original.log",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/pre-build-diff.log",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/run-summary.json",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/test-machine-original.log",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/test-machine-readable.jsonl",
+      "unchanged": true
+    },
+    {
+      "path": "02-pruebas-automatizadas/tests-results.json",
+      "unchanged": true
+    },
+    {
+      "path": "03-pruebas-android/devices-original.log",
+      "unchanged": true
+    },
+    {
+      "path": "03-pruebas-android/matrix.json",
+      "unchanged": true
+    },
+    {
+      "path": "03-pruebas-android/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "04-objetivo-3/flow.md",
+      "unchanged": true
+    },
+    {
+      "path": "04-objetivo-3/matrix.json",
+      "unchanged": true
+    },
+    {
+      "path": "04-objetivo-3/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "04-objetivo-3/run-2026-10-16/scenarios.json",
+      "unchanged": true
+    },
+    {
+      "path": "05-videos-originales/manifest.json",
+      "unchanged": true
+    },
+    {
+      "path": "05-videos-originales/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "05-videos-originales/WhatsApp Video 2026-10-15 at 23.13.00.mp4",
+      "unchanged": true
+    },
+    {
+      "path": "05-videos-originales/WhatsApp Video 2026-10-15 at 23.13.15.mp4",
+      "unchanged": true
+    },
+    {
+      "path": "06-capturas/manifest.json",
+      "unchanged": true
+    },
+    {
+      "path": "06-capturas/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "06-capturas/V01-t08-google-anonimizada.png",
+      "unchanged": true
+    },
+    {
+      "path": "06-capturas/V01-t17-home-anonimizada.png",
+      "unchanged": true
+    },
+    {
+      "path": "06-capturas/V02-t85-analitica-derivada.png",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/APK-SHA256SUMS.txt",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/assets-original.log",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/badging-original.log",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/build-command.json",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/build-final-original.log",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/github-size-review.json",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/INVENTARIO.md",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/manifest-original.log",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/originals-baseline.json",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/preservation-final.json",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/privacy-review.json",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/README.md",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/signature-original.log",
+      "unchanged": true
+    },
+    {
+      "path": "07-integridad-y-versiones/version-final.json",
+      "unchanged": true
+    },
+    {
+      "path": "README.md",
+      "unchanged": true
+    }
+  ]
+}

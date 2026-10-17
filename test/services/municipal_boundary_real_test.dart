@@ -10,8 +10,11 @@ void main() {
   test(
     'asset oficial identifica municipio 68001 y conserva todos sus vértices',
     () async {
-      final service =
-          MunicipalBoundaryService(); // Not the synthetic shared test fixture.
+      final service = MunicipalBoundaryService(
+        allowedMunicipalities: [
+          MunicipalBoundaryService.operationalMunicipalities.first,
+        ],
+      ); // Bucaramanga-only regression.
       await service.load();
       expect(service.loadError, isNull);
       expect(service.available, isTrue);
@@ -26,7 +29,11 @@ void main() {
   );
 
   test('puntos reales con procedencia OSM: UIS/parque dentro, municipios vecinos fuera', () async {
-    final service = MunicipalBoundaryService();
+    final service = MunicipalBoundaryService(
+      allowedMunicipalities: [
+        MunicipalBoundaryService.operationalMunicipalities.first,
+      ],
+    );
     await service.load();
     final points = jsonDecode(
       await File('test/fixtures/boundary-reference-points.json').readAsString(),

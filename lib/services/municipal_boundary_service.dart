@@ -6,19 +6,113 @@ import 'package:latlong2/latlong.dart';
 import '../models/municipal_coverage.dart';
 export '../models/municipal_coverage.dart';
 
-/// Local, versioned boundary. Unknown never authorizes a route.
+/// A point is authorized by any verified allowed municipality. A missing
+/// municipality makes unmatched points unknown, never outside.
 class MunicipalBoundaryService {
-  MunicipalBoundaryService({Future<String> Function()? loader})
-    : _loader = loader ?? _loadOfficialAsset;
+  MunicipalBoundaryService({
+    Future<String> Function()? loader,
+    Iterable<MunicipalTerritory>? allowedMunicipalities,
+    Future<String> Function(MunicipalTerritory)? municipalityLoader,
+  }) : _legacyLoader = loader,
+       municipalities = List.unmodifiable(
+         allowedMunicipalities ?? operationalMunicipalities,
+       ),
+       _municipalityLoader = municipalityLoader ?? _readAsset;
 
   MunicipalBoundaryService.fromGeoJson(String source)
-    : _loader = (() async => source),
-      _geometry = MunicipalGeometry.parse(source);
+    : _legacyLoader = (() async => source),
+      _anonymousGeometry = MunicipalGeometry.parse(source),
+      municipalities = operationalMunicipalities,
+      _municipalityLoader = _readAsset;
 
   static const assetPath = 'assets/geo/bucaramanga-mgn2024.geojson';
+  static const operationalMunicipalities = [
+    MunicipalTerritory(
+      code: '68001',
+      name: 'Bucaramanga',
+      assetPath: assetPath,
+    ),
+    MunicipalTerritory(
+      code: '68307',
+      name: 'Girón',
+      assetPath: 'assets/geo/giron-mgn2024.geojson',
+    ),
+    MunicipalTerritory(
+      code: '68276',
+      name: 'Floridablanca',
+      assetPath: 'assets/geo/floridablanca-mgn2024.geojson',
+    ),
+  ];
   static MunicipalBoundaryService shared = MunicipalBoundaryService();
-  static Future<String> _loadOfficialAsset() async {
-    final source = await rootBundle.loadString(assetPath);
+  static Future<String> _readAsset(MunicipalTerritory municipality) =>
+      rootBundle.loadString(municipality.assetPath);
+
+  final List<MunicipalTerritory> municipalities;
+  final Future<String> Function()? _legacyLoader;
+  final Future<String> Function(MunicipalTerritory) _municipalityLoader;
+  final Map<String, MunicipalGeometry> _geometries = {};
+  final Map<String, Object> _loadErrors = {};
+  MunicipalGeometry? _anonymousGeometry;
+  Object? _legacyError;
+  bool _attempted = false;
+  Future<void>? _loading;
+
+  bool get available =>
+      _anonymousGeometry != null ||
+      (_legacyLoader == null &&
+          municipalities.isNotEmpty &&
+          municipalities.every((m) => _geometries.containsKey(m.code)));
+  Map<String, Object> get loadErrors => Map.unmodifiable(_loadErrors);
+  Object? get loadError =>
+      _legacyError ?? (_loadErrors.isEmpty ? null : _loadErrors.values.first);
+  String get coverageName => municipalities.map((m) => m.name).join(', ');
+  List<List<List<LatLng>>> get polygons =>
+      _anonymousGeometry?.polygons ??
+      List.unmodifiable([
+        for (final municipality in municipalities)
+          ...?_geometries[municipality.code]?.polygons,
+      ]);
+
+  Future<void> load({bool retry = false}) {
+    if (_loading != null) return _loading!;
+    if (available || (_attempted && !retry)) return Future.value();
+    final task = _load();
+    _loading = task;
+    return task.whenComplete(() => _loading = null);
+  }
+
+  Future<void> _load() async {
+    _attempted = true;
+    final loader = _legacyLoader;
+    if (loader != null) {
+      try {
+        _anonymousGeometry = MunicipalGeometry.parse(await loader());
+        _legacyError = null;
+      } catch (error) {
+        _anonymousGeometry = null;
+        _legacyError = error;
+      }
+      return;
+    }
+    for (final municipality in municipalities) {
+      if (_geometries.containsKey(municipality.code)) continue;
+      try {
+        final source = await _municipalityLoader(municipality);
+        _geometries[municipality.code] = _verifiedGeometry(
+          source,
+          municipality,
+        );
+        _loadErrors.remove(municipality.code);
+      } catch (error) {
+        _loadErrors[municipality.code] = error;
+      }
+    }
+  }
+
+  static MunicipalGeometry _verifiedGeometry(
+    String source,
+    MunicipalTerritory municipality,
+  ) {
     final data = jsonDecode(source);
     if (data is! Map ||
         data['type'] != 'FeatureCollection' ||
@@ -29,40 +123,15 @@ class MunicipalBoundaryService {
     final feature = data['features'][0];
     final properties = feature is Map ? feature['properties'] : null;
     if (properties is! Map ||
-        properties['mpio_cdpmp'] != '68001' ||
-        properties['mpio_cnmbr'] != 'BUCARAMANGA' ||
+        properties['mpio_cdpmp'] != municipality.code ||
+        properties['mpio_cnmbr'] != municipality.name.toUpperCase() ||
         properties['mpio_tipo'] != 'MUNICIPIO' ||
         properties['mpio_nano'] != 2024) {
       throw const FormatException(
-        'El recurso no corresponde a Bucaramanga MGN 2024.',
+        'El recurso no corresponde al municipio MGN 2024 configurado.',
       );
     }
-    return source;
-  }
-
-  final Future<String> Function() _loader;
-  MunicipalGeometry? _geometry;
-  Future<void>? _loading;
-  Object? loadError;
-  bool get available => _geometry != null;
-  List<List<List<LatLng>>> get polygons => _geometry?.polygons ?? const [];
-
-  Future<void> load({bool retry = false}) {
-    if (_loading != null) return _loading!;
-    if (available || (loadError != null && !retry)) return Future.value();
-    final task = _load();
-    _loading = task;
-    return task.whenComplete(() => _loading = null);
-  }
-
-  Future<void> _load() async {
-    try {
-      _geometry = MunicipalGeometry.parse(await _loader());
-      loadError = null;
-    } catch (error) {
-      _geometry = null;
-      loadError = error;
-    }
+    return MunicipalGeometry.parse(source);
   }
 
   CoverageAssessment assess(LatLng point) =>
@@ -72,19 +141,37 @@ class MunicipalBoundaryService {
         !longitude.isFinite ||
         latitude.abs() > 90 ||
         longitude.abs() > 180) {
-      return const CoverageAssessment(
+      return CoverageAssessment(
         MunicipalCoverage.unknown,
         invalidCoordinates: true,
+        coverageName: coverageName,
       );
     }
-    final geometry = _geometry;
-    if (geometry == null) {
-      return const CoverageAssessment(MunicipalCoverage.unknown);
+    final point = LatLng(latitude, longitude);
+    final anonymous = _anonymousGeometry;
+    if (anonymous != null) {
+      return CoverageAssessment(
+        anonymous.contains(point)
+            ? MunicipalCoverage.inside
+            : MunicipalCoverage.outside,
+        coverageName: coverageName,
+      );
+    }
+    final matches = [
+      for (final municipality in municipalities)
+        if (_geometries[municipality.code]?.contains(point) == true)
+          municipality,
+    ];
+    if (matches.isNotEmpty) {
+      return CoverageAssessment(
+        MunicipalCoverage.inside,
+        municipalities: List.unmodifiable(matches),
+        coverageName: coverageName,
+      );
     }
     return CoverageAssessment(
-      geometry.contains(LatLng(latitude, longitude))
-          ? MunicipalCoverage.inside
-          : MunicipalCoverage.outside,
+      available ? MunicipalCoverage.outside : MunicipalCoverage.unknown,
+      coverageName: coverageName,
     );
   }
 

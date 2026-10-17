@@ -1,0 +1,35 @@
+[
+  {
+    "name": "V01-t08-google-anonimizada.png",
+    "sourceVideoId": "V01",
+    "sourceVideoSha256": "dbb8b4b4c8ab117a2062c220eeb0ae542d6456737fb8c53001f01971df47bf35",
+    "requestedTimestampSeconds": 8,
+    "derivative": true,
+    "modifications": "máscara sólida de cuentas y barra de estado",
+    "sizeBytes": 28065,
+    "sha256": "bc1c41b493b7b7e7200417b6fab5abb0989b12fbfebc6231c60198400e61af84",
+    "visuallyReviewed": true
+  },
+  {
+    "name": "V01-t17-home-anonimizada.png",
+    "sourceVideoId": "V01",
+    "sourceVideoSha256": "dbb8b4b4c8ab117a2062c220eeb0ae542d6456737fb8c53001f01971df47bf35",
+    "requestedTimestampSeconds": 17,
+    "derivative": true,
+    "modifications": "máscara de zona principal del mapa y barra de estado",
+    "sizeBytes": 96333,
+    "sha256": "c9c699287e8b6a87f18e83bee57ca7129677ab009839689219b252e91b7d933b",
+    "visuallyReviewed": true
+  },
+  {
+    "name": "V02-t85-analitica-derivada.png",
+    "sourceVideoId": "V02",
+    "sourceVideoSha256": "0640fc557724c7c73192028c7e9e68ca702aad08d7ec50014d8d6c8bf2cbfc5e",
+    "requestedTimestampSeconds": 85,
+    "derivative": true,
+    "modifications": "barra de estado ocultada; métricas visibles sin modificación",
+    "sizeBytes": 119744,
+    "sha256": "873718bacf4d02d80cfc5898e61a77ac56045b94c004bfa0ec8157de3835696a",
+    "visuallyReviewed": true
+  }
+]

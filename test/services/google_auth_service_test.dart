@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:transporte_inteligente/services/google_auth_service.dart';
+import 'package:transporte_inteligente/config/auth_redirect.dart';
 
 void main() {
   group('GoogleAuthService', () {
@@ -33,7 +34,7 @@ void main() {
         },
       );
 
-      const redirectTo = 'com.transporte.inteligente://login-callback/';
+      const redirectTo = AuthRedirect.androidCallback;
 
       await service.signIn(redirectTo: redirectTo);
 

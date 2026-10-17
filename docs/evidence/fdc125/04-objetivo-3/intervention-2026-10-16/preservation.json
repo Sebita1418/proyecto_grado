@@ -1,0 +1,223 @@
+{
+  "checkedAt": "2026-10-17T02:32:50.335Z",
+  "allUnchanged": true,
+  "sourceStable": true,
+  "sourceManifestSha256": "b2445ac61e770177230074e8f84cb070ea0064074ca5ecf36c4d740d01bf102a",
+  "items": [
+    {
+      "path": "docs/evidence/objective-3/2026-10-15/exit-codes.txt",
+      "sha256": "04920623b5ef8c9e01d541b19168707d2b5655261a297f33026eea85ac8c8f3b",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/objective-3/2026-10-15/flutter-analyze.log",
+      "sha256": "9c33b780df8d171e58cb440ddfc3c7540f31bf280d690fd2fe6a2cc49ffd81ad",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/objective-3/2026-10-15/flutter-test.log",
+      "sha256": "11e4471935c9f37c5db28d564c36aef6c3a0738fc87fc38c34b13c9138a27c5f",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/objective-3/2026-10-15/git-diff-check.log",
+      "sha256": "32d1549f73039e048ed7dea0ac3a551b4677c612a9ec017385766c92cbe07ded",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/objective-3/2026-10-15/git-diff-stat.txt",
+      "sha256": "1ef8135cd7bbaff30e80c65bbeeba54480b8aa0606bf8caf03e111d5d376eb47",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/objective-3/2026-10-15/git-status.txt",
+      "sha256": "10ed9e75a69dc008541d59c05533b587a4eafb116c7db784920abf23f278d498",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/objective-3/2026-10-15/preservation.json",
+      "sha256": "b2069bd210824c4996ccda9a2b356e46e452feab2cbdd7e14a639f530b368e03",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/objective-3/2026-10-15/run-summary.json",
+      "sha256": "4384c1ec0b92287f9acc5a250e3185865fc0967b05b9dd5882c5b0625591a56d",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/objective-3/2026-10-15/scenarios-test.log",
+      "sha256": "c35198cb9abdbc5038ce4e290ae76d84b6e4203a9f93d2d066fcf020721e6340",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/objective-3/2026-10-15/scenarios.json",
+      "sha256": "0ca40bc84a7157e15e7d30ee7cd89a06bd795f240f938f1902175deb763b0ccb",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/objective-3/2026-10-15/SHA256SUMS.txt",
+      "sha256": "05940506f1134afcd2fa6245dc5729db853db5948c45aba5f0802953b747c036",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/address-and-navigation-audit.md",
+      "sha256": "4fb8a12b161d85802cac259eb89ab4c894c5bb3016aa68eb4595ee57a5e68b30",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/android-release-validation.md",
+      "sha256": "c2fc632e7d4617ac72c3138f2aa05814f7349b1656f6be0fb8b4bdcc8be2582a",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/address-provider-audit.json",
+      "sha256": "39550ba554bdd7b160235dab6fa4c82f496bf6630b93f1733926b21b5811e86b",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/analyze.log",
+      "sha256": "ddd9b6b946ced9e88085f7c0a8ad1782dcf637ffc68b4bd0e72fd6d862f8c685",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/apk-badging.log",
+      "sha256": "855efd0380ed848827525bcad3b20544a613d559828415108635fe0d9e45fd37",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/apk-manifest.log",
+      "sha256": "9e1eae88e092a7932b87cfcd37d90e6e628e2392dfe7b461e9afcae3ada5b29b",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/apk-signature.log",
+      "sha256": "17a8a5228f0f074b8e785e182c82e209b24a32fec25a2dd1bebdfa1c20e981c2",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/assets-verification.log",
+      "sha256": "7d1d36fd769e8c144cc9c0c013eb9c120905fd37fad40317aaa6909c419c8bc4",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/build-release.log",
+      "sha256": "5d1efdd4917e294ffd56a5bdd81e06ab95c64109e3d4b1213ebbb51e84ecdda6",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/debug-fallback-signature.log",
+      "sha256": "17a8a5228f0f074b8e785e182c82e209b24a32fec25a2dd1bebdfa1c20e981c2",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/diff-check-final.log",
+      "sha256": "6d1dc716bedb7f20570fefa1c2a3897ab1967b1b3b95053938d8685cc379c3a9",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/diff-check.log",
+      "sha256": "94743792c92c493187888fb50e73013776a26545fde4a78ef44f3c1515aafb4c",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/git-diff-stat.log",
+      "sha256": "1ef8135cd7bbaff30e80c65bbeeba54480b8aa0606bf8caf03e111d5d376eb47",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/git-status-before-packaging.log",
+      "sha256": "3c61975e8349e346ca5f510f79e9e8aad45ee51e384b3925ae0aaab6c0640d3a",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/git-status-final.log",
+      "sha256": "94e5b23db151faed6d54d3120d806a61af5fdc33e357c542eb5758409626cf2e",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/s22-install.log",
+      "sha256": "4dbdc95cc34f134cec3335a1cb220862b88ecce0d65412b9bd88908c08194dc9",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/s22-installed-apk-hash.log",
+      "sha256": "e6df2ebd93038221e9c092563da010dd6b860e40677b5ff250a81509c6e6ac05",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/s22-launch.log",
+      "sha256": "18e0ab978e54ba855e239e777514c07893de1a38988507bbf8ef8a2a00503784",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/s22-launch.png",
+      "sha256": "a00b6a7b64b6abda44c6ee08c4ab70b6266dd7fc1fa18c0f62850c0bba74267a",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/s22-runtime-errors.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/source-files.sha256",
+      "sha256": "477adb50cd924325706e3a91ffdc8fb34eb73c2c8a3fb0058e1790fe2a44514d",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/tests.log",
+      "sha256": "27786f2d9568d1b2a37ae34833dc57541b2dcd3dff6155d77d19f00d8c1e5902",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/evidence/verify-apk.ps1",
+      "sha256": "0a1f32a2ed44c1d86c471b6814018f20d47180ad2e134206b608258af591b321",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/INSTALACION.md",
+      "sha256": "61671c7c5778d3d1fea364a0effbdb62e2de5b8a121e007c74be3978f903f010",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/PACKAGE_SHA256SUMS.txt",
+      "sha256": "19cf38d5ffc7f8fd3a6c512fbbb92bd8fd0fd71eaebd93b7c8b4b8f54b8ef6e1",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/SHA256SUMS.txt",
+      "sha256": "a154e5780d6dd4c6f667c2c7139c15d36948c0e31f253d6db25f3d286827c190",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/transporte-inteligente-1.0.0-20261014-release-debug-signed.apk",
+      "sha256": "040768c25ab2075125957dafe47939f82e57f4299c0a8a78b48b5ef4236fc6c3",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/version.json",
+      "sha256": "cb11ce78517dee7b3f31b6564d32349e6b6b566c27587e936c48e51a34a7e990",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/fdc125/05-videos-originales/WhatsApp Video 2026-10-15 at 23.13.00.mp4",
+      "sha256": "dbb8b4b4c8ab117a2062c220eeb0ae542d6456737fb8c53001f01971df47bf35",
+      "unchanged": true
+    },
+    {
+      "path": "docs/evidence/fdc125/05-videos-originales/WhatsApp Video 2026-10-15 at 23.13.15.mp4",
+      "sha256": "0640fc557724c7c73192028c7e9e68ca702aad08d7ec50014d8d6c8bf2cbfc5e",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/2026-10-14-android-academic/transporte-inteligente-1.0.0-20261014-release-debug-signed.apk",
+      "sha256": "040768c25ab2075125957dafe47939f82e57f4299c0a8a78b48b5ef4236fc6c3",
+      "unchanged": true
+    },
+    {
+      "path": "deliveries/version-final-academica/transporte-inteligente-1.0.1-20261016-release-debug-signed.apk",
+      "sha256": "df46b68345ea3e07fce5eb57a452863fccf33b431e4c76be54361d44727bcd40",
+      "unchanged": true
+    }
+  ]
+}
